@@ -1,62 +1,19 @@
-.claude
-.coverage
-localstack-data/
-
 dist/*
-.pgdata/
-.maintenance_mode
 
-.devcontainer
-
-huey.*
-
-.srl
-*.pyc
-.python-version
-.env
-.envrc
-.venv/*
-.in
-.localstack/
-package-lock.json
-node_modules/*
-
-/mnt/*
-
-nginx/localhost/*
-minica-key.pem
-minica.pem
-
-
-# Ignore the build directory
-
-# Ignore the old source code as it is ported
-/source/CORE_OLD
-
-# Other
-.DS_Store
-codekit-config.json
-.bugs.done
-bugs
-
-build
-robot_tests/logs
-s3analysis/mirror
-s3analysis/*csv
-
-env.sh
-local_only.key
-local_only.crt
-
-static/local/*
-!static/local/.gitkeep 
-
-.vscode
-
-analysis
-
-nginx/logs/*
+# Playwright
 test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+
+# Environment
+.env
+.envrc
+
+# Node
+node_modules/*
+.DS_Store
+
+# Editors
+.vscode
+.claude

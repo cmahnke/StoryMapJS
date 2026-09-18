@@ -1,4 +1,5 @@
-import { LeafletModule } from "leaflet";
+import * as L from "leaflet";
+
 /*
  * L.TileLayer.Zoomify display Zoomify tiles with Leaflet
  * Modified from https://github.com/turban/Leaflet.Zoomify

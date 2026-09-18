@@ -1,9 +1,11 @@
-let EN = require('./locale/en.json');
+const localeModules = import.meta.glob("./locale/*.json", { eager: true });
+
+let EN = (localeModules["./locale/en.json"] || {}).default || {};
 
 var Language = {}
 
 function getLanguage(code) {
-    var lang = require(`./locale/${code}.json`);
+    var lang = JSON.parse(JSON.stringify((localeModules[`./locale/${code}.json`] || {}).default || {}));
     for (let k in EN) {
         if (lang[k]) {
             if (typeof(EN[k]) == 'object') {

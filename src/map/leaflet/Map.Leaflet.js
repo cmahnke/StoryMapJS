@@ -1,3 +1,5 @@
+import * as L from "leaflet";
+
 import { classMixin } from "../../core/Util";
 import Map from "../Map";
 import Events from "../../core/Events";

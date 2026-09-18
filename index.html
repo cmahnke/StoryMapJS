@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>StoryMapJS Demo</title>
+    <meta charset="utf-8">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 10px 100px;
+            margin: 0;
+        }
+        #storymap-embed {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>StoryMapJS Demo</h1>
+    <p>This page loads the StoryMapJS library from source and renders the football example.</p>
+    <div id="storymap-embed"></div>
+
+    <script type="module">
+        import { StoryMap } from "./src/main.js";
+
+        function onStoryMapTitle(e) {
+            document.title = "StoryMapJS: " + e.title;
+        }
+
+        fetch("./football.json")
+            .then((response) => response.json())
+            .then((data) => {
+                window.storymap = new StoryMap("storymap-embed", data, {}, { title: onStoryMapTitle });
+            })
+            .catch((error) => {
+                console.error("Error loading storymap data:", error);
+                document.getElementById("storymap-embed").innerHTML =
+                    '<p style="color: red; padding: 20px;">Error loading storymap data. Check console for details.</p>';
+            });
+    </script>
+</body>
+
+</html>

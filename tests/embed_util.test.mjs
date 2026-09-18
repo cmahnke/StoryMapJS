@@ -13,7 +13,7 @@ global.document = dom.window.document;
 global.DOMParser = dom.window.DOMParser;
 
 const { buildIframe, sanitizeBlockquote, validateWebURL } = await import(
-	"../src/js/media/EmbedUtil.js"
+	"../src/media/EmbedUtil.js"
 );
 
 /*	validateWebURL

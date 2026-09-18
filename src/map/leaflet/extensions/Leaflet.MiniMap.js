@@ -1,4 +1,5 @@
-import { LeafletModule } from "leaflet";
+import * as L from "leaflet";
+
 /*
 	https://github.com/Norkart/Leaflet-MiniMap
 	

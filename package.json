@@ -37,20 +37,19 @@
         "style-loader": "^4.0.0",
         "terser-webpack-plugin": "^5.6.1",
         "trash": "^10.1.1",
+        "vite": "^8.3.0",
         "webpack": "^5.111.1",
         "webpack-cli": "^7.2.3",
         "webpack-dev-server": "^6.0.0",
         "webpack-merge": "^6.0.1"
     },
     "scripts": {
-        "start": "webpack serve --config webpack.dev.js --open",
-        "build": "webpack --config webpack.prd.js && node tasks/compile_less.js",
-        "clean": "trash dist",
+        "dev": "vite",
+        "build": "vite build && vite build --config vite.demo.config.ts",
+        "preview": "vite preview",
+        "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
         "test": "node --test \"tests/*.test.mjs\"",
-        "dist": "npm-run-all -s clean build && cp dist/js/storymap.js dist/js/storymap-min.js",
-        "stage": "npm run dist && node tasks/stage.js",
-        "stage_latest": "npm run dist && node tasks/stage.js latest",
-        "stage_dev": "npm run dist && node tasks/stage.js dev"
+        "dist": "npm run clean build && cp dist/js/storymap.js dist/js/storymap-min.js"
     },
     "repository": {
         "type": "git",

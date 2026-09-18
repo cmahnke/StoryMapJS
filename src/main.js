@@ -1,4 +1,4 @@
-require('../less/VCO.StoryMap.less')
+import "./less/VCO.StoryMap.less";
 export { StoryMap } from "./storymap/StoryMap"
 export { loadCSS } from "./core/Load"
 

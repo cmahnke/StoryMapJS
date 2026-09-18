@@ -10,25 +10,26 @@
 </head>
 <body>
     <div id="storymap-embed"></div>
-    <script src="/dist/js/storymap.js"></script>
-    <script>
+    <script type="module">
+        import { StoryMap } from "./src/main.js";
+
         window.__smErrors = [];
         window.__smReady = false;
-        window.addEventListener('error', function (e) {
+        window.addEventListener("error", function (e) {
             window.__smErrors.push(String(e.message || e));
         });
 
-        var params = new URLSearchParams(window.location.search);
-        var name = params.get('example');
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get("example");
 
-        fetch('/examples/' + name + '.json')
+        fetch("/examples/" + name + ".json")
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                window.__sm = new KLStoryMap.StoryMap('storymap-embed', data, {}, {});
+                window.__sm = new StoryMap("storymap-embed", data, {}, {});
                 window.__smReady = true;
             })
             .catch(function (err) {
-                window.__smErrors.push('harness: ' + (err && err.message ? err.message : String(err)));
+                window.__smErrors.push("harness: " + (err && err.message ? err.message : String(err)));
                 window.__smReady = true;
             });
     </script>

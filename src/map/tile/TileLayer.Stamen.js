@@ -1,3 +1,5 @@
+import * as L from "leaflet";
+
 /*	TyleLayer.Stamen
 	Makes Stamen Map tiles available
 	http://maps.stamen.com/
