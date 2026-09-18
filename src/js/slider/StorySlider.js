@@ -243,7 +243,9 @@ export default class StorySlider {
 			}
 
 			// Set Slide Active State
-			this._slides[this.current_slide].setActive(true);
+			if (this._slides.length > 0) {
+				this._slides[this.current_slide].setActive(true);
+			}
 
 			// Update Navigation and Info
 			if (this._slides[this.current_slide + 1]) {
@@ -642,8 +644,9 @@ export default class StorySlider {
 
 	_onLoaded() {
 		this.fire("loaded", this.data);
-		this.fire("title", {title:this._slides[0].title});
-
+		if (this._slides.length > 0) {
+			this.fire("title", {title:this._slides[0].title});
+		}
 	}
 }
 

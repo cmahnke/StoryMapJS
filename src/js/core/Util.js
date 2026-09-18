@@ -38,6 +38,7 @@ export function convertUnixTime(str) { // created for Instagram. It's ISO8601-is
         var date_parts = str.match(pattern).slice(1);
     }
     var date_array = [];
+    var date, months, year, month, day, time;
     for(var i = 0; i < date_parts.length; i++) {
         var val = parseInt(date_parts[i]);
         if (i == 1) { val = val - 1 } // stupid javascript months

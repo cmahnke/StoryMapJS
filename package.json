@@ -19,6 +19,7 @@
         "uglify-js": "^3.19.3"
     },
     "devDependencies": {
+        "@playwright/test": "^1.63.0",
         "clean-webpack-plugin": "^4.0.0",
         "copy-webpack-plugin": "^14.0.0",
         "css-loader": "^7.1.5",

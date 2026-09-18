@@ -56,3 +56,7 @@ static/local/*
 analysis
 
 nginx/logs/*
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

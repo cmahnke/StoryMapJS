@@ -24,6 +24,10 @@ module.exports = merge({
             {
                 directory: path.resolve(__dirname, 'dist/css'),
                 publicPath: '/dist/css'
+            },
+            {
+                directory: path.resolve(__dirname, 'public/examples'),
+                publicPath: '/examples'
             }
         ],
         hot: true,

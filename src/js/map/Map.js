@@ -613,7 +613,9 @@ export default class Map {
 		if (this.data.slides) {
 			this._createMarkers(this.data.slides);
 			this._resetMarkersActive();
-			this._markers[this.current_marker].active(true);
+			if (this._markers.length > 0) {
+				this._markers[this.current_marker].active(true);
+			}
 			this._loaded.data = true;
 			this._initialMapLocation();
 			

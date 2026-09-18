@@ -109,7 +109,8 @@ export default class Leaflet extends Map {
 		if (tiles) {
 			// Create Image Overlay for each tile in the group
 			for (let x in tiles) {
-				var target_tile = tiles[x],
+				// Leaflet 1.x wraps the tile element in an object
+				var target_tile = tiles[x].el || tiles[x],
 					image = {},
 					tile = {
 						x: 			0,
