@@ -10,8 +10,8 @@ export { MediaType }
 
 export { setLanguage } from "./language/Language"
 
-import ZoomifyTileLayer from "./map/leaflet/extensions/Leaflet.TileLayer.Zoomify"
-export { ZoomifyTileLayer }
+import IIIFTileLayer from "./map/leaflet/IIIFTileLayer"
+export { IIIFTileLayer }
 
 /* Transitional references deprecated as of 0.7.7 */
 function trace(msg) {

@@ -3,7 +3,7 @@ import * as L from "leaflet";
 import { classMixin } from "../../core/Util";
 import Map from "../Map";
 import Events from "../../core/Events";
-import ZoomifyTileLayer from "./extensions/Leaflet.TileLayer.Zoomify";
+import IIIFTileLayer from "./IIIFTileLayer";
 import MiniMapControl from "./extensions/Leaflet.MiniMap";
 import LeafletMapMarker from "./MapMarker.Leaflet";
 import StamenTileLayer from "../tile/TileLayer.Stamen";
@@ -235,14 +235,16 @@ export default class Leaflet extends Map {
 				_tilelayer = new StamenTileLayer(_map_type_arr[1] || 'toner-lite', options);
 				this._map.getContainer().style.backgroundColor = "#FFFFFF";
 				break;
-			case 'zoomify':
-				options.width			= this.options.zoomify.width;
-				options.height 		= this.options.zoomify.height;
-				options.tolerance 		= this.options.zoomify.tolerance || 0.9;
-				options.attribution 	= _attribution_knightlab + this.options.zoomify.attribution;
+			case 'iiif':
+				options.attribution 	= _attribution_knightlab + (this.options.iiif.attribution || "");
 
-				_tilelayer = new ZoomifyTileLayer(this.options.zoomify.path, options);
-				//this._image_layer = L.imageOverlay(this.options.zoomify.path + "TileGroup0/0-0-0.jpg", _tilelayer.getZoomifyBounds(this._map));
+				_tilelayer = new IIIFTileLayer(this.options.iiif.url, options);
+				// Refit the overview once the info.json dimensions are known
+				_tilelayer.on("infoLoaded", () => {
+					if (this.options.map_as_image) {
+						this._markerOverview();
+					}
+				});
 				break;
 			case 'http':
 			case 'https':
@@ -316,7 +318,7 @@ export default class Leaflet extends Map {
 		// Hide Active Line
 		this._line_active.setStyle({opacity:0});
 
-		if (this.options.map_type == "zoomify" && this.options.map_as_image) {
+		if (this.options.map_type == "iiif" && this.options.map_as_image) {
 
 			var _center_zoom 	= this._tile_layer.getCenterZoom(this._map);
 
@@ -559,10 +561,6 @@ export default class Leaflet extends Map {
 		} else {
 			return this._map.getBoundsZoom(bounds, true, _padding);
 		}
-	}
-
-	_getZoomifyZoom() {
-
 	}
 
 	_initialMapLocation() {

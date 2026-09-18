@@ -95,7 +95,7 @@ export default class Map {
 		// Map Tiles Layer for Mini Map
 		this._tile_layer_mini = null;
 		
-		// Image Layer (for zoomify)
+		// Image Layer (for iiif)
 		this._image_layer = null;
 	
 		// Data
@@ -112,11 +112,8 @@ export default class Map {
 			map_background_color: "#d9d9d9",
 			map_subdomains: 	"",
 			map_access_token:   "",
-			zoomify: {
-				path: 			"",
-				width: 			"",
-				height: 		"",
-				tolerance: 		0.8,
+			iiif: {
+				url: 			"",
 				attribution: 	""
 			},
 			skinny_size: 		650,

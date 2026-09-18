@@ -1,0 +1,28 @@
+{
+    "storymap": {
+        "map_as_image": true,
+        "map_type": "iiif",
+        "slides": [
+            {
+                "date": "",
+                "location": {
+                    "line": true
+                },
+                "media": {
+                    "caption": "",
+                    "credit": "",
+                    "url": ""
+                },
+                "text": {
+                    "headline": "IIIF Image API",
+                    "text": "<p>Rendered from an IIIF info.json via the IIIFTileLayer. Image: Laocoön (IIIF reference fixture).</p>"
+                },
+                "type": "overview"
+            }
+        ],
+        "iiif": {
+            "url": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+            "attribution": "IIIF fixture repository"
+        }
+    }
+}

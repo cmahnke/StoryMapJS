@@ -127,11 +127,8 @@ class StoryMap {
       map_access_token:
         "pk.eyJ1IjoibnVrbmlnaHRsYWIiLCJhIjoiczFmd0hPZyJ9.Y_afrZdAjo3u8sz_r8m2Yw", // default
       map_background_color: "#d9d9d9",
-      zoomify: {
-        path: "",
-        width: "",
-        height: "",
-        tolerance: 0.8,
+      iiif: {
+        url: "",
         attribution: ""
       },
       map_height: 300,
@@ -209,7 +206,7 @@ class StoryMap {
 		if (this.options.layout == "landscape") {
 			this.options.map_center_offset = {left: -200, top: 0};
 		}
-		if (this.options.map_type == "zoomify" && this.options.map_as_image) {
+		if (this.options.map_type == "iiif" && this.options.map_as_image) {
 			this.options.map_size_sticky = 2;
 		}
 		if (this.options.map_as_image) {

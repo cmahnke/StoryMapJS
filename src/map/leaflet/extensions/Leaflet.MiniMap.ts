@@ -123,7 +123,9 @@ export default class MiniMapControl extends L.Control {
             //this._miniMap.on('move', this._onMiniMapMoving, this);
             //this._miniMap.on('moveend', this._onMiniMapMoved, this);
 			if (this.options.bounds_array) {
-				this._miniMap.fitBounds(this.options.bounds_array, {padding:[15,15]});
+				if (this.options.bounds_array && L.latLngBounds(this.options.bounds_array).isValid()) {
+					this._miniMap.fitBounds(this.options.bounds_array, {padding:[15,15]});
+				}
 			}
         }, this));
 
@@ -143,7 +145,9 @@ export default class MiniMapControl extends L.Control {
 	restore() {
 		if (this._minimized) {
 			this._restore();
-			this._miniMap.fitBounds(this.options.bounds_array, {padding:[15,15]});
+			if (this.options.bounds_array && L.latLngBounds(this.options.bounds_array).isValid()) {
+				this._miniMap.fitBounds(this.options.bounds_array, {padding:[15,15]});
+			}
 		}
 	}
 
