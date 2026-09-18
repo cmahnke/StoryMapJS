@@ -1,0 +1,50 @@
+/*	Font Clicker & Garamond
+
+https://fonts.google.com/specimen/Clicker+Script
+https://fonts.google.com/specimen/EB+Garamond
+----------------------------------------------------- */
+
+// Main Variables 
+@import "../Variables"; 
+
+// Font Import
+@import "@fontsource/clicker-script";
+@import "@fontsource-variable/eb-garamond";
+@import "@fontsource-variable/eb-garamond/wght-italic.css";
+
+// Font Variables
+$font-main:						'EB Garamond', serif;
+$font-secondary:				'Clicker Script', cursive;
+$font-navigation:				$font-main;//'Helvetica Neue', Helvetica, Arial, "MS Trebuchet", sans-serif;
+$font-marker: 					$font-navigation;
+$font-headline-date: 			$font-navigation;
+
+$base-font-size: 				18px;
+$base-font-weight: 				400;
+
+// Blockquote
+$font-blockquote: 				$font-main;
+$font-blockquote-weight: 		400;
+$font-blockquote-style: 		italic;
+
+// Headings
+$font-size-headings: 			58px;
+$font-headings-lineheight: 		$font-size-headings;
+$font-headings-text-transform: 	none;
+$font-size-headings-small: 		24px;
+$font-headings-weight: 			400;
+$font-size-headline-title: 		64px;
+
+// Marker
+$font-marker-text-transform: 	$font-headings-text-transform;
+
+// Navigation
+$font-navigation-text-transform: 	none;
+ 
+@import "_font.base";
+
+.vco-timeline {
+	.vco-headline-date, h3.vco-headline-date {
+		margin-bottom:10px !important;
+	}
+}

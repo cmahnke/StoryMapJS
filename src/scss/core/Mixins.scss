@@ -1,0 +1,157 @@
+/*	Mixins.scss
+	Snippets of reusable CSS to develop faster and keep code readable
+ * ----------------------------------------------------------------- */
+
+// Cubic Bezier
+@mixin animation-timing-cubic-bezier {
+	transition-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);
+}
+
+// Property Animation
+@mixin property-animation($prop: height, $time: 1000ms, $ease: cubic-bezier(0.770, 0.000, 0.175, 1.000)) {
+	transition: $prop $time $ease;
+}
+
+// Opacity
+@mixin opacity($opacity: 100) {
+	opacity: ($opacity / 100);
+}
+
+// Background Opacity
+@mixin background-opacity($opacity: 100) {
+	/* Fallback for web browsers that doesn't support RGBa */
+	background: rgb(0, 0, 0) transparent;
+	/* RGBa with 0.6 opacity */
+	background: rgba(0, 0, 0, ($opacity / 100));
+}
+
+// Background Color Opacity
+@mixin background-color-opacity($cr: 0, $cg: 0, $cb: 0, $opacity: 100) {
+	/* Fallback for web browsers that doesn't support RGBa */
+	background: rgb($cr, $cg, $cb) transparent;
+	/* RGBa with 0.6 opacity */
+	background: rgba($cr, $cg, $cb, ($opacity / 100));
+}
+
+// Slide Text Shadow
+@mixin slide-text-shadow($shadow: 1px 1px 1px #000) {
+	color: #FFF !important;
+	text-shadow: $shadow !important;
+}
+
+// Border Radius
+@mixin border-radius($radius: 5px) {
+	border-radius: $radius;
+}
+
+// Single side border-radius
+@mixin border-top-radius($radius) {
+	border-top-right-radius: $radius;
+	border-top-left-radius: $radius;
+}
+@mixin border-right-radius($radius) {
+	border-bottom-right-radius: $radius;
+	border-top-right-radius: $radius;
+}
+@mixin border-bottom-radius($radius) {
+	border-bottom-right-radius: $radius;
+	border-bottom-left-radius: $radius;
+}
+@mixin border-left-radius($radius) {
+	border-bottom-left-radius: $radius;
+	border-top-left-radius: $radius;
+}
+
+// Box Shadow
+@mixin box-shadow($shadow: 1px 1px 7px rgba(0,0,0,.30)) {
+	box-shadow: $shadow;
+}
+
+// Transform
+@mixin transform($transform) {
+	transform: $transform;
+}
+
+// Transitions
+@mixin transition($transition) {
+	transition: $transition;
+}
+
+// Hyphens
+@mixin hyphens($hyphens: auto) {
+	hyphens: $hyphens;
+}
+
+// User select
+// For selecting text on the page
+@mixin user-select($select) {
+	user-select: $select;
+}
+
+// Clear Fix
+@mixin clearfix {
+	&:before,
+	&:after {
+		display: table;
+		content: "";
+	}
+	&:after {
+		clear: both;
+	}
+}
+
+@mixin translucent-background($color: #fff, $alpha: 1) {
+	background-color: hsla(hue($color), saturation($color), lightness($color), $alpha);
+}
+
+// Center-align a block level element
+@mixin center-block {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+// Create Vertical Gradient
+@mixin gradient-vertical($startColor: #555, $endColor: #333) {
+	background-repeat: repeat-x;
+	background-image: linear-gradient(top, $startColor, $endColor);
+}
+
+// GRADIENTS
+// --------------------------------------------------
+
+// Horizontal gradient, from left to right
+@mixin gradient-horizontal($start-color: #555, $end-color: #333, $start-percent: 0%, $end-percent: 100%) {
+	background-image: linear-gradient(to right, $start-color $start-percent, $end-color $end-percent);
+	background-repeat: repeat-x;
+}
+
+// Vertical gradient, from top to bottom
+@mixin gradient-vertical-legacy($start-color: #555, $end-color: #333, $start-percent: 0%, $end-percent: 100%) {
+	background-image: linear-gradient(to bottom, $start-color $start-percent, $end-color $end-percent);
+	background-repeat: repeat-x;
+}
+
+@mixin gradient-directional($start-color: #555, $end-color: #333, $deg: 45deg) {
+	background-repeat: repeat-x;
+	background-image: linear-gradient($deg, $start-color, $end-color);
+}
+
+@mixin gradient-horizontal-three-colors($start-color: #00b3ee, $mid-color: #7a43b6, $color-stop: 50%, $end-color: #c3325f) {
+	background-image: linear-gradient(to right, $start-color, $mid-color $color-stop, $end-color);
+	background-repeat: no-repeat;
+}
+
+@mixin gradient-vertical-three-colors($start-color: #00b3ee, $mid-color: #7a43b6, $color-stop: 50%, $end-color: #c3325f) {
+	background-image: linear-gradient($start-color, $mid-color $color-stop, $end-color);
+	background-repeat: no-repeat;
+}
+
+@mixin gradient-radial($inner-color: #555, $outer-color: #333) {
+	background-image: radial-gradient(circle, $inner-color, $outer-color);
+	background-repeat: no-repeat;
+}
+
+@mixin gradient-striped($color: rgba(255,255,255,.15), $angle: 45deg) {
+	background-image: linear-gradient($angle, $color 25%, transparent 25%, transparent 50%, $color 50%, $color 75%, transparent 75%, transparent);
+}

@@ -1,0 +1,15 @@
+.vcoanimate {
+	-webkit-transform: translateZ(0);
+	-webkit-perspective: 1000;
+	-webkit-backface-visibility: hidden;
+}
+
+.vco-animate {
+	@include property-animation(all, $animation-duration, $animation-ease);
+	@include animation-timing-cubic-bezier;
+}
+
+.vco-animate-opacity {
+	@include property-animation(opacity, $animation-duration, $animation-ease);
+	@include animation-timing-cubic-bezier;
+}

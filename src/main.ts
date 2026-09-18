@@ -1,4 +1,4 @@
-import "./less/VCO.StoryMap.less";
+import "./scss/VCO.StoryMap.scss";
 export { StoryMap } from "./storymap/StoryMap"
 export { loadCSS } from "./core/Load"
 
