@@ -17,3 +17,7 @@ node_modules/*
 # Editors
 .vscode
 .claude
+
+# Local files
+/Notes.md
+/opencode.json
