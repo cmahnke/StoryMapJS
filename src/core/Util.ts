@@ -34,14 +34,15 @@ export function convertUnixTime(str) {
     // created for Instagram. It's ISO8601-ish
     // 2013-12-09 01:56:28
     const pattern = /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})/;
+    let date_parts;
     if (str.match(pattern)) {
-        var date_parts = str.match(pattern).slice(1);
+        date_parts = str.match(pattern).slice(1);
     }
     const date_array = [];
     let date, months, year, month, day, time;
     for (let i = 0; i < date_parts.length; i++) {
         let val = parseInt(date_parts[i]);
-        if (i == 1) {
+        if (i === 1) {
             val = val - 1;
         } // stupid javascript months
         date_array.push(val);
@@ -105,7 +106,7 @@ export function stamp(obj: any): number {
 export function findArrayNumberByUniqueID(id, array, prop) {
     let _n = 0;
     for (let i = 0; i < array.length; i++) {
-        if (array[i].data[prop] == id) {
+        if (array[i].data[prop] === id) {
             _n = i;
         }
     }
@@ -220,28 +221,28 @@ export const ratio = {
 };
 
 export function urljoin(base_url, path) {
-    if (base_url.length && base_url[base_url.length - 1] == "/") {
+    if (base_url.length && base_url[base_url.length - 1] === "/") {
         base_url = base_url.substring(0, base_url.length - 1);
     }
-    if (path.length && path[0] == "/") {
+    if (path.length && path[0] === "/") {
         path = path.substring(1);
     }
     const url1 = base_url.split("/");
     const url2 = path.split("/");
     const url3 = [];
     for (var i = 0, l = url1.length; i < l; i++) {
-        if (url1[i] == "..") {
+        if (url1[i] === "..") {
             url3.pop();
-        } else if (url1[i] == ".") {
+        } else if (url1[i] === ".") {
             continue;
         } else {
             url3.push(url1[i]);
         }
     }
     for (var i = 0, l = url2.length; i < l; i++) {
-        if (url2[i] == "..") {
+        if (url2[i] === "..") {
             url3.pop();
-        } else if (url2[i] == ".") {
+        } else if (url2[i] === ".") {
             continue;
         } else {
             url3.push(url2[i]);

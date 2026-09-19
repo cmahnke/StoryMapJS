@@ -149,12 +149,12 @@ export default class SlideNav {
         this.data = mergeData(this.data, d);
 
         // Title
-        if (this.data.title != "") {
+        if (this.data.title !== "") {
             this._el.title.innerHTML = this.data.title;
         }
 
         // Date
-        if (this.data.date != "") {
+        if (this.data.date !== "") {
             this._el.description.innerHTML = this.data.description;
         }
     }

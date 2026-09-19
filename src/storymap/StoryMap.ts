@@ -207,10 +207,10 @@ class StoryMap {
         // Grab options from storymap data
         updateData(this.options, this.data);
 
-        if (this.options.layout == "landscape") {
+        if (this.options.layout === "landscape") {
             this.options.map_center_offset = { left: -200, top: 0 };
         }
-        if (this.options.map_type == "iiif" && this.options.map_as_image) {
+        if (this.options.map_type === "iiif" && this.options.map_as_image) {
             this.options.map_size_sticky = 2;
         }
         if (this.options.map_as_image) {
@@ -218,16 +218,16 @@ class StoryMap {
         }
 
         // handle removed zoomify type
-        if (this.options.map_type == "zoomify") {
+        if (this.options.map_type === "zoomify") {
             console.error(
                 "StoryMapJS: map_type 'zoomify' has been removed; use map_type 'iiif' with options.iiif.url instead.",
             );
         }
 
         // handle Stamen change
-        if (this.options.map_type.indexOf("stamen") == 0) {
+        if (this.options.map_type.indexOf("stamen") === 0) {
             const old_type = this.options.map_type;
-            if (old_type == "stamen:watercolor") {
+            if (old_type === "stamen:watercolor") {
                 this.options.map_type = "ch-watercolor";
             } else {
                 this.options.map_type = "osm:standard";
@@ -260,7 +260,7 @@ class StoryMap {
     /*	Navigation
 	================================================== */
     goTo(n) {
-        if (n != this.current_slide) {
+        if (n !== this.current_slide) {
             this.current_slide = n;
             this._storyslider.goTo(this.current_slide);
             this._map.goTo(this.current_slide);
@@ -312,7 +312,7 @@ class StoryMap {
         this._storyslider.init();
 
         // LAYOUT
-        if (this.options.layout == "portrait") {
+        if (this.options.layout === "portrait") {
             // Set Default Component Sizes
             this.options.map_height = this.options.height / this.options.map_size_sticky;
             this.options.storyslider_height =
@@ -382,7 +382,7 @@ class StoryMap {
         }
 
         // LAYOUT
-        if (this.options.layout == "portrait") {
+        if (this.options.layout === "portrait") {
             display_class += " vco-skinny";
             // Map Offset
             this._map.setMapOffset(0, 0);
@@ -474,7 +474,7 @@ class StoryMap {
             );
         }
 
-        if (this.options.language.direction == "rtl") {
+        if (this.options.language.direction === "rtl") {
             display_class += " vco-rtl";
         }
 
@@ -505,7 +505,7 @@ class StoryMap {
     }
 
     _onSlideChange(e) {
-        if (this.current_slide != e.current_slide) {
+        if (this.current_slide !== e.current_slide) {
             this.current_slide = e.current_slide;
             this._map.goTo(this.current_slide);
             this.fire("change", { current_slide: this.current_slide }, this);
@@ -513,7 +513,7 @@ class StoryMap {
     }
 
     _onMapChange(e) {
-        if (this.current_slide != e.current_marker) {
+        if (this.current_slide !== e.current_marker) {
             this.current_slide = e.current_marker;
             this._storyslider.goTo(this.current_slide);
             this.fire("change", { current_slide: this.current_slide }, this);

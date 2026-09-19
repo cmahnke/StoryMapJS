@@ -210,7 +210,7 @@ export default class Swipable {
     }
 
     _momentum() {
-        let pos_adjust = {
+        const pos_adjust = {
                 x: 0,
                 y: 0,
                 time: 0,
@@ -223,9 +223,9 @@ export default class Swipable {
             swipe_detect = {
                 x: false,
                 y: false,
-            },
-            swipe = false,
-            _swipe_direction = "";
+            };
+        let swipe = false;
+        const _swipe_direction = "";
         this.data.direction = null;
         pos_adjust.time = (new Date().getTime() - this.data.time.start) * 10;
         pos_change.time = (new Date().getTime() - this.data.time.start) * 10;

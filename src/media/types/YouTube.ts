@@ -20,8 +20,8 @@ export default class YouTube extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let self = this,
-            url_vars;
+        const self = this;
+        let url_vars;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

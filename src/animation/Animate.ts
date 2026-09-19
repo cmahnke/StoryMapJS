@@ -20,24 +20,24 @@ export default function Animate(el, options) {
 ================================================== */
 //window.vcoanimate = (function() {
 const storymapAnimate = (function () {
-    let doc = document,
-        win = window,
-        perf = win.performance,
-        now = function () {
-            return perf.now();
-        },
-        _html = doc.documentElement,
-        fixTs = false, // feature detected below
-        thousand = 1000,
-        rgbOhex = /^rgb\(|#/,
-        relVal = /^([+\-])=([\d\.]+)/,
-        numUnit = /^(?:[\+\-]=?)?\d+(?:\.\d+)?(%|in|cm|mm|em|ex|pt|pc|px)$/,
-        rotate = /rotate\(((?:[+\-]=)?([\-\d\.]+))deg\)/,
-        scale = /scale\(((?:[+\-]=)?([\d\.]+))\)/,
-        skew = /skew\(((?:[+\-]=)?([\-\d\.]+))deg, ?((?:[+\-]=)?([\-\d\.]+))deg\)/,
-        translate = /translate\(((?:[+\-]=)?([\-\d\.]+))px, ?((?:[+\-]=)?([\-\d\.]+))px\)/,
-        // these elements do not require 'px'
-        unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1, transform: 1 };
+    const doc = document;
+    const win = window;
+    const perf = win.performance;
+    const now = function () {
+        return perf.now();
+    };
+    const _html = doc.documentElement;
+    let fixTs = false; // feature detected below
+    const thousand = 1000;
+    const rgbOhex = /^rgb\(|#/;
+    const relVal = /^([+-])=([\d.]+)/;
+    const numUnit = /^(?:[+-]=?)?\d+(?:\.\d+)?(%|in|cm|mm|em|ex|pt|pc|px)$/;
+    const rotate = /rotate\(((?:[+-]=)?([-\d.]+))deg\)/;
+    const scale = /scale\(((?:[+-]=)?([\d.]+))\)/;
+    const skew = /skew\(((?:[+-]=)?([-\d.]+))deg, ?((?:[+-]=)?([-\d.]+))deg\)/;
+    const translate = /translate\(((?:[+-]=)?([-\d.]+))px, ?((?:[+-]=)?([-\d.]+))px\)/;
+    // these elements do not require 'px'
+    const unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1, transform: 1 };
 
     // which property name does this browser use for transform
     const transform = "transform";
@@ -61,7 +61,7 @@ const storymapAnimate = (function () {
     frame(function (timestamp) {
         // feature-detect if rAF and now() are of the same scale (epoch or high-res),
         // if not, we have to do a timestamp fix on each frame
-        fixTs = timestamp > 1e12 != now() > 1e12;
+        fixTs = timestamp > 1e12 !== now() > 1e12;
     });
 
     function has(array, elem, i?) {
@@ -238,7 +238,7 @@ const storymapAnimate = (function () {
 
     // this retreives the frame value within a sequence
     function getTweenVal(pos, units, begin, end, k, i, v?) {
-        if (k == "transform") {
+        if (k === "transform") {
             v = {};
             for (const t in begin[i][k]) {
                 v[t] =
@@ -263,7 +263,7 @@ const storymapAnimate = (function () {
     // support for relative movement via '+=n' or '-=n'
     function by(val, start?, m?, r?, i?) {
         return (m = relVal.exec(val))
-            ? (i = parseFloat(m[2])) && start + (m[1] == "+" ? 1 : -1) * i
+            ? (i = parseFloat(m[2])) && start + (m[1] === "+" ? 1 : -1) * i
             : parseFloat(val);
     }
 
@@ -282,8 +282,8 @@ const storymapAnimate = (function () {
      *     - this may also be a function that receives element to be animated. it must return a value
      */
     function morpheus(elements, options) {
-        var els = elements ? (els = isFinite(elements.length) ? elements : [elements]) : [],
-            i,
+        const els = elements ? (isFinite(elements.length) ? elements : [elements]) : [];
+        let i,
             complete = options.complete,
             duration = options.duration,
             ease = options.easing,
@@ -339,7 +339,7 @@ const storymapAnimate = (function () {
                     case "bezier":
                         continue;
                 }
-                var v = getStyle(els[i], k),
+                let v = getStyle(els[i], k),
                     unit,
                     tmp = fun(options[k]) ? options[k](els[i]) : options[k];
                 if (typeof tmp == "string" && rgbOhex.test(tmp) && !rgbOhex.test(v)) {
@@ -349,15 +349,15 @@ const storymapAnimate = (function () {
                 }
 
                 begin[i][k] =
-                    k == "transform"
+                    k === "transform"
                         ? parseTransform(v)
                         : typeof tmp == "string" && rgbOhex.test(tmp)
                           ? toHex(v).slice(1)
                           : parseFloat(v);
                 end[i][k] =
-                    k == "transform"
+                    k === "transform"
                         ? parseTransform(tmp, begin[i][k])
-                        : typeof tmp == "string" && tmp.charAt(0) == "#"
+                        : typeof tmp == "string" && tmp.charAt(0) === "#"
                           ? toHex(tmp).slice(1)
                           : by(tmp, parseFloat(v));
                 // record original unit
@@ -378,7 +378,7 @@ const storymapAnimate = (function () {
                     }
                     for (const k in options) {
                         v = getTweenVal(pos, units, begin, end, k, i);
-                        k == "transform"
+                        k === "transform"
                             ? (els[i].style[transform] = formatTransform(v))
                             : (els[i].style[camelize(k)] = v);
                     }

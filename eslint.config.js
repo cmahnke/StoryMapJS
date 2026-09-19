@@ -4,13 +4,7 @@ import globals from "globals";
 
 export default tseslint.config(
     {
-        ignores: [
-            "dist/**",
-            "node_modules/**",
-            "compiled/**",
-            "test-results/**",
-            "playwright-report/**",
-        ],
+        ignores: ["dist/**", "node_modules/**", "compiled/**", "test-results/**", "playwright-report/**"],
     },
     js.configs.recommended,
     ...tseslint.configs.recommended,
@@ -23,21 +17,19 @@ export default tseslint.config(
             },
         },
         rules: {
-            // legacy codebase pragmas
-            "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-this-alias": "off",
-            "@typescript-eslint/no-unused-expressions": "off",
-            "@typescript-eslint/no-unused-vars": [
-                "error",
-                { args: "none", varsIgnorePattern: "^_" },
-            ],
-            "prefer-const": "off",
-            "no-var": "off",
-            eqeqeq: "off",
-            "no-useless-escape": "off",
-            "no-useless-assignment": "off",
-            "no-cond-assign": "off",
+            // runtime console reporting (validation, deprecation notices) is a feature
             "no-console": "off",
+            // loosen null-only comparisons to smart mode
+            eqeqeq: ["error", "smart"],
+            "no-var": "error",
+            "prefer-const": "error",
+            "no-cond-assign": "error",
+            "no-useless-escape": "error",
+            "no-useless-assignment": "error",
+            "no-unused-expressions": "error",
+            "@typescript-eslint/no-this-alias": "error",
+            "@typescript-eslint/no-explicit-any": "error",
+            "@typescript-eslint/no-unused-vars": ["error", { args: "none", varsIgnorePattern: "^_" }],
         },
     },
     {
@@ -47,5 +39,5 @@ export default tseslint.config(
                 ...globals.node,
             },
         },
-    },
+    }
 );

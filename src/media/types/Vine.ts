@@ -17,8 +17,8 @@ export default class Vine extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url,
-            _self = this;
+        let api_url;
+        const _self = this;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

@@ -17,8 +17,8 @@ export default class Twitter extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url,
-            self = this;
+        let api_url;
+        const self = this;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

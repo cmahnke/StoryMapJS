@@ -16,9 +16,9 @@ export default class Wikipedia extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url,
-            api_language,
-            self = this;
+        let api_url;
+        let api_language;
+        const self = this;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

@@ -17,8 +17,8 @@ export default class Vimeo extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url,
-            _self = this;
+        const _self = this;
+        let api_url;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

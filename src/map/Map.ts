@@ -181,7 +181,7 @@ export default class Map {
             this._resetMarkersActive();
 
             // Check to see if it's an overview
-            if (marker.data.type && marker.data.type == "overview") {
+            if (marker.data.type && marker.data.type === "overview") {
                 this._markerOverview();
                 if (!change) {
                     this._onMarkerChange();
@@ -389,7 +389,7 @@ export default class Map {
     _destroyMarker(marker) {
         this._removeMarker(marker);
         for (let i = 0; i < this._markers.length; i++) {
-            if (this._markers[i] == marker) {
+            if (this._markers[i] === marker) {
                 this._markers.splice(i, 1);
             }
         }
@@ -498,7 +498,7 @@ export default class Map {
     }
 
     _onMarkerClick(e) {
-        if (this.current_marker != e.marker_number) {
+        if (this.current_marker !== e.marker_number) {
             this.goTo(e.marker_number, false);
         }
     }

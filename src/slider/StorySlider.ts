@@ -168,10 +168,10 @@ export default class StorySlider {
 	================================================== */
     _createSlides(array) {
         for (let i = 0; i < array.length; i++) {
-            if (array[i].uniqueid == "") {
+            if (array[i].uniqueid === "") {
                 array[i].uniqueid = unique_ID(6, "vco-slide");
             }
-            if (i == 0) {
+            if (i === 0) {
                 this._createSlide(array[i], true);
             } else {
                 this._createSlide(array[i], false);
@@ -188,7 +188,7 @@ export default class StorySlider {
     _destroySlide(slide) {
         this._removeSlide(slide);
         for (let i = 0; i < this._slides.length; i++) {
-            if (this._slides[i] == slide) {
+            if (this._slides[i] === slide) {
                 this._slides.splice(i, 1);
             }
         }
@@ -356,8 +356,8 @@ export default class StorySlider {
     }
 
     changeBackground(bg) {
-        let self = this,
-            do_animation = false;
+        const self = this;
+        let do_animation = false;
 
         let bg_color = { r: 256, g: 256, b: 256 },
             bg_color_rgb,
@@ -380,14 +380,14 @@ export default class StorySlider {
 
         bg_color_rgb = bg_color.r + "," + bg_color.g + "," + bg_color.b;
 
-        if (!this.current_bg_color || this.current_bg_color != bg_color_rgb) {
+        if (!this.current_bg_color || this.current_bg_color !== bg_color_rgb) {
             this.current_bg_color = bg_color_rgb;
             do_animation = true;
         }
 
         if (do_animation) {
             // Figure out CSS
-            if (this.options.layout == "landscape") {
+            if (this.options.layout === "landscape") {
                 this._nav.next.setColor(false);
                 this._nav.previous.setColor(false);
 
@@ -524,7 +524,7 @@ export default class StorySlider {
     _introInterface() {
         if (this.options.call_to_action) {
             let _str = Language.messages.start;
-            if (this.options.call_to_action_text != "") {
+            if (this.options.call_to_action_text !== "") {
                 _str = this.options.call_to_action_text;
             }
             this._slides[0].addCallToAction(_str);
@@ -658,9 +658,9 @@ export default class StorySlider {
     }
 
     _onNavigation(e) {
-        if (e.direction == "next" || e.direction == "left") {
+        if (e.direction === "next" || e.direction === "left") {
             this.next();
-        } else if (e.direction == "previous" || e.direction == "right") {
+        } else if (e.direction === "previous" || e.direction === "right") {
             this.previous();
         }
         this.fire("nav_" + e.direction, this.data);

@@ -155,7 +155,7 @@ export default class Slide {
                 // Some sort of race condition or other ordering condition can cause
                 // an error when the preview tab is selected in the editor due to
                 // the stopped media not being properly formed.
-                if (e.message == "this._el.content_item.querySelector is not a function") {
+                if (e.message === "this._el.content_item.querySelector is not a function") {
                     console.log("Ignoring error in editor context: " + e.message);
                 } else {
                     throw e;
@@ -234,7 +234,7 @@ export default class Slide {
         }
 
         // Determine Assets for layout and loading
-        if (this.data.media && this.data.media.url && this.data.media.url != "") {
+        if (this.data.media && this.data.media.url && this.data.media.url !== "") {
             this.has.media = true;
         }
         if (this.data.text && this.data.text.text) {
@@ -297,7 +297,7 @@ export default class Slide {
             pad_left = 0 + "px";
             pad_right = 0 + "px";
             new_width = this.options.width - 0 + "px";
-        } else if (layout == "landscape") {
+        } else if (layout === "landscape") {
             pad_left = 40 + "px";
             pad_right = 75 + "px";
             new_width = this.options.width - (75 + 40) + "px";

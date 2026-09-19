@@ -128,7 +128,7 @@ export class Media {
         if (this._state.loaded) {
             this._updateMediaDisplay(layout);
 
-            if (!Browser.mobile && layout != "portrait") {
+            if (!Browser.mobile && layout !== "portrait") {
                 this._el.content_item.style.maxHeight = this.options.height / 2 + "px";
             }
 
@@ -148,7 +148,7 @@ export class Media {
                     this._el.content_item.style.maxWidth = "100%";
                 }
 
-                if (layout == "portrait") {
+                if (layout === "portrait") {
                     this._el.content_item.style.maxHeight = "none";
                 }
             }
@@ -238,14 +238,14 @@ export class Media {
     showMeta(credit?, caption?) {
         this._state.show_meta = true;
         // Credit
-        if (this.data.credit && this.data.credit != "" && !this._el.credit) {
+        if (this.data.credit && this.data.credit !== "" && !this._el.credit) {
             this._el.credit = Dom.create("div", "vco-credit", this._el.content_container);
             this._el.credit.innerHTML = this.data.credit;
             this.options.credit_height = this._el.credit.offsetHeight;
         }
 
         // Caption
-        if (this.data.caption && this.data.caption != "" && !this._el.caption) {
+        if (this.data.caption && this.data.caption !== "" && !this._el.caption) {
             this._el.caption = Dom.create("div", "vco-caption", this._el.content_container);
             this._el.caption.innerHTML = this.data.caption;
             this.options.caption_height = this._el.caption.offsetHeight;
@@ -275,10 +275,10 @@ export class Media {
         );
 
         // Link
-        if (this.data.link && this.data.link != "") {
+        if (this.data.link && this.data.link !== "") {
             this._el.link = Dom.create("a", "vco-media-link", this._el.content_container);
             this._el.link.href = this.data.link;
-            if (this.data.link_target && this.data.link_target != "") {
+            if (this.data.link_target && this.data.link_target !== "") {
                 this._el.link.target = this.data.link_target;
             } else {
                 this._el.link.target = "_blank";

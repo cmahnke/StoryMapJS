@@ -195,7 +195,7 @@ export default class MenuBar {
                 Language.buttons.collapse_toggle + "<span class='vco-icon-arrow-up'></span>";
         }
 
-        if (this.options.layout == "landscape") {
+        if (this.options.layout === "landscape") {
             this._el.button_collapse_toggle.style.display = "none";
         }
     }

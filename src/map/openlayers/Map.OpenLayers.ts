@@ -343,7 +343,7 @@ export default class OpenLayers extends Map {
                 let marker_location, calculated_zoom;
 
                 // MARKER LOCATION
-                if (marker.data.type && marker.data.type == "overview") {
+                if (marker.data.type && marker.data.type === "overview") {
                     marker_location = this._getMapCenter(true);
                 } else {
                     marker_location = marker.location();
@@ -369,8 +369,8 @@ export default class OpenLayers extends Map {
                 }
 
                 if (
-                    (this.options.map_center_offset && this.options.map_center_offset.left != 0) ||
-                    this.options.map_center_offset.top != 0
+                    (this.options.map_center_offset && this.options.map_center_offset.left !== 0) ||
+                    this.options.map_center_offset.top !== 0
                 ) {
                     calculated_zoom = calculated_zoom - 1;
                 }
@@ -456,7 +456,7 @@ export default class OpenLayers extends Map {
         // Options
         if (opts) {
             if (opts.duration !== undefined) {
-                if (opts.duration == 0) {
+                if (opts.duration === 0) {
                     _animate = false;
                 } else {
                     _duration = this.options.duration;
@@ -558,7 +558,7 @@ export default class OpenLayers extends Map {
         // Hide Active Line
         this._line_active.setVisible(false);
 
-        if (this.options.map_type == "iiif" && this.options.map_as_image) {
+        if (this.options.map_type === "iiif" && this.options.map_as_image) {
             const source = this._tile_layer.getSource();
             const fit = () => {
                 try {
@@ -594,8 +594,8 @@ export default class OpenLayers extends Map {
             this.bounds_array = this._getAllMarkersBounds(this._markers);
 
             if (
-                (this.options.map_center_offset && this.options.map_center_offset.left != 0) ||
-                this.options.map_center_offset.top != 0
+                (this.options.map_center_offset && this.options.map_center_offset.left !== 0) ||
+                this.options.map_center_offset.top !== 0
             ) {
                 if (this.bounds_array && this.bounds_array.length) {
                     const view_coords = this._markerCoordsToViewCoords(this.bounds_array);
@@ -663,7 +663,7 @@ export default class OpenLayers extends Map {
             // Check to see if it's an overview
             if (
                 this._markers[this.current_marker].data.type &&
-                this._markers[this.current_marker].data.type == "overview"
+                this._markers[this.current_marker].data.type === "overview"
             ) {
                 this._markerOverview();
             } else {

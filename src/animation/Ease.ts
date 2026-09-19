@@ -47,7 +47,7 @@ const Easings = {
 // Bezier key spline helper, usable via `new Ease.KeySpline(...)`
 function KeySpline(this: any, a) {
     this.get = function (aX) {
-        if (a[0] == a[1] && a[2] == a[3]) return aX; // linear
+        if (a[0] === a[1] && a[2] === a[3]) return aX; // linear
         return CalcBezier(GetTForX(aX), a[1], a[3]);
     };
 
@@ -80,7 +80,7 @@ function KeySpline(this: any, a) {
         let aGuessT = aX;
         for (let i = 0; i < 4; ++i) {
             const currentSlope = GetSlope(aGuessT, a[0], a[2]);
-            if (currentSlope == 0.0) return aGuessT;
+            if (currentSlope === 0.0) return aGuessT;
             const currentX = CalcBezier(aGuessT, a[0], a[2]) - aX;
             aGuessT -= currentX / currentSlope;
         }
@@ -98,7 +98,7 @@ export default class Ease {
         return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
     }
     static easeOutStrong(t: number) {
-        return t == 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
     }
     static easeInSpline(t: number) {
         const spline = new Ease.KeySpline(Easings.easein);
@@ -120,7 +120,7 @@ export default class Ease {
     }
 
     easeOutStrong(t) {
-        return t == 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
     }
 
     easeIn(t) {
@@ -128,7 +128,7 @@ export default class Ease {
     }
 
     easeInStrong(t) {
-        return t == 0 ? 0 : Math.pow(2, 10 * (t - 1));
+        return t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
     }
 
     easeOutBounce(pos) {
@@ -212,8 +212,8 @@ export default class Ease {
         return -Math.cos(pos * Math.PI) / 2 + 0.5;
     }
 
-    flicker(pos) {
-        var pos = pos + (Math.random() - 0.5) / 5;
+    flicker(pos: any) {
+        pos = pos + (Math.random() - 0.5) / 5;
         return this.sinusoidal(pos < 0 ? 0 : pos > 1 ? 1 : pos);
     }
 

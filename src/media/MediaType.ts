@@ -32,37 +32,37 @@ export default function MediaType(m) {
             {
                 type: "youtube",
                 name: "YouTube",
-                match_str: "(www.)?youtube|youtu\.be",
+                match_str: "(www.)?youtube|youtu.be",
                 cls: YouTube,
             },
             {
                 type: "vimeo",
                 name: "Vimeo",
-                match_str: "(player.)?vimeo\.com",
+                match_str: "(player.)?vimeo.com",
                 cls: Vimeo,
             },
             {
                 type: "dailymotion",
                 name: "DailyMotion",
-                match_str: "(www.)?dailymotion\.com",
+                match_str: "(www.)?dailymotion.com",
                 cls: DailyMotion,
             },
             {
                 type: "vine",
                 name: "Vine",
-                match_str: "(www.)?vine\.co",
+                match_str: "(www.)?vine.co",
                 cls: Vine,
             },
             {
                 type: "soundcloud",
                 name: "SoundCloud",
-                match_str: "(player.)?soundcloud\.com",
+                match_str: "(player.)?soundcloud.com",
                 cls: SoundCloud,
             },
             {
                 type: "twitter",
                 name: "Twitter",
-                match_str: "(www.)?twitter\.com",
+                match_str: "(www.)?twitter.com",
                 cls: Twitter,
             },
             //{
@@ -99,13 +99,13 @@ export default function MediaType(m) {
                 type: "googledocs",
                 name: "Google Doc",
                 match_str:
-                    "^(https?:)?\/*[^.]*.google.com\/[^\/]*\/d\/[^\/]*\/[^\/]*\?usp=sharing|^(https?:)?\/*drive.google.com\/open\?id=[^\&]*\&authuser=0|^(https?:)?\/\/*drive.google.com\/open\\?id=[^\&]*|^(https?:)?\/*[^.]*.googledrive.com\/host\/[^\/]*\/",
+                    "^(https?:)?/*[^.]*.google.com/[^/]*/d/[^/]*/[^/]*?usp=sharing|^(https?:)?/*drive.google.com/open?id=[^&]*&authuser=0|^(https?:)?//*drive.google.com/open\\?id=[^&]*|^(https?:)?/*[^.]*.googledrive.com/host/[^/]*/",
                 cls: GoogleDoc,
             },
             {
                 type: "wikipedia",
                 name: "Wikipedia",
-                match_str: "(www.)?wikipedia\.org",
+                match_str: "(www.)?wikipedia.org",
                 cls: Wikipedia,
             },
             {

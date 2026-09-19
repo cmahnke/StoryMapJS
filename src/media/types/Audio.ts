@@ -15,8 +15,8 @@ export default class Audio extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let _api_url,
-            self = this;
+        const _api_url = "";
+        const self = this;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

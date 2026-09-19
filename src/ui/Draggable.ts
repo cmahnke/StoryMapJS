@@ -226,7 +226,7 @@ export class Draggable {
     }
 
     _momentum() {
-        let pos_adjust = {
+        const pos_adjust = {
                 x: 0,
                 y: 0,
                 time: 0,
@@ -235,9 +235,10 @@ export class Draggable {
                 x: 0,
                 y: 0,
                 time: 0,
-            },
-            swipe = false,
-            _swipe_direction = "";
+            };
+        let swipe = false;
+        const _swipe_direction = "";
+
 
         if (touch) {
             //this.options.momentum_multiplier = this.options.momentum_multiplier * 2;
