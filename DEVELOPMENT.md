@@ -1,292 +1,93 @@
-# Developing StoryMapJS - the javascript library
+# Developing StoryMapJS
 
-When you make changes to the code, you should execute the build command. To
-test your changes, run a simple local web server in the project root and
-navigate, e.g. to http://localhost:8000/src/template/arya.html.
+StoryMapJS is a viewer-only JavaScript library. It renders published StoryMap
+JSON into a web page, consumed either as an ES module, a CommonJS module, or
+a script tag exposing the global `KLStoryMap`.
 
-Install the dependencies and build the javascript:
+## Stack
 
-```
- $ npm install
- $ npx webpack -c webpack.dev.js
-```
+- **TypeScript** (strict mode, target ES2022)
+- **Vite** — dev server, library build (ESM + UMD) and preview
+- **OpenLayers** (`ol`) — maps, markers, and IIIF Image API imagery
+- **SASS** (`sass`) with themes in `src/scss/fonts/*`
+- **Fonts** — bundled from npm (`@fontsource/*`), no runtime CDN font requests
+- **Vitest** — unit tests (jsdom)
+- **Playwright** — browser e2e tests over all example fixtures
+- **ESLint + Stylelint** — linting
 
-# StoryMap editor development - the python server
-
-## Questions not yet completely addressed with the new localstack based setup:
-
-
-## Which StoryMap viewer library the editor loads
-
-The editor renders slide media — and the map preview — using the compiled
-StoryMap viewer library (`storymap.js` + `storymap.css`). Two environment
-variables control where those assets come from:
-
-- `CDN_URL` — base URL for shared assets (fonts, embed pages, etc.).
-- `STORYMAP_LIB_URL` — base URL for the **viewer library** specifically.
-  Defaults to `CDN_URL` when unset.
-
-Splitting these lets you keep `CDN_URL` pointed at a deployed CDN for
-convenience while independently loading the viewer library from a local build
-when you are working on the library itself.
-
-### Development modes
-
-| `STORYMAP_LIB_URL` | Editor loads the viewer from | Use when |
-| --- | --- | --- |
-| *(unset)* | whatever `CDN_URL` is (e.g. the deployed CDN) | working on the editor/server, not the library |
-| `/compiled/` | your local `npm run build` output in `dist/`, served by the `/compiled/` route | testing library changes before they are deployed |
-
-Pointing `CDN_URL` at a deployed CDN remains the easiest default when you have
-no need to host the library locally:
+## Layout
 
 ```
-   CDN_URL=https://cdn.knightlab.com/libs/storymapjs/latest/
+index.html            dev/demo entry (football example)
+arya.html             demo page loading a remote published storymap
+harness.html          example harness used by the e2e suite (?example=<name>)
+public/               static assets copied verbatim to dist/
+  examples/           storymap JSON fixtures (validated in CI)
+  embed/              the embed page
+  css/icons/          icon font binaries
+src/
+  main.ts             library entry (exports + KLStoryMap global)
+  storymap/           StoryMap class, data validation
+  map/                Map base + OpenLayers implementation
+  media/              media types (image, video, wikipedia, ...)
+  slider/             StorySlider, Slide, navigation
+  ui/ core/ dom/ animation/ language/ library/
+  scss/               styles (entry: VCO.StoryMap.scss, theme per font.*.scss)
+schema/
+  storymap.schema.json  JSON Schema for storymap data
+scripts/
+  validate-storymap.mjs  CLI validator (also runs on load in the browser)
+e2e/                  Playwright specs
+tests/                Vitest unit specs
+tasks/
+  build-fonts.mjs     compiles font themes to dist/css/fonts
 ```
 
-To load the **local** build instead, set the library override in `.env`:
+## Commands
 
 ```
-   STORYMAP_LIB_URL=/compiled/
+npm install                # hydrate dependencies (node >= 22)
+npm run dev                # vite dev server with HMR at :8000
+npm run build              # lib (js/storymap.js + storymap.es.js + css), demo pages, fonts
+npm run preview            # serve the built dist/ (what e2e tests run against)
+npm test                   # vitest unit tests
+npm run test:e2e           # playwright over all examples + embed page (builds first)
+npm run typecheck          # tsc --noEmit
+npm run lint               # eslint + stylelint
+npm run validate           # validate storymap JSON fixtures against the schema
 ```
 
-Then build the library and recreate the app container so it picks up the env
-change (a plain `docker compose restart` does NOT reload env-file values):
+`dist/` layout (consumers depend on these paths):
 
 ```
- $ npm run build                              # writes dist/js/storymap.js + dist/css/storymap.css
- $ docker compose up -d --force-recreate app
+dist/js/storymap.js        UMD bundle defining the global KLStoryMap
+dist/js/storymap.es.js     ES module bundle
+dist/css/storymap.css      full stylesheet (all themes)
+dist/css/fonts/font.*.css  font theme stylesheets + binaries (files/)
+dist/css/icons/            icon font binaries
+dist/embed/index.html      embed page (?url=<published.json>)
 ```
 
-`dist/` is bind-mounted into the container, so for subsequent library changes
-you only need to re-run `npm run build` and hard-reload the browser — no
-container recreate required.
-
-### Verifying which library version is loaded
-
-Browser tabs cache the library, so after switching modes or rebuilding you must
-hard-reload the editor (Cmd/Ctrl+Shift+R). A tab opened *before* you changed
-`STORYMAP_LIB_URL` (or before a rebuild) keeps running the previously loaded
-bundle in memory — a common source of "my change isn't showing up" confusion.
-
-To confirm which bundle a page is actually running, open the browser console
-and run:
-
-```js
-document.querySelector('script[src*="storymap.js"]').src
-```
-
-- `.../compiled/js/storymap.js` → the local build (your uncommitted changes).
-- `https://cdn.knightlab.com/libs/storymapjs/latest/...` → the deployed CDN build.
-
-If the src is not what you expect, hard-reload the tab.
-
-## Overview / tl;dr
-
-To get started you will need to do the following steps which are described in
-more detail below:
-
- * install docker
- * install the aws cli
- * build and import ssl certs
- * create a .env file
- * docker-compose build and up
- * create the s3 buckets in localstack
- * create the users table in postgres
-
-
-## Getting started developing StoryMap with docker-compose
-
-
-### Prerequisite installs
-
- * [Docker](https://docs.docker.com/) installed.
- * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-
-   You will need a local credentials configuration in your ~/.aws/credentials file:
-
-    ```
-    [local]
-    region=us-east-1
-    endpoint-url=http://localhost:4566
-    aws_access_key_id=localstack
-    aws_secret_access_key=localstack
-    ```
-
-
-### Build ssl certs for localstack
-
-Localstack would automatically create ssl certs, but without authority, thus
-making the stack inaccesible via the browser. Instead, we generate a certificate
-chain with authority using the server.test filenames that localstack expects.
-
-This should be done before bringing up the stack so that localstack will use the
-generated cert.
-
-Execute the following from the repo root:
-
-```
- $ scripts/makecerts.sh
-```
-
-#### Import the web cert to your browser
-
-**Note:** If you want to view a share link, ie. a StoryMap directly from the
-localstack hosted s3, you can do it via http rather than https. The backend
-calls to localstack should still work without this import.
-
-Note: on Mac, hit CMD+SHIFT+. to see dotted files in the finder.
-
- * For Firefox:
-    - Preferences >
-    - Certificates >
-    - View Certificates >
-    - Authorities >
-    - Import .localstack/KnightLabRootCA.pem
-
-
-### Create a .env file
-
-```
- $ cp dotenv.example .env
-```
-
-Fill in the missing keys and other secret info. The following are required:
-
-Needed to login to StoryMap:
- * GOOGLE_CLIENT_ID
- * GOOGLE_CLIENT_SECRET
-
-
-
-### Run the development docker-compose stack
-
-```
- $ docker compose build
- $ docker compose up
-```
-
-
-### Create the s3 buckets
-
-After the services come up, create the required buckets:
-
-```
- $ scripts/makebuckets.sh
-```
-
-### Create the users table
-
-```
- $ scripts/create-tables.sh
-```
-
-Note: If prompted for the password of the storymap user, it is `storymap`
-
-
-### Open application
-
-Navigate to `https://localhost` and accept the self-signed certificate.
-
-
-## Maintenance Mode
-
-To take the editor down for maintenance (e.g. during a database upgrade), touch a flag
-file on the app server. No restart or redeploy needed — it's checked on every request:
-
-```bash
-# production (or wherever the app is deployed)
-touch /home/apps/sites/StoryMapJS/.maintenance_mode
-
-# local docker-compose dev
-docker compose exec app touch .maintenance_mode
-```
-
-While the file exists, every route returns `storymap/templates/maintenance.html` with a
-503 status instead of the normal page. That template is self-contained (inline CSS, no
-calls to the DB, S3, or Flask templating beyond itself), so it still renders correctly
-even if the database is down.
-
-Remove the file to restore normal service:
-
-```bash
-rm /home/apps/sites/StoryMapJS/.maintenance_mode          # production
-docker compose exec app rm .maintenance_mode              # local
-```
-
-The check itself lives in `storymap/api.py` (`check_maintenance_mode`, a `before_request`
-hook). `.maintenance_mode` is gitignored, so it never accidentally ships as part of a deploy.
-
-Note: this only takes the app fully offline if there's a single app server, which matches
-the current nginx → gunicorn setup. If StoryMapJS ever moves to multiple app servers behind
-a load balancer, the flag would need to be set on each one.
-
-
-## Docker troubleshooting
-
-Some commands to know:
-
-```
- $ docker compose images
- $ docker compose up --remove-orphans
- $ docker ps
- $ docker stop
- $ docker system prune
- $ docker volume ls
- $ docker volume rm
-```
-
-
-## Using LocalStack
-
-See the [LocalStack docs](https://docs.localstack.cloud/integrations/aws-cli/) for details.
-
-One approach: use [awslocal](https://docs.localstack.cloud/integrations/aws-cli/#localstack-aws-cli-awslocal)
-
-Or just use the aws cli with a localized profile
-
-
-### Using the aws cli
-
-Configure a profile in your ~/.aws/credentials:
-
-```
-
-[local]
-aws_access_key_id=test
-aws_secret_access_key=test
-```
-
-Specify the profile and endpoint for s3 operations. Optionally, specify --debug:
-
-```
-aws [--debug] --profile local --endpoint-url=http://localhost:4566 s3 ...
-```
-
-E.g.:
-
-```
-aws --profile local --endpoint-url=http://localhost:4566 s3 ls uploads.knilab.com/storymapjs/
-```
-
-Note that there has not been a lot of interest from the cli dev team in [making
-endpoint-url profile configurable](https://github.com/aws/aws-cli/issues/1270), although
-this [may be changing](https://github.com/aws/aws-sdk/issues/229).
-
-
-## Testing
-
-StoryMapJS uses a comprehensive test suite with both unit and integration tests. See [tests/README.md](tests/README.md) for detailed testing documentation.
-
-**Quick start:**
-
-```bash
-# Unit tests (no Docker required)
-hatch run unit:test
-
-# Integration tests (requires Docker Compose stack running)
-docker compose up
-hatch run integration:test
-```
-
-For more information on test setup, writing tests, and available commands, see the [Testing Guide](tests/README.md).
+## Data validation
+
+StoryMap JSON is validated against `schema/storymap.schema.json`:
+- in the browser on load — all errors are reported via `console.error`
+- in CI / CLI — `npm run validate` (all `public/examples/*.json`)
+
+## OpenLayers notes
+
+- `src/map/openlayers/Map.OpenLayers.ts` implements the Map contract
+  (tile layers by `map_type`, markers as HTML overlays, path lines,
+  overview fitting, mini map via `ol/control/OverviewMap`).
+- `map_type: "iiif"` with `options.iiif.url` (an `info.json` URL) renders
+  IIIF Image API imagery via `ol/source/IIIF`. `map_type: "zoomify"` has
+  been removed.
+- Image maps (`map_as_image: true` with `iiif`) use an `EPSG:4326` view
+  with image-pixel coordinates.
+
+## Tests
+
+The Playwright suite covers every fixture in `public/examples/` (rendering,
+slide navigation, no uncaught exceptions), the IIIF path, and the embed page
+via the `KLStoryMap` global. Four legacy zoomify fixtures are skipped since
+zoomify support was replaced by IIIF.

@@ -87,3 +87,16 @@
 * PR #302 Media fixes including pause of video types when navigating away from slide
 * PR #303 Adds custom map marker upload in editor
 * PR #312 Adds Greek translation to StoryMap editor
+
+## 1.0.0 (unreleased)
+
+Viewer-only restructure of the repository:
+- Removed the editor Flask backend, staging and legacy build artifacts
+- Replaced webpack with Vite (dev/build/preview), default project layout
+- Converted the source to strict TypeScript (target ES2022)
+- Replaced Leaflet with OpenLayers; IIIF Image API replaces Zoomify (breaking)
+- Converted Less to SASS; fonts bundled from npm (@fontsource) instead of runtime CDN requests
+- Added a JSON Schema for storymap data, runtime validation with console reporting, and a CLI validator
+- Added ESLint + Stylelint and GitHub Actions for linting/tests and release packaging
+- Playwright e2e suite over all examples, Vitest for units
+- Dropped code paths for pre-2022 browsers (legacy vendor prefixes, IE/old-engine fallbacks)
