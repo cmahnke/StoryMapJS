@@ -567,7 +567,7 @@ class StorySliderBase {
         this._el.background = Dom.create("div", "vco-slider-background", this._el.container);
         this._el.slider_container = Dom.create(
             "div",
-            "vco-slider-container vcoanimate",
+            "vco-slider-container",
             this._el.slider_container_mask,
         );
         this._el.slider_item_container = Dom.create(

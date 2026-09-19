@@ -1,12 +1,6 @@
 @use "../Variables" as *;
 @use "../core/Mixins" as *;
 
-.vcoanimate {
-    transform: translateZ(0);
-    perspective: 1000;
-    backface-visibility: hidden;
-}
-
 .vco-animate {
     @include property-animation(all, $animation-duration, $animation-ease);
     @include animation-timing-cubic-bezier;

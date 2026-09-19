@@ -14,7 +14,7 @@
     $formats: woff2
 );
 @include fontsource.faces(
-    $metadata: eb_garamond.$metadata,
+    $metadata: eb_garamond.$metadata, $family: "EB Garamond",
     $weights: all,
     $styles: all,
     $subsets: (

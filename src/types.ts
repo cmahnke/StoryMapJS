@@ -113,6 +113,7 @@ export interface StorymapOptions {
     menubar_default_y: number;
     path_gfx: string;
     script_path: string;
+    font_css: string;
     language: string;
     api_key_flickr: string;
     [key: string]: unknown;

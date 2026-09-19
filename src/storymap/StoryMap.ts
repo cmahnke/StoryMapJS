@@ -1,4 +1,5 @@
-import { mergeData, updateData } from "../core/Util";
+import { mergeData, updateData, urljoin } from "../core/Util";
+import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
 import Dom from "../dom/Dom";
@@ -165,6 +166,7 @@ class StoryMapBase {
             show_lines: true,
             show_history_line: true,
             api_key_flickr: "8f2d5becf7b6ba46570741620054b507",
+            font_css: "stock:default",
             language: "en",
         } as StorymapOptions;
 
@@ -259,7 +261,29 @@ class StoryMapBase {
 
     _loadLanguage() {
         setLanguage(this.options.language);
+        this._loadFontCss();
         this._onDataLoaded();
+    }
+
+    /*  Load the font theme stylesheet
+    ================================================== */
+    _loadFontCss() {
+        let font = this.options.font_css || "stock:default";
+        if (font.startsWith("stock:")) {
+            const font_name = font.split(":")[1] || "default";
+            font = "css/fonts/font." + font_name + ".css";
+        } else if (!/^(http|https|\/\/)/.test(font)) {
+            font = urljoin(this.options.script_path, font);
+        }
+        if (font) {
+            loadCSS(font, () => {
+                this._onFontLoaded(font);
+            });
+        }
+    }
+
+    _onFontLoaded(font: string) {
+        this.fire("fontLoaded", { font: font });
     }
 
     /*	Navigation

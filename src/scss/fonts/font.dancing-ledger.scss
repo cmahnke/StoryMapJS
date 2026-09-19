@@ -3,7 +3,7 @@
 @use "../Variables" as *;
 @use "font.base" as base;
 @include fontsource.faces(
-    $metadata: dancing_script.$metadata,
+    $metadata: dancing_script.$metadata, $family: "Dancing Script",
     $weights: all,
     $styles: all,
     $subsets: (

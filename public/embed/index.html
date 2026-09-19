@@ -49,42 +49,13 @@
       return slide;
     }
 
-    function urlJoin(url, concat) { // see http://stackoverflow.com/questions/2676178/joining-relative-urls
-        function build(parts,container) {
-            for (var i = 0, l = parts.length; i < l; i ++) {
-                if (parts[i] == '..') {
-                    container.pop();
-                } else if (parts[i] == '.') {
-                    continue;
-                } else {
-                    container.push(parts[i]);
-                }
-            }
-        }
-        var url_parts = [ ];
-        build(url.split('/'),url_parts);
-        build(concat.split('/'),url_parts);
-        return url_parts.join('/');
-    }
-
     function buildStoryMap(data) {
         if (!data || !data.storymap) { return; }
         var options = {
             script_path: getScriptPath(/storymap(-min)?\.js/),
             start_at_slide: getStartSlide()
         };
-        var font = "stock:default";
-        if(data.font_css) {
-            font = data.font_css;
-        }
-        if(font.indexOf("stock:") == 0) {
-            var font_name = font.split(':')[1];
-            var base_url = urlJoin(options.script_path,"../css/fonts");
-            font = urlJoin(base_url, "font." + font_name + ".css");
-        } else if(!font.match('^(http|https|//)')) {
-            font = urlJoin(options.script_path, font);
-        }
-        KLStoryMap.loadCSS(font,function(){ console.log('font loaded: ' + font);});
+        // font theme loading is handled by the library (data.font_css / stock:default)
         storymap = new KLStoryMap.StoryMap('storymap-embed', data, options, {
             title: onStoryMapTitle
         });

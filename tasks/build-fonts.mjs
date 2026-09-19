@@ -9,7 +9,9 @@ import * as sass from "sass";
 
 const req = createRequire(import.meta.url);
 const root = process.cwd();
-const outDir = join(root, "dist/css/fonts");
+// Output to public/ so `vite dev` serves the font CSS directly; the vite
+// build copies it verbatim into dist/css/fonts.
+const outDir = join(root, "public/css/fonts");
 const filesDir = join(outDir, "files");
 
 mkdirSync(filesDir, { recursive: true });

@@ -14,7 +14,7 @@
     $formats: woff2
 );
 @include fontsource.faces(
-    $metadata: playfair_display.$metadata,
+    $metadata: playfair_display.$metadata, $family: "Playfair Display",
     $weights: all,
     $styles: all,
     $subsets: (
