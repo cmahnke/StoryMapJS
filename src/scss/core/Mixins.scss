@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "sass:math";
 
 /*	Mixins.scss
 	Snippets of reusable CSS to develop faster and keep code readable
@@ -16,7 +17,7 @@
 
 // Opacity
 @mixin opacity($opacity: 100) {
-    opacity: (calc( / 100));
+    opacity: math.div($opacity, 100);
 }
 
 // Background Opacity
@@ -25,7 +26,7 @@
     background: rgb(0 0 0) transparent;
 
     /* RGBa with 0.6 opacity */
-    background: rgba(0, 0, 0, (calc( / 100)));
+    background: rgba(0, 0, 0, math.div($opacity, 100));
 }
 
 // Background Color Opacity
@@ -34,7 +35,7 @@
     background: rgb($cr, $cg, $cb) transparent;
 
     /* RGBa with 0.6 opacity */
-    background: rgba($cr, $cg, $cb, (calc( / 100)));
+    background: rgba($cr, $cg, $cb, math.div($opacity, 100));
 }
 
 // Slide Text Shadow

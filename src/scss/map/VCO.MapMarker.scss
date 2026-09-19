@@ -1,5 +1,6 @@
 @use "../Variables" as *;
 @use "../core/Mixins" as *;
+@use "sass:math";
 
 /* Requires Variables.less
 ================================================== */
@@ -28,7 +29,7 @@ $map-icon-width: 38px;
 
         // overflow:hidden;
         top: -($map-icon-size - $leaflet-offset);
-        left: -((calc(-icon-width / 2)) - $leaflet-offset);
+        left: -(math.div($map-icon-width, 2) - $leaflet-offset);
     }
 
     // Map Pin
