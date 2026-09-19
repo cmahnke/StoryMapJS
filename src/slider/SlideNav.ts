@@ -1,7 +1,6 @@
-import { classMixin, mergeData } from "../core/Util";
+import { mergeData } from "../core/Util";
+import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
-import DomMixins from "../dom/DomMixins";
-import Events from "../core/Events";
 import Animate from "morpheus";
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
@@ -23,22 +22,14 @@ interface SlideNavOptions {
     [key: string]: unknown;
 }
 
-export default class SlideNav {
+class SlideNavBase {
     declare "_el": Record<string, HTMLElement>;
     declare "mediatype": unknown;
     declare "data": SlideNavData;
     declare "options": SlideNavOptions;
     declare "animator": AnimationHandle | null;
     declare "animator_position": AnimationHandle | null;
-    declare "fire": (type: string, data?: unknown) => unknown;
-    declare "on": (type: string, fn: unknown, context?: unknown) => unknown;
-    declare "off": (type: string, fn: unknown, context?: unknown) => unknown;
-    declare "addTo": (container: HTMLElement) => void;
-    declare "show": (animate?: unknown) => void;
-    declare "hide": (animate?: unknown) => void;
-    declare "setPosition": (pos: Record<string, number>, el?: HTMLElement) => void;
-
-    //includes: [VCO.Events, VCO.DomMixins],
+    declare "fire": EventedInstance["fire"];
 
     //_el: {},
 
@@ -215,4 +206,8 @@ export default class SlideNav {
     }
 }
 
-classMixin(SlideNav, Events, DomMixins);
+export default class SlideNav extends DomMixed(Evented(SlideNavBase)) {
+    constructor(...args: ConstructorParameters<typeof SlideNavBase>) {
+        super(...args);
+    }
+}

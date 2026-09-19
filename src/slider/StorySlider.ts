@@ -1,13 +1,7 @@
-import {
-    classMixin,
-    mergeData,
-    unique_ID,
-    findArrayNumberByUniqueID,
-    hexToRgb,
-} from "../core/Util";
+import { mergeData, unique_ID, findArrayNumberByUniqueID, hexToRgb } from "../core/Util";
+import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
-import Events from "../core/Events";
 import Ease from "../animation/Ease";
 import SlideNav from "./SlideNav";
 import Slide from "./Slide";
@@ -17,7 +11,6 @@ import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { Language } from "../language/Language";
 import { AnimationHandle, StorymapData, StorymapSlide } from "../types";
-import { MediaMessage } from "../media/Media";
 
 /*	StorySlider
 	is the central class of the API - it is used to create a StorySlider
@@ -60,29 +53,23 @@ interface SlideBackgroundChange {
     image?: boolean;
 }
 
-/*	Swipable gains Events members at runtime via classMixin, and its
-	enable() helper is invoked without arguments here. */
-type SliderSwipable = Swipable & Events & { enable: () => void };
-
-export default class StorySlider {
+class StorySliderBase {
     declare "_el": Record<string, HTMLElement>;
     declare "_nav": { previous: SlideNav; next: SlideNav };
     declare "slide_spacing": number;
     declare "_slides": Slide[];
-    declare "_swipable": SliderSwipable;
+    declare "_swipable": Swipable;
     declare "preloadTimer": ReturnType<typeof setTimeout>;
-    declare "_message": MediaMessage;
+    declare "_message": Message;
     declare "current_slide": number;
     declare "current_bg_color": string | null;
     declare "data": Partial<StorymapData>;
     declare "options": StorySliderOptions;
     declare "animator": AnimationHandle | null;
     declare "animator_background": AnimationHandle | null;
-    declare "fire": (type: string, data?: unknown) => unknown;
+    declare "fire": EventedInstance["fire"];
     declare "_loaded": boolean;
-    declare "hasEventListeners": (type: string) => boolean;
-
-    //includes: VCO.Events,
+    declare "hasEventListeners": EventedInstance["hasEventListeners"];
 
     /*	Private Methods
 	================================================== */
@@ -630,7 +617,7 @@ export default class StorySlider {
                     enable: { x: true, y: false },
                     snap: true,
                 },
-            ) as SliderSwipable;
+            );
             this._swipable.enable();
 
             // Message
@@ -640,7 +627,7 @@ export default class StorySlider {
                     message_class: "vco-message-full",
                     message_icon_class: "vco-icon-swipe-left",
                 },
-            ) as MediaMessage;
+            );
             this._message.updateMessage(Language.buttons.swipe_to_navigate);
             this._message.addTo(this._el.container);
         }
@@ -740,4 +727,8 @@ export default class StorySlider {
     }
 }
 
-classMixin(StorySlider, Events);
+export default class StorySlider extends Evented(StorySliderBase) {
+    constructor(...args: ConstructorParameters<typeof StorySliderBase>) {
+        super(...args);
+    }
+}

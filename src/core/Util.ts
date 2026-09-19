@@ -17,24 +17,6 @@ export function extend<T extends Record<string, unknown>>(
     return dest;
 }
 
-/**
- * Implement mixin behavior. Based on
- *     https://blog.bitsrc.io/understanding-mixins-in-javascript-de5d3e02b466
- * @param {class} cls
- * @param  {...class} src
- */
-type MixinClass = abstract new (...args: never[]) => unknown;
-
-export function classMixin(cls: MixinClass, ...src: MixinClass[]): void {
-    for (const _cl of src) {
-        for (const key of Object.getOwnPropertyNames(_cl.prototype as object)) {
-            (cls.prototype as Record<string, unknown>)[key] = (
-                _cl.prototype as Record<string, unknown>
-            )[key];
-        }
-    }
-}
-
 export function convertUnixTime(str: string): string {
     // created for Instagram. It's ISO8601-ish
     // 2013-12-09 01:56:28

@@ -1,6 +1,6 @@
-import { classMixin, mergeData } from "../core/Util";
+import { mergeData } from "../core/Util";
+import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
-import Events from "../core/Events";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { MediaState, StorymapSlideMedia } from "../types";
@@ -34,19 +34,12 @@ export interface MediaData extends StorymapSlideMedia {
     [key: string]: unknown;
 }
 
-/*	Message gains Events/DomMixins members at runtime via classMixin. */
-export type MediaMessage = Message & {
-    addTo: (container: HTMLElement) => void;
-    hide: (animate?: unknown) => void;
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-};
-
-export class Media {
+export class MediaBase {
     declare "_el": Record<string, HTMLElement>;
     declare "player": unknown;
     declare "timer": ReturnType<typeof setTimeout>;
     declare "load_timer": ReturnType<typeof setTimeout>;
-    declare "message": MediaMessage;
+    declare "message": Message;
     declare "media_id": unknown;
     declare "_state": MediaState;
     declare "data": MediaData;
@@ -54,9 +47,7 @@ export class Media {
     declare "animator": unknown;
     declare "_media": unknown;
     declare "_": (key: string) => string;
-    declare "fire": (type: string, data?: unknown) => unknown;
-
-    //includes: [VCO.Events],
+    declare "fire": EventedInstance["fire"];
 
     //_el: {},
 
@@ -294,7 +285,7 @@ export class Media {
 	================================================== */
     _initLayout() {
         // Message
-        this.message = new Message({}, this.options) as MediaMessage;
+        this.message = new Message({}, this.options);
         this.message.addTo(this._el.container);
 
         // Create Layout
@@ -347,4 +338,8 @@ export class Media {
     _stopMedia() {}
 }
 
-classMixin(Media, Events);
+export class Media extends Evented(MediaBase) {
+    constructor(...args: ConstructorParameters<typeof MediaBase>) {
+        super(...args);
+    }
+}

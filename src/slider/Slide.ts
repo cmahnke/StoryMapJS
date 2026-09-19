@@ -1,8 +1,7 @@
-import { classMixin, mergeData } from "../core/Util";
+import { mergeData } from "../core/Util";
+import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import { DomEvent } from "../dom/DomEvent";
-import Events from "../core/Events";
 import Dom from "../dom/Dom";
-import DomMixins from "../dom/DomMixins";
 import Ease from "../animation/Ease";
 import MediaType from "../media/MediaType";
 import Text from "../media/types/Text";
@@ -49,7 +48,7 @@ interface SlideOptions {
     [key: string]: unknown;
 }
 
-export default class Slide {
+class SlideBase {
     declare "_el": Record<string, HTMLElement>;
     declare "_media": MediaInstance | null;
     declare "_mediaclass": unknown;
@@ -61,13 +60,8 @@ export default class Slide {
     declare "options": SlideOptions;
     declare "active": boolean;
     declare "animator": unknown;
-    declare "fire": (type: string, data?: unknown) => unknown;
-    declare "on": (type: string, fn: unknown, context?: unknown) => unknown;
-    declare "off": (type: string, fn: unknown, context?: unknown) => unknown;
+    declare "fire": EventedInstance["fire"];
     declare "onLoaded": () => void;
-    declare "setPosition": (pos: Record<string, number>, el?: HTMLElement) => void;
-
-    //includes: [VCO.Events, VCO.DomMixins],
 
     //_el: {},
 
@@ -165,15 +159,6 @@ export default class Slide {
         } else {
             this.stopMedia();
         }
-    }
-
-    addTo(container: HTMLElement) {
-        container.appendChild(this._el.container);
-        //this.onAdd();
-    }
-
-    removeFrom(container: HTMLElement) {
-        container.removeChild(this._el.container);
     }
 
     updateDisplay(w?: number, h?: number, l?: string) {
@@ -389,4 +374,8 @@ export default class Slide {
     }
 }
 
-classMixin(Slide, Events, DomMixins);
+export default class Slide extends DomMixed(Evented(SlideBase)) {
+    constructor(...args: ConstructorParameters<typeof SlideBase>) {
+        super(...args);
+    }
+}

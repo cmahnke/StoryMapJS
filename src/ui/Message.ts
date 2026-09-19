@@ -1,8 +1,7 @@
-import { classMixin, mergeData } from "../core/Util";
+import { mergeData } from "../core/Util";
+import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
-import Events from "../core/Events";
-import DomMixins from "../dom/DomMixins";
 import { Language } from "../language/Language";
 /*	VCO.SizeBar
 	Draggable component to control size
@@ -16,20 +15,12 @@ interface MessageOptions {
     [key: string]: unknown;
 }
 
-interface Evented {
-    fire: (type: string, data?: unknown, target?: unknown) => unknown;
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-    hasEventListeners: (type: string) => boolean;
-}
-
-export default class Message {
+class MessageBase {
     declare "_el": Record<string, HTMLElement>;
     declare "options": MessageOptions;
     declare "data": Record<string, unknown>;
     declare "animator": Record<string, unknown>;
-    declare "fire": Evented["fire"];
-
-    //includes: [VCO.Events, VCO.DomMixins],
+    declare "fire": EventedInstance["fire"];
 
     //_el: {},
 
@@ -129,4 +120,8 @@ export default class Message {
     _updateDisplay(width?: number, height?: number, animate?: boolean): void {}
 }
 
-classMixin(Message, Events, DomMixins);
+export default class Message extends DomMixed(Evented(MessageBase)) {
+    constructor(...args: ConstructorParameters<typeof MessageBase>) {
+        super(...args);
+    }
+}

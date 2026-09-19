@@ -1,10 +1,9 @@
-import { classMixin, mergeData, updateData } from "../core/Util";
-import { loadJS } from "../core/Load";
+import { mergeData, updateData } from "../core/Util";
 import { validateStorymapAndReport } from "./validate";
 import Dom from "../dom/Dom";
 import Ease from "../animation/Ease";
 import { setLanguage } from "../language/Language";
-import Events from "../core/Events";
+import { Evented, type EventedInstance } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
 import StorySlider from "../slider/StorySlider";
@@ -14,23 +13,13 @@ import { DomEvent } from "../dom/DomEvent";
 import type { Map as OlMap } from "ol";
 import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
 
-/** Members injected at runtime via classMixin(StoryMap, Events). */
-interface Evented {
-    fire: (type: string, data?: unknown, target?: unknown) => unknown;
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-    hasEventListeners: (type: string) => boolean;
-}
-
 type StoryMapListener = (e: unknown) => void;
 
-type EventedStorySlider = StorySlider & Evented;
-type EventedMenuBar = MenuBar & Evented;
-
-class StoryMap {
+class StoryMapBase {
     declare "_loaded": { storyslider: boolean; map: boolean };
     declare mouseEventToLatLng: (e: unknown) => unknown;
     declare mouseEventToLayerPoint: (e: unknown) => unknown;
-    declare "on": Evented["on"];
+    declare "on": EventedInstance["on"];
     declare "version": string;
     declare "ready": boolean;
     declare "_el": {
@@ -39,18 +28,17 @@ class StoryMap {
         map: HTMLElement;
         storyslider: HTMLElement;
     };
-    declare "_storyslider": EventedStorySlider;
+    declare "_storyslider": StorySlider;
     declare "_map": OpenLayersMap;
     declare "map": OlMap;
-    declare "_menubar": EventedMenuBar;
+    declare "_menubar": MenuBar;
     declare "data": StorymapData;
     declare "options": StorymapOptions;
-    declare static SCRIPT_PATH: string;
     declare "current_slide": number;
     declare "animator_map": AnimationHandle | null;
     declare "animator_storyslider": AnimationHandle | null;
-    declare "fire": Evented["fire"];
-    declare "hasEventListeners": Evented["hasEventListeners"];
+    declare "fire": EventedInstance["fire"];
+    declare "hasEventListeners": EventedInstance["hasEventListeners"];
 
     // TODO: mixin
     // includes: VCO.Events,
@@ -108,14 +96,14 @@ class StoryMap {
         }
 
         // Slider
-        this._storyslider = {} as EventedStorySlider;
+        this._storyslider = {} as StorySlider;
 
         // Map
         this._map = {} as OpenLayersMap;
         this.map = {} as OlMap; // For direct access to Leaflet Map
 
         // Menu Bar
-        this._menubar = {} as EventedMenuBar;
+        this._menubar = {} as MenuBar;
 
         // Loaded State
         this._loaded = { storyslider: false, map: false };
@@ -139,7 +127,6 @@ class StoryMap {
             call_to_action_text: "",
             menubar_height: 0,
             skinny_size: 650,
-            relative_date: false, // Use momentjs to show a relative date from the slide.text.date.created_time field
             // animation
             duration: 1000,
             ease: Ease.easeInOutQuint,
@@ -254,18 +241,7 @@ class StoryMap {
             console.log(`Deprecated map_type ${old_type}; using ${this.options.map_type}`);
         }
 
-        // Use relative date calculations?
-        if (this.options.relative_date) {
-            if (typeof moment !== "undefined") {
-                this._loadLanguage();
-            } else {
-                loadJS(this.options.script_path + "/library/moment.js", () => {
-                    this._loadLanguage();
-                });
-            }
-        } else {
-            this._loadLanguage();
-        }
+        this._loadLanguage();
     }
 
     /*	Load Language
@@ -320,18 +296,10 @@ class StoryMap {
         this._el.map.style.backgroundColor = this.options.map_background_color;
 
         // Create Menu Bar
-        this._menubar = new MenuBar(
-            this._el.menubar,
-            this._el.container,
-            this.options,
-        ) as EventedMenuBar;
+        this._menubar = new MenuBar(this._el.menubar, this._el.container, this.options);
 
         // Create StorySlider
-        this._storyslider = new StorySlider(
-            this._el.storyslider,
-            this.data,
-            this.options,
-        ) as EventedStorySlider;
+        this._storyslider = new StorySlider(this._el.storyslider, this.data, this.options);
         this._storyslider.on("loaded", this._onStorySliderLoaded, this);
         this._storyslider.on("title", this._onTitle, this);
         this._storyslider.init();
@@ -600,6 +568,14 @@ class StoryMap {
     }
 }
 
+export default class StoryMap extends Evented(StoryMapBase) {
+    declare static SCRIPT_PATH: string;
+
+    constructor(...args: ConstructorParameters<typeof StoryMapBase>) {
+        super(...args);
+    }
+}
+
 // Calculates the script path and sets it as SCRIPT_PATH on the StoryMap class
 (function (StoryMapClass) {
     const scripts = document.getElementsByTagName("script");
@@ -609,5 +585,4 @@ class StoryMap {
     }
 })(StoryMap);
 
-classMixin(StoryMap, Events);
 export { StoryMap };

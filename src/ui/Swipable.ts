@@ -1,8 +1,8 @@
 import Animate from "morpheus";
-import Events from "../core/Events";
 import Ease from "../animation/Ease";
 import { Browser } from "../core/Browser";
-import { classMixin, mergeData } from "../core/Util";
+import { Evented, type EventedInstance } from "../core/mixins";
+import { mergeData } from "../core/Util";
 import { DomEvent, type LegacyEvent } from "../dom/DomEvent";
 import type { AnimateOptions, AnimationHandle } from "../types";
 
@@ -44,13 +44,7 @@ interface DragData {
     touch: boolean;
 }
 
-interface Evented {
-    fire: (type: string, data?: unknown, target?: unknown) => unknown;
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-    hasEventListeners: (type: string) => boolean;
-}
-
-export default class Swipable {
+class SwipableBase {
     declare "mousedrag": DragEventNames;
     declare "touchdrag": DragEventNames;
     declare "_el": Record<string, HTMLElement>;
@@ -58,7 +52,7 @@ export default class Swipable {
     declare "animator": AnimationHandle | null;
     declare "dragevent": DragEventNames;
     declare "data": DragData;
-    declare "fire": Evented["fire"];
+    declare "fire": EventedInstance["fire"];
 
     //_el: {},
 
@@ -387,4 +381,8 @@ export default class Swipable {
     }
 }
 
-classMixin(Swipable, Events);
+export default class Swipable extends Evented(SwipableBase) {
+    constructor(...args: ConstructorParameters<typeof SwipableBase>) {
+        super(...args);
+    }
+}

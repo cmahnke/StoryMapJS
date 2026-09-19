@@ -80,7 +80,6 @@ export interface StorymapOptions {
     call_to_action_text: string;
     menubar_height: number;
     skinny_size: number;
-    relative_date: boolean;
     duration: number;
     ease: unknown;
     dragging: boolean;
@@ -112,13 +111,6 @@ export interface StorymapOptions {
     slide_default_fade: string;
     menubar_default_y: number;
     path_gfx: string;
-    zoomify: {
-        path: string;
-        width: string;
-        height: string;
-        tolerance: number;
-        attribution: string;
-    };
     script_path: string;
     language: string;
     api_key_flickr: string;

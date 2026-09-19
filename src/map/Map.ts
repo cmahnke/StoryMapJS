@@ -1,13 +1,12 @@
-import { classMixin, mergeData } from "../core/Util";
+import { mergeData } from "../core/Util";
+import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
-import Events from "../core/Events";
-import DomMixins from "../dom/DomMixins";
 import { Browser } from "../core/Browser";
 import type { Map as OlMap } from "ol";
 import type { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import type OverviewMap from "ol/control/OverviewMap";
 import type MapMarker from "./MapMarker";
-import type { Evented, LinePoint, ViewToOptions } from "./types";
+import type { LinePoint, ViewToOptions } from "./types";
 import type {
     AnimationHandle,
     LatLngLiteral,
@@ -24,15 +23,7 @@ import type {
 	markerRemoved
 
 
-================================================= */
-
-/*
-Map = VCO.Class.extend({
-	
-	includes: [VCO.Events, VCO.DomMixins],
-	
-	_el: {},
-*/
+================================================ */
 
 /** Wheel/scroll zoom bookkeeping (handles cleared via clearTimeout). */
 interface ScrollState {
@@ -41,7 +32,7 @@ interface ScrollState {
     timer_done?: ReturnType<typeof setTimeout>;
 }
 
-export default class Map {
+class MapBase {
     declare "_el": { container: HTMLElement; map: HTMLElement; map_mask: HTMLElement };
     declare "_loaded": { data: boolean; map: boolean };
     declare "_map": OlMap | null;
@@ -61,10 +52,7 @@ export default class Map {
     declare "timer": ReturnType<typeof setTimeout> | null;
     declare "touch_scale": number;
     declare "scroll": ScrollState;
-    declare "onAdd": () => unknown;
-    declare "onRemove": () => unknown;
-    declare "fire": Evented["fire"];
-    declare "on": Evented["on"];
+    declare "fire": EventedInstance["fire"];
     constructor(
         elem: string | HTMLElement,
         data?: Partial<StorymapData>,
@@ -391,16 +379,6 @@ export default class Map {
 
     hide(): void {}
 
-    addTo(container: HTMLElement): void {
-        container.appendChild(this._el.container);
-        this.onAdd();
-    }
-
-    removeFrom(container: HTMLElement): void {
-        container.removeChild(this._el.container);
-        this.onRemove();
-    }
-
     /*	Adding and Removing Markers
 	================================================== */
     createMarkers(array: StorymapSlide[]): void {
@@ -646,5 +624,10 @@ export default class Map {
     }
 }
 
-classMixin(Map, Events, DomMixins);
+export default class Map extends DomMixed(Evented(MapBase)) {
+    constructor(...args: ConstructorParameters<typeof MapBase>) {
+        super(...args);
+    }
+}
+
 export { Map };

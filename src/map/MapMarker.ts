@@ -1,7 +1,6 @@
-import { classMixin, mergeData } from "../core/Util";
-import Events from "../core/Events";
+import { mergeData } from "../core/Util";
+import { Evented, type EventedInstance } from "../core/mixins";
 import Ease from "../animation/Ease";
-import type { Evented } from "./types";
 import type {
     AnimationHandle,
     IconSpec,
@@ -14,7 +13,7 @@ import type {
 	populates the marker with content.
 ================================================= */
 
-export default class MapMarker {
+class MapMarkerBase {
     declare "_el": Record<string, HTMLElement>;
     declare "_marker": HTMLDivElement;
     declare "_icon": IconSpec | HTMLDivElement | false;
@@ -27,10 +26,7 @@ export default class MapMarker {
     declare "data": MapMarkerData;
     declare "options": StorymapOptions;
     declare "animator": AnimationHandle | null;
-    declare "fire": Evented["fire"];
-    declare "on": Evented["on"];
-
-    //includes: [VCO.Events],
+    declare "fire": EventedInstance["fire"];
 
     /*	Constructor
 	================================================== */
@@ -150,5 +146,10 @@ export default class MapMarker {
     _updateDisplay(width: number, height: number, animate?: boolean): void {}
 }
 
-classMixin(MapMarker, Events);
+export default class MapMarker extends Evented(MapMarkerBase) {
+    constructor(...args: ConstructorParameters<typeof MapMarkerBase>) {
+        super(...args);
+    }
+}
+
 export { MapMarker };

@@ -14,9 +14,7 @@ import { defaults as interactionDefaults } from "ol/interaction";
 
 import "ol/ol.css";
 
-import { classMixin } from "../../core/Util";
 import Map from "../Map";
-import Events from "../../core/Events";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
 import type { LinePoint, ViewToOptions } from "../types";
 import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../types";
@@ -674,5 +672,4 @@ export default class OpenLayers extends Map {
     }
 }
 
-classMixin(OpenLayers, Events);
 export { OpenLayers };

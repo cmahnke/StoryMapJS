@@ -1,5 +1,5 @@
-import { classMixin, mergeData } from "../core/Util";
-import Events from "../core/Events";
+import { mergeData } from "../core/Util";
+import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent, type LegacyEvent } from "../dom/DomEvent";
 import { touch } from "../core/Browser";
@@ -44,19 +44,13 @@ interface DragData {
     touch: boolean;
 }
 
-interface Evented {
-    fire: (type: string, data?: unknown, target?: unknown) => unknown;
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-    hasEventListeners: (type: string) => boolean;
-}
-
-export class Draggable {
+export class DraggableBase {
     declare "_el": Record<string, HTMLElement>;
     declare "options": DraggableOptions;
     declare "animator": AnimationHandle | null;
     declare "dragevent": DragEventNames;
     declare "data": DragData;
-    declare "fire": Evented["fire"];
+    declare "fire": EventedInstance["fire"];
 
     mousedrag = {
         down: "mousedown",
@@ -373,4 +367,8 @@ export class Draggable {
     }
 }
 
-classMixin(Draggable, Events);
+export class Draggable extends Evented(DraggableBase) {
+    constructor(...args: ConstructorParameters<typeof DraggableBase>) {
+        super(...args);
+    }
+}

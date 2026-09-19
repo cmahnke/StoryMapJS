@@ -22,22 +22,6 @@
 <body>
   <div id="storymap-embed"></div>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M95DDQGLWH"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-M95DDQGLWH');
-    gtag('event', 'EmbeddedIn', {
-      'event_label': document.referrer,
-      'event_category': 'StoryMapJS',
-      'non_interaction': true
-    })
-
-  </script>
-
   <script>
     var storymap;
     const urlParams = new URLSearchParams(window.location.search);
@@ -101,13 +85,9 @@
             font = urlJoin(options.script_path, font);
         }
         KLStoryMap.loadCSS(font,function(){ console.log('font loaded: ' + font);});
-	    storymap = new KLStoryMap.StoryMap('storymap-embed', data, options, {
+        storymap = new KLStoryMap.StoryMap('storymap-embed', data, options, {
             title: onStoryMapTitle
         });
-        var mapType = storymap.options.map_type;
-        if(mapType && mapType.match('^iiif.*')) {
-            ga('send', 'event', 'StoryMapJS', 'iiif', document.referrer)
-        }
     }
 
     (function() {

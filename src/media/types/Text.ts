@@ -1,5 +1,5 @@
-import { classMixin, mergeData, setData, htmlify, convertUnixTime } from "../../core/Util";
-import Events from "../../core/Events";
+import { mergeData, setData, htmlify, convertUnixTime } from "../../core/Util";
+import { Evented, type EventedInstance } from "../../core/mixins";
 import Dom from "../../dom/Dom";
 
 interface TextData {
@@ -13,11 +13,11 @@ interface TextOptions {
     title?: boolean;
 }
 
-export default class Text {
+class TextBase {
     declare "_el": Record<string, HTMLElement>;
     declare "data": TextData;
     declare "options": TextOptions;
-    declare "fire": (type: string, data?: unknown) => unknown;
+    declare "fire": EventedInstance["fire"];
 
     /*	Constructor
 	================================================== */
@@ -155,4 +155,8 @@ export default class Text {
     }
 }
 
-classMixin(Text, Events);
+export default class Text extends Evented(TextBase) {
+    constructor(...args: ConstructorParameters<typeof TextBase>) {
+        super(...args);
+    }
+}

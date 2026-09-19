@@ -1,9 +1,8 @@
-import { classMixin, mergeData } from "../core/Util";
+import { mergeData } from "../core/Util";
+import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
-import Events from "../core/Events";
 import Ease from "../animation/Ease";
 
-import DomMixins from "../dom/DomMixins";
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
 import { Language } from "../language/Language";
@@ -21,20 +20,14 @@ interface MenuBarOptions {
     [key: string]: unknown;
 }
 
-interface Evented {
-    fire: (type: string, data?: unknown, target?: unknown) => unknown;
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-    hasEventListeners: (type: string) => boolean;
-}
-
-export default class MenuBar {
+class MenuBarBase {
     declare "_el": Record<string, HTMLElement>;
     declare "collapsed": boolean;
     declare "options": MenuBarOptions;
     declare "animator": Record<string, unknown>;
-    declare "fire": Evented["fire"];
+    declare "fire": EventedInstance["fire"];
 
-    //includes: [Events, DomMixins],
+    //_el: {},
 
     /*	Constructor
 	================================================== */
@@ -228,4 +221,8 @@ export default class MenuBar {
     }
 }
 
-classMixin(MenuBar, Events, DomMixins);
+export default class MenuBar extends DomMixed(Evented(MenuBarBase)) {
+    constructor(...args: ConstructorParameters<typeof MenuBarBase>) {
+        super(...args);
+    }
+}
