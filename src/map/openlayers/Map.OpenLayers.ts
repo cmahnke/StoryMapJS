@@ -290,7 +290,7 @@ export default class OpenLayers extends Map {
             layers: [this._tile_layer_mini],
             collapseLabel: "\u00bb",
             label: "\u00ab",
-            collapsed: false,
+            collapsed: true,
         });
         this._map.addControl(this._mini_map);
 
@@ -671,7 +671,21 @@ export default class OpenLayers extends Map {
                     });
                 }
             } else {
-                this._fitView(this._map, this.bounds_array, this._transition_duration);
+                // fit instantly, then shift the center by the panel offset
+                // and animate there so the markers clear the story panel
+                this._fitView(this._map, this.bounds_array, 0);
+                const view = this._map.getView();
+                const zoom = view.getZoom();
+                if (zoom !== undefined) {
+                    const center = this._fromViewCoords(view.getCenter(), view.getProjection());
+                    const offset_location = this._getMapCenterOffset(center, zoom);
+                    view.animate({
+                        center: this._toViewCoords(offset_location),
+                        zoom: zoom,
+                        duration: this._transition_duration,
+                        easing: this.options.ease as ((t: number) => number) | undefined,
+                    });
+                }
             }
         }
 

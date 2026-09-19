@@ -526,6 +526,12 @@ class MapBase {
     }
 
     _onMapLoaded(e?: unknown): void {
+        // OpenLayers fires `loadend` after every finished tile-load cycle, not
+        // just the first render — without this guard every navigation would
+        // snap the map back to the start slide once its tiles arrive
+        if (this._loaded.map) {
+            return;
+        }
         this._loaded.map = true;
 
         if (this.options.calculate_zoom) {
