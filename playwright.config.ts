@@ -12,7 +12,7 @@ export default defineConfig({
         viewport: { width: 1280, height: 800 },
     },
     webServer: {
-        command: "npx vite --port 8200 --strictPort",
+        command: "npm run build && npx vite preview --port 8200 --strictPort",
         url: "http://localhost:8200/harness.html?example=katrina",
         reuseExistingServer: true,
         timeout: 120_000,
