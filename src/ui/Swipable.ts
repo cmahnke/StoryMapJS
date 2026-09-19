@@ -175,7 +175,7 @@ export default class Swipable {
     }
     
     _onDragMove(e) {
-        var change = {
+        const change = {
             x:0,
             y:0
         }
@@ -210,7 +210,7 @@ export default class Swipable {
     }
     
     _momentum() {
-        var pos_adjust = {
+        let pos_adjust = {
                 x: 0,
                 y: 0,
                 time: 0
@@ -225,7 +225,7 @@ export default class Swipable {
                 y: false
             },
             swipe = false,
-            swipe_direction = "";
+            _swipe_direction = "";
         this.data.direction = null;
         pos_adjust.time = (new Date().getTime() - this.data.time.start) * 10;
         pos_change.time = (new Date().getTime() - this.data.time.start) * 10;
@@ -306,7 +306,7 @@ export default class Swipable {
     }
     
     _animateMomentum() {
-        var pos = {
+        const pos = {
                 x: this.data.new_pos.x,
                 y: this.data.new_pos.y
             },

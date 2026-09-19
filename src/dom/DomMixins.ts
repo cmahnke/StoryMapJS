@@ -45,12 +45,12 @@ export default class DomMixins {
 	/*	Animate to Position
 	================================================== */
 	animatePosition(pos, el, use_percent) {
-		var ani = {
+		const ani = {
 			duration: 	this.options.duration,
 			easing: 	this.options.ease
 		};
-		for (var name in pos) {
-			if (pos.hasOwnProperty(name)) {
+		for (const name in pos) {
+			if (Object.hasOwn(pos, name)) {
 				if (use_percent) {
 					ani[name] = pos[name] + "%";
 				} else {
@@ -84,8 +84,8 @@ export default class DomMixins {
 	/*	Set the Position
 	================================================== */
 	setPosition(pos, el) {
-		for (var name in pos) {
-			if (pos.hasOwnProperty(name)) {
+		for (const name in pos) {
+			if (Object.hasOwn(pos, name)) {
 				if (el) {
 					el.style[name] = pos[name] + "px";
 				} else {

@@ -20,7 +20,7 @@ export default class YouTube extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var self = this,
+		let self = this,
 			url_vars;
 		
 		// Loading Message 
@@ -79,10 +79,10 @@ export default class YouTube extends Media {
 	}
 	
 	createMedia() {
-		var self = this;
+		const _self = this;
 		// Determine Start of Media
 		if (typeof(this.media_id.start) != 'undefined') {
-			var vidstart			= this.media_id.start.toString(),
+			let vidstart			= this.media_id.start.toString(),
 				vid_start_minutes	= 0,
 				vid_start_seconds	= 0;
 			if (vidstart.match('m')) {
@@ -105,7 +105,7 @@ export default class YouTube extends Media {
 	}
 	
 	createPlayer() {
-		var self = this;
+		const self = this;
 		clearTimeout(this.timer);
 		if(typeof YT != 'undefined' && typeof YT.Player != 'undefined') {
 			// Create Player

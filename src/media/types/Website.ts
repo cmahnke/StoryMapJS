@@ -16,7 +16,7 @@ export default class Website extends Media {
 		this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 		this._el.content_item	= Dom.create("div", "vco-media-item vco-media-iframe", this._el.content);
 		this.media_id = this.data.url;
-		let iframe = `<iframe src="${this.media_id}" />`;
+		const iframe = `<iframe src="${this.media_id}" />`;
 		this._el.content_item.innerHTML = iframe;
 		this.onLoaded();
 	}

@@ -28,7 +28,7 @@ import { Media } from "./Media"
 	Allow array so a slideshow can be a mediatype
 ================================================== */
 export default function MediaType(m) {
-	var media: any = {}, 
+	let media: any = {}, 
 		media_types = 	[
 			{
 				type: 		"youtube",
@@ -134,7 +134,7 @@ export default function MediaType(m) {
 			}
 		];
 	
-	for (var i = 0; i < media_types.length; i++) {
+	for (let i = 0; i < media_types.length; i++) {
 		if (m instanceof Array) {
 			return media = {
 				type: 		"slider",

@@ -167,12 +167,12 @@ export default class Map {
 	
 	goTo(n, change?) {
 		if (n < this._markers.length && n >= 0) {
-			var zoom = 0,
+			let zoom = 0,
 				previous_marker = this.current_marker;
 				
 			this.current_marker = n;
 			
-			var marker = this._markers[this.current_marker];
+			const marker = this._markers[this.current_marker];
 			
 			// Stop animation
 			if (this.animator) {
@@ -197,7 +197,7 @@ export default class Map {
 					if (marker.data.location) {
 						this._viewTo(marker.data.location);
 					} else {
-						
+						// nothing to show
 					}
 					
 					
@@ -213,7 +213,7 @@ export default class Map {
 						// Show Line
 						if (this.options.line_follows_path) {
 							if (this.options.show_history_line && marker.data.real_marker && this._markers[previous_marker].data.real_marker) {
-								var lines_array = [],
+								let lines_array = [],
 									line_num = previous_marker,
 									point;
 							
@@ -319,7 +319,7 @@ export default class Map {
 	}
 	
 	calculateMinMaxZoom() {
-		for (var i = 0; i < this._markers.length; i++) {
+		for (let i = 0; i < this._markers.length; i++) {
 			
 			if (this._markers[i].data.location && this._markers[i].data.location.zoom) {
 				this.updateMinMaxZoom(this._markers[i].data.location.zoom);
@@ -384,7 +384,7 @@ export default class Map {
 	
 	_destroyMarker(marker) {
 		this._removeMarker(marker);
-		for (var i = 0; i < this._markers.length; i++) {
+		for (let i = 0; i < this._markers.length; i++) {
 			if (this._markers[i] == marker) {
 				this._markers.splice(i, 1);
 			}
@@ -393,7 +393,7 @@ export default class Map {
 	}
 	
 	_createMarkers(array) {
-		for (var i = 0; i < array.length; i++) {
+		for (let i = 0; i < array.length; i++) {
 			this._createMarker(array[i]); // this must be called even for overview which has no marker or other logic must be fixed.  
 			if (array[i].location && array[i].location.lat && this.options.show_lines) {
 				this._addToLine(this._line, array[i]);
@@ -429,7 +429,7 @@ export default class Map {
 		
 		// Specific Marker Methods based on preferred Map API
 		_createMarker(d) {
-			var marker: any = {};
+			const marker: any = {};
 			marker.on("markerclick", this._onMarkerClick);
 			this._addMarker(marker);
 			this._markers.push(marker);
@@ -446,7 +446,7 @@ export default class Map {
 		}
 		
 		_resetMarkersActive() {
-			for (var i = 0; i < this._markers.length; i++) {
+			for (let i = 0; i < this._markers.length; i++) {
 				this._markers[i].active(false);
 			};
 		}
@@ -554,10 +554,10 @@ export default class Map {
 	
 	_onWheel(e) {
 		// borrowed from http://jsbin.com/qiyaseza/5/edit
-		var self = this;
+		const self = this;
 		
 		if (e.ctrlKey) {
-			var s = Math.exp(-e.deltaY/100);
+			const s = Math.exp(-e.deltaY/100);
 			this.touch_scale *= s;
 			e.preventDefault();
 			e.stopPropagation(e);
@@ -567,7 +567,7 @@ export default class Map {
 			this.scroll.start_time = +new Date();
 		};
 		
-		var time_left = Math.max(40 - (+new Date() - this.scroll.start_time), 0);
+		const time_left = Math.max(40 - (+new Date() - this.scroll.start_time), 0);
 		
 		clearTimeout(this.scroll.timer);
 		
@@ -581,7 +581,7 @@ export default class Map {
 	}
 	
 	_scollZoom(e?) {
-		var self = this,
+		const self = this,
 			current_zoom = this._getMapZoom();
 			
 		this.scroll.start_time = null;
@@ -642,7 +642,7 @@ export default class Map {
 	}
 	
 	_initEvents() {
-		var self = this;
+		const self = this;
 		
 		this._el.map.addEventListener('wheel', function(e) {
 			self._onWheel(e);

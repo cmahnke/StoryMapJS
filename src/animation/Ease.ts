@@ -36,7 +36,7 @@
  * spline.get(x) => returns the easing value | x must be in [0, 1] range
  */
 
-let Easings = {
+const Easings = {
     ease:        [0.25, 0.1, 0.25, 1.0], 
     linear:      [0.00, 0.0, 1.00, 1.0],
     easein:     [0.42, 0.0, 1.00, 1.0],
@@ -77,11 +77,11 @@ function KeySpline(this: any, a) {
 
 	function GetTForX(aX) {
 		// Newton raphson iteration
-		var aGuessT = aX;
-		for (var i = 0; i < 4; ++i) {
-			var currentSlope = GetSlope(aGuessT, a[0], a[2]);
+		let aGuessT = aX;
+		for (let i = 0; i < 4; ++i) {
+			const currentSlope = GetSlope(aGuessT, a[0], a[2]);
 			if (currentSlope == 0.0) return aGuessT;
-			var currentX = CalcBezier(aGuessT, a[0], a[2]) - aX;
+			const currentX = CalcBezier(aGuessT, a[0], a[2]) - aX;
 			aGuessT -= currentX / currentSlope;
 		}
 		return aGuessT;
@@ -97,17 +97,17 @@ export default class Ease {
 	static easeInOutQuint(t: number) { return t < .5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t; }
 	static easeOutStrong(t: number) { return (t == 1) ? 1 : 1 - Math.pow(2, - 10 * t); }
 	static easeInSpline(t: number) {
-		var spline = new Ease.KeySpline(Easings.easein);
+		const spline = new Ease.KeySpline(Easings.easein);
 		return spline.get(t);
 	}
 
 	easeInSpline(t) {
-		var spline = new Ease.KeySpline(Easings.easein);
+		const spline = new Ease.KeySpline(Easings.easein);
 		return spline.get(t);
 	}
 	
 	easeInOutExpo(t) {
-		var spline = new Ease.KeySpline(Easings.easein);
+		const spline = new Ease.KeySpline(Easings.easein);
 		return spline.get(t);
 	}
 
@@ -140,12 +140,12 @@ export default class Ease {
 	}
 
 	easeInBack(pos) {
-		var s = 1.70158;
+		const s = 1.70158;
 		return (pos) * pos * ((s + 1) * pos - s);
 	}
 
 	easeOutBack(pos) {
-		var s = 1.70158;
+		const s = 1.70158;
 		return (pos = pos - 1) * pos * ((s + 1) * pos + s) + 1;
 	}
 
@@ -175,12 +175,12 @@ export default class Ease {
 	}
 
 	swingTo(pos) {
-		var s = 1.70158;
+		const s = 1.70158;
 		return (pos -= 1) * pos * ((s + 1) * pos + s) + 1;
 	}
 
 	swingFrom(pos) {
-		var s = 1.70158;
+		const s = 1.70158;
 		return pos * pos * ((s + 1) * pos - s);
 	}
 

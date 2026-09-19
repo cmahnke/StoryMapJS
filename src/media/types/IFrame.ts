@@ -16,7 +16,7 @@ export default class IFrame extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var self = this;
+		const _self = this;
 
 		// Loading Message
 		this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
@@ -30,7 +30,7 @@ export default class IFrame extends Media {
 		// The url field holds a user-pasted embed snippet. Rebuild a
 		// clean iframe from its src instead of injecting the raw markup,
 		// which would allow stored XSS via the storymap JSON.
-		let iframe = buildIframe(this.media_id);
+		const iframe = buildIframe(this.media_id);
 
 		if (!iframe) {
 			this.loadErrorDisplay("Invalid embed code. Paste an iframe embed code with an http(s) source URL.");

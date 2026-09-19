@@ -16,7 +16,7 @@ export default class Flickr extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
+		let api_url,
 			self = this;
 		
 		// Loading Message
@@ -46,18 +46,18 @@ export default class Flickr extends Media {
 	}
 
 	establishMediaID() {
-		var marker = 'flickr.com/photos/';
-		var idx = this.data.url.indexOf(marker);
+		const marker = 'flickr.com/photos/';
+		const idx = this.data.url.indexOf(marker);
 		if (idx == -1) { throw "Invalid Flickr URL"; }
-		var pos = idx + marker.length;
+		const pos = idx + marker.length;
 		this.media_id = this.data.url.substr(pos).split("/")[1];
 	}
 	
 	createMedia(d) {
-		var best_size 	= this.sizes(this.options.height),
+		let best_size 	= this.sizes(this.options.height),
 			size 		= d.sizes.size[d.sizes.size.length - 2].source;
 		
-		for(var i = 0; i < d.sizes.size.length; i++) {
+		for(let i = 0; i < d.sizes.size.length; i++) {
 			if (d.sizes.size[i].label == best_size) {
 				size = d.sizes.size[i].source;
 			}
@@ -71,7 +71,7 @@ export default class Flickr extends Media {
 	}
 	
 	sizes(s) {
-		var _size = "";
+		let _size = "";
 		
 		if (s <= 75) {
 			if (s <= 0) {

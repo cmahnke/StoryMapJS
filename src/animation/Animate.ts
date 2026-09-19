@@ -21,11 +21,11 @@ export default function Animate(el, options) {
 //window.vcoanimate = (function() {
 const storymapAnimate = function() {
 
-	var doc = document,
+	let doc = document,
 		win = window,
 		perf = win.performance,
 		now = function () { return perf.now() },
-		html = doc.documentElement,
+		_html = doc.documentElement,
 		fixTs = false, // feature detected below
 		thousand = 1000,
 		rgbOhex = /^rgb\(|#/,
@@ -39,23 +39,23 @@ const storymapAnimate = function() {
 		unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1, transform: 1};
 
 	// which property name does this browser use for transform
-	var transform = 'transform';
+	const transform = 'transform';
 
 	// initial style is determined by the elements themselves
-	var getStyle = function (el, property) {
+	const getStyle = function (el, property) {
 		property = camelize(property)
-		var value = null,
+		let value = null,
 			computed = doc.defaultView.getComputedStyle(el, '');
 
 		computed && (value = computed[property]);
 		return el.style[property] || value;
 	};
 
-  var frame = function () {
+  const frame = function () {
     return win.requestAnimationFrame.bind(win)
   }()
 
-  var children = []
+  let children = []
 
 	frame(function(timestamp) {
 	  	// feature-detect if rAF and now() are of the same scale (epoch or high-res),
@@ -71,7 +71,7 @@ const storymapAnimate = function() {
   }
 
   function render(timestamp) {
-    var i, count = children.length
+    let i, count = children.length
     // if we're using a high res timer, make sure timestamp is not the old epoch-based value.
     // http://updates.html5rocks.com/2012/05/requestAnimationFrame-API-now-with-sub-millisecond-precision
 	if (fixTs) timestamp = now()
@@ -86,7 +86,7 @@ const storymapAnimate = function() {
   }
 
   function die(f) {
-    var rest, index = has(children, f)
+    let rest, index = has(children, f)
     if (index >= 0) {
       rest = children.slice(index + 1)
       children.length = index
@@ -95,7 +95,7 @@ const storymapAnimate = function() {
   }
 
   function parseTransform(style, base?) {
-    var values: any = {}, m
+    let values: any = {}, m
     if (m = style.match(rotate)) values.rotate = by(m[1], base ? base.rotate : null)
     if (m = style.match(scale)) values.scale = by(m[1], base ? base.scale : null)
     if (m = style.match(skew)) {values.skewx = by(m[1], base ? base.skewx : null); values.skewy = by(m[3], base ? base.skewy : null)}
@@ -104,7 +104,7 @@ const storymapAnimate = function() {
   }
 
   function formatTransform(v) {
-    var s = ''
+    let s = ''
     if ('rotate' in v) s += 'rotate(' + v.rotate + 'deg) '
     if ('scale' in v) s += 'scale(' + v.scale + ') '
     if ('translatex' in v) s += 'translate(' + v.translatex + 'px,' + v.translatey + 'px) '
@@ -118,7 +118,7 @@ const storymapAnimate = function() {
 
   // convert rgb and short hex to long hex
   function toHex(c) {
-    var m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+    const m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
     return (m ? rgb(m[1], m[2], m[3]) : c)
       .replace(/#(\w)(\w)(\w)$/, '#$1$1$2$2$3$3') // short skirt to long jacket
   }
@@ -152,7 +152,7 @@ const storymapAnimate = function() {
     */
   function tween(this: any, duration, fn, done, ease, from, to) {
     ease = fun(ease) ? ease : morpheus.easings[ease] || nativeTween
-    var time = duration || thousand
+    let time = duration || thousand
       , self = this
       , diff = to - from
       , start = now()
@@ -160,7 +160,7 @@ const storymapAnimate = function() {
       , end = 0
 
     function run(t) {
-      var delta = t - start
+      const delta = t - start
       if (delta > time || stop) {
         to = isFinite(to) ? to : 1
         stop ? end && fn(to) : fn(to)
@@ -196,7 +196,7 @@ const storymapAnimate = function() {
     * @return [x, y]
     */
   function bezier(points, pos) {
-    var n = points.length, r = [], i, j
+    let n = points.length, r = [], i, j
     for (i = 0; i < n; ++i) {
       r[i] = [points[i][0], points[i][1]]
     }
@@ -211,7 +211,7 @@ const storymapAnimate = function() {
 
   // this gets you the next hex in line according to a 'position'
   function nextColor(pos, start, finish) {
-    var r = [], i, e, from, to
+    let r = [], i, e, from, to
     for (i = 0; i < 6; i++) {
       from = Math.min(15, parseInt(start.charAt(i),  16))
       to   = Math.min(15, parseInt(finish.charAt(i), 16))
@@ -226,7 +226,7 @@ const storymapAnimate = function() {
   function getTweenVal(pos, units, begin, end, k, i, v?) {
     if (k == 'transform') {
       v = {}
-      for (var t in begin[i][k]) {
+      for (const t in begin[i][k]) {
         v[t] = (t in end[i][k]) ? Math.round(((end[i][k][t] - begin[i][k][t]) * pos + begin[i][k][t]) * thousand) / thousand : begin[i][k][t]
       }
       return v
@@ -295,7 +295,7 @@ const storymapAnimate = function() {
       // are we 'moving'?
       if (points) {
 
-        var left = getStyle(els[i], 'left')
+        const left = getStyle(els[i], 'left')
           , top = getStyle(els[i], 'top')
           , xy = [by(fun(originalLeft) ? originalLeft(els[i]) : originalLeft || 0, parseFloat(left)),
                   by(fun(originalTop) ? originalTop(els[i]) : originalTop || 0, parseFloat(top))]
@@ -308,7 +308,7 @@ const storymapAnimate = function() {
         ])
       }
 
-      for (var k in options) {
+      for (const k in options) {
         switch (k) {
         case 'complete':
         case 'duration':
@@ -348,7 +348,7 @@ const storymapAnimate = function() {
           els[i].style.left = xy[0] + 'px'
           els[i].style.top = xy[1] + 'px'
         }
-        for (var k in options) {
+        for (const k in options) {
           v = getTweenVal(pos, units, begin, end, k, i)
           k == 'transform' ?
             els[i].style[transform] = formatTransform(v) :

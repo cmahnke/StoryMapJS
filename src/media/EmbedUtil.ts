@@ -31,7 +31,7 @@ export function validateWebURL(url) {
 	if (!url) {
 		return null;
 	}
-	var a = document.createElement("a");
+	const a = document.createElement("a");
 	a.href = url;
 	if (a.protocol === "http:" || a.protocol === "https:") {
 		return a.href;
@@ -46,8 +46,8 @@ export function validateWebURL(url) {
 	src can be extracted.
 ================================================== */
 export function buildIframe(html) {
-	var pasted = parseInert(html).querySelector("iframe");
-	var src = null;
+	const pasted = parseInert(html).querySelector("iframe");
+	let src = null;
 
 	if (pasted) {
 		src = validateWebURL(pasted.getAttribute("src"));
@@ -59,10 +59,10 @@ export function buildIframe(html) {
 		return null;
 	}
 
-	var iframe = document.createElement("iframe");
+	const iframe = document.createElement("iframe");
 	iframe.setAttribute("src", src);
 	if (pasted) {
-		for (var i = 0; i < IFRAME_ATTRIBUTES.length; i++) {
+		for (let i = 0; i < IFRAME_ATTRIBUTES.length; i++) {
 			if (pasted.hasAttribute(IFRAME_ATTRIBUTES[i])) {
 				iframe.setAttribute(IFRAME_ATTRIBUTES[i], pasted.getAttribute(IFRAME_ATTRIBUTES[i]));
 			}
@@ -82,25 +82,25 @@ export function buildIframe(html) {
 	executable/embedding tags are dropped with their contents.
 ================================================== */
 export function sanitizeBlockquote(html) {
-	var fragment = document.createDocumentFragment();
+	const fragment = document.createDocumentFragment();
 	appendSanitized(parseInert(html).body, fragment);
 	return fragment;
 }
 
 function appendSanitized(node, parent) {
-	for (var i = 0; i < node.childNodes.length; i++) {
-		var child = node.childNodes[i];
+	for (let i = 0; i < node.childNodes.length; i++) {
+		const child = node.childNodes[i];
 		if (child.nodeType === 3) {
 			parent.appendChild(document.createTextNode(child.nodeValue));
 		} else if (child.nodeType === 1) {
-			var tag = child.nodeName.toUpperCase();
+			const tag = child.nodeName.toUpperCase();
 			if (DROP_TAGS.indexOf(tag) !== -1) {
 				continue;
 			}
 			if (BLOCKQUOTE_TAGS.indexOf(tag) !== -1) {
-				var el = document.createElement(tag);
+				const el = document.createElement(tag);
 				if (tag === "A") {
-					var href = validateWebURL(child.getAttribute("href"));
+					const href = validateWebURL(child.getAttribute("href"));
 					if (href) {
 						el.setAttribute("href", href);
 						el.setAttribute("target", "_blank");

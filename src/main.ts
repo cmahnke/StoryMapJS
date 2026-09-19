@@ -21,11 +21,11 @@ window.trace = trace;
 
 
 function getJSON(url, onload) {
-    let httpRequest = new XMLHttpRequest();
+    const httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                let data = JSON.parse(httpRequest.responseText);
+                const data = JSON.parse(httpRequest.responseText);
                 onload(data);
             } else {
                 alert('There was a problem with the request.');

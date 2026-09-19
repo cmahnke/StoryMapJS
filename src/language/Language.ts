@@ -1,12 +1,12 @@
 const localeModules = import.meta.glob("./locale/*.json", { eager: true }) as Record<string, any>;
 
-let EN = (localeModules["./locale/en.json"] || {}).default || {};
+const EN = (localeModules["./locale/en.json"] || {}).default || {};
 
-var Language: any = {}
+let Language: any = {}
 
 function getLanguage(code) {
-    var lang = JSON.parse(JSON.stringify((localeModules[`./locale/${code}.json`] || {}).default || {}));
-    for (let k in EN) {
+    const lang = JSON.parse(JSON.stringify((localeModules[`./locale/${code}.json`] || {}).default || {}));
+    for (const k in EN) {
         if (lang[k]) {
             if (typeof(EN[k]) == 'object') {
                 lang[k] = Object.assign(EN[k], lang[k]);

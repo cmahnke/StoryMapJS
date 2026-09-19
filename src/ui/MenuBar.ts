@@ -2,7 +2,7 @@ import { classMixin, mergeData } from "../core/Util"
 import Dom from "../dom/Dom"
 import Events from "../core/Events"
 import Ease from "../animation/Ease"
-import Animate from "../animation/Animate"
+
 import DomMixins from "../dom/DomMixins"
 import { DomEvent } from "../dom/DomEvent"
 import { Browser } from "../core/Browser"
@@ -71,10 +71,9 @@ export default class MenuBar {
 	/*	Public
 	================================================== */
 	show(d?) {
-		
-		var duration = this.options.duration;
+		let _duration = this.options.duration;
 		if (d) {
-			duration = d;
+			_duration = d;
 		}
 		/*
 		this.animator = Animate(this._el.container, {

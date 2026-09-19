@@ -6,7 +6,7 @@ export default class Events {
     declare "_vco_events": any;
 	//addEventListener(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
 	on(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
-		var events = this._vco_events = this._vco_events || {};
+		const events = this._vco_events = this._vco_events || {};
 		events[type] = events[type] || [];
 		events[type].push({
 			action: fn,
@@ -16,7 +16,7 @@ export default class Events {
 	}
 
 	hasEventListeners(/*String*/ type) /*-> Boolean*/ {
-		var k = '_vco_events';
+		const k = '_vco_events';
 		return (k in this) && (type in this[k]) && (this[k][type].length > 0);
 	}
 
@@ -25,7 +25,7 @@ export default class Events {
 			return this;
 		}
 
-		for (var i = 0, events = this._vco_events, len = events[type].length; i < len; i++) {
+		for (let i = 0, events = this._vco_events, len = events[type].length; i < len; i++) {
 			if (
 				(events[type][i].action === fn) &&
 				(!context || (events[type][i].context === context))
@@ -42,14 +42,14 @@ export default class Events {
 			return this;
 		}
 
-		var event = extend({
+		const event = extend({
 			type: type,
 			target: this
 		}, data);
 
-		var listeners = this._vco_events[type].slice();
+		const listeners = this._vco_events[type].slice();
 
-		for (var i = 0, len = listeners.length; i < len; i++) {
+		for (let i = 0, len = listeners.length; i < len; i++) {
 			listeners[i].action.call(listeners[i].context || this, event);
 		}
 

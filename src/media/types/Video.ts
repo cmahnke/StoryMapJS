@@ -15,7 +15,7 @@ export default class Video extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
+		let _api_url,
 			self = this;
 
 		// Loading Message
@@ -53,8 +53,8 @@ export default class Video extends Media {
 	}
 
 	_getType(url, reg) {
-		var ext = url.match(reg);
-		var type = "video/"
+		const ext = url.match(reg);
+		let type = "video/"
 		switch (ext[1]) {
 			case "mp4":
 				type += "mp4";

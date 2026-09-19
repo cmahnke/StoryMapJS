@@ -92,7 +92,7 @@ export default class SlideNav {
 	/*	Position
 	================================================== */
 	updatePosition(pos, use_percent, duration, ease, start_value, return_to_default) {
-		var self = this,
+		const self = this,
 			ani: any = {
 				duration: 	duration,
 				easing: 	ease,
@@ -100,10 +100,10 @@ export default class SlideNav {
 					self._onUpdatePositionComplete(return_to_default);
 				}
 			};
-		var _start_value = start_value;
+		const _start_value = start_value;
 		
-		for (var name in pos) {
-			if (pos.hasOwnProperty(name)) {
+		for (const name in pos) {
+			if (Object.hasOwn(pos, name)) {
 				if (use_percent) {
 					ani[name] = pos[name] + "%";
 				} else {
@@ -117,7 +117,7 @@ export default class SlideNav {
 			this.animator_position.stop();
 		}
 		
-		var prop_to_set;
+		let prop_to_set;
 		if (ani.right) {
 			prop_to_set = "right";
 		} else {

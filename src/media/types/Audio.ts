@@ -15,7 +15,7 @@ export default class Audio extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
+		let _api_url,
 			self = this;
 
 		// Loading Message
@@ -52,8 +52,8 @@ export default class Audio extends Media {
 	}
 
 	_getType(url, reg) {
-		var ext = url.match(reg);
-		var type = "audio/"
+		const ext = url.match(reg);
+		let type = "audio/"
 		switch (ext[1]) {
 			case "mp3":
 				type += "mpeg";

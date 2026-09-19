@@ -17,7 +17,7 @@ export default class Image extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var self = this;
+		const self = this;
 		// Loading Message
 		this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 		

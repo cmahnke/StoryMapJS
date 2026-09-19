@@ -65,11 +65,11 @@ class Loader {
     @private
     */
     createNode(name, attrs?) {
-        var node = this.doc.createElement(name),
+        let node = this.doc.createElement(name),
             attr;
 
         for (attr in attrs) {
-            if (attrs.hasOwnProperty(attr)) {
+            if (Object.hasOwn(attrs, attr)) {
                 node.setAttribute(attr, attrs[attr]);
             }
         }
@@ -87,7 +87,7 @@ class Loader {
     @private
     */
     finish(type) {
-        var p = this.pending[type],
+        let p = this.pending[type],
             callback,
             urls;
 
@@ -130,7 +130,7 @@ class Loader {
     @private
     */
     load(type, urls?, callback?, obj?, context?) {
-        var _finish = function(this: any) { this.finish(type); }.bind(this),
+        let _finish = function(this: any) { this.finish(type); }.bind(this),
             isCSS = type === 'css',
             nodes = [],
             i, len, node, p, pendingUrls, url;
@@ -245,6 +245,6 @@ function loadCSS(urls, callback, obj?, context?) {
 
 // this seems fragile but not sure how else to inject the document
 // besides 
-let loader = new Loader(document)
+const loader = new Loader(document)
 
 export { loadJS, loadCSS }

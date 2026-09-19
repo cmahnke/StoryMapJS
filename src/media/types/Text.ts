@@ -103,7 +103,7 @@ export default class Text {
 		
 		// Headline
 		if (this.data.headline != "") {
-			var headline_class = "vco-headline";
+			let headline_class = "vco-headline";
 			if (this.options.title) {
 				headline_class = "vco-headline vco-headline-title";
 			}
@@ -113,7 +113,7 @@ export default class Text {
 		
 		// Text
 		if (this.data.text != "") {
-			var text_content = "";
+			let text_content = "";
 			
 			text_content 					+= htmlify(this.data.text);
 			

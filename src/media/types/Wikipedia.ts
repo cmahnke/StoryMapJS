@@ -16,7 +16,7 @@ export default class Wikipedia extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
+		let api_url,
 			api_language,
 			self = this;
 		
@@ -31,11 +31,11 @@ export default class Wikipedia extends Media {
 		this.media_id	 = this.media_id.replace(" ", "%20");
 		api_language	 = this.data.url.split("//")[1].split(".wikipedia")[0];
 
-        let callbackPrefix = 'wikipediaCallback_';
-        let maxIDLength = 512 - callbackPrefix.length;
-        let callbackName = callbackPrefix + this.media_id.replace(/[^0-9a-z]/gi, '').slice(0, maxIDLength);
+        const callbackPrefix = 'wikipediaCallback_';
+        const maxIDLength = 512 - callbackPrefix.length;
+        const callbackName = callbackPrefix + this.media_id.replace(/[^0-9a-z]/gi, '').slice(0, maxIDLength);
 		api_url = `https://${api_language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${this.media_id}&exintro=1&format=json&callback=${callbackName}`;
-        let callbackScript = document.createElement('script');
+        const callbackScript = document.createElement('script');
         window[callbackName] = function(data) {
             self.createMedia(data);
         };
@@ -44,10 +44,10 @@ export default class Wikipedia extends Media {
 	}
 	
 	createMedia(d) {
-		var wiki: any = "";
+		let wiki: any = "";
 
 		if (d.query) {
-			var content;
+			let content;
 			wiki = {
 					entry: {},
 					title: "",
@@ -67,7 +67,7 @@ export default class Wikipedia extends Media {
 				wiki.text_array.push(wiki.extract);
 			}
 			
-			for(var i = 0; i < wiki.text_array.length; i++) {
+			for(let i = 0; i < wiki.text_array.length; i++) {
 				if (i+1 <= wiki.paragraphs && i+1 < wiki.text_array.length) {
 					wiki.text	+= "<p>" + wiki.text_array[i+1];
 				}
@@ -78,7 +78,7 @@ export default class Wikipedia extends Media {
 			content		+=	wiki.text;
 			
 			if (wiki.extract.match("REDIRECT")) {
-			
+				// redirect page: leave content empty
 			} else {
 				// Add to DOM
 				this._el.content_item.innerHTML	= content;

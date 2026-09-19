@@ -4,7 +4,6 @@ import Events from "../core/Events"
 import Dom from "../dom/Dom"
 import DomMixins from "../dom/DomMixins"
 import Ease from "../animation/Ease"
-import Animate from "../animation/Animate"
 import MediaType from "../media/MediaType"
 import Text from "../media/types/Text"
 import { Browser } from "../core/Browser"
@@ -283,7 +282,7 @@ export default class Slide {
 	
 	// Update Display
 	_updateDisplay(width, height, layout) {
-		var pad_left, pad_right, new_width;
+		let pad_left, pad_right, new_width;
 		
 		if (width) {
 			this.options.width 					= width;

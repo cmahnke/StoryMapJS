@@ -6,7 +6,7 @@ import VectorSource from "ol/source/Vector";
 import LineString from "ol/geom/LineString";
 import Feature from "ol/Feature";
 import { Style, Stroke } from "ol/style";
-import { fromLonLat, toLonLat, get as getProjection } from "ol/proj";
+import { fromLonLat, toLonLat } from "ol/proj";
 import { boundingExtent } from "ol/extent";
 import OverviewMap from "ol/control/OverviewMap";
 import { defaults as interactionDefaults } from "ol/interaction";
@@ -117,7 +117,7 @@ export default class OpenLayers extends Map {
 		const _map_type_arr = map_type.split(':');
 
 		switch (_map_type_arr[0]) {
-			case 'mapbox':
+			case 'mapbox': {
 				let mapbox_url;
 				if (_map_type_arr.length > 2) {
 					// new form mapbox URL:
@@ -131,8 +131,9 @@ export default class OpenLayers extends Map {
 					mapbox_url = "https://api.tiles.mapbox.com/v4/" + mapbox_name + "/{z}/{x}/{y}.png?access_token=" + this.options.map_access_token;
 				}
 				return new TileLayer({ source: new XYZ({ url: mapbox_url, attributions: [], crossOrigin: "anonymous" }) });
+			}
 
-			case 'stadia':
+			case 'stadia': {
 				let style_url = "osm:standard";
 				if (_map_type_arr.length > 1) {
 					style_url = _map_type_arr.slice(1).join(':');
@@ -140,7 +141,7 @@ export default class OpenLayers extends Map {
 						style_url = `${style_url}?api_key=${this.options.map_access_token}`;
 					}
 				}
-				return new TileLayer({ source: new XYZ({ url: `https://tiles.stadiamaps.com/tiles/${style_url}/{z}/{x}/{y}.png`, attributions: [] }) });
+				return new TileLayer({ source: new XYZ({ url: `https://tiles.stadiamaps.com/tiles/${style_url}/{z}/{x}/{y}.png`, attributions: [] }) });			}
 
 			case 'stamen':
 				this._map.getViewport().style.backgroundColor = "#FFFFFF";

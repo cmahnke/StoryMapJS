@@ -162,7 +162,7 @@ export default class StorySlider {
 	/*	Create Slides
 	================================================== */
 	_createSlides(array) {
-		for (var i = 0; i < array.length; i++) {
+		for (let i = 0; i < array.length; i++) {
 			if (array[i].uniqueid == "") {
 				array[i].uniqueid = unique_ID(6, "vco-slide");
 			}
@@ -176,14 +176,14 @@ export default class StorySlider {
 	}
 
 	_createSlide(d, title_slide?) {
-		var slide = new Slide(d, this.options, title_slide);
+		const slide = new Slide(d, this.options, title_slide);
 		this._addSlide(slide);
 		this._slides.push(slide);
 	}
 
 	_destroySlide(slide) {
 		this._removeSlide(slide);
-		for (var i = 0; i < this._slides.length; i++) {
+		for (let i = 0; i < this._slides.length; i++) {
 			if (this._slides[i] == slide) {
 				this._slides.splice(i, 1);
 			}
@@ -208,7 +208,7 @@ export default class StorySlider {
 	/*	Navigation
 	================================================== */
 	goToId(n, fast?, displayupdate?) {
-		var _n;
+		let _n;
 		if (typeof n == 'string' || n instanceof String) {
 			_n = findArrayNumberByUniqueID(String(n), this._slides, "uniqueid");
 		} else {
@@ -219,7 +219,7 @@ export default class StorySlider {
 	}
 
 	goTo(n, fast?, displayupdate?) {
-		var self = this;
+		const self = this;
 
 		this.changeBackground({color_value:"", image:false});
 
@@ -229,7 +229,7 @@ export default class StorySlider {
 		}
 
 		// Set Slide Active State
-		for (var i = 0; i < this._slides.length; i++) {
+		for (let i = 0; i < this._slides.length; i++) {
 			this._slides[i].setActive(false);
 		}
 
@@ -307,7 +307,7 @@ export default class StorySlider {
 	}
 
 	getNavInfo(slide) {
-		var n = {
+		const n = {
 			title: "",
 			description: ""
 		};
@@ -349,7 +349,7 @@ export default class StorySlider {
 	showNav(nav_obj, show) {
 
 		if (this.options.width <= 500 && Browser.mobile) {
-
+			// hidden on small mobile screens
 		} else {
 			if (show) {
 				nav_obj.show();
@@ -361,16 +361,16 @@ export default class StorySlider {
 	}
 
 	changeBackground(bg) {
-		var self = this,
+		let self = this,
 			do_animation = false;
 
-		var bg_color = {r:256, g:256, b:256},
+		let bg_color = {r:256, g:256, b:256},
 			bg_color_rgb,
 			bg_percent_start 	= this.options.slide_default_fade,
 			bg_percent_end 		= "15%",
 			bg_alpha_end 		= "0.87",
 			bg_css 				= "",
-			bg_old 				= this._el.background.getAttribute('style');
+			_bg_old 				= this._el.background.getAttribute('style');
 
 		if (bg.color_value) {
 			bg_color = hexToRgb(bg.color_value);
@@ -466,7 +466,7 @@ export default class StorySlider {
 
 	// Update Display
 	_updateDisplay(width?, height?, animate?, layout?) {
-		var nav_pos, _layout;
+		let nav_pos, _layout;
 
 		if(typeof layout === 'undefined'){
 			_layout = this.options.layout;
@@ -499,7 +499,7 @@ export default class StorySlider {
 
 
 		// Position slides
-		for (var i = 0; i < this._slides.length; i++) {
+		for (let i = 0; i < this._slides.length; i++) {
 			this._slides[i].updateDisplay(this.options.width, this.options.height, _layout);
 			this._slides[i].setPosition({left:(this.slide_spacing * i), top:0});
 		};
@@ -511,7 +511,7 @@ export default class StorySlider {
 	_introInterface() {
 
 		if (this.options.call_to_action) {
-			var _str = Language.messages.start;
+			let _str = Language.messages.start;
 			if (this.options.call_to_action_text != "") {
 				_str = this.options.call_to_action_text;
 			}
@@ -520,7 +520,7 @@ export default class StorySlider {
 		}
 
 		if (this.options.width <= this.options.skinny_size) {
-
+			// hidden when skinny
 		} else {
 			this._nav.next.updatePosition({right:"130"}, false, this.options.duration*3, this.options.ease, -100, true);
 			this._nav.previous.updatePosition({left:"-100"}, true, this.options.duration*3, this.options.ease, -200, true);
@@ -595,7 +595,7 @@ export default class StorySlider {
 	/*	Events
 	================================================== */
 	_onBackgroundChange(e) {
-		var slide_background = this._slides[this.current_slide].getBackground();
+		const slide_background = this._slides[this.current_slide].getBackground();
 		this.changeBackground(e);
 		this.fire("colorchange", slide_background);
 	}
@@ -642,7 +642,7 @@ export default class StorySlider {
 			return;
 		}
 
-		var type = e.type;
+		let type = e.type;
 		type = (type === 'mouseenter' ? 'mouseover' : (type === 'mouseleave' ? 'mouseout' : type));
 
 		if (!this.hasEventListeners(type)) {

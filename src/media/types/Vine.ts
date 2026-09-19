@@ -17,8 +17,8 @@ export default class Vine extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
-			self = this;
+		let api_url,
+			_self = this;
 
 		// Loading Message
 		this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
@@ -41,7 +41,7 @@ export default class Vine extends Media {
 
 	// Update Media Display
 	_updateMediaDisplay() {
-		var size = ratio.square({w:this._el.content_item.offsetWidth , h:this.options.height});
+		const size = ratio.square({w:this._el.content_item.offsetWidth , h:this.options.height});
 		this._el.content_item.style.height = size.h + "px";
 	}
 

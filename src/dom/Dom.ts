@@ -21,7 +21,7 @@ export default class Dom {
 	}
 
 	static create(tagName, className, container?) {
-		var el = document.createElement(tagName);
+		const el = document.createElement(tagName);
 		el.className = className;
 		if (container) {
 			container.appendChild(el);
@@ -30,7 +30,7 @@ export default class Dom {
 	}
 
 	static createText(content, container?) {
-		var el = document.createTextNode(content);
+		const el = document.createTextNode(content);
 		if (container) {
 			container.appendChild(el);
 		}
@@ -59,7 +59,7 @@ export default class Dom {
 	}
 
 	static getPosition(el){
-	    var pos = {
+	    const pos = {
 	    	x: 0,
 			y: 0
 	    }
@@ -72,9 +72,9 @@ export default class Dom {
 	}
 
 	static testProp(props) {
-		var style = document.documentElement.style;
+		const style = document.documentElement.style;
 
-		for (var i = 0; i < props.length; i++) {
+		for (let i = 0; i < props.length; i++) {
 			if (props[i] in style) {
 				return props[i];
 			}

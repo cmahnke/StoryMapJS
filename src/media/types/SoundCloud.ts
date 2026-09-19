@@ -6,7 +6,7 @@ import { loadJS } from "../../core/Load"
 /*	Media.SoundCloud
 ================================================== */
 
-var soundCoudCreated = false;
+
 
 
 export default class SoundCloud extends Media {
@@ -20,7 +20,7 @@ export default class SoundCloud extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
+		let api_url,
 			self = this;
 
 		// Loading Message

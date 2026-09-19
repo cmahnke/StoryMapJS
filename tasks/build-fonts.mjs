@@ -4,7 +4,7 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { readdirSync, mkdirSync, writeFileSync, copyFileSync, existsSync } from "node:fs";
-import { resolve, join, basename, dirname } from "node:path";
+import { join, basename, } from "node:path";
 import * as sass from "sass";
 
 const req = createRequire(import.meta.url);

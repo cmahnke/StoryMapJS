@@ -1,4 +1,4 @@
-const debug = true;
+// const debug = true;
 import { Browser } from "../core/Browser"
 import Emoji from "../library/Emoji"
 
@@ -7,8 +7,8 @@ export function extend(dest: any, ...sources: any[]): any {	// merge src propert
     sources = sources.filter(Boolean);
     for (var j = 0, len = sources.length, src; j < len; j++) {
         src = sources[j] || {};
-        for (var i in src) {
-            if (src.hasOwnProperty(i)) {
+        for (const i in src) {
+            if (Object.hasOwn(src, i)) {
                 dest[i] = src[i];
             }
         }
@@ -23,8 +23,8 @@ export function extend(dest: any, ...sources: any[]): any {	// merge src propert
  * @param  {...class} src 
  */
 export function classMixin(cls, ...src) {
-    for (let _cl of src) {
-        for (var key of Object.getOwnPropertyNames(_cl.prototype)) {
+    for (const _cl of src) {
+        for (const key of Object.getOwnPropertyNames(_cl.prototype)) {
             cls.prototype[key] = _cl.prototype[key]
         }
     }
@@ -33,14 +33,14 @@ export function classMixin(cls, ...src) {
 
 export function convertUnixTime(str) { // created for Instagram. It's ISO8601-ish
     // 2013-12-09 01:56:28
-    var pattern = /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})/;
+    const pattern = /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})/;
     if (str.match(pattern)) {
         var date_parts = str.match(pattern).slice(1);
     }
-    var date_array = [];
-    var date, months, year, month, day, time;
-    for(var i = 0; i < date_parts.length; i++) {
-        var val = parseInt(date_parts[i]);
+    const date_array = [];
+    let date, months, year, month, day, time;
+    for(let i = 0; i < date_parts.length; i++) {
+        let val = parseInt(date_parts[i]);
         if (i == 1) { val = val - 1 } // stupid javascript months
         date_array.push( val )
     }
@@ -61,7 +61,7 @@ export function setData(obj, data) {
 }
 
 export function mergeData(data_main, data_to_merge) {
-    var x;
+    let x;
     for (x in data_to_merge) {
         if (Object.prototype.hasOwnProperty.call(data_to_merge, x)) {
             data_main[x] = data_to_merge[x];
@@ -76,7 +76,7 @@ export function mergeData(data_main, data_to_merge) {
  *  in data_main
  */
 export function updateData(data_main, data_to_merge) {
-    var x;
+    let x;
     for (x in data_main) {
         if (Object.prototype.hasOwnProperty.call(data_to_merge, x)) {
             data_main[x] = data_to_merge[x];
@@ -95,8 +95,8 @@ export function stamp(obj: any): number {
 }
 
 export function findArrayNumberByUniqueID(id, array, prop) {
-    var _n = 0;
-    for (var i = 0; i < array.length; i++) {
+    let _n = 0;
+    for (let i = 0; i < array.length; i++) {
         if (array[i].data[prop] == id) {
             _n = i;
         }
@@ -105,16 +105,16 @@ export function findArrayNumberByUniqueID(id, array, prop) {
 }
 
 export function unique_ID(size, prefix?) {
-    var getRandomNumber = function(range) {
+    const getRandomNumber = function(range) {
         return Math.floor(Math.random() * range);
     };
-    var getRandomChar = function() {
-        var chars = "abcdefghijklmnopqurstuvwxyz";
+    const getRandomChar = function() {
+        const chars = "abcdefghijklmnopqurstuvwxyz";
         return chars.substr( getRandomNumber(32), 1 );
     };
-    var randomID = function(size) {
-        var str = "";
-        for(var i = 0; i < size; i++) {
+    const randomID = function(size) {
+        let str = "";
+        for(let i = 0; i < size; i++) {
             str += getRandomChar();
         }
         return str;
@@ -128,12 +128,12 @@ export function unique_ID(size, prefix?) {
 
 export function hexToRgb(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.replace(shorthandRegex, function(m, r, g, b) {
         return r + r + g + g + b + b;
     });
 
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
@@ -155,7 +155,7 @@ export function htmlify(str) {
 }
 
 export function getUrlVars(string) {
-    var str,
+    let str,
         vars = [],
         hash,
         hashes;
@@ -168,7 +168,7 @@ export function getUrlVars(string) {
         str = str.replace("&amp;", "&");
     }
     hashes = str.slice(str.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++) {
+    for(let i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=');
         vars.push(hash[0]);
         vars[hash[0]] = hash[1];
@@ -178,7 +178,7 @@ export function getUrlVars(string) {
 
 export const ratio = {
     square: function(size) {
-        var s = {
+        const s = {
             w: 0,
             h: 0
         }
@@ -217,9 +217,9 @@ export function urljoin(base_url, path) {
     if(path.length && path[0] == '/') {
         path = path.substring(1);
     }
-    var url1 = base_url.split('/');
-    var url2 = path.split('/');
-    var url3 = [ ];
+    const url1 = base_url.split('/');
+    const url2 = path.split('/');
+    const url3 = [ ];
     for (var i = 0, l = url1.length; i < l; i ++) {
     if (url1[i] == '..') {
       url3.pop();
@@ -244,8 +244,8 @@ export function urljoin(base_url, path) {
 
 export function getObjectAttributeByIndex(obj, index) {
     if(typeof obj != 'undefined') {
-        var i = 0;
-        for (var attr in obj){
+        let i = 0;
+        for (const attr in obj){
             if (index === i){
                 return obj[attr];
             }

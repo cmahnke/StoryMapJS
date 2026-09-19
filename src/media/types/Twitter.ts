@@ -17,7 +17,7 @@ export default class Twitter extends Media {
 	/*	Load the media
 	================================================== */
 	_loadMedia() {
-		var api_url,
+		let api_url,
 			self = this;
 			
 		// Loading Message
@@ -28,15 +28,15 @@ export default class Twitter extends Media {
 		
 		// Get Media ID
 
-        let r = /twitter.com\/(.+?)\/status\/(\d+)/
-        let match = r.exec(this.data.url);
+        const r = /twitter.com\/(.+?)\/status\/(\d+)/
+        const match = r.exec(this.data.url);
         if (match) { 
             this.user_id = match[1];
             this.media_id = match[2];
         }
-        let callbackName = `twitterCallback_${this.media_id}`;
+        const callbackName = `twitterCallback_${this.media_id}`;
         api_url = `https://api.twitter.com/1/statuses/oembed.json?id=${this.media_id}&include_entities=true&callback=${callbackName}`;
-        let callbackScript = document.createElement('script');
+        const callbackScript = document.createElement('script');
         window[callbackName] = function(data) {
             self.createMedia(data);
         };
@@ -45,7 +45,7 @@ export default class Twitter extends Media {
 	}
 
 	createMedia(d) {	
-		var tweet				= "",
+		let tweet				= "",
 			tweet_text			= "",
 			tweetuser			= "",
 			tweet_status_temp 	= "",

@@ -1,5 +1,5 @@
-import { classMixin, mergeData, updateData, urljoin } from "../core/Util"
-import { loadJS, loadCSS } from "../core/Load"
+import { classMixin, mergeData, updateData } from "../core/Util"
+import { loadJS } from "../core/Load"
 import { validateStorymapAndReport } from "./validate"
 import Dom from "../dom/Dom"
 import Ease from "../animation/Ease"
@@ -41,12 +41,12 @@ class StoryMap {
 	//initialize: function (elem, data, options,listeners) {
 	constructor(elem, data, options, listeners) {
 
-		for (let key in listeners) {
-			var callbacks = listeners[key];
+		for (const key in listeners) {
+			const callbacks = listeners[key];
 			if (typeof(callbacks) == 'function') {
 				this.on(key,callbacks);
 			} else {
-				for (var idx in callbacks) {
+				for (const idx in callbacks) {
                     if (typeof(callbacks[idx]) == 'function') { 
 					    this.on(key,callbacks[idx]);
                     } else {
@@ -59,7 +59,7 @@ class StoryMap {
 			}
 		}
 
-		var self = this;
+		const _self = this;
 		// Version
 		this.version = "0.1.16";
 
@@ -173,7 +173,7 @@ class StoryMap {
 	/* Initialize the data
 	================================================== */
   _initData(data) {
-		var self = this;
+		const self = this;
 
 		if (typeof data === 'string') {
             fetch(data)
@@ -200,7 +200,7 @@ class StoryMap {
 	/* Initialize the options
 	================================================== */
   _initOptions() {
- 		var self = this;
+ 		const self = this;
 
     // Grab options from storymap data
     updateData(this.options, this.data);
@@ -274,7 +274,7 @@ class StoryMap {
 
 	// Initialize the layout
 	_initLayout() {
-		var self = this;
+		const _self = this;
 
 		this._el.container.className += ' vco-storymap';
 		this.options.base_class = this._el.container.className;
@@ -346,7 +346,7 @@ class StoryMap {
 
 	// Update View
 	_updateDisplay(map_height?, animate?, d?) {
-		var duration 		= this.options.duration,
+		let duration 		= this.options.duration,
 			display_class 	= this.options.base_class,
 			self			= this;
 
@@ -463,9 +463,6 @@ class StoryMap {
 		if (this.options.language.direction == 'rtl') {
 			display_class += ' vco-rtl';
 		}
-		else if (this.options.language.direction == 'rtl'){
-			display_class += ' vco-rtl';
-		}
 
 		// Apply class
 		this._el.container.className = display_class;
@@ -536,7 +533,7 @@ class StoryMap {
 			return;
 		}
 
-		var type = e.type;
+		let type = e.type;
 		type = (type === 'mouseenter' ? 'mouseover' : (type === 'mouseleave' ? 'mouseout' : type));
 
 		if (!this.hasEventListeners(type)) {
@@ -572,9 +569,9 @@ class StoryMap {
 
 // Calculates the script path and sets it as SCRIPT_PATH on the StoryMap class
 (function(StoryMapClass) {
-	var scripts = document.getElementsByTagName("script");
+	const scripts = document.getElementsByTagName("script");
 	if (scripts.length > 0) {
-		var src = scripts[scripts.length - 1].src;
+		const src = scripts[scripts.length - 1].src;
 		StoryMapClass.SCRIPT_PATH = src.substring(0, src.lastIndexOf("/"));
 	}
 })(StoryMap);

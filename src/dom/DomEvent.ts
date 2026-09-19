@@ -28,7 +28,7 @@ var DomEvent: any = {
 	},
 
 	_checkMouse: function (el, e) {
-		var related = e.relatedTarget;
+		let related = e.relatedTarget;
 
 		if (!related) {
 			return true;
@@ -38,7 +38,7 @@ var DomEvent: any = {
 			while (related && (related !== el)) {
 				related = related.parentNode;
 			}
-		} catch (err) {
+		} catch {
 			return false;
 		}
 

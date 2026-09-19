@@ -2,7 +2,7 @@ import { classMixin, mergeData } from "../core/Util"
 import Events from "../core/Events"
 import Dom from "../dom/Dom"
 import { DomEvent } from "../dom/DomEvent"
-import { Browser, touch } from "../core/Browser"
+import { touch } from "../core/Browser"
 import Ease from "../animation/Ease"
 import Animate from "../animation/Animate"
 
@@ -226,7 +226,7 @@ export class Draggable {
 	}
 	
 	_momentum() {
-		var pos_adjust = {
+		let pos_adjust = {
 				x: 0,
 				y: 0,
 				time: 0
@@ -237,7 +237,7 @@ export class Draggable {
 				time: 0
 			},
 			swipe = false,
-			swipe_direction = "";
+			_swipe_direction = "";
 		
 		
 		if (touch) {
@@ -296,7 +296,7 @@ export class Draggable {
 	}
 	
 	_animateMomentum() {
-		var pos = {
+		const pos = {
 				x: this.data.new_pos.x,
 				y: this.data.new_pos.y
 			},

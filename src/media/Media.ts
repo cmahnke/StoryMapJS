@@ -103,7 +103,7 @@ export class Media {
 	}
 
 	loadMedia() {
-		var self = this;
+		const self = this;
 
 		if (!this._state.loaded) {
 			try {
