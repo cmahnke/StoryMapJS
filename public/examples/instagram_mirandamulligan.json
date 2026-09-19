@@ -145,7 +145,7 @@
                         "created_time": "1296710327"
                     },
                     "headline": "Oz Park",
-                    "text": "Ya shoes are lookin\u2019 extra red this a.m., lady.<span class=\"vco-media-instagram-likes\">17</span>"
+                    "text": "Ya shoes are lookin’ extra red this a.m., lady.<span class=\"vco-media-instagram-likes\">17</span>"
                 }
             },
             {
@@ -396,7 +396,7 @@
                 }
             }
         ],
-        "use_custom_markers": "true"
+        "use_custom_markers": true
     },
     "width": 900
 }

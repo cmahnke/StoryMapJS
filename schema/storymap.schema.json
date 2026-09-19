@@ -1,0 +1,115 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "storymap.schema.json",
+    "title": "StoryMapJS",
+    "description": "StoryMapJS data format",
+    "type": "object",
+    "required": ["storymap"],
+    "properties": {
+        "storymap": {
+            "type": "object",
+            "required": ["slides"],
+            "properties": {
+                "language": { "type": "string" },
+                "map_type": {
+                    "type": "string",
+                    "description": "Basemap type: osm:<style>, mapbox:..., stadia:<style>, https://... (tile url), iiif, ch-watercolor. 'zoomify' has been removed in favor of 'iiif'."
+                },
+                "map_as_image": { "type": "boolean" },
+                "map_mini": { "type": "boolean" },
+                "map_subdomains": { "type": "string" },
+                "map_access_token": { "type": "string" },
+                "map_background_color": { "type": "string" },
+                "map_center_offset": {
+                    "type": "object",
+                    "properties": {
+                        "left": { "type": "number" },
+                        "top": { "type": "number" }
+                    }
+                },
+                "map_popup": { "type": "boolean" },
+                "use_custom_markers": { "type": "boolean" },
+                "zoom_distance": { "type": "number" },
+                "calculate_zoom": { "type": "boolean" },
+                "less_bounce": { "type": "boolean" },
+                "line_follows_path": { "type": "boolean" },
+                "show_lines": { "type": "boolean" },
+                "show_history_line": { "type": "boolean" },
+                "line_color": { "type": "string" },
+                "line_color_inactive": { "type": "string" },
+                "line_weight": { "type": "number" },
+                "line_opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+                "line_dash": { "type": "string" },
+                "line_join": { "type": "string" },
+                "iiif": {
+                    "type": "object",
+                    "required": ["url"],
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "URL of the IIIF Image API info.json document"
+                        },
+                        "attribution": { "type": "string" }
+                    }
+                },
+                "font_css": { "type": "string" },
+                "call_to_action": { "type": "boolean" },
+                "call_to_action_text": { "type": "string" },
+                "relative_date": { "type": "boolean" },
+                "start_at_slide": { "type": "integer", "minimum": 0 },
+                "slides": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/slide" }
+                }
+            }
+        }
+    },
+    "$defs": {
+        "slide": {
+            "type": "object",
+            "properties": {
+                "type": { "type": "string", "description": "'overview' marks the map overview slide" },
+                "date": { "type": ["string", "object", "null"] },
+                "group": { "type": "string" },
+                "location": {
+                    "type": "object",
+                    "properties": {
+                        "lat": { "type": "number", "description": "Latitude, or vertical position in image pixels for image maps" },
+                        "lon": { "type": "number", "description": "Longitude, or horizontal position in image pixels for image maps" },
+                        "zoom": { "type": "number" },
+                        "line": { "type": "boolean" },
+                        "icon": { "type": "string", "format": "uri" },
+                        "iconSize": { "type": "array", "items": { "type": "number" }, "minItems": 1, "maxItems": 2 },
+                        "image": { "type": "string", "format": "uri" },
+                        "use_custom_marker": { "type": "boolean" }
+                    }
+                },
+                "media": {
+                    "type": "object",
+                    "properties": {
+                        "url": { "type": ["string", "null"] },
+                        "caption": { "type": ["string", "null"] },
+                        "credit": { "type": ["string", "null"] },
+                        "thumb": { "type": "string" },
+                        "mediatype": { "type": ["object", "null"] }
+                    }
+                },
+                "text": {
+                    "type": "object",
+                    "properties": {
+                        "headline": { "type": "string" },
+                        "text": { "type": "string" }
+                    }
+                },
+                "background": {
+                    "type": ["object", "string"],
+                    "properties": {
+                        "url": { "type": ["string", "null"], "format": "uri" },
+                        "color": { "type": ["string", "null"] }
+                    }
+                },
+                "uniqueid": { "type": "string" }
+            }
+        }
+    }
+}

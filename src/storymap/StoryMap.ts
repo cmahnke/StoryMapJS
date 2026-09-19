@@ -1,5 +1,6 @@
 import { classMixin, mergeData, updateData, urljoin } from "../core/Util"
 import { loadJS, loadCSS } from "../core/Load"
+import { validateStorymapAndReport } from "./validate"
 import Dom from "../dom/Dom"
 import Ease from "../animation/Ease"
 import { setLanguage } from "../language/Language"
@@ -178,19 +179,20 @@ class StoryMap {
             fetch(data)
             .then(response => response.json())
             .then(result => {
-                console.log(result);
+                validateStorymapAndReport(result, data);
 				self.data = result.storymap;
 			    self._initOptions();
             });
 		} else if (typeof data === 'object') {
+			validateStorymapAndReport(data);
 			if (data.storymap) {
 				self.data = data.storymap;
 			} else {
-				console.log("data must have a storymap property")
+				console.error("StoryMapJS: data must have a storymap property")
 			}
 			self._initOptions();
 		} else {
-	        console.log("data has unknown type")
+	        console.error("StoryMapJS: data has unknown type")
 	        self._initOptions();
         }
 	}
@@ -212,6 +214,11 @@ class StoryMap {
 		if (this.options.map_as_image) {
 			this.options.calculate_zoom = false;
 		}
+
+	  // handle removed zoomify type
+	  if (this.options.map_type == 'zoomify') {
+		  console.error("StoryMapJS: map_type 'zoomify' has been removed; use map_type 'iiif' with options.iiif.url instead.");
+	  }
 
 	  // handle Stamen change
 	  if (this.options.map_type.indexOf('stamen') == 0) {
