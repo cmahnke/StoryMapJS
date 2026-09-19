@@ -1,24 +1,64 @@
-import Animate from "../animation/Animate";
+import Animate from "morpheus";
 import Events from "../core/Events";
 import Ease from "../animation/Ease";
 import { Browser } from "../core/Browser";
 import { classMixin, mergeData } from "../core/Util";
 import { DomEvent } from "../dom/DomEvent";
+import type { AnimateOptions, AnimationHandle } from "../types";
 
 /*    Swipable
     Draggable allows you to add dragging capabilities to any element. Supports mobile devices too.
     TODO Enable constraints
 ================================================== */
 
+interface DragEventNames {
+    down: string;
+    up: string;
+    leave: string;
+    move: string;
+}
+
+interface SwipableOptions {
+    snap: boolean;
+    enable: { x: boolean; y: boolean };
+    constraint: {
+        top: number | boolean;
+        bottom: number | boolean;
+        left: number | boolean;
+        right: number | boolean;
+    };
+    momentum_multiplier: number;
+    duration: number;
+    ease: unknown;
+}
+
+interface DragData {
+    sliding: boolean;
+    direction: string | null;
+    pagex: { start: number; end: number };
+    pagey: { start: number; end: number };
+    pos: { start: { x: number; y: number }; end: { x: number; y: number } };
+    new_pos: { x: number; y: number };
+    new_pos_parent: { x: number; y: number };
+    time: { start: number; end: number };
+    touch: boolean;
+}
+
+interface Evented {
+    fire: (type: string, data?: unknown, target?: unknown) => unknown;
+    on: (type: string, fn: unknown, context?: unknown) => unknown;
+    hasEventListeners: (type: string) => boolean;
+}
+
 export default class Swipable {
-    declare "mousedrag": any;
-    declare "touchdrag": any;
-    declare "_el": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "dragevent": any;
-    declare "data": any;
-    declare "fire": any;
+    declare "mousedrag": DragEventNames;
+    declare "touchdrag": DragEventNames;
+    declare "_el": Record<string, HTMLElement>;
+    declare "options": SwipableOptions;
+    declare "animator": AnimationHandle | null;
+    declare "dragevent": DragEventNames;
+    declare "data": DragData;
+    declare "fire": Evented["fire"];
 
     //_el: {},
 
@@ -110,7 +150,7 @@ export default class Swipable {
     enable(e) {
         DomEvent.addListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.addListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
-        this.data.pos.start = 0; //VCO.Dom.getPosition(this._el.move);
+        this.data.pos.start = 0 as unknown as { x: number; y: number }; //VCO.Dom.getPosition(this._el.move);
         this._el.move.style.left = this.data.pos.start.x + "px";
         this._el.move.style.top = this.data.pos.start.y + "px";
         this._el.move.style.position = "absolute";
@@ -314,26 +354,26 @@ export default class Swipable {
                 x: this.data.new_pos.x,
                 y: this.data.new_pos.y,
             },
-            animate: any = {
+            animate: AnimateOptions = {
                 duration: this.options.duration,
                 easing: Ease.easeOutStrong,
             };
         if (this.options.enable.y) {
             if (this.options.constraint.top || this.options.constraint.bottom) {
-                if (pos.y > this.options.constraint.bottom) {
-                    pos.y = this.options.constraint.bottom;
-                } else if (pos.y < this.options.constraint.top) {
-                    pos.y = this.options.constraint.top;
+                if (pos.y > (this.options.constraint.bottom as number)) {
+                    pos.y = this.options.constraint.bottom as number;
+                } else if (pos.y < (this.options.constraint.top as number)) {
+                    pos.y = this.options.constraint.top as number;
                 }
             }
             animate.top = Math.floor(pos.y) + "px";
         }
         if (this.options.enable.x) {
             if (this.options.constraint.left || this.options.constraint.right) {
-                if (pos.x >= this.options.constraint.left) {
-                    pos.x = this.options.constraint.left;
-                } else if (pos.x < this.options.constraint.right) {
-                    pos.x = this.options.constraint.right;
+                if (pos.x >= (this.options.constraint.left as number)) {
+                    pos.x = this.options.constraint.left as number;
+                } else if (pos.x < (this.options.constraint.right as number)) {
+                    pos.x = this.options.constraint.right as number;
                 }
             }
             animate.left = Math.floor(pos.x) + "px";

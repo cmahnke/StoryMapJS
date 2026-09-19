@@ -45,7 +45,13 @@ const Easings = {
 };
 
 // Bezier key spline helper, usable via `new Ease.KeySpline(...)`
-function KeySpline(this: any, a) {
+interface KeySplineInstance {
+    get: (x: number) => number;
+}
+
+type KeySplineConstructor = new (a: number[]) => KeySplineInstance;
+
+function KeySpline(this: KeySplineInstance, a: number[]) {
     this.get = function (aX) {
         if (a[0] === a[1] && a[2] === a[3]) return aX; // linear
         return CalcBezier(GetTForX(aX), a[1], a[3]);
@@ -89,9 +95,9 @@ function KeySpline(this: any, a) {
 }
 
 export default class Ease {
-    declare get: any;
+    declare get: (x: number) => number;
 
-    static KeySpline: any = KeySpline;
+    static KeySpline: KeySplineConstructor = KeySpline as unknown as KeySplineConstructor;
 
     // Static access to the most used easings (legacy API: Ease.easeOutStrong(t))
     static easeInOutQuint(t: number) {
@@ -212,7 +218,7 @@ export default class Ease {
         return -Math.cos(pos * Math.PI) / 2 + 0.5;
     }
 
-    flicker(pos: any) {
+    flicker(pos: number) {
         pos = pos + (Math.random() - 0.5) / 5;
         return this.sinusoidal(pos < 0 ? 0 : pos > 1 ? 1 : pos);
     }

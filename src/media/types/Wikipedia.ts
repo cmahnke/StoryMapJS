@@ -7,11 +7,7 @@ import { getObjectAttributeByIndex } from "../../core/Util";
 ================================================== */
 
 export default class Wikipedia extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
+    declare "media_id": string;
 
     /*	Load the media
 	================================================== */
@@ -47,13 +43,13 @@ export default class Wikipedia extends Media {
     createMedia(d) {
         if (d.query) {
             let content;
-            const wiki: any = {
-                entry: {},
+            const wiki = {
+                entry: {} as Record<string, string>,
                 title: "",
                 text: "",
                 extract: "",
                 paragraphs: 1,
-                text_array: [],
+                text_array: [] as string[],
             };
 
             wiki.entry = getObjectAttributeByIndex(d.query.pages, 0);

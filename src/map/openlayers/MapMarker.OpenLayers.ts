@@ -1,30 +1,22 @@
 import Overlay from "ol/Overlay";
 import { fromLonLat } from "ol/proj";
+import type { Map as OlMap } from "ol";
 import MapMarker from "../MapMarker";
+import type { LatLngLiteral, MapMarkerData, StorymapOptions } from "../../types";
 
 /*	MapMarker.OpenLayers
 	Produces a marker for OpenLayers maps.
 
 	Default and image markers are rendered as HTML overlays so the
 	existing .vco-mapmarker styles apply unchanged.
-================================================== */
+================================================= */
 
 export default class OpenLayersMapMarker extends MapMarker {
-    declare data: any;
-    declare "_custom_icon": any;
-    declare "_icon": any;
-    declare "_custom_image_icon": any;
-    declare "_marker": any;
-    declare "_overlay": any;
-    declare "media_icon_class": any;
-    declare "timer": any;
-    declare "on": any;
-    declare "fire": any;
-    declare "_el": any;
+    declare "_overlay": Overlay;
 
     /*	Create Marker
     ================================================== */
-    _createMarker(d, o) {
+    _createMarker(d?: MapMarkerData, o?: StorymapOptions): void {
         if (d.location && typeof d.location.lat == "number" && typeof d.location.lon == "number") {
             this.data.real_marker = true;
             const use_custom_marker = o.use_custom_markers || d.location.use_custom_marker;
@@ -46,7 +38,7 @@ export default class OpenLayersMapMarker extends MapMarker {
         }
     }
 
-    _createMarkerElement(d, o) {
+    _createMarkerElement(d: MapMarkerData, o?: StorymapOptions): HTMLDivElement {
         const el = document.createElement("div");
         el.className = "vco-mapmarker " + this.media_icon_class;
         el.title = d.text && d.text.headline ? d.text.headline : "";
@@ -71,7 +63,7 @@ export default class OpenLayersMapMarker extends MapMarker {
         return el;
     }
 
-    _addTo(m) {
+    _addTo(m: OlMap): void {
         if (this.data.real_marker) {
             const d = this.data;
             // Image-space maps (IIIF) use EPSG:4326 with raw image pixel coordinates
@@ -89,17 +81,17 @@ export default class OpenLayersMapMarker extends MapMarker {
         }
     }
 
-    _removeFrom(m) {
+    _removeFrom(m: OlMap): void {
         if (this.data.real_marker && this._overlay) {
             m.removeOverlay(this._overlay);
         }
     }
 
-    _createPopup(d, o) {
+    _createPopup(d?: MapMarkerData, o?: StorymapOptions): void {
         // popups intentionally not implemented (matching Leaflet version)
     }
 
-    _active(a) {
+    _active(a: boolean): void {
         if (this.data.media && this.data.media.mediatype) {
             this.media_icon_class = "vco-mapmarker-icon vco-icon-" + this.data.media.mediatype.type;
         } else {
@@ -127,7 +119,7 @@ export default class OpenLayersMapMarker extends MapMarker {
         }
     }
 
-    _customIconAnchor(size) {
+    _customIconAnchor(size?: number[]): number[] {
         if (size) {
             return [size[0] * 0.5, size[1]];
         } else {
@@ -135,11 +127,11 @@ export default class OpenLayersMapMarker extends MapMarker {
         }
     }
 
-    _location() {
+    _location(): LatLngLiteral {
         if (this.data.real_marker) {
             return { lat: this.data.location.lat, lon: this.data.location.lon };
         } else {
-            return {};
+            return {} as LatLngLiteral;
         }
     }
 }

@@ -7,11 +7,7 @@ import { ratio } from "../../core/Util";
 ================================================== */
 
 export default class DailyMotion extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "data": any;
-    declare "media_id": any;
+    declare "media_id": string;
 
     /*	Load the media
 	================================================== */
@@ -54,8 +50,8 @@ export default class DailyMotion extends Media {
     }
 
     _stopMedia() {
-        this._el.content_item
-            .querySelector("iframe")
-            .contentWindow.postMessage('{"command":"pause","parameters":[]}', "*");
+        (
+            this._el.content_item.querySelector("iframe") as HTMLIFrameElement
+        ).contentWindow.postMessage('{"command":"pause","parameters":[]}', "*");
     }
 }

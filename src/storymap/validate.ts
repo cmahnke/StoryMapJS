@@ -12,9 +12,27 @@ export interface StorymapError {
     message: string;
 }
 
-const SCHEMA: any = schema;
+/** Minimal structural type for a JSON Schema node. */
+interface SchemaNode {
+    $ref?: string;
+    type?: string | string[];
+    enum?: unknown[];
+    minimum?: number;
+    maximum?: number;
+    minLength?: number;
+    maxLength?: number;
+    pattern?: string;
+    minItems?: number;
+    maxItems?: number;
+    items?: SchemaNode;
+    required?: string[];
+    properties?: Record<string, SchemaNode>;
+    [key: string]: unknown;
+}
 
-function typeMatches(value: any, type: string | string[]): boolean {
+const SCHEMA: SchemaNode = schema;
+
+function typeMatches(value: unknown, type: string | string[]): boolean {
     const types = Array.isArray(type) ? type : [type];
     return types.some((t) => {
         switch (t) {
@@ -40,14 +58,19 @@ function typeMatches(value: any, type: string | string[]): boolean {
     });
 }
 
-function validateAgainstSchema(value: any, schemaNode: any, path: string, errors: StorymapError[]) {
+function validateAgainstSchema(
+    value: unknown,
+    schemaNode: SchemaNode,
+    path: string,
+    errors: StorymapError[],
+) {
     if (!schemaNode || typeof schemaNode !== "object") return;
 
     // $ref / $defs
     if (schemaNode.$ref) {
         const refPath = schemaNode.$ref.replace(/^#\//, "").replace(/~1/g, "/").replace(/~0/g, "~");
-        let node = SCHEMA;
-        for (const part of refPath.split("/")) node = node[part];
+        let node: SchemaNode = SCHEMA;
+        for (const part of refPath.split("/")) node = node[part] as SchemaNode;
         validateAgainstSchema(value, node, path, errors);
         return;
     }
@@ -67,10 +90,10 @@ function validateAgainstSchema(value: any, schemaNode: any, path: string, errors
     }
 
     // enum
-    if (schemaNode.enum && !schemaNode.enum.some((v: any) => v === value)) {
+    if (schemaNode.enum && !schemaNode.enum.some((v) => v === value)) {
         errors.push({
             path,
-            message: `must be one of ${schemaNode.enum.map((v: any) => JSON.stringify(v)).join(", ")}`,
+            message: `must be one of ${schemaNode.enum.map((v) => JSON.stringify(v)).join(", ")}`,
         });
     }
 
@@ -129,7 +152,7 @@ function validateAgainstSchema(value: any, schemaNode: any, path: string, errors
 }
 
 /** Validate storymap JSON (the object containing a "storymap" property). */
-export function validateStorymap(data: any): StorymapError[] {
+export function validateStorymap(data: unknown): StorymapError[] {
     const errors: StorymapError[] = [];
     if (data === null || typeof data !== "object" || Array.isArray(data)) {
         return [{ path: "", message: "storymap data must be a JSON object" }];
@@ -142,7 +165,7 @@ export function validateStorymap(data: any): StorymapError[] {
 }
 
 /** Validate and report all errors to the JavaScript console. Returns true when valid. */
-export function validateStorymapAndReport(data: any, source?: string): boolean {
+export function validateStorymapAndReport(data: unknown, source?: string): boolean {
     const errors = validateStorymap(data);
     if (errors.length === 0) {
         return true;

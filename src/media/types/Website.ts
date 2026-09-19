@@ -6,11 +6,7 @@ import { Language } from "../../language/Language";
 ================================================== */
 
 export default class Website extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
+    declare "media_id": string;
 
     _loadMedia() {
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);

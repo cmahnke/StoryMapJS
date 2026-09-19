@@ -7,11 +7,7 @@ import { sanitizeBlockquote } from "../EmbedUtil";
 ================================================== */
 
 export default class Blockquote extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
+    declare "media_id": string;
 
     /*	Load the media
 	================================================== */

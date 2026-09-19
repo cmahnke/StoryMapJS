@@ -6,13 +6,14 @@ import { loadJS } from "../../core/Load";
 /*	Media.SoundCloud
 ================================================== */
 
+/*	Minimal surface of the SoundCloud widget API used here. */
+interface SoundCloudWidget {
+    pause: () => void;
+}
+
 export default class SoundCloud extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
-    declare "soundCloudCreated": any;
+    declare "media_id": string;
+    declare "soundCloudCreated": boolean;
 
     /*	Load the media
 	================================================== */
@@ -49,7 +50,10 @@ export default class SoundCloud extends Media {
 
         this.soundCloudCreated = true;
 
-        (self as any).widget = SC.Widget(this._el.content_item.querySelector("iframe")); //create widget for api use
+        const sc = SC as { Widget: (iframe: Element | null) => SoundCloudWidget };
+        (self as unknown as { widget: SoundCloudWidget }).widget = sc.Widget(
+            this._el.content_item.querySelector("iframe"),
+        ); //create widget for api use
 
         // After Loaded
         this.onLoaded();
@@ -57,7 +61,7 @@ export default class SoundCloud extends Media {
 
     _stopMedia() {
         if (this.soundCloudCreated) {
-            (self as any).widget.pause();
+            (self as unknown as { widget: SoundCloudWidget }).widget.pause();
         }
     }
 }

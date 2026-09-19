@@ -9,29 +9,48 @@ import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
 import StorySlider from "../slider/StorySlider";
 import { Browser } from "../core/Browser";
-import Animate from "../animation/Animate";
+import Animate from "morpheus";
 import { DomEvent } from "../dom/DomEvent";
+import type { Map as OlMap } from "ol";
+import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
+
+/** Members injected at runtime via classMixin(StoryMap, Events). */
+interface Evented {
+    fire: (type: string, data?: unknown, target?: unknown) => unknown;
+    on: (type: string, fn: unknown, context?: unknown) => unknown;
+    hasEventListeners: (type: string) => boolean;
+}
+
+type StoryMapListener = (e: unknown) => void;
+
+type EventedStorySlider = StorySlider & Evented;
+type EventedMenuBar = MenuBar & Evented;
 
 class StoryMap {
-    declare _loaded: any;
-    declare mouseEventToLatLng: any;
-    declare mouseEventToLayerPoint: any;
-    declare "on": any;
-    declare "version": any;
-    declare "ready": any;
-    declare "_el": any;
-    declare "_storyslider": any;
-    declare "_map": any;
-    declare "map": any;
-    declare "_menubar": any;
-    declare "data": any;
-    declare "options": any;
-    declare static SCRIPT_PATH: any;
-    declare "current_slide": any;
-    declare "animator_map": any;
-    declare "animator_storyslider": any;
-    declare "fire": any;
-    declare "hasEventListeners": any;
+    declare "_loaded": { storyslider: boolean; map: boolean };
+    declare mouseEventToLatLng: (e: unknown) => unknown;
+    declare mouseEventToLayerPoint: (e: unknown) => unknown;
+    declare "on": Evented["on"];
+    declare "version": string;
+    declare "ready": boolean;
+    declare "_el": {
+        container: HTMLElement;
+        menubar: HTMLElement;
+        map: HTMLElement;
+        storyslider: HTMLElement;
+    };
+    declare "_storyslider": EventedStorySlider;
+    declare "_map": OpenLayersMap;
+    declare "map": OlMap;
+    declare "_menubar": EventedMenuBar;
+    declare "data": StorymapData;
+    declare "options": StorymapOptions;
+    declare static SCRIPT_PATH: string;
+    declare "current_slide": number;
+    declare "animator_map": AnimationHandle | null;
+    declare "animator_storyslider": AnimationHandle | null;
+    declare "fire": Evented["fire"];
+    declare "hasEventListeners": Evented["hasEventListeners"];
 
     // TODO: mixin
     // includes: VCO.Events,
@@ -39,7 +58,12 @@ class StoryMap {
     /*	Private Methods
 	================================================== */
     //initialize: function (elem, data, options,listeners) {
-    constructor(elem, data, options, listeners) {
+    constructor(
+        elem: string | HTMLElement,
+        data: string | StorymapDataWrapper,
+        options?: Partial<StorymapOptions>,
+        listeners?: Record<string, StoryMapListener | StoryMapListener[]>,
+    ) {
         for (const key in listeners) {
             const callbacks = listeners[key];
             if (typeof callbacks == "function") {
@@ -70,10 +94,10 @@ class StoryMap {
 
         // DOM ELEMENTS
         this._el = {
-            container: {},
-            storyslider: {},
-            map: {},
-            menubar: {},
+            container: {} as HTMLElement,
+            storyslider: {} as HTMLElement,
+            map: {} as HTMLElement,
+            menubar: {} as HTMLElement,
         };
 
         // Determine Container Element
@@ -84,21 +108,21 @@ class StoryMap {
         }
 
         // Slider
-        this._storyslider = {};
+        this._storyslider = {} as EventedStorySlider;
 
         // Map
-        this._map = {};
-        this.map = {}; // For direct access to Leaflet Map
+        this._map = {} as OpenLayersMap;
+        this.map = {} as OlMap; // For direct access to Leaflet Map
 
         // Menu Bar
-        this._menubar = {};
+        this._menubar = {} as EventedMenuBar;
 
         // Loaded State
         this._loaded = { storyslider: false, map: false };
 
         // Data Object
         // Test Data compiled from http://www.pbs.org/marktwain/learnmore/chronology.html
-        this.data = {};
+        this.data = {} as StorymapData;
 
         this.options = {
             script_path: StoryMap.SCRIPT_PATH,
@@ -154,7 +178,7 @@ class StoryMap {
             show_history_line: true,
             api_key_flickr: "8f2d5becf7b6ba46570741620054b507",
             language: "en",
-        };
+        } as StorymapOptions;
 
         // Current Slide
         this.current_slide = this.options.start_at_slide;
@@ -173,7 +197,7 @@ class StoryMap {
 
     /* Initialize the data
 	================================================== */
-    _initData(data) {
+    _initData(data: string | StorymapDataWrapper) {
         if (typeof data === "string") {
             fetch(data)
                 .then((response) => response.json())
@@ -254,7 +278,7 @@ class StoryMap {
 
     /*	Navigation
 	================================================== */
-    goTo(n) {
+    goTo(n: number) {
         if (n !== this.current_slide) {
             this.current_slide = n;
             this._storyslider.goTo(this.current_slide);
@@ -296,10 +320,18 @@ class StoryMap {
         this._el.map.style.backgroundColor = this.options.map_background_color;
 
         // Create Menu Bar
-        this._menubar = new MenuBar(this._el.menubar, this._el.container, this.options);
+        this._menubar = new MenuBar(
+            this._el.menubar,
+            this._el.container,
+            this.options,
+        ) as EventedMenuBar;
 
         // Create StorySlider
-        this._storyslider = new StorySlider(this._el.storyslider, this.data, this.options);
+        this._storyslider = new StorySlider(
+            this._el.storyslider,
+            this.data,
+            this.options,
+        ) as EventedStorySlider;
         this._storyslider.on("loaded", this._onStorySliderLoaded, this);
         this._storyslider.on("title", this._onTitle, this);
         this._storyslider.init();
@@ -453,7 +485,7 @@ class StoryMap {
             this._map.setMapOffset(-(this.options.width / 4), 0);
 
             // StorySlider
-            this._el.storyslider.style.top = 0;
+            this._el.storyslider.style.top = "0";
             this._el.storyslider.style.height = this.options.storyslider_height + "px";
 
             this._menubar.updateDisplay(this.options.width, this.options.height, animate);
@@ -466,7 +498,7 @@ class StoryMap {
             );
         }
 
-        if (this.options.language.direction === "rtl") {
+        if ((this.options.language as unknown as { direction?: string }).direction === "rtl") {
             display_class += " vco-rtl";
         }
 

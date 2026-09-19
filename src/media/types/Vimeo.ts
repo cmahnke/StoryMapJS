@@ -7,12 +7,8 @@ import { ratio } from "../../core/Util";
 ================================================== */
 
 export default class Vimeo extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
-    declare "player": any;
+    declare "media_id": string;
+    declare "player": HTMLIFrameElement;
 
     /*	Load the media
 	================================================== */
@@ -36,7 +32,7 @@ export default class Vimeo extends Media {
             this.media_id +
             "?api=1&title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff";
 
-        this.player = Dom.create("iframe", "", this._el.content_item);
+        this.player = Dom.create("iframe", "", this._el.content_item) as HTMLIFrameElement;
         this.player.width = "100%";
         this.player.height = "100%";
         this.player.frameBorder = "0";

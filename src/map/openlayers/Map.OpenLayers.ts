@@ -7,6 +7,7 @@ import LineString from "ol/geom/LineString";
 import Feature from "ol/Feature";
 import { Style, Stroke } from "ol/style";
 import { fromLonLat, toLonLat } from "ol/proj";
+import type Projection from "ol/proj/Projection";
 import { boundingExtent } from "ol/extent";
 import OverviewMap from "ol/control/OverviewMap";
 import { defaults as interactionDefaults } from "ol/interaction";
@@ -17,33 +18,27 @@ import { classMixin } from "../../core/Util";
 import Map from "../Map";
 import Events from "../../core/Events";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
+import type { LinePoint, ViewToOptions } from "../types";
+import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../types";
 
 /*	Map.OpenLayers
 	Creates a Map using OpenLayers
-================================================== */
+================================================= */
 
 const MAX_ZOOM = 19;
 
 export default class OpenLayers extends Map {
-    declare "_map": any;
-    declare "_el": any;
-    declare "options": any;
-    declare "_tile_layer": any;
-    declare "_image_layer": any;
-    declare "_line": any;
-    declare "_line_active": any;
-    declare "zoom_min_max": any;
-    declare "bounds_array": any;
-    declare "_markers": any;
-    declare "_tile_layer_mini": any;
-    declare "_mini_map": any;
-    declare "fire": any;
-    declare "timer": any;
-    declare "current_marker": any;
+    declare "_map": OlMap;
+    declare "_tile_layer": TileLayer;
+    declare "_line": VectorLayer;
+    declare "_line_active": VectorLayer;
+    declare "_tile_layer_mini": TileLayer;
+    declare "_mini_map": OverviewMap;
+    declare "_markers": OpenLayersMapMarker[];
 
     /*	Create the Map
 	================================================== */
-    _createMap() {
+    _createMap(): void {
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
 
         this._map = new OlMap({
@@ -67,7 +62,7 @@ export default class OpenLayers extends Map {
         this._tile_layer = this._createTileLayer(this.options.map_type);
         // The IIIF layer sets its source asynchronously (after the info.json fetch)
         if (this._tile_layer.getSource()) {
-            this._tile_layer.getSource().on("tilesloadend", () => {
+            this._tile_layer.getSource().on("tileloadend", () => {
                 this._onTilesLoaded(undefined);
             });
         }
@@ -120,7 +115,7 @@ export default class OpenLayers extends Map {
         }
     }
 
-    _getAttribution(map_type) {
+    _getAttribution(map_type: string): string {
         const parts = [
             "<a href='https://storymap.knightlab.com/' target='_blank' class='vco-knightlab-brand'><span>&#x25a0;</span> StoryMapJS</a>",
         ];
@@ -134,7 +129,7 @@ export default class OpenLayers extends Map {
 
     /*	Create Tile Layer
 	================================================== */
-    _createTileLayer(map_type) {
+    _createTileLayer(map_type: string): TileLayer {
         const _map_type_arr = map_type.split(":");
 
         switch (_map_type_arr[0]) {
@@ -194,16 +189,16 @@ export default class OpenLayers extends Map {
                 });
 
             case "iiif": {
-                const iiif_layer = new TileLayer();
+                const iiif_layer: TileLayer = new TileLayer();
                 fetch(this.options.iiif.url)
                     .then((r) => r.json())
-                    .then((info) => {
+                    .then((info: { width: number; height: number }) => {
                         const source = new IIIF({
                             url: this.options.iiif.url,
                             projection: "EPSG:4326",
                             size: [info.width, info.height],
                             attributions: this.options.iiif.attribution || [],
-                        } as any);
+                        });
                         iiif_layer.setSource(source);
                         source.once("change", () => {
                             if (source.getState() === "ready") {
@@ -245,7 +240,7 @@ export default class OpenLayers extends Map {
 
     /*	Create Mini Map
 	================================================== */
-    _createMiniMap() {
+    _createMiniMap(): void {
         if (this.options.map_as_image) {
             this.zoom_min_max.min = 0;
         }
@@ -275,17 +270,17 @@ export default class OpenLayers extends Map {
 
     /*	Create Background Map
 	================================================== */
-    _createBackgroundMap(tiles) {
+    _createBackgroundMap(tiles: unknown): void {
         // Not needed with OpenLayers: the tile layer renders directly
     }
 
-    _onTilesLoaded(e) {
+    _onTilesLoaded(e?: unknown): void {
         // Tiles have rendered; nothing further to do in OpenLayers
     }
 
     /*	Create Markers
 	================================================== */
-    _createMarker(d) {
+    _createMarker(d: StorymapSlide): void {
         const marker = new OpenLayersMapMarker(d, this.options);
         marker.on("markerclick", this._onMarkerClick, this);
         this._addMarker(marker);
@@ -294,11 +289,11 @@ export default class OpenLayers extends Map {
         this.fire("markerAdded", marker);
     }
 
-    _addMarker(marker) {
+    _addMarker(marker: OpenLayersMapMarker): void {
         marker.addTo(this._map);
     }
 
-    _removeMarker(marker) {
+    _removeMarker(marker: OpenLayersMapMarker): void {
         if (marker && marker.data.real_marker) {
             marker._removeFrom(this._map);
         }
@@ -306,7 +301,7 @@ export default class OpenLayers extends Map {
 
     /*	Marker helpers
 	================================================== */
-    _getAllMarkersBounds(markers_array) {
+    _getAllMarkersBounds(markers_array: OpenLayersMapMarker[]): number[][] {
         const coords = [];
         for (let i = 0; i < markers_array.length; i++) {
             if (markers_array[i].data.real_marker) {
@@ -319,13 +314,13 @@ export default class OpenLayers extends Map {
         return coords;
     }
 
-    _markerCoordsToViewCoords(coords) {
+    _markerCoordsToViewCoords(coords: number[][]): number[][] {
         const is_image_space = this._map.getView().getProjection().getCode() === "EPSG:4326";
         if (is_image_space) return coords.map((c) => [c[0], c[1]]);
         return coords.map((c) => fromLonLat(c));
     }
 
-    _fitView(ol_map, coords) {
+    _fitView(ol_map: OlMap, coords: number[][]): void {
         if (!coords || !coords.length) return;
         const view_coords = this._markerCoordsToViewCoords(coords);
         const extent = boundingExtent(view_coords);
@@ -336,7 +331,7 @@ export default class OpenLayers extends Map {
         });
     }
 
-    _calculateMarkerZooms() {
+    _calculateMarkerZooms(): void {
         for (let i = 0; i < this._markers.length; i++) {
             if (this._markers[i].data.location) {
                 const marker = this._markers[i];
@@ -383,7 +378,7 @@ export default class OpenLayers extends Map {
     /*	Line
 	================================================== */
 
-    _createLine(d?): any {
+    _createLine(d?: StorymapSlide): VectorLayer {
         return new VectorLayer({
             source: new VectorSource({ features: [] }),
             style: new Style({
@@ -395,11 +390,11 @@ export default class OpenLayers extends Map {
         });
     }
 
-    _addLineToMap(line) {
+    _addLineToMap(line: VectorLayer): void {
         this._map.addLayer(line);
     }
 
-    _addToLine(line, d) {
+    _addToLine(line: VectorLayer, d: LinePoint): void {
         // Append a point to the line's geometry
         const source = line.getSource();
         let feature = source.getFeatures()[0];
@@ -412,7 +407,7 @@ export default class OpenLayers extends Map {
         feature.getGeometry().setCoordinates(coords);
     }
 
-    _replaceLines(line, array) {
+    _replaceLines(line: VectorLayer, array: LinePoint[]): void {
         const pts = array.map((d) => {
             const lat = d.location ? d.location.lat : d.lat;
             const lon = d.location ? d.location.lon : d.lon;
@@ -427,22 +422,22 @@ export default class OpenLayers extends Map {
 
     /*	Map
 	================================================== */
-    _panTo(loc, animate) {
+    _panTo(loc: LatLngLiteral, animate?: boolean): void {
         this._map.getView().animate({
             center: this._toViewCoords(loc),
             duration: this.options.duration,
         });
     }
 
-    _zoomTo(z, animate) {
+    _zoomTo(z: number, animate?: boolean): void {
         this._map.getView().animate({ zoom: z, duration: this.options.duration });
     }
 
-    _viewTo(loc, opts?) {
+    _viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {
         let _animate = true,
             _duration = this.options.duration,
             _zoom = this._getMapZoom(),
-            _location = { lat: loc.lat, lon: loc.lon };
+            _location: LatLngLiteral = { lat: loc.lat, lon: loc.lon };
 
         // Show Active Line
         if (!this.options.map_as_image) {
@@ -488,21 +483,21 @@ export default class OpenLayers extends Map {
         }
     }
 
-    _toViewCoords(loc) {
+    _toViewCoords(loc: LatLngLiteral): number[] {
         const is_image_space = this._map.getView().getProjection().getCode() === "EPSG:4326";
         if (is_image_space) return [loc.lon, loc.lat];
         return fromLonLat([loc.lon, loc.lat]);
     }
 
-    _getMapLocation(m) {
+    _getMapLocation(m: LatLngLiteral): unknown {
         return this._map.getPixelFromCoordinate(this._toViewCoords(m));
     }
 
-    _getMapZoom() {
+    _getMapZoom(): number {
         return Math.round(this._map.getView().getZoom() || 0);
     }
 
-    _getMapCenter(offset) {
+    _getMapCenter(offset?: boolean): LatLngLiteral {
         const center = toLonLat(
             this._map.getView().getCenter(),
             this._map.getView().getProjection(),
@@ -510,7 +505,7 @@ export default class OpenLayers extends Map {
         return { lat: center[1], lon: center[0] };
     }
 
-    _getMapCenterOffset(location, zoom) {
+    _getMapCenterOffset(location: LatLngLiteral, zoom: number): LatLngLiteral {
         // Offset the center by map_center_offset pixels at the given zoom
         const view = this._map.getView();
         const projection = view.getProjection();
@@ -525,13 +520,17 @@ export default class OpenLayers extends Map {
         );
     }
 
-    _fromViewCoords(coord, projection) {
+    _fromViewCoords(coord: number[], projection: Projection): LatLngLiteral {
         if (projection.getCode() === "EPSG:4326") return { lat: coord[1], lon: coord[0] };
         const c = toLonLat(coord, projection);
         return { lat: c[1], lon: c[0] };
     }
 
-    _getBoundsZoom(origin, destination, correct_for_center) {
+    _getBoundsZoom(
+        origin: LatLngLiteral,
+        destination: LatLngLiteral,
+        correct_for_center?: boolean,
+    ): number {
         const coords = [
             [origin.lon !== undefined ? origin.lon : origin.lng, origin.lat],
             [destination.lon, destination.lat],
@@ -550,11 +549,11 @@ export default class OpenLayers extends Map {
         return Math.max(0, Math.round(z));
     }
 
-    _initialMapLocation() {
+    _initialMapLocation(): void {
         // OpenLayers renders independently; nothing to subscribe for initial location
     }
 
-    _markerOverview() {
+    _markerOverview(): void {
         // Hide Active Line
         this._line_active.setVisible(false);
 
@@ -630,7 +629,7 @@ export default class OpenLayers extends Map {
 
     /*	Display
 	================================================== */
-    _updateMapDisplay(animate, d) {
+    _updateMapDisplay(animate?: boolean, d?: number): void {
         if (animate) {
             const duration = d ? d : this.options.duration;
             if (this.timer) {
@@ -651,7 +650,7 @@ export default class OpenLayers extends Map {
         }
     }
 
-    _refreshMap() {
+    _refreshMap(): void {
         if (this._map) {
             if (this.timer) {
                 clearTimeout(this.timer);

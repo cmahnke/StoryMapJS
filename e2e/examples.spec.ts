@@ -24,11 +24,11 @@ for (const name of exampleNames) {
         await page.goto(`/harness.html?example=${encodeURIComponent(name)}`);
 
         await expect
-            .poll(() => page.evaluate(() => (window as any).__smReady), { timeout: 30_000 })
+            .poll(() => page.evaluate(() => (window as unknown as { __smReady?: boolean }).__smReady), { timeout: 30_000 })
             .toBe(true);
 
         const state = await page.evaluate(() => ({
-            errors: (window as any).__smErrors,
+            errors: (window as unknown as { __smErrors?: string[] }).__smErrors,
             hasContainer: !!document.querySelector("#storymap-embed.vco-storymap"),
             slideCount: document.querySelectorAll("#storymap-embed .vco-slide").length,
         }));
@@ -48,7 +48,7 @@ for (const name of exampleNames) {
                 await next.click();
                 await page.waitForTimeout(1500);
                 expect(
-                    await page.evaluate(() => (window as any).__smErrors),
+                    await page.evaluate(() => (window as unknown as { __smErrors?: string[] }).__smErrors),
                     `window errors after navigation in ${name}`,
                 ).toEqual([]);
             }

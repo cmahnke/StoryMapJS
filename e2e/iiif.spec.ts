@@ -10,7 +10,7 @@ test("IIIF example renders on the OpenLayers canvas", async ({ page }) => {
         .poll(
             () =>
                 page.evaluate(() => {
-                    const map = (window as any).__sm?.map;
+                    const map = (window as unknown as { __sm?: unknown }).__sm?.map;
                     if (!map) return false;
                     const source = map.getLayers()?.getArray()?.[0]?.getSource?.();
                     if (!source || source.getState() !== "ready") return false;
@@ -21,6 +21,6 @@ test("IIIF example renders on the OpenLayers canvas", async ({ page }) => {
         )
         .toBe(true);
 
-    const errors = await page.evaluate(() => (window as any).__smErrors);
+    const errors = await page.evaluate(() => (window as unknown as { __smErrors?: string[] }).__smErrors);
     expect(errors).toEqual([]);
 });

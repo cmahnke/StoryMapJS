@@ -7,11 +7,7 @@ import { Language } from "../../language/Language";
 ================================================== */
 
 export default class Flickr extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
+    declare "media_id": string;
 
     /*	Load the media
 	================================================== */
@@ -73,7 +69,7 @@ export default class Flickr extends Media {
         }
 
         // Set Image Source
-        this._el.content_item.src = size;
+        (this._el.content_item as HTMLImageElement).src = size;
 
         // After Loaded
         this.onLoaded();

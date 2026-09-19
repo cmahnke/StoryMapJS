@@ -12,12 +12,27 @@ import { Language } from "../language/Language";
 	Draggable component to control size
 ================================================== */
 
+interface MenuBarOptions {
+    width: number;
+    height: number;
+    duration: number;
+    ease: unknown;
+    menubar_default_y: number;
+    [key: string]: unknown;
+}
+
+interface Evented {
+    fire: (type: string, data?: unknown, target?: unknown) => unknown;
+    on: (type: string, fn: unknown, context?: unknown) => unknown;
+    hasEventListeners: (type: string) => boolean;
+}
+
 export default class MenuBar {
-    declare "_el": any;
-    declare "collapsed": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "fire": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "collapsed": boolean;
+    declare "options": MenuBarOptions;
+    declare "animator": Record<string, unknown>;
+    declare "fire": Evented["fire"];
 
     //includes: [Events, DomMixins],
 
@@ -35,7 +50,7 @@ export default class MenuBar {
             line: {},
             coverbar: {},
             grip: {},
-        };
+        } as unknown as Record<string, HTMLElement>;
 
         this.collapsed = false;
 

@@ -3,26 +3,58 @@ import Dom from "../dom/Dom";
 import Events from "../core/Events";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
+import { MediaState, StorymapSlideMedia } from "../types";
 /*	VCO.Media
 	Main media template for media assets.
 	Takes a data object and populates a dom object
 ================================================== */
 // TODO add link
 
+/*	Options for Media and its subclasses: the fields Media itself sets
+	or reads. Everything else merged in via mergeData is absorbed by the
+	index signature. */
+export interface MediaOptions {
+    width?: number;
+    height?: number;
+    layout?: string;
+    media_name?: string;
+    media_type?: string;
+    credit_height?: number;
+    caption_height?: number;
+    api_key_flickr?: string;
+    [key: string]: unknown;
+}
+
+/*	Data for media assets: the shared exchange format plus the link
+	fields the base layout renders. */
+export interface MediaData extends StorymapSlideMedia {
+    uniqueid?: string;
+    link?: string;
+    link_target?: string;
+    [key: string]: unknown;
+}
+
+/*	Message gains Events/DomMixins members at runtime via classMixin. */
+export type MediaMessage = Message & {
+    addTo: (container: HTMLElement) => void;
+    hide: (animate?: unknown) => void;
+    on: (type: string, fn: unknown, context?: unknown) => unknown;
+};
+
 export class Media {
-    declare "_el": any;
-    declare "player": any;
-    declare "timer": any;
-    declare "load_timer": any;
-    declare "message": any;
-    declare "media_id": any;
-    declare "_state": any;
-    declare "data": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "_media": any;
-    declare "_": any;
-    declare "fire": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "player": unknown;
+    declare "timer": ReturnType<typeof setTimeout>;
+    declare "load_timer": ReturnType<typeof setTimeout>;
+    declare "message": MediaMessage;
+    declare "media_id": unknown;
+    declare "_state": MediaState;
+    declare "data": MediaData;
+    declare "options": MediaOptions;
+    declare "animator": unknown;
+    declare "_media": unknown;
+    declare "_": (key: string) => string;
+    declare "fire": (type: string, data?: unknown) => unknown;
 
     //includes: [VCO.Events],
 
@@ -30,17 +62,17 @@ export class Media {
 
     /*	Constructor
 	================================================== */
-    constructor(data, options?, add_to_container?) {
+    constructor(data: MediaData, options?: MediaOptions, add_to_container?: HTMLElement) {
         // DOM ELEMENTS
         this._el = {
-            container: {},
-            content_container: {},
-            content: {},
-            content_item: {},
-            content_link: {},
+            container: {} as HTMLElement,
+            content_container: {} as HTMLElement,
+            content: {} as HTMLElement,
+            content_item: {} as HTMLElement,
+            content_link: {} as HTMLElement,
             caption: null,
             credit: null,
-            parent: {},
+            parent: {} as HTMLElement,
             link: null,
         };
 
@@ -122,7 +154,7 @@ export class Media {
         this.message.updateMessage(this._("loading") + " " + this.options.media_name);
     }
 
-    updateMediaDisplay(layout) {
+    updateMediaDisplay(layout?: string) {
         if (this._state.loaded) {
             this._updateMediaDisplay(layout);
 
@@ -165,7 +197,7 @@ export class Media {
 	================================================== */
     _loadMedia() {}
 
-    _updateMediaDisplay(l) {
+    _updateMediaDisplay(l?: string) {
         //this._el.content_item.style.maxHeight = (this.options.height - this.options.credit_height - this.options.caption_height - 16) + "px";
     }
 
@@ -175,18 +207,18 @@ export class Media {
 
     hide() {}
 
-    addTo(container) {
+    addTo(container: HTMLElement) {
         container.appendChild(this._el.container);
         this.onAdd();
     }
 
-    removeFrom(container) {
+    removeFrom(container: HTMLElement) {
         container.removeChild(this._el.container);
         this.onRemove();
     }
 
     // Update Display
-    updateDisplay(w?, h?, l?) {
+    updateDisplay(w?: number, h?: number, l?: string) {
         this._updateDisplay(w, h, l);
     }
 
@@ -194,7 +226,7 @@ export class Media {
         this._stopMedia();
     }
 
-    loadErrorDisplay(message) {
+    loadErrorDisplay(message: string) {
         this._el.content.removeChild(this._el.content_item);
         this._el.content_item = Dom.create(
             "div",
@@ -210,7 +242,7 @@ export class Media {
 
     /*	Events
 	================================================== */
-    onLoaded(error?) {
+    onLoaded(error?: boolean) {
         this._state.loaded = true;
         this.fire("loaded", this.data);
         if (this.message) {
@@ -222,7 +254,7 @@ export class Media {
         this.updateDisplay();
     }
 
-    onMediaLoaded(e?) {
+    onMediaLoaded(e?: unknown) {
         this._state.media_loaded = true;
         this.fire("media_loaded", this.data);
         if (this._el.credit) {
@@ -233,7 +265,7 @@ export class Media {
         }
     }
 
-    showMeta(credit?, caption?) {
+    showMeta(credit?: unknown, caption?: unknown) {
         this._state.show_meta = true;
         // Credit
         if (this.data.credit && this.data.credit !== "" && !this._el.credit) {
@@ -262,7 +294,7 @@ export class Media {
 	================================================== */
     _initLayout() {
         // Message
-        this.message = new Message({}, this.options);
+        this.message = new Message({}, this.options) as MediaMessage;
         this.message.addTo(this._el.container);
 
         // Create Layout
@@ -275,11 +307,12 @@ export class Media {
         // Link
         if (this.data.link && this.data.link !== "") {
             this._el.link = Dom.create("a", "vco-media-link", this._el.content_container);
-            this._el.link.href = this.data.link;
+            const link = this._el.link as HTMLAnchorElement;
+            link.href = this.data.link;
             if (this.data.link_target && this.data.link_target !== "") {
-                this._el.link.target = this.data.link_target;
+                link.target = this.data.link_target;
             } else {
-                this._el.link.target = "_blank";
+                link.target = "_blank";
             }
 
             this._el.content = Dom.create("div", "vco-media-content", this._el.link);
@@ -289,7 +322,7 @@ export class Media {
     }
 
     // Update Display
-    _updateDisplay(w?, h?, l?) {
+    _updateDisplay(w?: number, h?: number, l?: string) {
         if (w) {
             this.options.width = w;
         }

@@ -124,10 +124,10 @@ export interface StorymapOptions {
 export interface AnimateOptions extends Record<string, unknown> {
     duration?: number;
     easing?: unknown;
-    complete?: () => void;
+    complete?: unknown;
     left?: string | number;
     top?: string | number;
-    bezier?: unknown;
+    bezier?: number[][];
 }
 
 export interface AnimationHandle {

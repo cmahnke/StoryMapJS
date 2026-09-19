@@ -5,8 +5,8 @@ import { stamp } from "../core/Util";
 	DomEvent contains functions for working with DOM events.
 ================================================== */
 
-const DomEvent: any = {
-    addListener: function (obj, type, fn, context) {
+const DomEvent = {
+    addListener: function (obj, type, fn, context?) {
         const handler = function (e) {
             return fn.call(context || obj, e);
         };
@@ -15,7 +15,7 @@ const DomEvent: any = {
         obj["_vco_" + type + stamp(fn)] = handler;
     },
 
-    removeListener: function (obj, type, fn, context) {
+    removeListener: function (obj, type, fn, context?) {
         const key = "_vco_" + type + stamp(fn);
         const handler = obj[key];
 

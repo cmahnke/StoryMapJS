@@ -3,6 +3,19 @@ import Dom from "../dom/Dom";
 import Events from "../core/Events";
 import DomMixins from "../dom/DomMixins";
 import { Browser } from "../core/Browser";
+import type { Map as OlMap } from "ol";
+import type { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import type OverviewMap from "ol/control/OverviewMap";
+import type MapMarker from "./MapMarker";
+import type { Evented, LinePoint, ViewToOptions } from "./types";
+import type {
+    AnimationHandle,
+    LatLngLiteral,
+    StorymapData,
+    StorymapOptions,
+    StorymapSlide,
+    StorymapSlideLocation,
+} from "../types";
 /*	Map
 	Makes a Map
 
@@ -11,7 +24,7 @@ import { Browser } from "../core/Browser";
 	markerRemoved
 
 
-================================================== */
+================================================= */
 
 /*
 Map = VCO.Class.extend({
@@ -21,35 +34,47 @@ Map = VCO.Class.extend({
 	_el: {},
 */
 
+/** Wheel/scroll zoom bookkeeping (handles cleared via clearTimeout). */
+interface ScrollState {
+    start_time: number | null;
+    timer?: ReturnType<typeof setTimeout>;
+    timer_done?: ReturnType<typeof setTimeout>;
+}
+
 export default class Map {
-    declare "_el": any;
-    declare "_loaded": any;
-    declare "_map": any;
-    declare "_mini_map": any;
-    declare "_markers": any;
-    declare "zoom_min_max": any;
-    declare "_line": any;
-    declare "_line_active": any;
-    declare "current_marker": any;
-    declare "bounds_array": any;
-    declare "_tile_layer": any;
-    declare "_tile_layer_mini": any;
-    declare "_image_layer": any;
-    declare "data": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "timer": any;
-    declare "touch_scale": any;
-    declare "scroll": any;
-    declare "onAdd": any;
-    declare "onRemove": any;
-    declare "fire": any;
-    constructor(elem, data, options) {
+    declare "_el": { container: HTMLElement; map: HTMLElement; map_mask: HTMLElement };
+    declare "_loaded": { data: boolean; map: boolean };
+    declare "_map": OlMap | null;
+    declare "_mini_map": OverviewMap | null;
+    declare "_markers": MapMarker[];
+    declare "zoom_min_max": { min: number | null; max: number | null };
+    declare "_line": VectorLayer | null;
+    declare "_line_active": VectorLayer | null;
+    declare "current_marker": number;
+    declare "bounds_array": number[][] | null;
+    declare "_tile_layer": TileLayer | null;
+    declare "_tile_layer_mini": TileLayer | null;
+    declare "_image_layer": TileLayer | null;
+    declare "data": StorymapData;
+    declare "options": StorymapOptions;
+    declare "animator": AnimationHandle | null;
+    declare "timer": ReturnType<typeof setTimeout> | null;
+    declare "touch_scale": number;
+    declare "scroll": ScrollState;
+    declare "onAdd": () => unknown;
+    declare "onRemove": () => unknown;
+    declare "fire": Evented["fire"];
+    declare "on": Evented["on"];
+    constructor(
+        elem: string | HTMLElement,
+        data?: Partial<StorymapData>,
+        options?: Partial<StorymapOptions>,
+    ) {
         // DOM ELEMENTS
         this._el = {
-            container: {},
-            map: {},
-            map_mask: {},
+            container: {} as HTMLElement,
+            map: {} as HTMLElement,
+            map_mask: {} as HTMLElement,
         };
 
         if (typeof elem === "object") {
@@ -133,7 +158,7 @@ export default class Map {
             show_lines: true,
             show_history_line: true,
             map_center_offset: null, // takes object {top:0,left:0}
-        };
+        } as StorymapOptions;
 
         // Animation
         this.animator = null;
@@ -159,11 +184,11 @@ export default class Map {
 
     /*	Public
 	================================================== */
-    updateDisplay(w, h, animate, d, offset) {
+    updateDisplay(w: number, h: number, animate?: boolean, d?: number, offset?: unknown): void {
         this._updateDisplay(w, h, animate, d, offset);
     }
 
-    goTo(n, change?) {
+    goTo(n: number, change?: boolean): void {
         if (n < this._markers.length && n >= 0) {
             let zoom;
             const previous_marker = this.current_marker;
@@ -294,41 +319,41 @@ export default class Map {
         }
     }
 
-    panTo(loc, animate) {
+    panTo(loc: LatLngLiteral, animate?: boolean): void {
         this._panTo(loc, animate);
     }
 
-    zoomTo(z, animate?) {
+    zoomTo(z: number, animate?: boolean): void {
         this._zoomTo(z, animate);
     }
 
-    viewTo(loc, opts) {
+    viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {
         this._viewTo(loc, opts);
     }
 
-    getBoundsZoom(m1, m2, inside, padding) {
+    getBoundsZoom(m1: LatLngLiteral, m2: LatLngLiteral, inside?: boolean, padding?: unknown): void {
         this._getBoundsZoom(m1, m2, inside, padding); // (LatLngBounds[, Boolean, Point]) -> Number
     }
 
-    markerOverview() {
+    markerOverview(): void {
         this._markerOverview();
     }
 
-    calculateMarkerZooms() {
+    calculateMarkerZooms(): void {
         this._calculateMarkerZooms();
     }
 
-    createMiniMap() {
+    createMiniMap(): void {
         this._createMiniMap();
     }
 
-    setMapOffset(left, top) {
+    setMapOffset(left: number, top: number): void {
         // Update Component Displays
         this.options.map_center_offset.left = left;
         this.options.map_center_offset.top = top;
     }
 
-    calculateMinMaxZoom() {
+    calculateMinMaxZoom(): void {
         for (let i = 0; i < this._markers.length; i++) {
             if (this._markers[i].data.location && this._markers[i].data.location.zoom) {
                 this.updateMinMaxZoom(this._markers[i].data.location.zoom);
@@ -336,7 +361,7 @@ export default class Map {
         }
     }
 
-    updateMinMaxZoom(zoom) {
+    updateMinMaxZoom(zoom: number): void {
         if (!this.zoom_min_max.max) {
             this.zoom_min_max.max = zoom;
         }
@@ -353,7 +378,7 @@ export default class Map {
         }
     }
 
-    initialMapLocation() {
+    initialMapLocation(): void {
         if (this._loaded.data && this._loaded.map) {
             this.goTo(this.options.start_at_slide, true);
             this._initialMapLocation();
@@ -362,31 +387,31 @@ export default class Map {
 
     /*	Adding, Hiding, Showing etc
 	================================================== */
-    show() {}
+    show(): void {}
 
-    hide() {}
+    hide(): void {}
 
-    addTo(container) {
+    addTo(container: HTMLElement): void {
         container.appendChild(this._el.container);
         this.onAdd();
     }
 
-    removeFrom(container) {
+    removeFrom(container: HTMLElement): void {
         container.removeChild(this._el.container);
         this.onRemove();
     }
 
     /*	Adding and Removing Markers
 	================================================== */
-    createMarkers(array) {
+    createMarkers(array: StorymapSlide[]): void {
         this._createMarkers(array);
     }
 
-    createMarker(d) {
+    createMarker(d: StorymapSlide): void {
         this._createMarker(d);
     }
 
-    _destroyMarker(marker) {
+    _destroyMarker(marker: MapMarker): void {
         this._removeMarker(marker);
         for (let i = 0; i < this._markers.length; i++) {
             if (this._markers[i] === marker) {
@@ -396,7 +421,7 @@ export default class Map {
         this.fire("markerRemoved", marker);
     }
 
-    _createMarkers(array) {
+    _createMarkers(array: StorymapSlide[]): void {
         for (let i = 0; i < array.length; i++) {
             this._createMarker(array[i]); // this must be called even for overview which has no marker or other logic must be fixed.
             if (array[i].location && array[i].location.lat && this.options.show_lines) {
@@ -405,7 +430,7 @@ export default class Map {
         }
     }
 
-    _createLines(array) {}
+    _createLines(array: StorymapSlide[]): void {}
 
     /*	Map Specific
 	================================================== */
@@ -413,19 +438,19 @@ export default class Map {
     /*	Map Specific Create
 		================================================== */
     // Extend this map class and use this to create the map using preferred API
-    _createMap() {}
+    _createMap(): void {}
 
     /*	Mini Map Specific Create
 		================================================== */
     // Extend this map class and use this to create the map using preferred API
-    _createMiniMap() {}
+    _createMiniMap(): void {}
 
     /*	Map Specific Marker
 		================================================== */
 
     // Specific Marker Methods based on preferred Map API
-    _createMarker(d) {
-        const marker: any = {};
+    _createMarker(d?: StorymapSlide): void {
+        const marker = {} as MapMarker;
         marker.on("markerclick", this._onMarkerClick);
         this._addMarker(marker);
         this._markers.push(marker);
@@ -433,77 +458,82 @@ export default class Map {
         this.fire("markerAdded", marker);
     }
 
-    _addMarker(marker) {}
+    _addMarker(marker: MapMarker): void {}
 
-    _removeMarker(marker) {}
+    _removeMarker(marker: MapMarker): void {}
 
-    _resetMarkersActive() {
+    _resetMarkersActive(): void {
         for (let i = 0; i < this._markers.length; i++) {
             this._markers[i].active(false);
         }
     }
 
-    _calculateMarkerZooms() {}
+    _calculateMarkerZooms(): void {}
 
     /*	Map Specific Line
 		================================================== */
 
-    _createLine(d) {
+    _createLine(d?: StorymapSlide): unknown {
         return { data: d };
     }
 
-    _addToLine(line, d) {}
+    _addToLine(line: VectorLayer | null, d: LinePoint): void {}
 
-    _replaceLines(line, d) {}
+    _replaceLines(line: VectorLayer | null, d: LinePoint[]): void {}
 
-    _addLineToMap(line) {}
+    _addLineToMap(line: VectorLayer): void {}
 
     /*	Map Specific Methods
 		================================================== */
 
-    _panTo(loc, animate) {}
+    _panTo(loc: LatLngLiteral, animate?: boolean): void {}
 
-    _zoomTo(z, animate?) {}
+    _zoomTo(z: number, animate?: boolean): void {}
 
-    _viewTo(loc, opts?) {}
+    _viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {}
 
-    _updateMapDisplay(animate, d) {}
+    _updateMapDisplay(animate?: boolean, d?: number): void {}
 
-    _refreshMap() {}
+    _refreshMap(): void {}
 
-    _getMapLocation(m) {
+    _getMapLocation(m: LatLngLiteral): unknown {
         return { x: 0, y: 0 };
     }
 
-    _getMapZoom() {
+    _getMapZoom(): number {
         return 1;
     }
 
-    _getMapCenter(correct_for_center?): any {
+    _getMapCenter(correct_for_center?: boolean): LatLngLiteral {
         return { lat: 0, lng: 0 };
     }
 
-    _getBoundsZoom(m1, m2, inside?, padding?): any {
+    _getBoundsZoom(
+        m1: LatLngLiteral,
+        m2: LatLngLiteral,
+        inside?: boolean,
+        padding?: unknown,
+    ): number {
         return undefined;
     }
 
-    _markerOverview() {}
+    _markerOverview(): void {}
 
-    _initialMapLocation() {}
+    _initialMapLocation(): void {}
 
     /*	Events
 	================================================== */
-    _onMarkerChange(e?) {
+    _onMarkerChange(e?: unknown): void {
         this.fire("change", { current_marker: this.current_marker });
     }
 
-    _onMarkerClick(e) {
+    _onMarkerClick(e: { marker_number: number }): void {
         if (this.current_marker !== e.marker_number) {
             this.goTo(e.marker_number, false);
         }
     }
 
-    _onMapLoaded(e) {
+    _onMapLoaded(e?: unknown): void {
         this._loaded.map = true;
 
         if (this.options.calculate_zoom) {
@@ -520,13 +550,13 @@ export default class Map {
         this.fire("loaded", this.data);
     }
 
-    _onWheel(e) {
+    _onWheel(e: WheelEvent): void {
         // borrowed from http://jsbin.com/qiyaseza/5/edit
         if (e.ctrlKey) {
             const s = Math.exp(-e.deltaY / 100);
             this.touch_scale *= s;
             e.preventDefault();
-            e.stopPropagation(e);
+            e.stopPropagation();
         }
 
         if (!this.scroll.start_time) {
@@ -544,7 +574,7 @@ export default class Map {
         }, time_left);
     }
 
-    _scollZoom(e?) {
+    _scollZoom(e?: unknown): void {
         const current_zoom = this._getMapZoom();
 
         this.scroll.start_time = null;
@@ -559,7 +589,7 @@ export default class Map {
         this.zoomTo(Math.round(current_zoom * this.touch_scale));
     }
 
-    _scollZoomDone(e?) {
+    _scollZoomDone(e?: unknown): void {
         //VCO.DomUtil.removeClass(this._el.container, 'vco-map-touch-zoom');
         this.touch_scale = 1;
     }
@@ -567,16 +597,20 @@ export default class Map {
     /*	Private Methods
 	================================================== */
 
-    _calculateZoomChange(origin, destination, correct_for_center?) {
+    _calculateZoomChange(
+        origin: LatLngLiteral,
+        destination: LatLngLiteral,
+        correct_for_center?: boolean,
+    ): number {
         return this._getBoundsZoom(origin, destination, correct_for_center);
     }
 
-    _updateDisplay(w?, h?, animate?, d?, offset?) {
+    _updateDisplay(w?: number, h?: number, animate?: boolean, d?: number, offset?: unknown): void {
         // Update Map Display
         this._updateMapDisplay(animate, d);
     }
 
-    _initLayout() {
+    _initLayout(): void {
         // Create Layout
         this._el.map_mask = Dom.create("div", "vco-map-mask", this._el.container);
 
@@ -591,7 +625,7 @@ export default class Map {
         }
     }
 
-    _initData() {
+    _initData(): void {
         if (this.data.slides) {
             this._createMarkers(this.data.slides);
             this._resetMarkersActive();
@@ -603,7 +637,7 @@ export default class Map {
         }
     }
 
-    _initEvents() {
+    _initEvents(): void {
         this._el.map.addEventListener("wheel", (e) => {
             this._onWheel(e);
         });

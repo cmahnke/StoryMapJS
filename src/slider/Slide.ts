@@ -7,25 +7,65 @@ import Ease from "../animation/Ease";
 import MediaType from "../media/MediaType";
 import Text from "../media/types/Text";
 import { Browser } from "../core/Browser";
+import { MediaTypeMatch, StorymapSlide, StorymapSlideBackground } from "../types";
 /*	VCO.Slide
 	Creates a slide. Takes a data object and
 	populates the slide with content.
 ================================================== */
 
+/*	Media instance surface as used by Slide; instances are created
+	dynamically via the matched MediaTypeMatch.cls constructor. */
+interface MediaInstance {
+    addTo: (container: HTMLElement) => void;
+    loadMedia: () => void;
+    stopMedia: () => void;
+    updateDisplay: (w?: number, h?: number, l?: string) => void;
+}
+
+interface SlideHas {
+    headline: boolean;
+    text: boolean;
+    media: boolean;
+    title: boolean;
+    background: {
+        image: boolean;
+        color: boolean;
+        color_value: string;
+    };
+}
+
+/*	Slide options: the fields Slide itself sets or reads; everything
+	else merged in from the StorySlider options is absorbed by the
+	index signature. */
+interface SlideOptions {
+    duration: number;
+    slide_padding_lr: number;
+    ease: unknown;
+    width: number;
+    height: number;
+    skinny_size: number;
+    media_name?: string;
+    media_type?: string;
+    [key: string]: unknown;
+}
+
 export default class Slide {
-    declare "_el": any;
-    declare "_media": any;
-    declare "_mediaclass": any;
-    declare "_text": any;
-    declare "_state": any;
-    declare "has": any;
-    declare "title": any;
-    declare "data": any;
-    declare "options": any;
-    declare "active": any;
-    declare "animator": any;
-    declare "fire": any;
-    declare "onLoaded": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "_media": MediaInstance | null;
+    declare "_mediaclass": unknown;
+    declare "_text": Text;
+    declare "_state": { loaded: boolean };
+    declare "has": SlideHas;
+    declare "title": string;
+    declare "data": StorymapSlide;
+    declare "options": SlideOptions;
+    declare "active": boolean;
+    declare "animator": unknown;
+    declare "fire": (type: string, data?: unknown) => unknown;
+    declare "on": (type: string, fn: unknown, context?: unknown) => unknown;
+    declare "off": (type: string, fn: unknown, context?: unknown) => unknown;
+    declare "onLoaded": () => void;
+    declare "setPosition": (pos: Record<string, number>, el?: HTMLElement) => void;
 
     //includes: [VCO.Events, VCO.DomMixins],
 
@@ -33,21 +73,21 @@ export default class Slide {
 
     /*	Constructor
 	================================================== */
-    constructor(data, options, title_slide) {
+    constructor(data: StorymapSlide, options: Record<string, unknown>, title_slide?: boolean) {
         // DOM Elements
         this._el = {
-            container: {},
-            scroll_container: {},
-            background: {},
-            content_container: {},
-            content: {},
+            container: {} as HTMLElement,
+            scroll_container: {} as HTMLElement,
+            background: {} as HTMLElement,
+            content_container: {} as HTMLElement,
+            content: {} as HTMLElement,
             call_to_action: null,
         };
 
         // Components
         this._media = null;
         this._mediaclass = {};
-        this._text = {};
+        this._text = {} as Text;
 
         // State
         this._state = {
@@ -114,7 +154,7 @@ export default class Slide {
 
     hide() {}
 
-    setActive(is_active) {
+    setActive(is_active: boolean) {
         this.active = is_active;
 
         if (this.active) {
@@ -127,16 +167,16 @@ export default class Slide {
         }
     }
 
-    addTo(container) {
+    addTo(container: HTMLElement) {
         container.appendChild(this._el.container);
         //this.onAdd();
     }
 
-    removeFrom(container) {
+    removeFrom(container: HTMLElement) {
         container.removeChild(this._el.container);
     }
 
-    updateDisplay(w?, h?, l?) {
+    updateDisplay(w?: number, h?: number, l?: string) {
         this._updateDisplay(w, h, l);
     }
 
@@ -151,12 +191,14 @@ export default class Slide {
         if (this._media && this._state.loaded) {
             try {
                 this._media.stopMedia();
-            } catch (e: any) {
+            } catch (e: unknown) {
                 // Some sort of race condition or other ordering condition can cause
                 // an error when the preview tab is selected in the editor due to
                 // the stopped media not being properly formed.
-                if (e.message === "this._el.content_item.querySelector is not a function") {
-                    console.log("Ignoring error in editor context: " + e.message);
+                if (
+                    (e as Error).message === "this._el.content_item.querySelector is not a function"
+                ) {
+                    console.log("Ignoring error in editor context: " + (e as Error).message);
                 } else {
                     throw e;
                 }
@@ -172,7 +214,7 @@ export default class Slide {
         this._el.container.scrollTop = 0;
     }
 
-    addCallToAction(str) {
+    addCallToAction(str: string) {
         this._el.call_to_action = Dom.create(
             "div",
             "vco-slide-calltoaction",
@@ -211,24 +253,26 @@ export default class Slide {
         this._el.background = Dom.create("div", "vco-slide-background", this._el.container);
         // Style Slide Background
         if (this.data.background) {
-            if (this.data.background.url) {
+            const background = this.data.background as StorymapSlideBackground & {
+                text_background?: unknown;
+            };
+            if (background.url) {
                 this.has.background.image = true;
                 this._el.container.className += " vco-full-image-background";
                 //this._el.container.style.backgroundImage="url('" + this.data.background.url + "')";
                 this.has.background.color_value = "#000";
-                this._el.background.style.backgroundImage =
-                    "url('" + this.data.background.url + "')";
+                this._el.background.style.backgroundImage = "url('" + background.url + "')";
                 this._el.background.style.display = "block";
             }
-            if (this.data.background.color) {
+            if (background.color) {
                 this.has.background.color = true;
                 this._el.container.className += " vco-full-color-background";
-                this.has.background.color_value = this.data.background.color;
+                this.has.background.color_value = background.color;
                 //this._el.container.style.backgroundColor = this.data.background.color;
                 //this._el.background.style.backgroundColor 	= this.data.background.color;
                 //this._el.background.style.display 			= "block";
             }
-            if (this.data.background.text_background) {
+            if (background.text_background) {
                 this._el.container.className += " vco-text-background";
             }
         }
@@ -248,12 +292,15 @@ export default class Slide {
         // Create Media
         if (this.has.media) {
             // Determine the media type
-            this.data.media.mediatype = MediaType(this.data.media);
+            this.data.media.mediatype = MediaType(this.data.media) as MediaTypeMatch;
             this.options.media_name = this.data.media.mediatype.name;
             this.options.media_type = this.data.media.mediatype.type;
 
             // Create a media object using the matched class name
-            this._media = new this.data.media.mediatype.cls(this.data.media, this.options);
+            this._media = new this.data.media.mediatype.cls(
+                this.data.media,
+                this.options,
+            ) as MediaInstance;
         }
 
         // Create Text
@@ -284,7 +331,7 @@ export default class Slide {
     _initEvents() {}
 
     // Update Display
-    _updateDisplay(width, height, layout) {
+    _updateDisplay(width?: number, height?: number, layout?: string) {
         let pad_left, pad_right, new_width;
 
         if (width) {

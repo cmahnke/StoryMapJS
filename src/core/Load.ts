@@ -37,11 +37,18 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
+interface PendingResource {
+    urls: string[];
+    callback?: (obj: unknown) => void;
+    obj?: unknown;
+    context?: unknown;
+}
+
 class Loader {
-    declare "doc": any;
-    declare "pending": any;
-    declare "queue": any;
-    declare "head": any;
+    declare "doc": Document;
+    declare "pending": Record<string, PendingResource | null>;
+    declare "queue": Record<string, PendingResource[]>;
+    declare "head": HTMLElement;
 
     constructor(document) {
         this.doc = document;
@@ -126,7 +133,7 @@ class Loader {
     @private
     */
     load(type, urls?, callback?, obj?, context?) {
-        const _finish = function (this: any) {
+        const _finish = function (this: Loader) {
             this.finish(type);
         }.bind(this);
         const isCSS = type === "css";

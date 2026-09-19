@@ -7,12 +7,8 @@ import { Language } from "../../language/Language";
 ================================================== */
 
 export default class Twitter extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "data": any;
-    declare "user_id": any;
-    declare "media_id": any;
+    declare "user_id": string;
+    declare "media_id": string;
 
     /*	Load the media
 	================================================== */

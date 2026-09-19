@@ -15,6 +15,7 @@ import Slider from "./types/Slider";
 import IFrame from "./types/IFrame";
 import Website from "./types/Website";
 import { Media } from "./Media";
+import { MediaTypeMatch, StorymapSlideMedia } from "../types";
 
 /*	MediaType
 	Determines the type of media the url string is.
@@ -26,9 +27,16 @@ import { Media } from "./Media";
 	TODO
 	Allow array so a slideshow can be a mediatype
 ================================================== */
-export default function MediaType(m) {
-    let media: any;
-    const media_types = [
+
+/* A media type table entry: like MediaTypeMatch, but match_str may be
+	a RegExp for pattern-based types (e.g. images). */
+type MediaTypeEntry = Omit<MediaTypeMatch, "match_str"> & {
+    match_str: string | RegExp;
+};
+
+export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false {
+    let media: MediaTypeEntry | undefined;
+    const media_types: MediaTypeEntry[] = [
         {
             type: "youtube",
             name: "YouTube",
@@ -139,12 +147,11 @@ export default function MediaType(m) {
             return {
                 type: "slider",
                 cls: Slider,
-            };
+            } as MediaTypeMatch;
         } else if (m.url.match(media_types[i].match_str)) {
             media = media_types[i];
             media.url = m.url;
-            return media;
-            break;
+            return media as MediaTypeMatch;
         }
     }
 

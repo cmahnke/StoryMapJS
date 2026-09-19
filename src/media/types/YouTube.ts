@@ -7,15 +7,35 @@ import { Language } from "../../language/Language";
 /*	Media.YouTube
 ================================================== */
 
+/*	Minimal surface of the YouTube iframe API player used here. */
+interface YTPlayer {
+    playVideo: () => void;
+    pauseVideo: () => void;
+    seekTo: (seconds: number) => void;
+    destroy: () => void;
+    loadVideoById: (id: string) => void;
+    cueVideoById: (id: string) => void;
+    setVolume: (volume: number) => void;
+    getDuration: () => number;
+    getPlayerState: () => number;
+}
+
+/*	The externally loaded YT global, narrowed at its usage sites. */
+type YTGlobal = {
+    Player: new (el: HTMLElement | string, opts: unknown) => YTPlayer;
+    PlayerState: Record<string, number>;
+};
+
+interface YouTubeMediaID {
+    id?: string;
+    start?: number | string;
+    hd?: boolean | string;
+}
+
 export default class YouTube extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "youtube_loaded": any;
-    declare "_el": any;
-    declare "data": any;
-    declare "media_id": any;
-    declare "player": any;
-    declare "timer": any;
+    declare "youtube_loaded": boolean;
+    declare "media_id": YouTubeMediaID;
+    declare "player": YTPlayer;
 
     /*	Load the media
 	================================================== */
@@ -67,7 +87,8 @@ export default class YouTube extends Media {
     _stopMedia() {
         if (this.youtube_loaded) {
             try {
-                if (this.player.getPlayerState() === YT.PlayerState.PLAYING) {
+                const yt = YT as YTGlobal;
+                if (this.player.getPlayerState() === yt.PlayerState.PLAYING) {
                     this.player.pauseVideo();
                 }
             } catch (err) {
@@ -104,7 +125,8 @@ export default class YouTube extends Media {
         clearTimeout(this.timer);
         if (typeof YT != "undefined" && typeof YT.Player != "undefined") {
             // Create Player
-            this.player = new YT.Player(this._el.content_item.id, {
+            const yt = YT as YTGlobal;
+            this.player = new yt.Player(this._el.content_item.id, {
                 playerVars: {
                     enablejsapi: 1,
                     color: "white",
@@ -135,15 +157,16 @@ export default class YouTube extends Media {
 
     /*	Events
 	================================================== */
-    onPlayerReady(e?) {
+    onPlayerReady(e?: unknown) {
         this.youtube_loaded = true;
         this._el.content_item = document.getElementById(this._el.content_item.id);
         this.onMediaLoaded();
         this.onLoaded();
     }
 
-    onStateChange(e) {
-        if (e.data === YT.PlayerState.ENDED) {
+    onStateChange(e: { data: number; target: YTPlayer }) {
+        const yt = YT as YTGlobal;
+        if (e.data === yt.PlayerState.ENDED) {
             e.target.seekTo(0);
             e.target.pauseVideo();
         }

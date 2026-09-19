@@ -11,11 +11,13 @@ import Events from "../core/Events";
 import Ease from "../animation/Ease";
 import SlideNav from "./SlideNav";
 import Slide from "./Slide";
-import Animate from "../animation/Animate";
+import Animate from "morpheus";
 import Swipable from "../ui/Swipable";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { Language } from "../language/Language";
+import { AnimationHandle, StorymapData, StorymapSlide } from "../types";
+import { MediaMessage } from "../media/Media";
 
 /*	StorySlider
 	is the central class of the API - it is used to create a StorySlider
@@ -32,41 +34,77 @@ import { Language } from "../language/Language";
 
 ================================================== */
 
+/*	StorySlider options: the fields it sets or reads; everything else
+	merged in from the StoryMap options is absorbed by the index signature. */
+interface StorySliderOptions {
+    id?: string;
+    layout: string;
+    width: number;
+    height: number;
+    default_bg_color: { r: number; g: number; b: number };
+    slide_padding_lr: number;
+    start_at_slide: number;
+    slide_default_fade: string;
+    duration: number;
+    ease: unknown;
+    skinny_size?: number;
+    call_to_action?: boolean;
+    call_to_action_text?: string;
+    dragging?: boolean;
+    trackResize?: boolean;
+    [key: string]: unknown;
+}
+
+interface SlideBackgroundChange {
+    color_value?: string;
+    image?: boolean;
+}
+
+/*	Swipable gains Events members at runtime via classMixin, and its
+	enable() helper is invoked without arguments here. */
+type SliderSwipable = Swipable & Events & { enable: () => void };
+
 export default class StorySlider {
-    declare "_el": any;
-    declare "_nav": any;
-    declare "slide_spacing": any;
-    declare "_slides": any;
-    declare "_swipable": any;
-    declare "preloadTimer": any;
-    declare "_message": any;
-    declare "current_slide": any;
-    declare "current_bg_color": any;
-    declare "data": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "animator_background": any;
-    declare "fire": any;
-    declare "_loaded": any;
-    declare "hasEventListeners": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "_nav": { previous: SlideNav; next: SlideNav };
+    declare "slide_spacing": number;
+    declare "_slides": Slide[];
+    declare "_swipable": SliderSwipable;
+    declare "preloadTimer": ReturnType<typeof setTimeout>;
+    declare "_message": MediaMessage;
+    declare "current_slide": number;
+    declare "current_bg_color": string | null;
+    declare "data": Partial<StorymapData>;
+    declare "options": StorySliderOptions;
+    declare "animator": AnimationHandle | null;
+    declare "animator_background": AnimationHandle | null;
+    declare "fire": (type: string, data?: unknown) => unknown;
+    declare "_loaded": boolean;
+    declare "hasEventListeners": (type: string) => boolean;
 
     //includes: VCO.Events,
 
     /*	Private Methods
 	================================================== */
-    constructor(elem, data, options?, init?) {
+    constructor(
+        elem: HTMLElement | string,
+        data: Partial<StorymapData>,
+        options?: Partial<StorySliderOptions>,
+        init?: boolean,
+    ) {
         // DOM ELEMENTS
         this._el = {
-            container: {},
-            background: {},
-            slider_container_mask: {},
-            slider_container: {},
-            slider_item_container: {},
+            container: {} as HTMLElement,
+            background: {} as HTMLElement,
+            slider_container_mask: {} as HTMLElement,
+            slider_container: {} as HTMLElement,
+            slider_item_container: {} as HTMLElement,
         };
 
-        this._nav = {};
-        this._nav.previous = {};
-        this._nav.next = {};
+        this._nav = {
+            previous: {} as SlideNav,
+            next: {} as SlideNav,
+        };
 
         // Slide Spacing
         this.slide_spacing = 0;
@@ -141,23 +179,23 @@ export default class StorySlider {
 
     /*	Public
 	================================================== */
-    updateDisplay(w?, h?, a?, l?) {
+    updateDisplay(w?: number, h?: number, a?: unknown, l?: string) {
         this._updateDisplay(w, h, a, l);
     }
 
     // Create a slide
-    createSlide(d) {
+    createSlide(d: StorymapSlide) {
         this._createSlide(d);
     }
 
     // Create Many Slides from an array
-    createSlides(array) {
+    createSlides(array: StorymapData["slides"]) {
         this._createSlides(array);
     }
 
     /*	Create Slides
 	================================================== */
-    _createSlides(array) {
+    _createSlides(array: StorymapData["slides"]) {
         for (let i = 0; i < array.length; i++) {
             if (array[i].uniqueid === "") {
                 array[i].uniqueid = unique_ID(6, "vco-slide");
@@ -170,13 +208,13 @@ export default class StorySlider {
         }
     }
 
-    _createSlide(d, title_slide?) {
+    _createSlide(d: StorymapSlide, title_slide?: boolean) {
         const slide = new Slide(d, this.options, title_slide);
         this._addSlide(slide);
         this._slides.push(slide);
     }
 
-    _destroySlide(slide) {
+    _destroySlide(slide: Slide) {
         this._removeSlide(slide);
         for (let i = 0; i < this._slides.length; i++) {
             if (this._slides[i] === slide) {
@@ -185,13 +223,13 @@ export default class StorySlider {
         }
     }
 
-    _addSlide(slide) {
+    _addSlide(slide: Slide) {
         slide.addTo(this._el.slider_item_container);
         slide.on("added", this._onSlideAdded, this);
         slide.on("background_change", this._onBackgroundChange, this);
     }
 
-    _removeSlide(slide) {
+    _removeSlide(slide: Slide) {
         slide.removeFrom(this._el.slider_item_container);
         slide.off("added", this._onSlideAdded, this);
         slide.off("background_change", this._onBackgroundChange);
@@ -202,9 +240,9 @@ export default class StorySlider {
 
     /*	Navigation
 	================================================== */
-    goToId(n, fast?, displayupdate?) {
+    goToId(n: string | number, fast?: boolean, displayupdate?: boolean) {
         let _n;
-        if (typeof n == "string" || n instanceof String) {
+        if (typeof n == "string" || (n as unknown) instanceof String) {
             _n = findArrayNumberByUniqueID(String(n), this._slides, "uniqueid");
         } else {
             _n = n;
@@ -212,7 +250,7 @@ export default class StorySlider {
         this.goTo(_n, fast, displayupdate);
     }
 
-    goTo(n, fast?, displayupdate?) {
+    goTo(n: number, fast?: boolean, displayupdate?: boolean) {
         this.changeBackground({ color_value: "", image: false });
 
         // Clear Preloader Timer
@@ -293,7 +331,7 @@ export default class StorySlider {
         }
     }
 
-    getNavInfo(slide) {
+    getNavInfo(slide: Slide) {
         const n = {
             title: "",
             description: "",
@@ -332,7 +370,7 @@ export default class StorySlider {
         }
     }
 
-    showNav(nav_obj, show) {
+    showNav(nav_obj: SlideNav, show: boolean) {
         if (this.options.width <= 500 && Browser.mobile) {
             // hidden on small mobile screens
         } else {
@@ -344,7 +382,7 @@ export default class StorySlider {
         }
     }
 
-    changeBackground(bg) {
+    changeBackground(bg: SlideBackgroundChange) {
         let do_animation = false;
 
         let bg_color,
@@ -446,7 +484,7 @@ export default class StorySlider {
         }
     }
 
-    fadeInBackground(bg_css) {
+    fadeInBackground(bg_css: string) {
         if (this.animator_background) {
             this.animator_background.stop();
         }
@@ -466,7 +504,7 @@ export default class StorySlider {
 	================================================== */
 
     // Update Display
-    _updateDisplay(width?, height?, animate?, layout?) {
+    _updateDisplay(width?: number, height?: number, animate?: unknown, layout?: string) {
         let _layout;
 
         if (typeof layout === "undefined") {
@@ -592,7 +630,7 @@ export default class StorySlider {
                     enable: { x: true, y: false },
                     snap: true,
                 },
-            );
+            ) as SliderSwipable;
             this._swipable.enable();
 
             // Message
@@ -602,7 +640,7 @@ export default class StorySlider {
                     message_class: "vco-message-full",
                     message_icon_class: "vco-icon-swipe-left",
                 },
-            );
+            ) as MediaMessage;
             this._message.updateMessage(Language.buttons.swipe_to_navigate);
             this._message.addTo(this._el.container);
         }
@@ -661,7 +699,7 @@ export default class StorySlider {
         this.fire("slideAdded", this.data);
     }
 
-    _onSlideChange(displayupdate) {
+    _onSlideChange(displayupdate?: boolean) {
         if (!displayupdate) {
             this.fire("change", {
                 current_slide: this.current_slide,

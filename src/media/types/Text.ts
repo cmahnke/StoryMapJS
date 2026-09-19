@@ -2,23 +2,34 @@ import { classMixin, mergeData, setData, htmlify, convertUnixTime } from "../../
 import Events from "../../core/Events";
 import Dom from "../../dom/Dom";
 
+interface TextData {
+    uniqueid?: string | null;
+    headline?: string;
+    text?: string;
+    date?: { created_time?: string; [key: string]: unknown } | null;
+}
+
+interface TextOptions {
+    title?: boolean;
+}
+
 export default class Text {
-    declare "_el": any;
-    declare "data": any;
-    declare "options": any;
-    declare "fire": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "data": TextData;
+    declare "options": TextOptions;
+    declare "fire": (type: string, data?: unknown) => unknown;
 
     /*	Constructor
 	================================================== */
-    constructor(data, options?, add_to_container?) {
+    constructor(data: TextData, options?: TextOptions, add_to_container?: HTMLElement) {
         // DOM ELEMENTS
         this._el = {
-            container: {},
-            content_container: {},
-            content: {},
-            headline: {},
-            date: {},
-            start_btn: {},
+            container: {} as HTMLElement,
+            content_container: {} as HTMLElement,
+            content: {} as HTMLElement,
+            headline: {} as HTMLElement,
+            date: {} as HTMLElement,
+            start_btn: {} as HTMLElement,
         };
 
         // Data
@@ -54,12 +65,12 @@ export default class Text {
 
     hide() {}
 
-    addTo(container) {
+    addTo(container: HTMLElement) {
         container.appendChild(this._el.container);
         //this.onAdd();
     }
 
-    removeFrom(container) {
+    removeFrom(container: HTMLElement) {
         container.removeChild(this._el.container);
     }
 
@@ -67,7 +78,7 @@ export default class Text {
         return this._el.headline.offsetHeight + 40;
     }
 
-    addDateText(str) {
+    addDateText(str: string) {
         this._el.date.innerHTML = str;
     }
 

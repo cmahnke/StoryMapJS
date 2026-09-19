@@ -8,12 +8,26 @@ import { Language } from "../language/Language";
 	Draggable component to control size
 ================================================== */
 
+interface MessageOptions {
+    width: number;
+    height: number;
+    message_class: string;
+    message_icon_class: string;
+    [key: string]: unknown;
+}
+
+interface Evented {
+    fire: (type: string, data?: unknown, target?: unknown) => unknown;
+    on: (type: string, fn: unknown, context?: unknown) => unknown;
+    hasEventListeners: (type: string) => boolean;
+}
+
 export default class Message {
-    declare "_el": any;
-    declare "options": any;
-    declare "data": any;
-    declare "animator": any;
-    declare "fire": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "options": MessageOptions;
+    declare "data": Record<string, unknown>;
+    declare "animator": Record<string, unknown>;
+    declare "fire": Evented["fire"];
 
     //includes: [VCO.Events, VCO.DomMixins],
 
@@ -29,7 +43,7 @@ export default class Message {
             message_container: {},
             loading_icon: {},
             message: {},
-        };
+        } as unknown as Record<string, HTMLElement>;
 
         //Options
         this.options = {

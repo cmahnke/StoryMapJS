@@ -9,11 +9,6 @@ import { Browser } from "../../core/Browser";
 ================================================== */
 
 export default class Image extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "data": any;
-    declare "_el": any;
-
     /*	Load the media
 	================================================== */
     _loadMedia() {
@@ -23,8 +18,9 @@ export default class Image extends Media {
         // Link
         if (this.data.link) {
             this._el.content_link = Dom.create("a", "", this._el.content);
-            this._el.content_link.href = this.data.link;
-            this._el.content_link.target = "_blank";
+            const content_link = this._el.content_link as HTMLAnchorElement;
+            content_link.href = this.data.link;
+            content_link.target = "_blank";
             this._el.content_item = Dom.create(
                 "img",
                 "vco-media-item vco-media-image vco-media-shadow",
@@ -43,12 +39,12 @@ export default class Image extends Media {
             this.onMediaLoaded();
         });
 
-        this._el.content_item.src = this.data.url;
+        (this._el.content_item as HTMLImageElement).src = this.data.url;
 
         this.onLoaded();
     }
 
-    _updateMediaDisplay(layout) {
+    _updateMediaDisplay(layout?: string) {
         if (Browser.firefox) {
             //this._el.content_item.style.maxWidth = (this.options.width/2) - 40 + "px";
             this._el.content_item.style.width = "auto";

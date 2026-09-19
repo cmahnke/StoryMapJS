@@ -9,9 +9,6 @@ import Dom from "../../dom/Dom";
 ================================================== */
 
 export default class Slider extends Media {
-    declare "_el": any;
-    declare "data": any;
-
     /*	Load the media
 	================================================== */
     _loadMedia() {
@@ -20,7 +17,7 @@ export default class Slider extends Media {
             "vco-media-item vco-media-image",
             this._el.content,
         );
-        this._el.content_item.src = this.data.url;
+        (this._el.content_item as HTMLImageElement).src = this.data.url;
 
         this.onLoaded();
     }

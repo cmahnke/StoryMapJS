@@ -1,15 +1,16 @@
 // const debug = true;
-import { Browser } from "../core/Browser";
-import Emoji from "../library/Emoji";
 
-export function extend(dest: any, ...sources: any[]): any {
+export function extend<T extends Record<string, unknown>>(
+    dest: T,
+    ...sources: (Record<string, unknown> | null | undefined)[]
+): T {
     // merge src properties into dest
     sources = sources.filter(Boolean);
     for (let j = 0, len = sources.length, src; j < len; j++) {
         src = sources[j] || {};
         for (const i in src) {
             if (Object.hasOwn(src, i)) {
-                dest[i] = src[i];
+                (dest as Record<string, unknown>)[i] = src[i];
             }
         }
     }
@@ -110,9 +111,9 @@ let _lastStampId = 0;
 const _stampKey = "_vco_id";
 
 /** Stamp an object (or function) with a unique id and return it. */
-export function stamp(obj: any): number {
+export function stamp(obj: Record<string, unknown>): number {
     obj[_stampKey] = obj[_stampKey] || ++_lastStampId;
-    return obj[_stampKey];
+    return obj[_stampKey] as number;
 }
 
 export function findArrayNumberByUniqueID(id, array, prop) {
@@ -166,9 +167,6 @@ export function hexToRgb(hex) {
 
 export function htmlify(str) {
     //if (str.match(/<\s*p[^>]*>([^<]*)<\s*\/\s*p\s*>/)) {
-    if (Browser.chrome) {
-        str = Emoji(str);
-    }
     if (str.match(/<p>[\s\S]*?<\/p>/)) {
         return str;
     } else {

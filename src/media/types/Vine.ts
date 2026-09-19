@@ -8,11 +8,7 @@ import { ratio } from "../../core/Util";
 ================================================== */
 
 export default class Vine extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "media_id": any;
-    declare "data": any;
+    declare "media_id": string;
 
     /*	Load the media
 	================================================== */
@@ -50,6 +46,8 @@ export default class Vine extends Media {
     }
 
     _stopMedia() {
-        this._el.content_item.querySelector("iframe").contentWindow.postMessage("pause", "*");
+        (
+            this._el.content_item.querySelector("iframe") as HTMLIFrameElement
+        ).contentWindow.postMessage("pause", "*");
     }
 }

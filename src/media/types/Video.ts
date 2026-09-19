@@ -6,11 +6,7 @@ import { Language } from "../../language/Language";
 ================================================== */
 
 export default class Video extends Media {
-    declare "message": any;
-    declare "options": any;
-    declare "_el": any;
-    declare "data": any;
-    declare "player_element": any;
+    declare "player_element": HTMLMediaElement;
 
     /*	Load the media
 	================================================== */
@@ -26,20 +22,21 @@ export default class Video extends Media {
             "vco-media-item vco-media-video vco-media-shadow",
             this._el.content,
         );
-        this._el.content_item.controls = true;
+        const media_item = this._el.content_item as HTMLMediaElement;
+        media_item.controls = true;
         this._el.source_item = Dom.create("source", "", this._el.content_item);
+        const source_item = this._el.source_item as HTMLSourceElement;
 
         // Media Loaded Event
-        this._el.content_item.addEventListener("canplay", (e) => {
+        media_item.addEventListener("canplay", (e) => {
             console.log("load event", e);
             this.onLoaded();
         });
 
-        this._el.source_item.src = this.data.url;
-        this._el.source_item.type = this._getType(this.data.url, this.data.mediatype.match_str);
-        this._el.content_item.innerHTML +=
-            "Your browser doesn't support HTML5 video with " + this._el.source_item.type;
-        this.player_element = this._el.content_item;
+        source_item.src = this.data.url;
+        source_item.type = this._getType(this.data.url, this.data.mediatype.match_str);
+        media_item.innerHTML += "Your browser doesn't support HTML5 video with " + source_item.type;
+        this.player_element = media_item;
     }
 
     // Update Media Display
@@ -54,7 +51,7 @@ export default class Video extends Media {
         }
     }
 
-    _getType(url, reg) {
+    _getType(url: string, reg: string | RegExp) {
         const ext = url.match(reg);
         let type = "video/";
         switch (ext[1]) {

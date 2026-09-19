@@ -2,8 +2,17 @@ import { extend } from "../core/Util";
 /*	Events
 	adds custom events functionality to a class
 ================================================== */
+interface VCOEventListener {
+    action: (...args: unknown[]) => unknown;
+    context: unknown;
+}
+
+interface VCOEventStore {
+    [type: string]: VCOEventListener[];
+}
+
 export default class Events {
-    declare "_vco_events": any;
+    declare "_vco_events": VCOEventStore;
     //addEventListener(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
     on(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
         const events = (this._vco_events = this._vco_events || {});

@@ -2,22 +2,41 @@ import { classMixin, mergeData } from "../core/Util";
 import Dom from "../dom/Dom";
 import DomMixins from "../dom/DomMixins";
 import Events from "../core/Events";
-import Animate from "../animation/Animate";
+import Animate from "morpheus";
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
+import { AnimateOptions, AnimationHandle } from "../types";
 /*	SlideNav
 	Navigation for Slideshows
 ================================================== */
 // TODO null out data
 
+interface SlideNavData {
+    title: string;
+    description: string;
+    date?: string;
+    [key: string]: unknown;
+}
+
+interface SlideNavOptions {
+    direction: string;
+    [key: string]: unknown;
+}
+
 export default class SlideNav {
-    declare "_el": any;
-    declare "mediatype": any;
-    declare "data": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "animator_position": any;
-    declare "fire": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "mediatype": unknown;
+    declare "data": SlideNavData;
+    declare "options": SlideNavOptions;
+    declare "animator": AnimationHandle | null;
+    declare "animator_position": AnimationHandle | null;
+    declare "fire": (type: string, data?: unknown) => unknown;
+    declare "on": (type: string, fn: unknown, context?: unknown) => unknown;
+    declare "off": (type: string, fn: unknown, context?: unknown) => unknown;
+    declare "addTo": (container: HTMLElement) => void;
+    declare "show": (animate?: unknown) => void;
+    declare "hide": (animate?: unknown) => void;
+    declare "setPosition": (pos: Record<string, number>, el?: HTMLElement) => void;
 
     //includes: [VCO.Events, VCO.DomMixins],
 
@@ -25,14 +44,18 @@ export default class SlideNav {
 
     /*	Constructor
 	================================================== */
-    constructor(data, options?, add_to_container?) {
+    constructor(
+        data?: Partial<SlideNavData>,
+        options?: Partial<SlideNavOptions>,
+        add_to_container?: HTMLElement,
+    ) {
         // DOM ELEMENTS
         this._el = {
-            container: {},
-            content_container: {},
-            icon: {},
-            title: {},
-            description: {},
+            container: {} as HTMLElement,
+            content_container: {} as HTMLElement,
+            icon: {} as HTMLElement,
+            title: {} as HTMLElement,
+            description: {} as HTMLElement,
         };
 
         // Media Type
@@ -72,13 +95,13 @@ export default class SlideNav {
 
     /*	Update Content
 	================================================== */
-    update(d) {
+    update(d?: Partial<SlideNavData>) {
         this._update(d);
     }
 
     /*	Color
 	================================================== */
-    setColor(inverted) {
+    setColor(inverted: boolean) {
         if (inverted) {
             this._el.content_container.className =
                 "vco-slidenav-content-container vco-slidenav-inverted";
@@ -89,8 +112,15 @@ export default class SlideNav {
 
     /*	Position
 	================================================== */
-    updatePosition(pos, use_percent, duration, ease, start_value, return_to_default) {
-        const ani: any = {
+    updatePosition(
+        pos: Record<string, number | string>,
+        use_percent: boolean,
+        duration: number,
+        ease: unknown,
+        start_value: number,
+        return_to_default: boolean,
+    ) {
+        const ani: AnimateOptions = {
             duration: duration,
             easing: ease,
             complete: () => {
@@ -128,7 +158,7 @@ export default class SlideNav {
         this.animator_position = Animate(this._el.container, ani);
     }
 
-    _onUpdatePositionComplete(return_to_default) {
+    _onUpdatePositionComplete(return_to_default: boolean) {
         if (return_to_default) {
             this._el.container.style.left = "";
             this._el.container.style.right = "";
@@ -143,7 +173,7 @@ export default class SlideNav {
 
     /*	Private Methods
 	================================================== */
-    _update(d?) {
+    _update(d?: Partial<SlideNavData>) {
         // update data
         this.data = mergeData(this.data, d);
 

@@ -2,15 +2,27 @@
 	DOM methods used regularly
 	Assumes there is a _el.container and animator
 ================================================== */
-import Animate from "../animation/Animate";
+import Animate from "morpheus";
 import Dom from "./Dom";
+import type { AnimationHandle } from "../types";
+
+interface DomMixinsOptions {
+    duration: number;
+    ease: unknown;
+}
+
+interface Evented {
+    fire: (type: string, data?: unknown, target?: unknown) => unknown;
+    on: (type: string, fn: unknown, context?: unknown) => unknown;
+    hasEventListeners: (type: string) => boolean;
+}
 
 export default class DomMixins {
-    declare "_el": any;
-    declare "options": any;
-    declare "animator": any;
-    declare "fire": any;
-    declare "data": any;
+    declare "_el": Record<string, HTMLElement>;
+    declare "options": DomMixinsOptions;
+    declare "animator": AnimationHandle;
+    declare "fire": Evented["fire"];
+    declare "data": Record<string, unknown>;
 
     /*	Adding, Hiding, Showing etc
 	================================================== */
