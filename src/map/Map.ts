@@ -165,8 +165,8 @@ export default class Map {
 
     goTo(n, change?) {
         if (n < this._markers.length && n >= 0) {
-            let zoom = 0,
-                previous_marker = this.current_marker;
+            let zoom;
+            const previous_marker = this.current_marker;
 
             this.current_marker = n;
 
@@ -218,8 +218,8 @@ export default class Map {
                                 marker.data.real_marker &&
                                 this._markers[previous_marker].data.real_marker
                             ) {
-                                let lines_array = [],
-                                    line_num = previous_marker,
+                                const lines_array = [];
+                                let line_num = previous_marker,
                                     point;
 
                                 if (line_num < this.current_marker) {
@@ -522,8 +522,6 @@ export default class Map {
 
     _onWheel(e) {
         // borrowed from http://jsbin.com/qiyaseza/5/edit
-        const self = this;
-
         if (e.ctrlKey) {
             const s = Math.exp(-e.deltaY / 100);
             this.touch_scale *= s;
@@ -539,24 +537,23 @@ export default class Map {
 
         clearTimeout(this.scroll.timer);
 
-        this.scroll.timer = setTimeout(function () {
-            self._scollZoom();
+        this.scroll.timer = setTimeout(() => {
+            this._scollZoom();
             //e.preventDefault();
             //e.stopPropagation(e);
         }, time_left);
     }
 
     _scollZoom(e?) {
-        const self = this,
-            current_zoom = this._getMapZoom();
+        const current_zoom = this._getMapZoom();
 
         this.scroll.start_time = null;
         //VCO.DomUtil.addClass(this._el.container, 'vco-map-touch-zoom');
         clearTimeout(this.scroll.timer);
         clearTimeout(this.scroll.timer_done);
 
-        this.scroll.timer_done = setTimeout(function () {
-            self._scollZoomDone();
+        this.scroll.timer_done = setTimeout(() => {
+            this._scollZoomDone();
         }, 1000);
 
         this.zoomTo(Math.round(current_zoom * this.touch_scale));
@@ -607,10 +604,8 @@ export default class Map {
     }
 
     _initEvents() {
-        const self = this;
-
-        this._el.map.addEventListener("wheel", function (e) {
-            self._onWheel(e);
+        this._el.map.addEventListener("wheel", (e) => {
+            this._onWheel(e);
         });
 
         //this.on("wheel", this._onWheel, this);

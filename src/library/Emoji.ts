@@ -969,12 +969,11 @@ export default function Emoji(str) {
         "\u2b1c": 839,
         "\u2b1b": 840,
     };
-    let regx_arr = [];
+    const regx_arr = [];
     for (const k in emoji) {
         regx_arr.push(k);
     }
     const regx = new RegExp("(" + regx_arr.join("|") + ")", "g");
-    regx_arr = null;
     return str.replace(regx, function (a, b) {
         return '<span class="vco-emoji emj' + emoji[b] + '"></span>';
     });

@@ -45,10 +45,10 @@ const storymapAnimate = (function () {
     // initial style is determined by the elements themselves
     const getStyle = function (el, property) {
         property = camelize(property);
-        let value = null,
-            computed = doc.defaultView.getComputedStyle(el, "");
+        let value = null;
+        const computed = doc.defaultView.getComputedStyle(el, "");
 
-        computed && (value = computed[property]);
+        if (computed) value = computed[property];
         return el.style[property] || value;
     };
 
@@ -72,15 +72,15 @@ const storymapAnimate = (function () {
     }
 
     function render(timestamp) {
-        let i,
-            count = children.length;
+        let i;
+        const count = children.length;
         // if we're using a high res timer, make sure timestamp is not the old epoch-based value.
         // http://updates.html5rocks.com/2012/05/requestAnimationFrame-API-now-with-sub-millisecond-precision
         if (fixTs) timestamp = now();
         for (i = count; i--;) {
             children[i](timestamp);
         }
-        children.length && frame(render);
+        if (children.length) frame(render);
     }
 
     function live(f) {
@@ -88,8 +88,8 @@ const storymapAnimate = (function () {
     }
 
     function die(f) {
-        let rest,
-            index = has(children, f);
+        let rest;
+        const index = has(children, f);
         if (index >= 0) {
             rest = children.slice(index + 1);
             children.length = index;
@@ -98,8 +98,8 @@ const storymapAnimate = (function () {
     }
 
     function parseTransform(style, base?) {
-        let values: any = {},
-            m;
+        const values: any = {};
+        let m;
         if ((m = style.match(rotate))) values.rotate = by(m[1], base ? base.rotate : null);
         if ((m = style.match(scale))) values.scale = by(m[1], base ? base.scale : null);
         if ((m = style.match(skew))) {
@@ -161,25 +161,32 @@ const storymapAnimate = (function () {
      */
     function tween(this: any, duration, fn, done, ease, from, to) {
         ease = fun(ease) ? ease : morpheus.easings[ease] || nativeTween;
-        let time = duration || thousand,
-            self = this,
-            diff = to - from,
-            start = now(),
-            stop = 0,
-            end = 0;
+        const time = duration || thousand;
+        const diff = to - from;
+        const start = now();
+        let stop = 0;
+        let end = 0;
 
-        function run(t) {
+        const run = (t) => {
             const delta = t - start;
             if (delta > time || stop) {
                 to = isFinite(to) ? to : 1;
-                stop ? end && fn(to) : fn(to);
+                if (stop) {
+                    if (end) fn(to);
+                } else {
+                    fn(to);
+                }
                 die(run);
-                return done && done.apply(self);
+                return done && done.apply(this);
             }
             // if you don't specify a 'to' you can use tween as a generic delta tweener
             // cool, eh?
-            isFinite(to) ? fn(diff * ease(delta / time) + from) : fn(ease(delta / time));
-        }
+            if (isFinite(to)) {
+                fn(diff * ease(delta / time) + from);
+            } else {
+                fn(ease(delta / time));
+            }
+        };
 
         live(run);
 
@@ -203,10 +210,9 @@ const storymapAnimate = (function () {
     * @return [x, y]
     */
     function bezier(points, pos) {
-        let n = points.length,
-            r = [],
-            i,
-            j;
+        const n = points.length;
+        const r = [];
+        let i, j;
         for (i = 0; i < n; ++i) {
             r[i] = [points[i][0], points[i][1]];
         }
@@ -221,11 +227,8 @@ const storymapAnimate = (function () {
 
     // this gets you the next hex in line according to a 'position'
     function nextColor(pos, start, finish) {
-        let r = [],
-            i,
-            e,
-            from,
-            to;
+        const r = [];
+        let i, e, from, to;
         for (i = 0; i < 6; i++) {
             from = Math.min(15, parseInt(start.charAt(i), 16));
             to = Math.min(15, parseInt(finish.charAt(i), 16));
@@ -262,9 +265,12 @@ const storymapAnimate = (function () {
 
     // support for relative movement via '+=n' or '-=n'
     function by(val, start?, m?, r?, i?) {
-        return (m = relVal.exec(val))
-            ? (i = parseFloat(m[2])) && start + (m[1] === "+" ? 1 : -1) * i
-            : parseFloat(val);
+        m = relVal.exec(val);
+        if (m) {
+            i = parseFloat(m[2]);
+            return i && start + (m[1] === "+" ? 1 : -1) * i;
+        }
+        return parseFloat(val);
     }
 
     /**
@@ -283,17 +289,15 @@ const storymapAnimate = (function () {
      */
     function morpheus(elements, options) {
         const els = elements ? (isFinite(elements.length) ? elements : [elements]) : [];
-        let i,
-            complete = options.complete,
-            duration = options.duration,
-            ease = options.easing,
-            points = options.bezier,
-            begin = [],
-            end = [],
-            units = [],
-            bez = [],
-            originalLeft,
-            originalTop;
+        let i, originalLeft, originalTop;
+        const complete = options.complete;
+        const duration = options.duration;
+        const ease = options.easing;
+        const points = options.bezier;
+        const begin = [];
+        const end = [];
+        const units = [];
+        const bez = [];
 
         if (points) {
             // remember the original values for top|left
@@ -339,9 +343,9 @@ const storymapAnimate = (function () {
                     case "bezier":
                         continue;
                 }
-                let v = getStyle(els[i], k),
-                    unit,
-                    tmp = fun(options[k]) ? options[k](els[i]) : options[k];
+                const v = getStyle(els[i], k);
+                let unit;
+                const tmp = fun(options[k]) ? options[k](els[i]) : options[k];
                 if (typeof tmp == "string" && rgbOhex.test(tmp) && !rgbOhex.test(v)) {
                     delete options[k]; // remove key :(
                     continue; // cannot animate colors like 'orange' or 'transparent'
@@ -361,7 +365,10 @@ const storymapAnimate = (function () {
                           ? toHex(tmp).slice(1)
                           : by(tmp, parseFloat(v));
                 // record original unit
-                typeof tmp == "string" && (unit = tmp.match(numUnit)) && (units[i][k] = unit[1]);
+                if (typeof tmp == "string") {
+                    unit = tmp.match(numUnit);
+                    if (unit) units[i][k] = unit[1];
+                }
             }
         }
         // ONE TWEEN TO RULE THEM ALL
@@ -378,9 +385,11 @@ const storymapAnimate = (function () {
                     }
                     for (const k in options) {
                         v = getTweenVal(pos, units, begin, end, k, i);
-                        k === "transform"
-                            ? (els[i].style[transform] = formatTransform(v))
-                            : (els[i].style[camelize(k)] = v);
+                        if (k === "transform") {
+                            els[i].style[transform] = formatTransform(v);
+                        } else {
+                            els[i].style[camelize(k)] = v;
+                        }
                     }
                 }
             },

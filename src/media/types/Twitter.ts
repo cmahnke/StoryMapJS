@@ -17,9 +17,6 @@ export default class Twitter extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url;
-        const self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -35,10 +32,10 @@ export default class Twitter extends Media {
             this.media_id = match[2];
         }
         const callbackName = `twitterCallback_${this.media_id}`;
-        api_url = `https://api.twitter.com/1/statuses/oembed.json?id=${this.media_id}&include_entities=true&callback=${callbackName}`;
+        const api_url = `https://api.twitter.com/1/statuses/oembed.json?id=${this.media_id}&include_entities=true&callback=${callbackName}`;
         const callbackScript = document.createElement("script");
-        window[callbackName] = function (data) {
-            self.createMedia(data);
+        window[callbackName] = (data) => {
+            this.createMedia(data);
         };
         callbackScript.src = api_url;
         document.body.appendChild(callbackScript);
@@ -46,18 +43,14 @@ export default class Twitter extends Media {
 
     createMedia(d) {
         let tweet = "",
-            tweet_text = "",
-            tweetuser = "",
-            tweet_status_temp = "",
-            tweet_status_url = "",
-            tweet_status_date = "";
+            tweet_text;
 
         //	TWEET CONTENT
-        tweet_text = d.html.split("<\/p>\&mdash;")[0] + "</p></blockquote>";
-        tweetuser = d.author_url.split("twitter.com\/")[1];
-        tweet_status_temp = d.html.split("<\/p>\&mdash;")[1].split('<a href="')[1];
-        tweet_status_url = tweet_status_temp.split('"\>')[0];
-        tweet_status_date = tweet_status_temp.split('"\>')[1].split("<\/a>")[0];
+        tweet_text = d.html.split("</p>&mdash;")[0] + "</p></blockquote>";
+        const tweetuser = d.author_url.split("twitter.com/")[1];
+        const tweet_status_temp = d.html.split("</p>&mdash;")[1].split('<a href="')[1];
+        const tweet_status_url = tweet_status_temp.split('">')[0];
+        const tweet_status_date = tweet_status_temp.split('">')[1].split("</a>")[0];
 
         // Open links in new window
         tweet_text = tweet_text.replace(/<a href/gi, '<a target="_blank" href');

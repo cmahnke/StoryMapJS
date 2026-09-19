@@ -17,9 +17,6 @@ export default class Vimeo extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        const _self = this;
-        let api_url;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -34,7 +31,7 @@ export default class Vimeo extends Media {
         this.media_id = this.data.url.split(/video\/|\/\/vimeo\.com\//)[1].split(/[?&]/)[0];
 
         // API URL
-        api_url =
+        const api_url =
             "https://player.vimeo.com/video/" +
             this.media_id +
             "?api=1&title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff";

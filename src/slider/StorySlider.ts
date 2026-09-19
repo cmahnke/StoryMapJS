@@ -74,15 +74,6 @@ export default class StorySlider {
         // Slides Array
         this._slides = [];
 
-        // Swipe Object
-        this._swipable;
-
-        // Preload Timer
-        this.preloadTimer;
-
-        // Message
-        this._message;
-
         // Current Slide
         this.current_slide = 0;
 
@@ -222,8 +213,6 @@ export default class StorySlider {
     }
 
     goTo(n, fast?, displayupdate?) {
-        const self = this;
-
         this.changeBackground({ color_value: "", image: false });
 
         // Clear Preloader Timer
@@ -279,8 +268,8 @@ export default class StorySlider {
             }
 
             // Preload Slides
-            this.preloadTimer = setTimeout(function () {
-                self.preloadSlides();
+            this.preloadTimer = setTimeout(() => {
+                this.preloadSlides();
             }, this.options.duration);
         }
     }
@@ -356,16 +345,14 @@ export default class StorySlider {
     }
 
     changeBackground(bg) {
-        const self = this;
         let do_animation = false;
 
-        let bg_color = { r: 256, g: 256, b: 256 },
-            bg_color_rgb,
+        let bg_color,
             bg_percent_start = this.options.slide_default_fade,
-            bg_percent_end = "15%",
-            bg_alpha_end = "0.87",
-            bg_css = "",
-            _bg_old = this._el.background.getAttribute("style");
+            bg_css = "";
+        const bg_percent_end = "15%";
+        const bg_alpha_end = "0.87";
+        const _bg_old = this._el.background.getAttribute("style");
 
         if (bg.color_value) {
             bg_color = hexToRgb(bg.color_value);
@@ -378,7 +365,7 @@ export default class StorySlider {
             this.animator_background.stop();
         }
 
-        bg_color_rgb = bg_color.r + "," + bg_color.g + "," + bg_color.b;
+        const bg_color_rgb = bg_color.r + "," + bg_color.g + "," + bg_color.b;
 
         if (!this.current_bg_color || this.current_bg_color !== bg_color_rgb) {
             this.current_bg_color = bg_color_rgb;
@@ -452,8 +439,8 @@ export default class StorySlider {
                 opacity: 0,
                 duration: this.options.duration / 2,
                 easing: this.options.ease,
-                complete: function () {
-                    self.fadeInBackground(bg_css);
+                complete: () => {
+                    this.fadeInBackground(bg_css);
                 },
             });
         }
@@ -480,7 +467,7 @@ export default class StorySlider {
 
     // Update Display
     _updateDisplay(width?, height?, animate?, layout?) {
-        let nav_pos, _layout;
+        let _layout;
 
         if (typeof layout === "undefined") {
             _layout = this.options.layout;
@@ -507,7 +494,7 @@ export default class StorySlider {
         //this._el.container.style.height = this.options.height;
 
         // position navigation
-        nav_pos = this.options.height / 2;
+        const nav_pos = this.options.height / 2;
         this._nav.next.setPosition({ top: nav_pos });
         this._nav.previous.setPosition({ top: nav_pos });
 

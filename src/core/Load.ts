@@ -62,8 +62,8 @@ class Loader {
     @private
     */
     createNode(name, attrs?) {
-        let node = this.doc.createElement(name),
-            attr;
+        const node = this.doc.createElement(name);
+        let attr;
 
         for (attr in attrs) {
             if (Object.hasOwn(attrs, attr)) {
@@ -84,9 +84,8 @@ class Loader {
     @private
     */
     finish(type) {
-        let p = this.pending[type],
-            callback,
-            urls;
+        const p = this.pending[type];
+        let callback, urls;
 
         if (p) {
             callback = p.callback;
@@ -97,9 +96,9 @@ class Loader {
             // If this is the last of the pending URLs, execute the callback and
             // start the next request in the queue (if any).
             if (!urls.length) {
-                callback && callback.call(p.context, p.obj);
+                if (callback) callback.call(p.context, p.obj);
                 this.pending[type] = null;
-                this.queue[type].length && this.load(type);
+                if (this.queue[type].length) this.load(type);
             }
         }
     }
@@ -127,17 +126,12 @@ class Loader {
     @private
     */
     load(type, urls?, callback?, obj?, context?) {
-        let _finish = function (this: any) {
-                this.finish(type);
-            }.bind(this),
-            isCSS = type === "css",
-            nodes = [],
-            i,
-            len,
-            node,
-            p,
-            pendingUrls,
-            url;
+        const _finish = function (this: any) {
+            this.finish(type);
+        }.bind(this);
+        const isCSS = type === "css";
+        const nodes = [];
+        let i, len, node, p, url;
 
         if (urls) {
             // If urls is a string, wrap it in an array. Otherwise assume it's an
@@ -163,7 +157,7 @@ class Loader {
             return;
         }
 
-        pendingUrls = p.urls;
+        const pendingUrls = p.urls;
 
         for (i = 0, len = pendingUrls.length; i < len; ++i) {
             url = pendingUrls[i];

@@ -5,7 +5,7 @@ import Emoji from "../library/Emoji";
 export function extend(dest: any, ...sources: any[]): any {
     // merge src properties into dest
     sources = sources.filter(Boolean);
-    for (var j = 0, len = sources.length, src; j < len; j++) {
+    for (let j = 0, len = sources.length, src; j < len; j++) {
         src = sources[j] || {};
         for (const i in src) {
             if (Object.hasOwn(src, i)) {
@@ -39,7 +39,6 @@ export function convertUnixTime(str) {
         date_parts = str.match(pattern).slice(1);
     }
     const date_array = [];
-    let date, months, year, month, day, time;
     for (let i = 0; i < date_parts.length; i++) {
         let val = parseInt(date_parts[i]);
         if (i === 1) {
@@ -47,7 +46,7 @@ export function convertUnixTime(str) {
         } // stupid javascript months
         date_array.push(val);
     }
-    date = new Date(
+    const date = new Date(
         date_array[0],
         date_array[1],
         date_array[2],
@@ -55,11 +54,24 @@ export function convertUnixTime(str) {
         date_array[4],
         date_array[5],
     );
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    year = date.getFullYear();
-    month = months[date.getMonth()];
-    day = date.getDate();
-    time = month + ", " + day + " " + year;
+    const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const time = month + ", " + day + " " + year;
     return time;
 }
 
@@ -165,10 +177,8 @@ export function htmlify(str) {
 }
 
 export function getUrlVars(string) {
-    let str,
-        vars = [],
-        hash,
-        hashes;
+    let str, hash;
+    const vars = [];
     str = string.toString();
     if (str.match("&#038;")) {
         str = str.replace("&#038;", "&");
@@ -177,7 +187,7 @@ export function getUrlVars(string) {
     } else if (str.match("&amp;")) {
         str = str.replace("&amp;", "&");
     }
-    hashes = str.slice(str.indexOf("?") + 1).split("&");
+    const hashes = str.slice(str.indexOf("?") + 1).split("&");
     for (let i = 0; i < hashes.length; i++) {
         hash = hashes[i].split("=");
         vars.push(hash[0]);
@@ -230,7 +240,7 @@ export function urljoin(base_url, path) {
     const url1 = base_url.split("/");
     const url2 = path.split("/");
     const url3 = [];
-    for (var i = 0, l = url1.length; i < l; i++) {
+    for (let i = 0, l = url1.length; i < l; i++) {
         if (url1[i] === "..") {
             url3.pop();
         } else if (url1[i] === ".") {
@@ -239,7 +249,7 @@ export function urljoin(base_url, path) {
             url3.push(url1[i]);
         }
     }
-    for (var i = 0, l = url2.length; i < l; i++) {
+    for (let i = 0, l = url2.length; i < l; i++) {
         if (url2[i] === "..") {
             url3.pop();
         } else if (url2[i] === ".") {

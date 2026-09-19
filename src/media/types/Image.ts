@@ -17,7 +17,6 @@ export default class Image extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        const self = this;
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -40,8 +39,8 @@ export default class Image extends Media {
         }
 
         // Media Loaded Event
-        this._el.content_item.addEventListener("load", function (e) {
-            self.onMediaLoaded();
+        this._el.content_item.addEventListener("load", (e) => {
+            this.onMediaLoaded();
         });
 
         this._el.content_item.src = this.data.url;

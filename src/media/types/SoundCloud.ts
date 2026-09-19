@@ -17,9 +17,6 @@ export default class SoundCloud extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url;
-        const self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -34,14 +31,14 @@ export default class SoundCloud extends Media {
         this.media_id = this.data.url;
 
         // API URL
-        api_url = "https://soundcloud.com/oembed?url=" + this.media_id + "&format=json";
+        const api_url = "https://soundcloud.com/oembed?url=" + this.media_id + "&format=json";
 
         // API Call
         fetch(api_url).then((r) =>
             r.json().then((d) => {
-                loadJS("https://w.soundcloud.com/player/api.js", function () {
+                loadJS("https://w.soundcloud.com/player/api.js", () => {
                     //load soundcloud api for pausing.
-                    self.createMedia(d);
+                    this.createMedia(d);
                 });
             }),
         );

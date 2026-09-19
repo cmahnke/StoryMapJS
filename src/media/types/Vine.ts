@@ -17,9 +17,6 @@ export default class Vine extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url;
-        const _self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -34,7 +31,7 @@ export default class Vine extends Media {
         this.media_id = this.data.url.split("vine.co/v/")[1];
 
         // API URL
-        api_url = "https://vine.co/v/" + this.media_id + "/embed/simple";
+        const api_url = "https://vine.co/v/" + this.media_id + "/embed/simple";
 
         // API Call
         this._el.content_item.innerHTML =

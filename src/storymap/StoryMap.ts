@@ -62,7 +62,6 @@ class StoryMap {
             }
         }
 
-        const _self = this;
         // Version
         this.version = "0.1.16";
 
@@ -175,35 +174,31 @@ class StoryMap {
     /* Initialize the data
 	================================================== */
     _initData(data) {
-        const self = this;
-
         if (typeof data === "string") {
             fetch(data)
                 .then((response) => response.json())
                 .then((result) => {
                     validateStorymapAndReport(result, data);
-                    self.data = result.storymap;
-                    self._initOptions();
+                    this.data = result.storymap;
+                    this._initOptions();
                 });
         } else if (typeof data === "object") {
             validateStorymapAndReport(data);
             if (data.storymap) {
-                self.data = data.storymap;
+                this.data = data.storymap;
             } else {
                 console.error("StoryMapJS: data must have a storymap property");
             }
-            self._initOptions();
+            this._initOptions();
         } else {
             console.error("StoryMapJS: data has unknown type");
-            self._initOptions();
+            this._initOptions();
         }
     }
 
     /* Initialize the options
 	================================================== */
     _initOptions() {
-        const self = this;
-
         // Grab options from storymap data
         updateData(this.options, this.data);
 
@@ -238,14 +233,14 @@ class StoryMap {
         // Use relative date calculations?
         if (this.options.relative_date) {
             if (typeof moment !== "undefined") {
-                self._loadLanguage();
+                this._loadLanguage();
             } else {
-                loadJS(this.options.script_path + "/library/moment.js", function () {
-                    self._loadLanguage();
+                loadJS(this.options.script_path + "/library/moment.js", () => {
+                    this._loadLanguage();
                 });
             }
         } else {
-            self._loadLanguage();
+            this._loadLanguage();
         }
     }
 
@@ -278,8 +273,6 @@ class StoryMap {
 
     // Initialize the layout
     _initLayout() {
-        const _self = this;
-
         this._el.container.className += " vco-storymap";
         this.options.base_class = this._el.container.className;
 
@@ -351,8 +344,7 @@ class StoryMap {
     // Update View
     _updateDisplay(map_height?, animate?, d?) {
         let duration = this.options.duration,
-            display_class = this.options.base_class,
-            self = this;
+            display_class = this.options.base_class;
 
         if (d) {
             duration = d;
@@ -404,13 +396,13 @@ class StoryMap {
                     height: this.options.map_height + "px",
                     duration: duration,
                     easing: Ease.easeOutStrong,
-                    complete: function () {
-                        self._map.updateDisplay(
-                            self.options.width,
-                            self.options.map_height,
+                    complete: () => {
+                        this._map.updateDisplay(
+                            this.options.width,
+                            this.options.map_height,
                             animate,
                             d,
-                            self.options.menubar_height,
+                            this.options.menubar_height,
                         );
                     },
                 });

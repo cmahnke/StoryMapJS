@@ -90,14 +90,13 @@ export default class SlideNav {
     /*	Position
 	================================================== */
     updatePosition(pos, use_percent, duration, ease, start_value, return_to_default) {
-        const self = this,
-            ani: any = {
-                duration: duration,
-                easing: ease,
-                complete: function () {
-                    self._onUpdatePositionComplete(return_to_default);
-                },
-            };
+        const ani: any = {
+            duration: duration,
+            easing: ease,
+            complete: () => {
+                this._onUpdatePositionComplete(return_to_default);
+            },
+        };
         const _start_value = start_value;
 
         for (const name in pos) {

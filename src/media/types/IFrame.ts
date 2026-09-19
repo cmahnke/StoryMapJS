@@ -16,8 +16,6 @@ export default class IFrame extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        const _self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 

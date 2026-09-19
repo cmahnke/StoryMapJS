@@ -20,9 +20,6 @@ export default class YouTube extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        const self = this;
-        let url_vars;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -37,15 +34,15 @@ export default class YouTube extends Media {
         this._el.content_item.id = unique_ID(7);
 
         // URL Vars
-        url_vars = getUrlVars(this.data.url);
+        const url_vars = getUrlVars(this.data.url);
 
         // Get Media ID
         this.media_id = {};
 
         if (this.data.url.match("v=")) {
             this.media_id.id = url_vars["v"];
-        } else if (this.data.url.match("\/embed\/")) {
-            this.media_id.id = this.data.url.split("embed\/")[1].split(/[?&]/)[0];
+        } else if (this.data.url.match("/embed/")) {
+            this.media_id.id = this.data.url.split("embed/")[1].split(/[?&]/)[0];
         } else if (this.data.url.match(/v\/|v=|youtu\.be\//)) {
             this.media_id.id = this.data.url.split(/v\/|v=|youtu\.be\//)[1].split(/[?&]/)[0];
         } else {
@@ -56,8 +53,8 @@ export default class YouTube extends Media {
         this.media_id.hd = url_vars["hd"];
 
         // API Call
-        loadJS("https://www.youtube.com/iframe_api", function () {
-            self.createMedia();
+        loadJS("https://www.youtube.com/iframe_api", () => {
+            this.createMedia();
         });
     }
 
@@ -70,7 +67,7 @@ export default class YouTube extends Media {
     _stopMedia() {
         if (this.youtube_loaded) {
             try {
-                if (this.player.getPlayerState() == YT.PlayerState.PLAYING) {
+                if (this.player.getPlayerState() === YT.PlayerState.PLAYING) {
                     this.player.pauseVideo();
                 }
             } catch (err) {
@@ -80,12 +77,10 @@ export default class YouTube extends Media {
     }
 
     createMedia() {
-        const _self = this;
         // Determine Start of Media
         if (typeof this.media_id.start != "undefined") {
-            let vidstart = this.media_id.start.toString(),
-                vid_start_minutes = 0,
-                vid_start_seconds = 0;
+            const vidstart = this.media_id.start.toString();
+            let vid_start_minutes, vid_start_seconds;
             if (vidstart.match("m")) {
                 vid_start_minutes = parseInt(vidstart.split("m")[0], 10);
                 vid_start_seconds = parseInt(vidstart.split("m")[1].split("s")[0], 10);
@@ -106,7 +101,6 @@ export default class YouTube extends Media {
     }
 
     createPlayer() {
-        const self = this;
         clearTimeout(this.timer);
         if (typeof YT != "undefined" && typeof YT.Player != "undefined") {
             // Create Player
@@ -123,17 +117,17 @@ export default class YouTube extends Media {
                 },
                 videoId: this.media_id.id,
                 events: {
-                    onReady: function () {
-                        self.onPlayerReady();
+                    onReady: () => {
+                        this.onPlayerReady();
                         // After Loaded
-                        //self.onLoaded();
+                        //this.onLoaded();
                     },
-                    onStateChange: self.onStateChange,
+                    onStateChange: this.onStateChange,
                 },
             });
         } else {
-            this.timer = setTimeout(function () {
-                self.createPlayer();
+            this.timer = setTimeout(() => {
+                this.createPlayer();
             }, 1000);
         }
         this.onLoaded();
@@ -149,7 +143,7 @@ export default class YouTube extends Media {
     }
 
     onStateChange(e) {
-        if (e.data == YT.PlayerState.ENDED) {
+        if (e.data === YT.PlayerState.ENDED) {
             e.target.seekTo(0);
             e.target.pauseVideo();
         }

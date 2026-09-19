@@ -16,9 +16,6 @@ export default class DailyMotion extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url;
-        const _self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -31,13 +28,14 @@ export default class DailyMotion extends Media {
 
         // Get Media ID
         if (this.data.url.match("video")) {
-            this.media_id = this.data.url.split("video\/")[1].split(/[?&]/)[0];
+            this.media_id = this.data.url.split("video/")[1].split(/[?&]/)[0];
         } else {
-            this.media_id = this.data.url.split("embed\/")[1].split(/[?&]/)[0];
+            this.media_id = this.data.url.split("embed/")[1].split(/[?&]/)[0];
         }
 
         // API URL
-        api_url = "https://www.dailymotion.com/embed/video/" + this.media_id + "?api=postMessage";
+        const api_url =
+            "https://www.dailymotion.com/embed/video/" + this.media_id + "?api=postMessage";
 
         // API Call
         this._el.content_item.innerHTML =

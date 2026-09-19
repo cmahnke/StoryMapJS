@@ -102,14 +102,12 @@ export class Media {
     }
 
     loadMedia() {
-        const self = this;
-
         if (!this._state.loaded) {
             try {
-                this.load_timer = setTimeout(function () {
-                    self._loadMedia();
-                    self._state.loaded = true;
-                    self._updateDisplay();
+                this.load_timer = setTimeout(() => {
+                    this._loadMedia();
+                    this._state.loaded = true;
+                    this._updateDisplay();
                 }, 1200);
             } catch (e) {
                 console.log("Error loading media for ", this._media);

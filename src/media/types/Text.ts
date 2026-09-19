@@ -99,7 +99,7 @@ export default class Text {
         this._el.date = Dom.create("h3", "vco-headline-date", this._el.content_container);
 
         // Headline
-        if (this.data.headline != "") {
+        if (this.data.headline !== "") {
             let headline_class = "vco-headline";
             if (this.options.title) {
                 headline_class = "vco-headline vco-headline-title";
@@ -109,7 +109,7 @@ export default class Text {
         }
 
         // Text
-        if (this.data.text != "") {
+        if (this.data.text !== "") {
             let text_content = "";
 
             text_content += htmlify(this.data.text);
@@ -118,7 +118,7 @@ export default class Text {
             if (
                 this.data.date &&
                 this.data.date.created_time &&
-                this.data.date.created_time != ""
+                this.data.date.created_time !== ""
             ) {
                 if (this.data.date.created_time.length > 10) {
                     if (typeof moment !== "undefined") {

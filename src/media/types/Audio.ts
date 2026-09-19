@@ -16,7 +16,6 @@ export default class Audio extends Media {
 	================================================== */
     _loadMedia() {
         const _api_url = "";
-        const self = this;
 
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
@@ -31,9 +30,9 @@ export default class Audio extends Media {
         this._el.source_item = Dom.create("source", "", this._el.content_item);
 
         // Media Loaded Event
-        this._el.content_item.addEventListener("canplay", function (e) {
+        this._el.content_item.addEventListener("canplay", (e) => {
             console.log("load event", e);
-            self.onLoaded();
+            this.onLoaded();
         });
 
         this._el.source_item.src = this.data.url;

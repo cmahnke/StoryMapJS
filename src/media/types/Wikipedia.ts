@@ -16,10 +16,6 @@ export default class Wikipedia extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url;
-        let api_language;
-        const self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -31,29 +27,27 @@ export default class Wikipedia extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url.split("wiki\/")[1].split("#")[0].replace("_", " ");
+        this.media_id = this.data.url.split("wiki/")[1].split("#")[0].replace("_", " ");
         this.media_id = this.media_id.replace(" ", "%20");
-        api_language = this.data.url.split("//")[1].split(".wikipedia")[0];
+        const api_language = this.data.url.split("//")[1].split(".wikipedia")[0];
 
         const callbackPrefix = "wikipediaCallback_";
         const maxIDLength = 512 - callbackPrefix.length;
         const callbackName =
             callbackPrefix + this.media_id.replace(/[^0-9a-z]/gi, "").slice(0, maxIDLength);
-        api_url = `https://${api_language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${this.media_id}&exintro=1&format=json&callback=${callbackName}`;
+        const api_url = `https://${api_language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${this.media_id}&exintro=1&format=json&callback=${callbackName}`;
         const callbackScript = document.createElement("script");
-        window[callbackName] = function (data) {
-            self.createMedia(data);
+        window[callbackName] = (data) => {
+            this.createMedia(data);
         };
         callbackScript.src = api_url;
         document.body.appendChild(callbackScript);
     }
 
     createMedia(d) {
-        let wiki: any = "";
-
         if (d.query) {
             let content;
-            wiki = {
+            const wiki: any = {
                 entry: {},
                 title: "",
                 text: "",

@@ -16,9 +16,6 @@ export default class Flickr extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        let api_url;
-        const self = this;
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -30,14 +27,14 @@ export default class Flickr extends Media {
         );
 
         // Media Loaded Event
-        this._el.content_item.addEventListener("load", function (e) {
-            self.onMediaLoaded();
+        this._el.content_item.addEventListener("load", (e) => {
+            this.onMediaLoaded();
         });
 
         // Get Media ID
         this.establishMediaID();
 
-        api_url =
+        const api_url =
             "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=" +
             this.options.api_key_flickr +
             "&photo_id=" +
@@ -46,10 +43,10 @@ export default class Flickr extends Media {
 
         fetch(api_url).then((r) =>
             r.json().then((d) => {
-                if (d.stat == "ok") {
-                    self.createMedia(d);
+                if (d.stat === "ok") {
+                    this.createMedia(d);
                 } else {
-                    self.loadErrorDisplay("Photo not found or private.");
+                    this.loadErrorDisplay("Photo not found or private.");
                 }
             }),
         );
@@ -58,7 +55,7 @@ export default class Flickr extends Media {
     establishMediaID() {
         const marker = "flickr.com/photos/";
         const idx = this.data.url.indexOf(marker);
-        if (idx == -1) {
+        if (idx === -1) {
             throw "Invalid Flickr URL";
         }
         const pos = idx + marker.length;
@@ -66,11 +63,11 @@ export default class Flickr extends Media {
     }
 
     createMedia(d) {
-        let best_size = this.sizes(this.options.height),
-            size = d.sizes.size[d.sizes.size.length - 2].source;
+        const best_size = this.sizes(this.options.height);
+        let size = d.sizes.size[d.sizes.size.length - 2].source;
 
         for (let i = 0; i < d.sizes.size.length; i++) {
-            if (d.sizes.size[i].label == best_size) {
+            if (d.sizes.size[i].label === best_size) {
                 size = d.sizes.size[i].source;
             }
         }
@@ -83,7 +80,7 @@ export default class Flickr extends Media {
     }
 
     sizes(s) {
-        let _size = "";
+        let _size;
 
         if (s <= 75) {
             if (s <= 0) {
