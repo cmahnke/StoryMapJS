@@ -44,14 +44,11 @@ class Loader {
     declare "head": any;
 
     constructor(document) {
-        this.doc = document
-        this.pending = {}
+        this.doc = document;
+        this.pending = {};
         this.queue = { css: [], js: [] };
-        this.head = this.doc.head || this.doc.getElementsByTagName('head')[0];
-
+        this.head = this.doc.head || this.doc.getElementsByTagName("head")[0];
     }
-
-
 
     // -- Private Methods --------------------------------------------------------
 
@@ -130,18 +127,23 @@ class Loader {
     @private
     */
     load(type, urls?, callback?, obj?, context?) {
-        let _finish = function(this: any) { this.finish(type); }.bind(this),
-            isCSS = type === 'css',
+        let _finish = function (this: any) {
+                this.finish(type);
+            }.bind(this),
+            isCSS = type === "css",
             nodes = [],
-            i, len, node, p, pendingUrls, url;
-
-
+            i,
+            len,
+            node,
+            p,
+            pendingUrls,
+            url;
 
         if (urls) {
             // If urls is a string, wrap it in an array. Otherwise assume it's an
             // array and create a copy of it so modifications won't be made to the
             // original.
-            urls = typeof urls === 'string' ? [urls] : urls.concat();
+            urls = typeof urls === "string" ? [urls] : urls.concat();
 
             // Create a request object for each URL. If multiple URLs are specified,
             // the callback will only be executed after all URLs have been loaded.
@@ -151,7 +153,7 @@ class Loader {
                 urls: urls,
                 callback: callback,
                 obj: obj,
-                context: context
+                context: context,
             });
         }
 
@@ -161,24 +163,23 @@ class Loader {
             return;
         }
 
-
         pendingUrls = p.urls;
 
         for (i = 0, len = pendingUrls.length; i < len; ++i) {
             url = pendingUrls[i];
 
             if (isCSS) {
-                node = this.createNode('link', {
+                node = this.createNode("link", {
                     href: url,
-                    rel: 'stylesheet'
+                    rel: "stylesheet",
                 });
             } else {
-                node = this.createNode('script', { src: url });
+                node = this.createNode("script", { src: url });
                 node.async = false;
             }
 
-            node.className = 'lazyload';
-            node.setAttribute('charset', 'utf-8');
+            node.className = "lazyload";
+            node.setAttribute("charset", "utf-8");
             node.onload = node.onerror = _finish;
 
             nodes.push(node);
@@ -188,7 +189,6 @@ class Loader {
             this.head.appendChild(nodes[i]);
         }
     }
-
 
     /**
     Requests the specified CSS URL or URLs and executes the specified
@@ -206,7 +206,7 @@ class Loader {
     @static
     */
     css(urls, callback, obj, context) {
-        this.load('css', urls, callback, obj, context);
+        this.load("css", urls, callback, obj, context);
     }
 
     /**
@@ -230,21 +230,20 @@ class Loader {
     @static
     */
     js(urls, callback, obj, context) {
-        this.load('js', urls, callback, obj, context);
+        this.load("js", urls, callback, obj, context);
     }
 }
 
 function loadJS(urls, callback, obj?, context?) {
-    loader.js(urls, callback, obj, context)
+    loader.js(urls, callback, obj, context);
 }
 
 function loadCSS(urls, callback, obj?, context?) {
-    loader.css(urls, callback, obj, context)
+    loader.css(urls, callback, obj, context);
 }
 
-
 // this seems fragile but not sure how else to inject the document
-// besides 
-const loader = new Loader(document)
+// besides
+const loader = new Loader(document);
 
-export { loadJS, loadCSS }
+export { loadJS, loadCSS };

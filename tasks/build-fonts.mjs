@@ -4,7 +4,7 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { readdirSync, mkdirSync, writeFileSync, copyFileSync, existsSync } from "node:fs";
-import { join, basename, } from "node:path";
+import { join, basename } from "node:path";
 import * as sass from "sass";
 
 const req = createRequire(import.meta.url);
@@ -57,16 +57,19 @@ for (const theme of themes) {
     let css = result.css;
 
     // Rewrite font binary urls and copy the files
-    css = css.replace(/url\((?:['"])?(\.\.?\/)?[^)"']*?([\w@.-]+\.woff2?|[\w@.-]+\.ttf|[\w@.-]+\.eot|[\w@.-]+\.svg)(?:['"])?\)/g, (m, rel, baseName) => {
-        // skip data urls handled by regex shape already
-        const found = findFontFile(baseName);
-        if (!found) {
-            console.warn(`  ! font binary not found: ${baseName}`);
-            return m;
-        }
-        copyFileSync(found, join(filesDir, basename(found)));
-        return `url(files/${basename(found)})`;
-    });
+    css = css.replace(
+        /url\((?:['"])?(\.\.?\/)?[^)"']*?([\w@.-]+\.woff2?|[\w@.-]+\.ttf|[\w@.-]+\.eot|[\w@.-]+\.svg)(?:['"])?\)/g,
+        (m, rel, baseName) => {
+            // skip data urls handled by regex shape already
+            const found = findFontFile(baseName);
+            if (!found) {
+                console.warn(`  ! font binary not found: ${baseName}`);
+                return m;
+            }
+            copyFileSync(found, join(filesDir, basename(found)));
+            return `url(files/${basename(found)})`;
+        },
+    );
 
     writeFileSync(join(outDir, theme.replace(/\.scss$/, ".css")), css);
     console.log(`FONT CSS compiled ${theme}`);

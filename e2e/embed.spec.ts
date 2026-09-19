@@ -9,10 +9,14 @@ test("embed page renders a storymap via the KLStoryMap global", async ({ page })
     await page.goto("/embed/index.html?url=/examples/katrina.json");
 
     await expect
-        .poll(() => page.evaluate(() => document.querySelectorAll("#storymap-embed .vco-slide").length), {
-            timeout: 20_000,
-            message: "waiting for slides to render",
-        })
+        .poll(
+            () =>
+                page.evaluate(() => document.querySelectorAll("#storymap-embed .vco-slide").length),
+            {
+                timeout: 20_000,
+                message: "waiting for slides to render",
+            },
+        )
         .toBeGreaterThan(0);
 
     expect(pageErrors, "uncaught exceptions on the embed page").toEqual([]);

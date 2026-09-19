@@ -1,15 +1,13 @@
 .vco-media {
-	.vco-media-image {
-		width: auto !important;
-	}
-
+    .vco-media-image {
+        width: auto !important;
+    }
 }
 
 .vco-mobile.vco-skinny {
-	.vco-media {
-		.vco-media-image {
-			max-height:250px !important;
-		}
-
-	}
+    .vco-media {
+        .vco-media-image {
+            max-height: 250px !important;
+        }
+    }
 }

@@ -49,7 +49,7 @@ for (const name of exampleNames) {
                 await page.waitForTimeout(1500);
                 expect(
                     await page.evaluate(() => (window as any).__smErrors),
-                    `window errors after navigation in ${name}`
+                    `window errors after navigation in ${name}`,
                 ).toEqual([]);
             }
         }

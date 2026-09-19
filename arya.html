@@ -1,41 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <title>StoryMapJS Remote JSON Demo</title>
+        <meta charset="utf-8" />
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            #storymap-embed {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
 
-<head>
-    <title>StoryMapJS Remote JSON Demo</title>
-    <meta charset="utf-8">
-    <style>
-        html, body {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
-        #storymap-embed {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
-</head>
+    <body>
+        <div id="storymap-embed"></div>
 
-<body>
-    <div id="storymap-embed"></div>
+        <script type="module">
+            import { StoryMap } from "./src/main.ts";
 
-    <script type="module">
-        import { StoryMap } from "./src/main.ts";
+            function onStoryMapTitle(e) {
+                document.title = "StoryMapJS: " + e.title;
+            }
 
-        function onStoryMapTitle(e) {
-            document.title = "StoryMapJS: " + e.title;
-        }
-
-        const url = "https://uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
-        fetch(url)
-            .then((response) => response.json())
-            .then((data) => {
-                window.storymap = new StoryMap("storymap-embed", data, {}, { title: onStoryMapTitle });
-            })
-            .catch((error) => console.error("Error loading storymap data:", error));
-    </script>
-</body>
-
+            const url =
+                "https://uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    window.storymap = new StoryMap(
+                        "storymap-embed",
+                        data,
+                        {},
+                        { title: onStoryMapTitle },
+                    );
+                })
+                .catch((error) => console.error("Error loading storymap data:", error));
+        </script>
+    </body>
 </html>

@@ -4,40 +4,40 @@ https://fonts.google.com/specimen/Amatic+SC
 https://fonts.google.com/specimen/Andika
 // ----------------------------------------------------- */
 
-// Main Variables 
-@import "../Variables"; 
+// Main Variables
+@import "../Variables";
 
 // Font Import
 @import "@fontsource/amatic-sc/400.css";
 @import "@fontsource/amatic-sc/700.css";
 
 // Font Variables
-$font-main:						'Andika', sans-serif;
-$font-secondary:				'Amatic SC', cursive;
-$font-navigation:				$font-main;
-$font-marker: 					$font-main;
-$font-headline-date: 			$font-navigation;
+$font-main: "Andika", sans-serif;
+$font-secondary: "Amatic SC", cursive;
+$font-navigation: $font-main;
+$font-marker: $font-main;
+$font-headline-date: $font-navigation;
 
-$base-font-size: 				16px;
-$base-font-weight: 				400;
+$base-font-size: 16px;
+$base-font-weight: 400;
 
 // Blockquote
-$font-blockquote: 				$font-secondary;
-$font-blockquote-weight: 		400;
-$font-blockquote-style: 		normal;
+$font-blockquote: $font-secondary;
+$font-blockquote-weight: 400;
+$font-blockquote-style: normal;
 
 // Headings
-$font-size-headings: 			64px;
-$font-headings-lineheight: 		$font-size-headings;
-$font-headings-text-transform: 	none;
-$font-size-headings-small: 		24px;
-$font-headings-weight: 			700;
-$font-size-headline-title: 		86px;
+$font-size-headings: 64px;
+$font-headings-lineheight: $font-size-headings;
+$font-headings-text-transform: none;
+$font-size-headings-small: 24px;
+$font-headings-weight: 700;
+$font-size-headline-title: 86px;
 
 // Marker
-$font-marker-text-transform: 	$font-headings-text-transform;
+$font-marker-text-transform: $font-headings-text-transform;
 
 // Navigation
-$font-navigation-text-transform: 	none;
- 
+$font-navigation-text-transform: none;
+
 @import "_font.base";

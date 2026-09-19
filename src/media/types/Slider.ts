@@ -1,5 +1,5 @@
-import { Media } from "../Media"
-import Dom from "../../dom/Dom"
+import { Media } from "../Media";
+import Dom from "../../dom/Dom";
 
 /*	Media.SLider
 	Produces a Slider
@@ -11,15 +11,17 @@ import Dom from "../../dom/Dom"
 export default class Slider extends Media {
     declare "_el": any;
     declare "data": any;
-	
-	/*	Load the media
+
+    /*	Load the media
 	================================================== */
-	_loadMedia() {
-		
-		this._el.content_item				= Dom.create("img", "vco-media-item vco-media-image", this._el.content);
-		this._el.content_item.src			= this.data.url;
-		
-		this.onLoaded();
-	}
-	
+    _loadMedia() {
+        this._el.content_item = Dom.create(
+            "img",
+            "vco-media-item vco-media-image",
+            this._el.content,
+        );
+        this._el.content_item.src = this.data.url;
+
+        this.onLoaded();
+    }
 }

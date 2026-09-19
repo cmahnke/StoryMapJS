@@ -4,7 +4,13 @@ import globals from "globals";
 
 export default tseslint.config(
     {
-        ignores: ["dist/**", "node_modules/**", "compiled/**", "test-results/**", "playwright-report/**"],
+        ignores: [
+            "dist/**",
+            "node_modules/**",
+            "compiled/**",
+            "test-results/**",
+            "playwright-report/**",
+        ],
     },
     js.configs.recommended,
     ...tseslint.configs.recommended,
@@ -21,7 +27,10 @@ export default tseslint.config(
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/no-this-alias": "off",
             "@typescript-eslint/no-unused-expressions": "off",
-            "@typescript-eslint/no-unused-vars": ["error", { args: "none", varsIgnorePattern: "^_" }],
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                { args: "none", varsIgnorePattern: "^_" },
+            ],
             "prefer-const": "off",
             "no-var": "off",
             eqeqeq: "off",
@@ -38,5 +47,5 @@ export default tseslint.config(
                 ...globals.node,
             },
         },
-    }
+    },
 );

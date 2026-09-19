@@ -1,17 +1,13 @@
 import "./scss/VCO.StoryMap.scss";
-export { StoryMap } from "./storymap/StoryMap"
-export { loadCSS } from "./core/Load"
+export { StoryMap } from "./storymap/StoryMap";
+export { loadCSS } from "./core/Load";
 
 /* Used by the editor: */
 
+import MediaType from "./media/MediaType";
+export { MediaType };
 
-import MediaType from "./media/MediaType"
-export { MediaType }
-
-export { setLanguage } from "./language/Language"
-
-
-
+export { setLanguage } from "./language/Language";
 
 /* Transitional references deprecated as of 0.7.7 */
 function trace(msg) {
@@ -19,31 +15,30 @@ function trace(msg) {
 }
 window.trace = trace;
 
-
 function getJSON(url, onload) {
     const httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 const data = JSON.parse(httpRequest.responseText);
                 onload(data);
             } else {
-                alert('There was a problem with the request.');
+                alert("There was a problem with the request.");
             }
         }
     };
-    httpRequest.open('GET', url);
+    httpRequest.open("GET", url);
     httpRequest.send();
 }
 
-import { loadCSS } from "./core/Load"
-import { StoryMap } from "./storymap/StoryMap"
+import { loadCSS } from "./core/Load";
+import { StoryMap } from "./storymap/StoryMap";
 
 const VCO = {
     Load: {
-        css: loadCSS
+        css: loadCSS,
     },
     getJSON: getJSON,
-    StoryMap: StoryMap
-}
+    StoryMap: StoryMap,
+};
 window.VCO = VCO;

@@ -1,9 +1,9 @@
 // const debug = true;
-import { Browser } from "../core/Browser"
-import Emoji from "../library/Emoji"
+import { Browser } from "../core/Browser";
+import Emoji from "../library/Emoji";
 
-
-export function extend(dest: any, ...sources: any[]): any {	// merge src properties into dest
+export function extend(dest: any, ...sources: any[]): any {
+    // merge src properties into dest
     sources = sources.filter(Boolean);
     for (var j = 0, len = sources.length, src; j < len; j++) {
         src = sources[j] || {};
@@ -17,21 +17,21 @@ export function extend(dest: any, ...sources: any[]): any {	// merge src propert
 }
 
 /**
- * Implement mixin behavior. Based on 
+ * Implement mixin behavior. Based on
  *     https://blog.bitsrc.io/understanding-mixins-in-javascript-de5d3e02b466
- * @param {class} cls 
- * @param  {...class} src 
+ * @param {class} cls
+ * @param  {...class} src
  */
 export function classMixin(cls, ...src) {
     for (const _cl of src) {
         for (const key of Object.getOwnPropertyNames(_cl.prototype)) {
-            cls.prototype[key] = _cl.prototype[key]
+            cls.prototype[key] = _cl.prototype[key];
         }
     }
 }
 
-
-export function convertUnixTime(str) { // created for Instagram. It's ISO8601-ish
+export function convertUnixTime(str) {
+    // created for Instagram. It's ISO8601-ish
     // 2013-12-09 01:56:28
     const pattern = /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})/;
     if (str.match(pattern)) {
@@ -39,17 +39,26 @@ export function convertUnixTime(str) { // created for Instagram. It's ISO8601-is
     }
     const date_array = [];
     let date, months, year, month, day, time;
-    for(let i = 0; i < date_parts.length; i++) {
+    for (let i = 0; i < date_parts.length; i++) {
         let val = parseInt(date_parts[i]);
-        if (i == 1) { val = val - 1 } // stupid javascript months
-        date_array.push( val )
+        if (i == 1) {
+            val = val - 1;
+        } // stupid javascript months
+        date_array.push(val);
     }
-    date = new Date(date_array[0], date_array[1], date_array[2], date_array[3], date_array[4], date_array[5]);
-    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    date = new Date(
+        date_array[0],
+        date_array[1],
+        date_array[2],
+        date_array[3],
+        date_array[4],
+        date_array[5],
+    );
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     year = date.getFullYear();
     month = months[date.getMonth()];
     day = date.getDate();
-    time = month + ', ' + day + ' ' + year;
+    time = month + ", " + day + " " + year;
     return time;
 }
 
@@ -70,7 +79,6 @@ export function mergeData(data_main, data_to_merge) {
     return data_main;
 }
 
-
 /**
  *  Like mergeData, except will only try to copy data that already exists
  *  in data_main
@@ -86,7 +94,7 @@ export function updateData(data_main, data_to_merge) {
 }
 
 let _lastStampId = 0;
-const _stampKey = '_vco_id';
+const _stampKey = "_vco_id";
 
 /** Stamp an object (or function) with a unique id and return it. */
 export function stamp(obj: any): number {
@@ -100,21 +108,21 @@ export function findArrayNumberByUniqueID(id, array, prop) {
         if (array[i].data[prop] == id) {
             _n = i;
         }
-    };
+    }
     return _n;
 }
 
 export function unique_ID(size, prefix?) {
-    const getRandomNumber = function(range) {
+    const getRandomNumber = function (range) {
         return Math.floor(Math.random() * range);
     };
-    const getRandomChar = function() {
+    const getRandomChar = function () {
         const chars = "abcdefghijklmnopqurstuvwxyz";
-        return chars.substr( getRandomNumber(32), 1 );
+        return chars.substr(getRandomNumber(32), 1);
     };
-    const randomID = function(size) {
+    const randomID = function (size) {
         let str = "";
-        for(let i = 0; i < size; i++) {
+        for (let i = 0; i < size; i++) {
             str += getRandomChar();
         }
         return str;
@@ -129,16 +137,18 @@ export function unique_ID(size, prefix?) {
 export function hexToRgb(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
         return r + r + g + g + b + b;
     });
 
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
+    return result
+        ? {
+              r: parseInt(result[1], 16),
+              g: parseInt(result[2], 16),
+              b: parseInt(result[3], 16),
+          }
+        : null;
 }
 
 export function htmlify(str) {
@@ -147,7 +157,6 @@ export function htmlify(str) {
         str = Emoji(str);
     }
     if (str.match(/<p>[\s\S]*?<\/p>/)) {
-        
         return str;
     } else {
         return "<p>" + str + "</p>";
@@ -160,16 +169,16 @@ export function getUrlVars(string) {
         hash,
         hashes;
     str = string.toString();
-    if (str.match('&#038;')) { 
+    if (str.match("&#038;")) {
         str = str.replace("&#038;", "&");
-    } else if (str.match('&#38;')) {
+    } else if (str.match("&#38;")) {
         str = str.replace("&#38;", "&");
-    } else if (str.match('&amp;')) {
+    } else if (str.match("&amp;")) {
         str = str.replace("&amp;", "&");
     }
-    hashes = str.slice(str.indexOf('?') + 1).split('&');
-    for(let i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
+    hashes = str.slice(str.indexOf("?") + 1).split("&");
+    for (let i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split("=");
         vars.push(hash[0]);
         vars[hash[0]] = hash[1];
     }
@@ -177,11 +186,11 @@ export function getUrlVars(string) {
 }
 
 export const ratio = {
-    square: function(size) {
+    square: function (size) {
         const s = {
             w: 0,
-            h: 0
-        }
+            h: 0,
+        };
         if (size.w > size.h && size.h > 0) {
             s.h = size.h;
             s.w = size.h;
@@ -191,8 +200,8 @@ export const ratio = {
         }
         return s;
     },
-    
-    r16_9: function(size) {
+
+    r16_9: function (size) {
         if (size.w !== null && size.w !== "") {
             return Math.round((size.w / 16) * 9);
         } else if (size.h !== null && size.h !== "") {
@@ -201,52 +210,51 @@ export const ratio = {
             return 0;
         }
     },
-    r4_3: function(size) {
+    r4_3: function (size) {
         if (size.w !== null && size.w !== "") {
             return Math.round((size.w / 4) * 3);
         } else if (size.h !== null && size.h !== "") {
             return Math.round((size.h / 3) * 4);
         }
-    }
-}
+    },
+};
 
 export function urljoin(base_url, path) {
-    if(base_url.length && base_url[base_url.length  - 1] == '/') {
-        base_url = base_url.substring(0, base_url.length  - 1);
+    if (base_url.length && base_url[base_url.length - 1] == "/") {
+        base_url = base_url.substring(0, base_url.length - 1);
     }
-    if(path.length && path[0] == '/') {
+    if (path.length && path[0] == "/") {
         path = path.substring(1);
     }
-    const url1 = base_url.split('/');
-    const url2 = path.split('/');
-    const url3 = [ ];
-    for (var i = 0, l = url1.length; i < l; i ++) {
-    if (url1[i] == '..') {
-      url3.pop();
-    } else if (url1[i] == '.') {
-      continue;
-    } else {
-      url3.push(url1[i]);
+    const url1 = base_url.split("/");
+    const url2 = path.split("/");
+    const url3 = [];
+    for (var i = 0, l = url1.length; i < l; i++) {
+        if (url1[i] == "..") {
+            url3.pop();
+        } else if (url1[i] == ".") {
+            continue;
+        } else {
+            url3.push(url1[i]);
+        }
     }
+    for (var i = 0, l = url2.length; i < l; i++) {
+        if (url2[i] == "..") {
+            url3.pop();
+        } else if (url2[i] == ".") {
+            continue;
+        } else {
+            url3.push(url2[i]);
+        }
     }
-    for (var i = 0, l = url2.length; i < l; i ++) {
-    if (url2[i] == '..') {
-      url3.pop();
-    } else if (url2[i] == '.') {
-      continue;
-    } else {
-      url3.push(url2[i]);
-    }
-    }
-    return url3.join('/');
+    return url3.join("/");
 }
 
-
 export function getObjectAttributeByIndex(obj, index) {
-    if(typeof obj != 'undefined') {
+    if (typeof obj != "undefined") {
         let i = 0;
-        for (const attr in obj){
-            if (index === i){
+        for (const attr in obj) {
+            if (index === i) {
                 return obj[attr];
             }
             i++;

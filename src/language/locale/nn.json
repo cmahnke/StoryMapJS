@@ -4,14 +4,14 @@
     "messages": {
         "loading": "Lastar inn",
         "wikipedia": "Frå Wikipedia, det frie oppslagsverket",
-	"start": "Utforsk"
+        "start": "Utforsk"
     },
     "buttons": {
-        "map_overview":      "Sjå oversiktskart",
-	"overview":          "Oversikt",
-        "backtostart":       "Til starten",
-        "collapse_toggle":   "Gøym kartet",
+        "map_overview": "Sjå oversiktskart",
+        "overview": "Oversikt",
+        "backtostart": "Til starten",
+        "collapse_toggle": "Gøym kartet",
         "uncollapse_toggle": "Vis kartet",
-  		"swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
     }
 }

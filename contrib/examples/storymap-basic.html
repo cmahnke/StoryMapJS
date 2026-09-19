@@ -1,26 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <link rel="stylesheet" href="//cdn.knightlab.com/libs/storymapjs/latest/css/storymap.css">
-  <script type="text/javascript" src="//cdn.knightlab.com/libs/storymapjs/latest/js/storymap-min.js"></script>
-</head>
-<body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="//cdn.knightlab.com/libs/storymapjs/latest/css/storymap.css" />
+        <script
+            type="text/javascript"
+            src="//cdn.knightlab.com/libs/storymapjs/latest/js/storymap-min.js"
+        ></script>
+    </head>
+    <body>
+        <div id="mapdiv" style="width: 100%; height: 600px"></div>
 
-<div id="mapdiv" style="width: 100%; height: 600px;"></div>
+        <script>
+            var storymap_url =
+                "//uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
+            var storymap_options = {};
 
-<script>
-    var storymap_url = "//uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
-    var storymap_options = {};
+            (function () {
+                var storymap = new KLStoryMap.StoryMap("mapdiv", storymap_url, storymap_options);
 
-    (function() {
-        var storymap = new KLStoryMap.StoryMap("mapdiv", storymap_url, storymap_options);
-        
-        window.onresize = function(event) {
-            storymap.updateDisplay();
-        }
-    })();
-</script>
-
-</body>
+                window.onresize = function (event) {
+                    storymap.updateDisplay();
+                };
+            })();
+        </script>
+    </body>
 </html>

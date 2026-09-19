@@ -1,37 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>StoryMapJS Example Harness</title>
-    <style>
-        html, body { width: 100%; height: 100%; padding: 0; margin: 0; }
-        #storymap-embed { width: 100%; height: 100%; }
-    </style>
-</head>
-<body>
-    <div id="storymap-embed"></div>
-    <script type="module">
-        import { StoryMap } from "./src/main.ts";
+    <head>
+        <meta charset="utf-8" />
+        <title>StoryMapJS Example Harness</title>
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            #storymap-embed {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="storymap-embed"></div>
+        <script type="module">
+            import { StoryMap } from "./src/main.ts";
 
-        window.__smErrors = [];
-        window.__smReady = false;
-        window.addEventListener("error", function (e) {
-            window.__smErrors.push(String(e.message || e));
-        });
-
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get("example");
-
-        fetch("/examples/" + name + ".json")
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                window.__sm = new StoryMap("storymap-embed", data, {}, {});
-                window.__smReady = true;
-            })
-            .catch(function (err) {
-                window.__smErrors.push("harness: " + (err && err.message ? err.message : String(err)));
-                window.__smReady = true;
+            window.__smErrors = [];
+            window.__smReady = false;
+            window.addEventListener("error", function (e) {
+                window.__smErrors.push(String(e.message || e));
             });
-    </script>
-</body>
+
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get("example");
+
+            fetch("/examples/" + name + ".json")
+                .then(function (r) {
+                    return r.json();
+                })
+                .then(function (data) {
+                    window.__sm = new StoryMap("storymap-embed", data, {}, {});
+                    window.__smReady = true;
+                })
+                .catch(function (err) {
+                    window.__smErrors.push(
+                        "harness: " + (err && err.message ? err.message : String(err)),
+                    );
+                    window.__smReady = true;
+                });
+        </script>
+    </body>
 </html>

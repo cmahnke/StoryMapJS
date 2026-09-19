@@ -4,8 +4,8 @@ https://fonts.google.com/specimen/Lustria
 https://fonts.google.com/specimen/Lato
 ----------------------------------------------------- */
 
-// Main Variables 
-@import "../Variables"; 
+// Main Variables
+@import "../Variables";
 
 // Font Import
 @import "@fontsource/lato/400.css";
@@ -14,38 +14,39 @@ https://fonts.google.com/specimen/Lato
 @import "@fontsource/lato/700-italic.css";
 
 // Font Variables
-$font-main:						'Lato', sans-serif;
-$font-secondary:				'Lustria', serif;
-$font-navigation:				$font-main;
-$font-marker: 					$font-secondary;
-$font-headline-date: 			$font-navigation;
+$font-main: "Lato", sans-serif;
+$font-secondary: "Lustria", serif;
+$font-navigation: $font-main;
+$font-marker: $font-secondary;
+$font-headline-date: $font-navigation;
 
-$base-font-size: 				17px;
-$base-font-weight: 				400;
+$base-font-size: 17px;
+$base-font-weight: 400;
 
 // Blockquote
-$font-blockquote: 				$font-main;
-$font-blockquote-weight: 		400;
-$font-blockquote-style: 		italic;
+$font-blockquote: $font-main;
+$font-blockquote-weight: 400;
+$font-blockquote-style: italic;
 
 // Headings
-$font-size-headings: 			46px;
-$font-headings-lineheight: 		$font-size-headings;
-$font-headings-text-transform: 	none;
-$font-size-headings-small: 		24px;
-$font-headings-weight: 			400;
-$font-size-headline-title: 		58px;
+$font-size-headings: 46px;
+$font-headings-lineheight: $font-size-headings;
+$font-headings-text-transform: none;
+$font-size-headings-small: 24px;
+$font-headings-weight: 400;
+$font-size-headline-title: 58px;
 
 // Marker
-$font-marker-text-transform: 	$font-headings-text-transform;
+$font-marker-text-transform: $font-headings-text-transform;
 
 // Navigation
-$font-navigation-text-transform: 	none;
- 
+$font-navigation-text-transform: none;
+
 @import "_font.base";
 
 .vco-timeline {
-	.vco-headline-date, h3.vco-headline-date {
-		margin-bottom:10px !important;
-	}
+    .vco-headline-date,
+    h3.vco-headline-date {
+        margin-bottom: 10px !important;
+    }
 }

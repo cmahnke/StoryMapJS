@@ -71,6 +71,7 @@ dist/embed/index.html      embed page (?url=<published.json>)
 ## Data validation
 
 StoryMap JSON is validated against `schema/storymap.schema.json`:
+
 - in the browser on load — all errors are reported via `console.error`
 - in CI / CLI — `npm run validate` (all `public/examples/*.json`)
 

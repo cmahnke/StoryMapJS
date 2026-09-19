@@ -11,7 +11,9 @@ if (args.length > 0) {
     files = args;
 } else {
     const examplesDir = join(process.cwd(), "public/examples");
-    files = readdirSync(examplesDir).filter((f) => f.endsWith(".json")).map((f) => join(examplesDir, f));
+    files = readdirSync(examplesDir)
+        .filter((f) => f.endsWith(".json"))
+        .map((f) => join(examplesDir, f));
 }
 
 let failed = 0;

@@ -25,14 +25,14 @@ export default class OpenLayersMapMarker extends MapMarker {
     /*	Create Marker
     ================================================== */
     _createMarker(d, o) {
-        if (d.location && typeof(d.location.lat) == 'number' && typeof(d.location.lon) == 'number') {
+        if (d.location && typeof d.location.lat == "number" && typeof d.location.lon == "number") {
             this.data.real_marker = true;
             const use_custom_marker = o.use_custom_markers || d.location.use_custom_marker;
             if (use_custom_marker && d.location.icon) {
                 this._custom_icon = {
                     url: d.location.icon,
                     size: d.location.iconSize || [48, 48],
-                    anchor: this._customIconAnchor(d.location.iconSize)
+                    anchor: this._customIconAnchor(d.location.iconSize),
                 };
             } else if (use_custom_marker && d.location.image) {
                 this._custom_image_icon = d.location.image;
@@ -121,7 +121,8 @@ export default class OpenLayersMapMarker extends MapMarker {
             if (icon_el) {
                 icon_el.className = this.media_icon_class;
             } else if (!this._custom_icon && !this._custom_image_icon) {
-                this._marker.className = (a ? "vco-mapmarker-active " : "vco-mapmarker ") + this.media_icon_class;
+                this._marker.className =
+                    (a ? "vco-mapmarker-active " : "vco-mapmarker ") + this.media_icon_class;
             }
         }
     }

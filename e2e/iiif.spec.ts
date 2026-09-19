@@ -17,7 +17,7 @@ test("IIIF example renders on the OpenLayers canvas", async ({ page }) => {
                     const canvas = map.getViewport()?.querySelector("canvas");
                     return !!(canvas && canvas.width > 0 && canvas.height > 0);
                 }),
-            { timeout: 20_000, message: "waiting for the IIIF source and canvas" }
+            { timeout: 20_000, message: "waiting for the IIIF source and canvas" },
         )
         .toBe(true);
 

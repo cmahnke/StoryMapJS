@@ -1,9 +1,9 @@
-import Animate from "../animation/Animate"
-import Events from "../core/Events"
-import Ease from "../animation/Ease"
-import { Browser } from "../core/Browser"
-import { classMixin, mergeData } from "../core/Util"
-import { DomEvent } from "../dom/DomEvent"
+import Animate from "../animation/Animate";
+import Events from "../core/Events";
+import Ease from "../animation/Ease";
+import { Browser } from "../core/Browser";
+import { classMixin, mergeData } from "../core/Util";
+import { DomEvent } from "../dom/DomEvent";
 
 /*    Swipable
     Draggable allows you to add dragging capabilities to any element. Supports mobile devices too.
@@ -19,26 +19,26 @@ export default class Swipable {
     declare "dragevent": any;
     declare "data": any;
     declare "fire": any;
-    
+
     //_el: {},
 
     constructor(drag_elem, move_elem, options) {
         this.mousedrag = {
-            down:  "mousedown",
-            up:    "mouseup",
+            down: "mousedown",
+            up: "mouseup",
             leave: "mouseleave",
-            move:  "mousemove"
-        }
+            move: "mousemove",
+        };
         this.touchdrag = {
-            down:  "touchstart",
-            up:    "touchend",
+            down: "touchstart",
+            up: "touchend",
             leave: "mouseleave",
-            move:  "touchmove"
-        }
-        // DOM ELements 
+            move: "touchmove",
+        };
+        // DOM ELements
         this._el = {
             drag: drag_elem,
-            move: drag_elem
+            move: drag_elem,
         };
         if (move_elem) {
             this._el.move = move_elem;
@@ -48,17 +48,17 @@ export default class Swipable {
             snap: false,
             enable: {
                 x: true,
-                y: true
+                y: true,
             },
             constraint: {
                 top: false,
                 bottom: false,
                 left: 0,
-                right: false
+                right: false,
             },
             momentum_multiplier: 2000,
-            duration:            1000,
-            ease:                Ease.easeInOutQuint
+            duration: 1000,
+            ease: Ease.easeInOutQuint,
         };
         // Animation Object
         this.animator = null;
@@ -69,44 +69,44 @@ export default class Swipable {
         }
         // Draggable Data
         this.data = {
-            sliding:   false,
+            sliding: false,
             direction: "none",
             pagex: {
                 start: 0,
-                end:   0
+                end: 0,
             },
             pagey: {
                 start: 0,
-                end:   0
+                end: 0,
             },
             pos: {
                 start: {
                     x: 0,
-                    y: 0
+                    y: 0,
                 },
                 end: {
                     x: 0,
-                    y: 0
-                }
+                    y: 0,
+                },
             },
             new_pos: {
                 x: 0,
-                y: 0
+                y: 0,
             },
             new_pos_parent: {
                 x: 0,
-                y: 0
+                y: 0,
             },
             time: {
                 start: 0,
-                end:   0
+                end: 0,
             },
-            touch: false
+            touch: false,
         };
         // Merge Data and Options
         mergeData(this.options, options);
     }
-    
+
     enable(e) {
         DomEvent.addListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.addListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
@@ -117,23 +117,23 @@ export default class Swipable {
         //this._el.move.style.zIndex = "11";
         //this._el.move.style.cursor = "move";
     }
-    
+
     disable() {
         DomEvent.removeListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.removeListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
     }
-    
+
     stopMomentum() {
         if (this.animator) {
             this.animator.stop();
         }
     }
-    
+
     updateConstraint(c) {
         this.options.constraint = c;
         // Temporary until issues are fixed
     }
-    
+
     /*    Private Methods
     ================================================== */
     _onDragStart(e) {
@@ -159,13 +159,13 @@ export default class Swipable {
         if (this.options.enable.y) {
             //this._el.move.style.top = this.data.pagey.start - (this._el.move.offsetHeight / 2) + "px";
         }
-        this.data.pos.start = {x:this._el.move.offsetLeft, y:this._el.move.offsetTop};
-        this.data.time.start             = new Date().getTime();
+        this.data.pos.start = { x: this._el.move.offsetLeft, y: this._el.move.offsetTop };
+        this.data.time.start = new Date().getTime();
         this.fire("dragstart", this.data);
         DomEvent.addListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.addListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
     }
-    
+
     _onDragEnd(e) {
         this.data.sliding = false;
         DomEvent.removeListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
@@ -173,12 +173,12 @@ export default class Swipable {
         this.fire("dragend", this.data);
         this._momentum();
     }
-    
+
     _onDragMove(e) {
         const change = {
-            x:0,
-            y:0
-        }
+            x: 0,
+            y: 0,
+        };
         //e.preventDefault();
         this.data.sliding = true;
         if (Browser.touch) {
@@ -195,42 +195,46 @@ export default class Swipable {
         }
         change.x = this.data.pagex.start - this.data.pagex.end;
         change.y = this.data.pagey.start - this.data.pagey.end;
-        this.data.pos.end = {x:this._el.drag.offsetLeft, y:this._el.drag.offsetTop};
+        this.data.pos.end = { x: this._el.drag.offsetLeft, y: this._el.drag.offsetTop };
         this.data.new_pos.x = -(change.x - this.data.pos.start.x);
-        this.data.new_pos.y = -(change.y - this.data.pos.start.y );
-        if (this.options.enable.x && ( Math.abs(change.x) > Math.abs(change.y) ) ) {
+        this.data.new_pos.y = -(change.y - this.data.pos.start.y);
+        if (this.options.enable.x && Math.abs(change.x) > Math.abs(change.y)) {
             e.preventDefault();
             this._el.move.style.left = this.data.new_pos.x + "px";
         }
-        if (this.options.enable.y && ( Math.abs(change.y) > Math.abs(change.y) ) ) {
+        if (this.options.enable.y && Math.abs(change.y) > Math.abs(change.y)) {
             e.preventDefault();
             this._el.move.style.top = this.data.new_pos.y + "px";
         }
         this.fire("dragmove", this.data);
     }
-    
+
     _momentum() {
         let pos_adjust = {
                 x: 0,
                 y: 0,
-                time: 0
+                time: 0,
             },
             pos_change = {
                 x: 0,
                 y: 0,
-                time: 0
+                time: 0,
             },
             swipe_detect = {
                 x: false,
-                y: false
+                y: false,
             },
             swipe = false,
             _swipe_direction = "";
         this.data.direction = null;
         pos_adjust.time = (new Date().getTime() - this.data.time.start) * 10;
         pos_change.time = (new Date().getTime() - this.data.time.start) * 10;
-        pos_change.x = this.options.momentum_multiplier * (Math.abs(this.data.pagex.end) - Math.abs(this.data.pagex.start));
-        pos_change.y = this.options.momentum_multiplier * (Math.abs(this.data.pagey.end) - Math.abs(this.data.pagey.start));
+        pos_change.x =
+            this.options.momentum_multiplier *
+            (Math.abs(this.data.pagex.end) - Math.abs(this.data.pagex.start));
+        pos_change.y =
+            this.options.momentum_multiplier *
+            (Math.abs(this.data.pagey.end) - Math.abs(this.data.pagey.start));
         pos_adjust.x = Math.round(pos_change.x / pos_change.time);
         pos_adjust.y = Math.round(pos_change.y / pos_change.time);
         this.data.new_pos.x = Math.min(this.data.pos.end.x + pos_adjust.x);
@@ -267,7 +271,7 @@ export default class Swipable {
         // Detect Direction and long swipe
         if (swipe_detect.x) {
             // Long Swipe
-            if (Math.abs(pos_change.x) > (this._el.drag.offsetWidth/2)) {
+            if (Math.abs(pos_change.x) > this._el.drag.offsetWidth / 2) {
                 swipe = true;
             }
             if (Math.abs(pos_change.x) > 10000) {
@@ -279,7 +283,7 @@ export default class Swipable {
         }
         if (swipe_detect.y) {
             // Long Swipe
-            if (Math.abs(pos_change.y) > (this._el.drag.offsetHeight/2)) {
+            if (Math.abs(pos_change.y) > this._el.drag.offsetHeight / 2) {
                 swipe = true;
             }
             if (Math.abs(pos_change.y) > 10000) {
@@ -297,22 +301,22 @@ export default class Swipable {
         } else if (this.options.snap) {
             this.animator.stop();
             this.animator = Animate(this._el.move, {
-                top:         this.data.pos.start.y,
-                left:         this.data.pos.start.x,
-                duration:     this.options.duration,
-                easing:     Ease.easeOutStrong
+                top: this.data.pos.start.y,
+                left: this.data.pos.start.x,
+                duration: this.options.duration,
+                easing: Ease.easeOutStrong,
             });
         }
     }
-    
+
     _animateMomentum() {
         const pos = {
                 x: this.data.new_pos.x,
-                y: this.data.new_pos.y
+                y: this.data.new_pos.y,
             },
             animate: any = {
-                duration:     this.options.duration,
-                easing:     Ease.easeOutStrong
+                duration: this.options.duration,
+                easing: Ease.easeOutStrong,
             };
         if (this.options.enable.y) {
             if (this.options.constraint.top || this.options.constraint.bottom) {
@@ -339,4 +343,4 @@ export default class Swipable {
     }
 }
 
-classMixin(Swipable, Events)
+classMixin(Swipable, Events);

@@ -4,8 +4,8 @@ https://fonts.google.com/specimen/Vollkorn
 https://fonts.google.com/specimen/Unica+One
 ----------------------------------------------------- */
 
-// Main Variables 
-@import "../Variables"; 
+// Main Variables
+@import "../Variables";
 
 // Font Import
 @import "@fontsource/unica-one";
@@ -13,32 +13,32 @@ https://fonts.google.com/specimen/Unica+One
 @import "@fontsource-variable/vollkorn/wght-italic.css";
 
 // Font Variables
-$font-main:						'Vollkorn', Georgia, serif;
-$font-secondary:				'Unica One', 'Helvetica Neue', Helvetica, Arial, "MS Trebuchet", sans-serif;
-$font-navigation:				$font-secondary;
-$font-marker: 					$font-secondary;
-$font-headline-date: 			$font-navigation;
+$font-main: "Vollkorn", Georgia, serif;
+$font-secondary: "Unica One", "Helvetica Neue", Helvetica, Arial, "MS Trebuchet", sans-serif;
+$font-navigation: $font-secondary;
+$font-marker: $font-secondary;
+$font-headline-date: $font-navigation;
 
-$base-font-size: 				17px;
-$base-font-weight: 				400;
+$base-font-size: 17px;
+$base-font-weight: 400;
 
 // Blockquote
-$font-blockquote: 				$font-secondary;
-$font-blockquote-weight: 		400;
-$font-blockquote-style: 		italic;
+$font-blockquote: $font-secondary;
+$font-blockquote-weight: 400;
+$font-blockquote-style: italic;
 
 // Headings
-$font-size-headings: 			46px;
-$font-headings-lineheight: 		$font-size-headings;
-$font-headings-text-transform: 	uppercase;
-$font-size-headings-small: 		24px;
-$font-headings-weight: 			400;
-$font-size-headline-title: 		58px;
+$font-size-headings: 46px;
+$font-headings-lineheight: $font-size-headings;
+$font-headings-text-transform: uppercase;
+$font-size-headings-small: 24px;
+$font-headings-weight: 400;
+$font-size-headline-title: 58px;
 
 // Marker
-$font-marker-text-transform: 	$font-headings-text-transform;
+$font-marker-text-transform: $font-headings-text-transform;
 
 // Navigation
-$font-navigation-text-transform: 	uppercase;
- 
+$font-navigation-text-transform: uppercase;
+
 @import "_font.base";

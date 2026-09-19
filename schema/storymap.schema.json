@@ -68,18 +68,32 @@
         "slide": {
             "type": "object",
             "properties": {
-                "type": { "type": "string", "description": "'overview' marks the map overview slide" },
+                "type": {
+                    "type": "string",
+                    "description": "'overview' marks the map overview slide"
+                },
                 "date": { "type": ["string", "object", "null"] },
                 "group": { "type": "string" },
                 "location": {
                     "type": "object",
                     "properties": {
-                        "lat": { "type": "number", "description": "Latitude, or vertical position in image pixels for image maps" },
-                        "lon": { "type": "number", "description": "Longitude, or horizontal position in image pixels for image maps" },
+                        "lat": {
+                            "type": "number",
+                            "description": "Latitude, or vertical position in image pixels for image maps"
+                        },
+                        "lon": {
+                            "type": "number",
+                            "description": "Longitude, or horizontal position in image pixels for image maps"
+                        },
                         "zoom": { "type": "number" },
                         "line": { "type": "boolean" },
                         "icon": { "type": "string", "format": "uri" },
-                        "iconSize": { "type": "array", "items": { "type": "number" }, "minItems": 1, "maxItems": 2 },
+                        "iconSize": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 1,
+                            "maxItems": 2
+                        },
                         "image": { "type": "string", "format": "uri" },
                         "use_custom_marker": { "type": "boolean" }
                     }

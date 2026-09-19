@@ -1,6 +1,5 @@
 /* Disable Text selection when dragging
 ================================================== */
 .vco-dragging {
-	
-	@include user-select(none);
+    @include user-select(none);
 }

@@ -4,41 +4,41 @@ https://fonts.google.com/specimen/Abril+Fatface
 https://fonts.google.com/noto/specimen/Noto+Sans
 // ----------------------------------------------------- */
 
-// Main Variables 
-@import "../Variables"; 
+// Main Variables
+@import "../Variables";
 
 // Font Import
-// as of 2022, Droid Sans was replaced with Noto Sans 
+// as of 2022, Droid Sans was replaced with Noto Sans
 // https: //github.com/google/fonts/issues/4469
 @import "@fontsource/abril-fatface";
 
 // Font Variables
-$font-main:						'Noto Sans', sans-serif;
-$font-secondary:				'Abril Fatface', cursive;
-$font-navigation:				$font-main;
-$font-marker: 					$font-main;
-$font-headline-date: 			$font-navigation;
+$font-main: "Noto Sans", sans-serif;
+$font-secondary: "Abril Fatface", cursive;
+$font-navigation: $font-main;
+$font-marker: $font-main;
+$font-headline-date: $font-navigation;
 
-$base-font-size: 				16px;
-$base-font-weight: 				400;
+$base-font-size: 16px;
+$base-font-weight: 400;
 
 // Blockquote
-$font-blockquote: 				$font-main;
-$font-blockquote-weight: 		400;
-$font-blockquote-style: 		normal;
+$font-blockquote: $font-main;
+$font-blockquote-weight: 400;
+$font-blockquote-style: normal;
 
 // Headings
-$font-size-headings: 			46px;
-$font-headings-lineheight: 		$font-size-headings;
-$font-headings-text-transform: 	none;
-$font-size-headings-small: 		24px;
-$font-headings-weight: 			700;
-$font-size-headline-title: 		58px;
+$font-size-headings: 46px;
+$font-headings-lineheight: $font-size-headings;
+$font-headings-text-transform: none;
+$font-size-headings-small: 24px;
+$font-headings-weight: 700;
+$font-size-headline-title: 58px;
 
 // Marker
-$font-marker-text-transform: 	$font-headings-text-transform;
+$font-marker-text-transform: $font-headings-text-transform;
 
 // Navigation
-$font-navigation-text-transform: 	none;
+$font-navigation-text-transform: none;
 
 @import "_font.base";

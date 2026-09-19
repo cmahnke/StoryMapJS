@@ -1,7 +1,7 @@
-import { Media } from "../Media"
-import Dom from "../../dom/Dom"
-import { Language } from "../../language/Language"
-import { ratio } from "../../core/Util"
+import { Media } from "../Media";
+import Dom from "../../dom/Dom";
+import { Language } from "../../language/Language";
+import { ratio } from "../../core/Util";
 
 /*	Media.Vine
 
@@ -14,39 +14,45 @@ export default class Vine extends Media {
     declare "media_id": any;
     declare "data": any;
 
-	/*	Load the media
+    /*	Load the media
 	================================================== */
-	_loadMedia() {
-		let api_url,
-			_self = this;
+    _loadMedia() {
+        let api_url,
+            _self = this;
 
-		// Loading Message
-		this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        // Loading Message
+        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
-		// Create Dom element
-		this._el.content_item	= Dom.create("div", "vco-media-item vco-media-iframe vco-media-vine vco-media-shadow", this._el.content);
+        // Create Dom element
+        this._el.content_item = Dom.create(
+            "div",
+            "vco-media-item vco-media-iframe vco-media-vine vco-media-shadow",
+            this._el.content,
+        );
 
-		// Get Media ID
-		this.media_id = this.data.url.split("vine.co/v/")[1];
+        // Get Media ID
+        this.media_id = this.data.url.split("vine.co/v/")[1];
 
-		// API URL
-		api_url = "https://vine.co/v/" + this.media_id + "/embed/simple";
+        // API URL
+        api_url = "https://vine.co/v/" + this.media_id + "/embed/simple";
 
-		// API Call
-		this._el.content_item.innerHTML = "<iframe frameborder='0' width='100%' height='100%' src='" + api_url + "'></iframe><script async src='https://platform.vine.co/static/scripts/embed.js' charset='utf-8'></script>"
+        // API Call
+        this._el.content_item.innerHTML =
+            "<iframe frameborder='0' width='100%' height='100%' src='" +
+            api_url +
+            "'></iframe><script async src='https://platform.vine.co/static/scripts/embed.js' charset='utf-8'></script>";
 
-		// After Loaded
-		this.onLoaded();
-	}
+        // After Loaded
+        this.onLoaded();
+    }
 
-	// Update Media Display
-	_updateMediaDisplay() {
-		const size = ratio.square({w:this._el.content_item.offsetWidth , h:this.options.height});
-		this._el.content_item.style.height = size.h + "px";
-	}
+    // Update Media Display
+    _updateMediaDisplay() {
+        const size = ratio.square({ w: this._el.content_item.offsetWidth, h: this.options.height });
+        this._el.content_item.style.height = size.h + "px";
+    }
 
-	 	_stopMedia() {
-	 		this._el.content_item.querySelector("iframe").contentWindow.postMessage('pause', '*');
-	}
-
+    _stopMedia() {
+        this._el.content_item.querySelector("iframe").contentWindow.postMessage("pause", "*");
+    }
 }

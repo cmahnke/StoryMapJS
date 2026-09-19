@@ -4,8 +4,8 @@ https://fonts.google.com/specimen/Medula+One
 https://fonts.google.com/specimen/Lato
 ----------------------------------------------------- */
 
-// Main Variables 
-@import "../Variables"; 
+// Main Variables
+@import "../Variables";
 
 // Font Import
 @import "@fontsource/lato/400.css";
@@ -15,32 +15,32 @@ https://fonts.google.com/specimen/Lato
 @import "@fontsource/lato/700-italic.css";
 
 // Font Variables
-$font-main:						'Lato', sans-serif;
-$font-secondary:				'Medula One', cursive;
-$font-navigation:				$font-main;
-$font-marker: 					$font-main;
-$font-headline-date: 			$font-navigation;
+$font-main: "Lato", sans-serif;
+$font-secondary: "Medula One", cursive;
+$font-navigation: $font-main;
+$font-marker: $font-main;
+$font-headline-date: $font-navigation;
 
-$base-font-size: 				16px;
-$base-font-weight: 				400;
+$base-font-size: 16px;
+$base-font-weight: 400;
 
 // Blockquote
-$font-blockquote: 				$font-main;
-$font-blockquote-weight: 		300;
-$font-blockquote-style: 		italic;
+$font-blockquote: $font-main;
+$font-blockquote-weight: 300;
+$font-blockquote-style: italic;
 
 // Headings
-$font-size-headings: 			58px;
-$font-headings-lineheight: 		$font-size-headings;
-$font-headings-text-transform: 	none;
-$font-size-headings-small: 		24px;
-$font-headings-weight: 			700;
-$font-size-headline-title: 		72px;
+$font-size-headings: 58px;
+$font-headings-lineheight: $font-size-headings;
+$font-headings-text-transform: none;
+$font-size-headings-small: 24px;
+$font-headings-weight: 700;
+$font-size-headline-title: 72px;
 
 // Marker
-$font-marker-text-transform: 	$font-headings-text-transform;
+$font-marker-text-transform: $font-headings-text-transform;
 
 // Navigation
-$font-navigation-text-transform: 	none;
- 
+$font-navigation-text-transform: none;
+
 @import "_font.base";

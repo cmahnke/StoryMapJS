@@ -18,15 +18,24 @@ function typeMatches(value: any, type: string | string[]): boolean {
     const types = Array.isArray(type) ? type : [type];
     return types.some((t) => {
         switch (t) {
-            case "object": return typeof value === "object" && value !== null && !Array.isArray(value);
-            case "array": return Array.isArray(value);
-            case "string": return typeof value === "string";
-            case "number": return typeof value === "number" && !isNaN(value);
-            case "integer": return typeof value === "number" && Number.isInteger(value);
-            case "boolean": return typeof value === "boolean";
-            case "null": return value === null;
-            case "uri": return typeof value === "string";
-            default: return true;
+            case "object":
+                return typeof value === "object" && value !== null && !Array.isArray(value);
+            case "array":
+                return Array.isArray(value);
+            case "string":
+                return typeof value === "string";
+            case "number":
+                return typeof value === "number" && !isNaN(value);
+            case "integer":
+                return typeof value === "number" && Number.isInteger(value);
+            case "boolean":
+                return typeof value === "boolean";
+            case "null":
+                return value === null;
+            case "uri":
+                return typeof value === "string";
+            default:
+                return true;
         }
     });
 }
@@ -46,15 +55,23 @@ function validateAgainstSchema(value: any, schemaNode: any, path: string, errors
     // type
     if (schemaNode.type) {
         if (!typeMatches(value, schemaNode.type)) {
-            const expected = Array.isArray(schemaNode.type) ? schemaNode.type.join(" or ") : schemaNode.type;
-            errors.push({ path, message: `expected ${expected}, got ${value === null ? "null" : typeof value}` });
+            const expected = Array.isArray(schemaNode.type)
+                ? schemaNode.type.join(" or ")
+                : schemaNode.type;
+            errors.push({
+                path,
+                message: `expected ${expected}, got ${value === null ? "null" : typeof value}`,
+            });
             return;
         }
     }
 
     // enum
     if (schemaNode.enum && !schemaNode.enum.some((v: any) => v === value)) {
-        errors.push({ path, message: `must be one of ${schemaNode.enum.map((v: any) => JSON.stringify(v)).join(", ")}` });
+        errors.push({
+            path,
+            message: `must be one of ${schemaNode.enum.map((v: any) => JSON.stringify(v)).join(", ")}`,
+        });
     }
 
     // numeric constraints
@@ -86,7 +103,9 @@ function validateAgainstSchema(value: any, schemaNode: any, path: string, errors
             errors.push({ path, message: `must have at most ${schemaNode.maxItems} items` });
         }
         if (schemaNode.items) {
-            value.forEach((item, i) => validateAgainstSchema(item, schemaNode.items, `${path}[${i}]`, errors));
+            value.forEach((item, i) =>
+                validateAgainstSchema(item, schemaNode.items, `${path}[${i}]`, errors),
+            );
         }
     }
 
@@ -129,7 +148,7 @@ export function validateStorymapAndReport(data: any, source?: string): boolean {
         return true;
     }
     console.error(
-        `StoryMapJS: invalid storymap data${source ? ` (${source})` : ""} - ${errors.length} error${errors.length > 1 ? "s" : ""} found:`
+        `StoryMapJS: invalid storymap data${source ? ` (${source})` : ""} - ${errors.length} error${errors.length > 1 ? "s" : ""} found:`,
     );
     for (const err of errors) {
         console.error(`  ${err.path || "(root)"}: ${err.message}`);

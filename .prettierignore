@@ -1,0 +1,9 @@
+dist/
+node_modules/
+public/
+test-results/
+playwright-report/
+blob-report/
+compiled/
+package-lock.json
+CHANGELOG

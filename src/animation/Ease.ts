@@ -9,17 +9,17 @@
  *
  * KeySpline - use bezier curve for transition easing function
  * Copyright (c) 2012 Gaetan Renaudeau <renaudeau.gaetan@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -37,212 +37,240 @@
  */
 
 const Easings = {
-    ease:        [0.25, 0.1, 0.25, 1.0], 
-    linear:      [0.00, 0.0, 1.00, 1.0],
-    easein:     [0.42, 0.0, 1.00, 1.0],
-    easeout:    [0.00, 0.0, 0.58, 1.0],
-    easeinout: [0.42, 0.0, 0.58, 1.0]
+    ease: [0.25, 0.1, 0.25, 1.0],
+    linear: [0.0, 0.0, 1.0, 1.0],
+    easein: [0.42, 0.0, 1.0, 1.0],
+    easeout: [0.0, 0.0, 0.58, 1.0],
+    easeinout: [0.42, 0.0, 0.58, 1.0],
 };
 
 // Bezier key spline helper, usable via `new Ease.KeySpline(...)`
 function KeySpline(this: any, a) {
-	this.get = function (aX) {
-		if (a[0] == a[1] && a[2] == a[3]) return aX; // linear
-		return CalcBezier(GetTForX(aX), a[1], a[3]);
-	}
+    this.get = function (aX) {
+        if (a[0] == a[1] && a[2] == a[3]) return aX; // linear
+        return CalcBezier(GetTForX(aX), a[1], a[3]);
+    };
 
-	function A(aA1, aA2) {
-		return 1.0 - 3.0 * aA2 + 3.0 * aA1;
-	}
+    function A(aA1, aA2) {
+        return 1.0 - 3.0 * aA2 + 3.0 * aA1;
+    }
 
-	function B(aA1, aA2) {
-		return 3.0 * aA2 - 6.0 * aA1;
-	}
+    function B(aA1, aA2) {
+        return 3.0 * aA2 - 6.0 * aA1;
+    }
 
-	function C(aA1) {
-		return 3.0 * aA1;
-	}
+    function C(aA1) {
+        return 3.0 * aA1;
+    }
 
-	// Returns x(t) given t, x1, and x2, or y(t) given t, y1, and y2.
+    // Returns x(t) given t, x1, and x2, or y(t) given t, y1, and y2.
 
-	function CalcBezier(aT, aA1, aA2) {
-		return ((A(aA1, aA2) * aT + B(aA1, aA2)) * aT + C(aA1)) * aT;
-	}
+    function CalcBezier(aT, aA1, aA2) {
+        return ((A(aA1, aA2) * aT + B(aA1, aA2)) * aT + C(aA1)) * aT;
+    }
 
-	// Returns dx/dt given t, x1, and x2, or dy/dt given t, y1, and y2.
+    // Returns dx/dt given t, x1, and x2, or dy/dt given t, y1, and y2.
 
-	function GetSlope(aT, aA1, aA2) {
-		return 3.0 * A(aA1, aA2) * aT * aT + 2.0 * B(aA1, aA2) * aT + C(aA1);
-	}
+    function GetSlope(aT, aA1, aA2) {
+        return 3.0 * A(aA1, aA2) * aT * aT + 2.0 * B(aA1, aA2) * aT + C(aA1);
+    }
 
-	function GetTForX(aX) {
-		// Newton raphson iteration
-		let aGuessT = aX;
-		for (let i = 0; i < 4; ++i) {
-			const currentSlope = GetSlope(aGuessT, a[0], a[2]);
-			if (currentSlope == 0.0) return aGuessT;
-			const currentX = CalcBezier(aGuessT, a[0], a[2]) - aX;
-			aGuessT -= currentX / currentSlope;
-		}
-		return aGuessT;
-	}
+    function GetTForX(aX) {
+        // Newton raphson iteration
+        let aGuessT = aX;
+        for (let i = 0; i < 4; ++i) {
+            const currentSlope = GetSlope(aGuessT, a[0], a[2]);
+            if (currentSlope == 0.0) return aGuessT;
+            const currentX = CalcBezier(aGuessT, a[0], a[2]) - aX;
+            aGuessT -= currentX / currentSlope;
+        }
+        return aGuessT;
+    }
 }
 
 export default class Ease {
     declare get: any;
 
-	static KeySpline: any = KeySpline;
+    static KeySpline: any = KeySpline;
 
-	// Static access to the most used easings (legacy API: Ease.easeOutStrong(t))
-	static easeInOutQuint(t: number) { return t < .5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t; }
-	static easeOutStrong(t: number) { return (t == 1) ? 1 : 1 - Math.pow(2, - 10 * t); }
-	static easeInSpline(t: number) {
-		const spline = new Ease.KeySpline(Easings.easein);
-		return spline.get(t);
-	}
+    // Static access to the most used easings (legacy API: Ease.easeOutStrong(t))
+    static easeInOutQuint(t: number) {
+        return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+    }
+    static easeOutStrong(t: number) {
+        return t == 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    }
+    static easeInSpline(t: number) {
+        const spline = new Ease.KeySpline(Easings.easein);
+        return spline.get(t);
+    }
 
-	easeInSpline(t) {
-		const spline = new Ease.KeySpline(Easings.easein);
-		return spline.get(t);
-	}
-	
-	easeInOutExpo(t) {
-		const spline = new Ease.KeySpline(Easings.easein);
-		return spline.get(t);
-	}
+    easeInSpline(t) {
+        const spline = new Ease.KeySpline(Easings.easein);
+        return spline.get(t);
+    }
 
-	easeOut(t) {
-		return Math.sin(t * Math.PI / 2);
-	}
+    easeInOutExpo(t) {
+        const spline = new Ease.KeySpline(Easings.easein);
+        return spline.get(t);
+    }
 
-	easeOutStrong(t) {
-		return (t == 1) ? 1 : 1 - Math.pow(2, - 10 * t);
-	}
+    easeOut(t) {
+        return Math.sin((t * Math.PI) / 2);
+    }
 
-	easeIn(t) {
-		return t * t;
-	}
+    easeOutStrong(t) {
+        return t == 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    }
 
-	easeInStrong(t) {
-		return (t == 0) ? 0 : Math.pow(2, 10 * (t - 1));
-	}
+    easeIn(t) {
+        return t * t;
+    }
 
-	easeOutBounce(pos) {
-		if ((pos) < (1 / 2.75)) {
-			return (7.5625 * pos * pos);
-		} else if (pos < (2 / 2.75)) {
-			return (7.5625 * (pos -= (1.5 / 2.75)) * pos + .75);
-		} else if (pos < (2.5 / 2.75)) {
-			return (7.5625 * (pos -= (2.25 / 2.75)) * pos + .9375);
-		} else {
-			return (7.5625 * (pos -= (2.625 / 2.75)) * pos + .984375);
-		}
-	}
+    easeInStrong(t) {
+        return t == 0 ? 0 : Math.pow(2, 10 * (t - 1));
+    }
 
-	easeInBack(pos) {
-		const s = 1.70158;
-		return (pos) * pos * ((s + 1) * pos - s);
-	}
+    easeOutBounce(pos) {
+        if (pos < 1 / 2.75) {
+            return 7.5625 * pos * pos;
+        } else if (pos < 2 / 2.75) {
+            return 7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75;
+        } else if (pos < 2.5 / 2.75) {
+            return 7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375;
+        } else {
+            return 7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375;
+        }
+    }
 
-	easeOutBack(pos) {
-		const s = 1.70158;
-		return (pos = pos - 1) * pos * ((s + 1) * pos + s) + 1;
-	}
+    easeInBack(pos) {
+        const s = 1.70158;
+        return pos * pos * ((s + 1) * pos - s);
+    }
 
-	bounce(t) {
-		if (t < (1 / 2.75)) {
-			return 7.5625 * t * t;
-		}
-		if (t < (2 / 2.75)) {
-			return 7.5625 * (t -= (1.5 / 2.75)) * t + 0.75;
-		}
-		if (t < (2.5 / 2.75)) {
-			return 7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375;
-		}
-		return 7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375;
-	}
+    easeOutBack(pos) {
+        const s = 1.70158;
+        return (pos = pos - 1) * pos * ((s + 1) * pos + s) + 1;
+    }
 
-	bouncePast(pos) {
-		if (pos < (1 / 2.75)) {
-			return (7.5625 * pos * pos);
-		} else if (pos < (2 / 2.75)) {
-			return 2 - (7.5625 * (pos -= (1.5 / 2.75)) * pos + .75);
-		} else if (pos < (2.5 / 2.75)) {
-			return 2 - (7.5625 * (pos -= (2.25 / 2.75)) * pos + .9375);
-		} else {
-			return 2 - (7.5625 * (pos -= (2.625 / 2.75)) * pos + .984375);
-		}
-	}
+    bounce(t) {
+        if (t < 1 / 2.75) {
+            return 7.5625 * t * t;
+        }
+        if (t < 2 / 2.75) {
+            return 7.5625 * (t -= 1.5 / 2.75) * t + 0.75;
+        }
+        if (t < 2.5 / 2.75) {
+            return 7.5625 * (t -= 2.25 / 2.75) * t + 0.9375;
+        }
+        return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
+    }
 
-	swingTo(pos) {
-		const s = 1.70158;
-		return (pos -= 1) * pos * ((s + 1) * pos + s) + 1;
-	}
+    bouncePast(pos) {
+        if (pos < 1 / 2.75) {
+            return 7.5625 * pos * pos;
+        } else if (pos < 2 / 2.75) {
+            return 2 - (7.5625 * (pos -= 1.5 / 2.75) * pos + 0.75);
+        } else if (pos < 2.5 / 2.75) {
+            return 2 - (7.5625 * (pos -= 2.25 / 2.75) * pos + 0.9375);
+        } else {
+            return 2 - (7.5625 * (pos -= 2.625 / 2.75) * pos + 0.984375);
+        }
+    }
 
-	swingFrom(pos) {
-		const s = 1.70158;
-		return pos * pos * ((s + 1) * pos - s);
-	}
+    swingTo(pos) {
+        const s = 1.70158;
+        return (pos -= 1) * pos * ((s + 1) * pos + s) + 1;
+    }
 
-	elastic(pos) {
-		return -1 * Math.pow(4, - 8 * pos) * Math.sin((pos * 6 - 1) * (2 * Math.PI) / 2) + 1;
-	}
+    swingFrom(pos) {
+        const s = 1.70158;
+        return pos * pos * ((s + 1) * pos - s);
+    }
 
-	spring(pos) {
-		return 1 - (Math.cos(pos * 4.5 * Math.PI) * Math.exp(-pos * 6));
-	}
+    elastic(pos) {
+        return -1 * Math.pow(4, -8 * pos) * Math.sin(((pos * 6 - 1) * (2 * Math.PI)) / 2) + 1;
+    }
 
-	blink(pos, blinks) {
-		return Math.round(pos * (blinks || 5)) % 2;
-	}
+    spring(pos) {
+        return 1 - Math.cos(pos * 4.5 * Math.PI) * Math.exp(-pos * 6);
+    }
 
-	pulse(pos, pulses) {
-		return (-Math.cos((pos * ((pulses || 5) - .5) * 2) * Math.PI) / 2) + .5;
-	}
+    blink(pos, blinks) {
+        return Math.round(pos * (blinks || 5)) % 2;
+    }
 
-	wobble(pos) {
-		return (-Math.cos(pos * Math.PI * (9 * pos)) / 2) + 0.5;
-	}
+    pulse(pos, pulses) {
+        return -Math.cos(pos * ((pulses || 5) - 0.5) * 2 * Math.PI) / 2 + 0.5;
+    }
 
-	sinusoidal(pos) {
-		return (-Math.cos(pos * Math.PI) / 2) + 0.5;
-	}
+    wobble(pos) {
+        return -Math.cos(pos * Math.PI * (9 * pos)) / 2 + 0.5;
+    }
 
-	flicker(pos) {
-		var pos = pos + (Math.random() - 0.5) / 5;
-		return this.sinusoidal(pos < 0 ? 0 : pos > 1 ? 1 : pos);
-	}
+    sinusoidal(pos) {
+        return -Math.cos(pos * Math.PI) / 2 + 0.5;
+    }
 
-	mirror(pos) {
-		if (pos < 0.5) return this.sinusoidal(pos * 2);
-		else return this.sinusoidal(1 - (pos - 0.5) * 2);
-	}
+    flicker(pos) {
+        var pos = pos + (Math.random() - 0.5) / 5;
+        return this.sinusoidal(pos < 0 ? 0 : pos > 1 ? 1 : pos);
+    }
 
-	// accelerating from zero velocity
-	easeInQuad(t) { return t*t }
-	// decelerating to zero velocity
-	easeOutQuad(t) { return t*(2-t) }
-	// acceleration until halfway, then deceleration
-	easeInOutQuad(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t }
-	// accelerating from zero velocity 
-	easeInCubic(t) { return t*t*t }
-	// decelerating to zero velocity 
-	easeOutCubic(t) { return (--t)*t*t+1 }
-	// acceleration until halfway, then deceleration 
-	easeInOutCubic(t) { return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1 }
-	// accelerating from zero velocity 
-	easeInQuart(t) { return t*t*t*t }
-	// decelerating to zero velocity 
-	easeOutQuart(t) { return 1-(--t)*t*t*t }
-	// acceleration until halfway, then deceleration
-	easeInOutQuart(t) { return t<.5 ? 8*t*t*t*t : 1-8*(--t)*t*t*t }
-	// accelerating from zero velocity
-	easeInQuint(t) { return t*t*t*t*t }
-	// decelerating to zero velocity
-	easeOutQuint(t) { return 1+(--t)*t*t*t*t }
-	// acceleration until halfway, then deceleration 
-	easeInOutQuint(t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t }
-};
+    mirror(pos) {
+        if (pos < 0.5) return this.sinusoidal(pos * 2);
+        else return this.sinusoidal(1 - (pos - 0.5) * 2);
+    }
+
+    // accelerating from zero velocity
+    easeInQuad(t) {
+        return t * t;
+    }
+    // decelerating to zero velocity
+    easeOutQuad(t) {
+        return t * (2 - t);
+    }
+    // acceleration until halfway, then deceleration
+    easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+    // accelerating from zero velocity
+    easeInCubic(t) {
+        return t * t * t;
+    }
+    // decelerating to zero velocity
+    easeOutCubic(t) {
+        return --t * t * t + 1;
+    }
+    // acceleration until halfway, then deceleration
+    easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+    // accelerating from zero velocity
+    easeInQuart(t) {
+        return t * t * t * t;
+    }
+    // decelerating to zero velocity
+    easeOutQuart(t) {
+        return 1 - --t * t * t * t;
+    }
+    // acceleration until halfway, then deceleration
+    easeInOutQuart(t) {
+        return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+    }
+    // accelerating from zero velocity
+    easeInQuint(t) {
+        return t * t * t * t * t;
+    }
+    // decelerating to zero velocity
+    easeOutQuint(t) {
+        return 1 + --t * t * t * t * t;
+    }
+    // acceleration until halfway, then deceleration
+    easeInOutQuint(t) {
+        return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+    }
+}
 
 /*
 Math.easeInExpo = function (t, b, c, d) {

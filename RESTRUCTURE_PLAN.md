@@ -14,23 +14,23 @@ at every commit.
 
 ## 1. Goals
 
-| # | Goal | Decision / Result |
-|---|------|-------------------|
-| 1 | Remove the backend infrastructure | Delete the Flask editor (`storymap/`), Docker/LocalStack/Postgres/nginx, deploy tooling, CDN staging. The repo becomes a **viewer-only library** (renders published StoryMap JSON; consumed as ESM, CJS or the `KLStoryMap` script-tag global). |
-| 2 | Vite as dev server **and** preview, replacing webpack | `npm run dev` (HMR from source), `npm run build` (library + demo pages + font themes), `npm run preview` (serves built `dist/`). |
-| 3 | Convert to TypeScript | All 47 source files converted, `strict: true`, `target: ES2022` (raised from the initial ES2020 decision), `lib: ["ES2022", "DOM", "DOM.Iterable"]`. |
-| 4 | Tests: Playwright or Vitest | **Both, split by role:** Vitest (jsdom) for units; Playwright for a browser-level characterization suite covering every example fixture, the IIIF path and the embed page. |
-| 5 | Build the test suite **first** | The Playwright characterization suite was built against the *old* webpack build before any migration, so the migration is validated against known-good behavior. |
-| 6 | Default Vite project structure | Root `index.html`, `public/`, `src/main.ts` entry, `src/` domain folders, `vite.config.ts` at root. |
-| 7 | Less → SASS | All ~45 `.less` files → `.scss` in `src/scss/`, compiled by dart-sass (`sass` npm package). |
-| 8 | Fonts from npm, embedded via SCSS | All Google Fonts / TypeNetwork runtime imports replaced by `@fontsource` / `@fontsource-variable` npm packages imported inside each theme; font binaries are emitted into `dist/css/fonts/files/` at build time. No runtime font CDN requests. |
-| 9 | Remove pre-2022 browser code | Dropped IE/old-engine fallbacks (`attachEvent`, `currentStyle`, rAF prefixes, `mozRequestAnimationFrame`, WebKit/Gecko polling, `pollGecko`/`pollWebKit`), legacy `Browser` detection, and all obsolete vendor prefixes in CSS. |
-| 10 | Replace Leaflet with OpenLayers | `src/map/leaflet/*` deleted; `src/map/openlayers/*` implements the same `Map`/`MapMarker` contract with `ol` 10.x. |
-| 11 | Replace Zoomify with the IIIF Image API (via OpenLayers) | `Leaflet.TileLayer.Zoomify` deleted; `map_type: "iiif"` renders via `ol/source/IIIF`. **Breaking change** for published storymaps using `zoomify`. |
-| 12 | JSON Schema + validation | `schema/storymap.schema.json`, a dependency-free runtime validator (`src/storymap/validate.ts`) used **on load** (reports *all* errors to `console.error`), plus a CLI (`npm run validate`) wired into CI. |
-| 13 | ESLint + Stylelint | Flat-config ESLint (typescript-eslint) + Stylelint (`stylelint-config-standard-scss`). |
-| 14 | GitHub Actions | `ci.yml` (lint → typecheck → validate → unit → build → e2e on every push/PR) and `package.yml` (on `v*` tag: build → zip `dist/` → GitHub Release — replaces the removed CDN staging). |
-| 15 | Legacy artifacts | `compiled/` (6 MB legacy build output) deleted entirely; its JSON fixtures live on as test data in `public/examples/`. |
+| #   | Goal                                                     | Decision / Result                                                                                                                                                                                                                               |
+| --- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Remove the backend infrastructure                        | Delete the Flask editor (`storymap/`), Docker/LocalStack/Postgres/nginx, deploy tooling, CDN staging. The repo becomes a **viewer-only library** (renders published StoryMap JSON; consumed as ESM, CJS or the `KLStoryMap` script-tag global). |
+| 2   | Vite as dev server **and** preview, replacing webpack    | `npm run dev` (HMR from source), `npm run build` (library + demo pages + font themes), `npm run preview` (serves built `dist/`).                                                                                                                |
+| 3   | Convert to TypeScript                                    | All 47 source files converted, `strict: true`, `target: ES2022` (raised from the initial ES2020 decision), `lib: ["ES2022", "DOM", "DOM.Iterable"]`.                                                                                            |
+| 4   | Tests: Playwright or Vitest                              | **Both, split by role:** Vitest (jsdom) for units; Playwright for a browser-level characterization suite covering every example fixture, the IIIF path and the embed page.                                                                      |
+| 5   | Build the test suite **first**                           | The Playwright characterization suite was built against the _old_ webpack build before any migration, so the migration is validated against known-good behavior.                                                                                |
+| 6   | Default Vite project structure                           | Root `index.html`, `public/`, `src/main.ts` entry, `src/` domain folders, `vite.config.ts` at root.                                                                                                                                             |
+| 7   | Less → SASS                                              | All ~45 `.less` files → `.scss` in `src/scss/`, compiled by dart-sass (`sass` npm package).                                                                                                                                                     |
+| 8   | Fonts from npm, embedded via SCSS                        | All Google Fonts / TypeNetwork runtime imports replaced by `@fontsource` / `@fontsource-variable` npm packages imported inside each theme; font binaries are emitted into `dist/css/fonts/files/` at build time. No runtime font CDN requests.  |
+| 9   | Remove pre-2022 browser code                             | Dropped IE/old-engine fallbacks (`attachEvent`, `currentStyle`, rAF prefixes, `mozRequestAnimationFrame`, WebKit/Gecko polling, `pollGecko`/`pollWebKit`), legacy `Browser` detection, and all obsolete vendor prefixes in CSS.                 |
+| 10  | Replace Leaflet with OpenLayers                          | `src/map/leaflet/*` deleted; `src/map/openlayers/*` implements the same `Map`/`MapMarker` contract with `ol` 10.x.                                                                                                                              |
+| 11  | Replace Zoomify with the IIIF Image API (via OpenLayers) | `Leaflet.TileLayer.Zoomify` deleted; `map_type: "iiif"` renders via `ol/source/IIIF`. **Breaking change** for published storymaps using `zoomify`.                                                                                              |
+| 12  | JSON Schema + validation                                 | `schema/storymap.schema.json`, a dependency-free runtime validator (`src/storymap/validate.ts`) used **on load** (reports _all_ errors to `console.error`), plus a CLI (`npm run validate`) wired into CI.                                      |
+| 13  | ESLint + Stylelint                                       | Flat-config ESLint (typescript-eslint) + Stylelint (`stylelint-config-standard-scss`).                                                                                                                                                          |
+| 14  | GitHub Actions                                           | `ci.yml` (lint → typecheck → validate → unit → build → e2e on every push/PR) and `package.yml` (on `v*` tag: build → zip `dist/` → GitHub Release — replaces the removed CDN staging).                                                          |
+| 15  | Legacy artifacts                                         | `compiled/` (6 MB legacy build output) deleted entirely; its JSON fixtures live on as test data in `public/examples/`.                                                                                                                          |
 
 ---
 
@@ -66,25 +66,25 @@ baseline was required first.
    `window.__smErrors` for assertions.
 3. **Playwright config.** `playwright.config.ts`, port `8200`,
    `webServer` boots the bundler's dev server, `workers: 1`, 60 s timeout.
-4. **Spec** (`e2e/examples.spec.ts`): for *every* fixture —
-   - no uncaught `pageerror` exceptions,
-   - no `window.__smErrors`,
-   - `#storymap-embed.vco-storymap` exists (note: the class is on the same
-     element as the id — descendant selector was the initial bug),
-   - slide count > 0 (except `empty`, which legitimately renders zero slides),
-   - slide navigation via `.vco-slidenav-next` produces no errors.
+4. **Spec** (`e2e/examples.spec.ts`): for _every_ fixture —
+    - no uncaught `pageerror` exceptions,
+    - no `window.__smErrors`,
+    - `#storymap-embed.vco-storymap` exists (note: the class is on the same
+      element as the id — descendant selector was the initial bug),
+    - slide count > 0 (except `empty`, which legitimately renders zero slides),
+    - slide navigation via `.vco-slidenav-next` produces no errors.
 5. **Baseline bug fixes** required to get the old build green (all
    "works with updated dependencies" class bugs):
-   - `Map.Leaflet._createBackgroundMap` — Leaflet 1.9 wraps tile elements in
-     `{ el: … }` objects; the code still read `.src`/`.style` from the raw
-     element (Leaflet 0.7 API) → uncaught `TypeError` whenever tiles loaded.
-     Fixed with `tiles[x].el || tiles[x]`.
-   - `Util.convertUnixTime` — implicit globals (`date`, `months`, …) throw in
-     strict-mode ESM bundles → declared as locals.
-   - Zero-slide storymaps (`empty.json`) crashed in `Map._initData`
-     (`this._markers[0].active(true)` on an empty array), `StorySlider`
-     (`this._slides[0].setActive(true)`) and `_onLoaded`
-     (`this._slides[0].title`) → guarded with `length > 0` checks.
+    - `Map.Leaflet._createBackgroundMap` — Leaflet 1.9 wraps tile elements in
+      `{ el: … }` objects; the code still read `.src`/`.style` from the raw
+      element (Leaflet 0.7 API) → uncaught `TypeError` whenever tiles loaded.
+      Fixed with `tiles[x].el || tiles[x]`.
+    - `Util.convertUnixTime` — implicit globals (`date`, `months`, …) throw in
+      strict-mode ESM bundles → declared as locals.
+    - Zero-slide storymaps (`empty.json`) crashed in `Map._initData`
+      (`this._markers[0].active(true)` on an empty array), `StorySlider`
+      (`this._slides[0].setActive(true)`) and `_onLoaded`
+      (`this._slides[0].title`) → guarded with `length > 0` checks.
 
 Result: 18 passed / 4 zoomify skipped — the behavior baseline.
 
@@ -163,14 +163,13 @@ Kept: end-user documentation (`AWS_Hosting/`, `GITHUB_HOSTING/`,
 
 **`vite.demo.config.ts`** (second pass, `emptyOutDir: false`): builds
 `index.html`, `arya.html`, `harness.html` so `vite preview` serves the built
-library *and* the demo pages together.
+library _and_ the demo pages together.
 
 ### 5.3 Source changes required by Vite/Rolldown
 
 - `require('../less/VCO.StoryMap.less')` → `import './scss/VCO.StoryMap.scss'`
   (post-rename path).
-- `Language.js`: the webpack dynamic `require(\`./locale/${code}.json\`)`
-  replaced with `import.meta.glob('./locale/*.json', { eager: true })`.
+- `Language.js`: the webpack dynamic `require(\`./locale/${code}.json\`)`replaced with`import.meta.glob('./locale/*.json', { eager: true })`.
 - The bogus `import { LeafletModule } from "leaflet"` (a non-existent named
   export whose only effect was evaluating Leaflet's UMD to populate
   `window.L`) replaced with real `import * as L from "leaflet"` in all five
@@ -211,15 +210,22 @@ library *and* the demo pages together.
         "resolveJsonModule": true,
         "types": ["vite/client"],
         "strict": true,
-        "noImplicitAny": false,       // documented stepping stone
-        "strictNullChecks": false,    // documented stepping stone
+        "noImplicitAny": false, // documented stepping stone
+        "strictNullChecks": false, // documented stepping stone
         "noEmit": true,
         "isolatedModules": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
     },
-    "include": ["src", "tests", "e2e", "vite.config.ts", "vite.demo.config.ts", "playwright.config.ts"]
+    "include": [
+        "src",
+        "tests",
+        "e2e",
+        "vite.config.ts",
+        "vite.demo.config.ts",
+        "playwright.config.ts",
+    ],
 }
 ```
 
@@ -263,7 +269,7 @@ the storymap origin for relative-URL tests), `tests/embed_util.test.ts`
 ported, `npm test` → `vitest run`. Playwright's `e2e/` excluded from Vitest.
 
 **Commit:** `refactor: convert src to typescript (target ES2020)`
-*(target raised to ES2022 in Phase 6b)*
+_(target raised to ES2022 in Phase 6b)_
 
 ---
 
@@ -301,16 +307,16 @@ migrated; a `console.error` explains the replacement at load time.
 
 - `git mv src/less src/scss`, all `.less` → `.scss`.
 - Mechanical converter (`tasks/less2scss.mjs`, removed after use):
-  - `@var:` → `$var:`, `@var` refs → `$var` (whitelist of declared names —
-    at-rules untouched), `@{x}` → `#{$x}`,
-  - `spin(a, b)` → `adjust-hue(a, b)` (LESS color function),
-  - LESS property-merge (`transition+:`) → plain property,
-  - `e(%("…"))` IE filter expressions dropped,
-  - mixin definitions → `@mixin name($p: default, …)`; semicolon-separated
-    LESS params → commas; namespaced `#gradient > .horizontal(…)` calls
-    flattened to `@include gradient-horizontal(…)`,
-  - statement-position mixin calls `.name(args);` → `@include name(args);`
-    (only for known mixin names, guarding against selector collisions).
+    - `@var:` → `$var:`, `@var` refs → `$var` (whitelist of declared names —
+      at-rules untouched), `@{x}` → `#{$x}`,
+    - `spin(a, b)` → `adjust-hue(a, b)` (LESS color function),
+    - LESS property-merge (`transition+:`) → plain property,
+    - `e(%("…"))` IE filter expressions dropped,
+    - mixin definitions → `@mixin name($p: default, …)`; semicolon-separated
+      LESS params → commas; namespaced `#gradient > .horizontal(…)` calls
+      flattened to `@include gradient-horizontal(…)`,
+    - statement-position mixin calls `.name(args);` → `@include name(args);`
+      (only for known mixin names, guarding against selector collisions).
 - `core/Mixins.scss` hand-rewritten: standardized properties only (no vendor
   prefixes), modern division, dead IE filters and the `#translucent` /
   `#gradient` namespaces removed.
@@ -322,17 +328,17 @@ migrated; a `console.error` explains the replacement at load time.
 - Runtime `@import url(fonts.googleapis.com…)` and the TypeNetwork
   (`cloud.typenetwork.com`) import replaced by `@fontsource` /
   `@fontsource-variable` package imports inside each theme:
-  - Static packages: abril-fatface, amatic-sc, average-sans, bitter,
-    clicker-script, fauna-one, gentium-book-plus, lato, megrim,
-    old-standard-tt, playfair-display-sc, pt-sans, pt-sans-narrow, pt-serif,
-    rufina, ubuntu, unica-one.
-  - Variable packages: bitter, dancing-script, eb-garamond, open-sans,
-    playfair-display, raleway, roboto-slab, vollkorn (italic variants via
-    `wght-italic.css`).
-  - Multi-family URLs required *all* matching packages (first-match-only bug
-    in the first pass, fixed).
-  - `font.knightlab` (commercial Turnip RE / Salvo Serif Cond / Apres RE)
-    substituted with Bitter / Roboto Slab / Open Sans.
+    - Static packages: abril-fatface, amatic-sc, average-sans, bitter,
+      clicker-script, fauna-one, gentium-book-plus, lato, megrim,
+      old-standard-tt, playfair-display-sc, pt-sans, pt-sans-narrow, pt-serif,
+      rufina, ubuntu, unica-one.
+    - Variable packages: bitter, dancing-script, eb-garamond, open-sans,
+      playfair-display, raleway, roboto-slab, vollkorn (italic variants via
+      `wght-italic.css`).
+    - Multi-family URLs required _all_ matching packages (first-match-only bug
+      in the first pass, fixed).
+    - `font.knightlab` (commercial Turnip RE / Salvo Serif Cond / Apres RE)
+      substituted with Bitter / Roboto Slab / Open Sans.
 - `font.emoji` (a 2560-line PNG-sprite polyfill for pre-2017 Chrome) deleted
   along with its `loadCSS` call in `StoryMap.ts`.
 - **Font theme build** (`tasks/build-fonts.mjs`): compiles each
@@ -499,18 +505,18 @@ dependency of the library).
 
 ### 14.1 Dependency changes
 
-| Removed | Added |
-|---|---|
-| webpack, webpack-cli, webpack-dev-server, webpack-merge | vite |
+| Removed                                                                      | Added                                                                    |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| webpack, webpack-cli, webpack-dev-server, webpack-merge                      | vite                                                                     |
 | css/style/file/json-loader, mini-css-extract, clean/copy/html/terser plugins | typescript (pinned `^5.9` — TS 7 conflicts with typescript-eslint peers) |
-| less, less-loader | sass |
-| leaflet, @types/leaflet | ol |
-| jsdom (node:test) | vitest, jsdom (vitest env) |
-| trash, trash-cli, uglify-js, prompt, simple-git, adm-zip (staging) | @playwright/test |
-| npm-run-all, run-all, run-s, fs-extra, glob, jstrace | @eslint/js, eslint, typescript-eslint, globals |
-| — | stylelint, stylelint-config-standard(-scss), postcss-scss |
-| — | @types/node |
-| — | 25 × @fontsource(-variable) packages |
+| less, less-loader                                                            | sass                                                                     |
+| leaflet, @types/leaflet                                                      | ol                                                                       |
+| jsdom (node:test)                                                            | vitest, jsdom (vitest env)                                               |
+| trash, trash-cli, uglify-js, prompt, simple-git, adm-zip (staging)           | @playwright/test                                                         |
+| npm-run-all, run-all, run-s, fs-extra, glob, jstrace                         | @eslint/js, eslint, typescript-eslint, globals                           |
+| —                                                                            | stylelint, stylelint-config-standard(-scss), postcss-scss                |
+| —                                                                            | @types/node                                                              |
+| —                                                                            | 25 × @fontsource(-variable) packages                                     |
 
 Runtime dependency: **`ol`** only. `package-lock.json` committed.
 
