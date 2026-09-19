@@ -506,7 +506,7 @@ export default class Map {
 			return 1;
 		}
 		
-		_getMapCenter(correct_for_center?) {
+		_getMapCenter(correct_for_center?): any {
 			return {lat:0, lng:0};
 		}
 		

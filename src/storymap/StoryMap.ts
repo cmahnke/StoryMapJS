@@ -4,7 +4,7 @@ import Dom from "../dom/Dom"
 import Ease from "../animation/Ease"
 import { setLanguage } from "../language/Language"
 import Events from "../core/Events"
-import Leaflet from "../map/leaflet/Map.Leaflet"
+import OpenLayersMap from "../map/openlayers/Map.OpenLayers"
 import MenuBar from "../ui/MenuBar"
 import StorySlider from "../slider/StorySlider"
 import { Browser } from "../core/Browser"
@@ -284,8 +284,8 @@ class StoryMap {
 		this._el.storyslider.style.top 	= "1px";
 
 		// Create Map using preferred Map API
-		this._map = new Leaflet(this._el.map, this.data, this.options);
-		this.map = this._map._map; // For access to Leaflet Map.
+		this._map = new OpenLayersMap(this._el.map, this.data, this.options);
+		this.map = this._map._map; // For access to the OpenLayers map.
 		this._map.on('loaded', this._onMapLoaded, this);
 
 		// Map Background Color

@@ -131,7 +131,7 @@ export default class MapMarker {
 		_active(a) {
 		}
 		
-		_location() {
+		_location(): any {
 			return {lat:0, lng:0}
 		}
 	

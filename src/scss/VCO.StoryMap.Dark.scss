@@ -46,11 +46,7 @@
 @import "media/types/VCO.Media.IFrame";
 @import "media/types/VCO.Media.Wikipedia";
 
-@import "map/leaflet/VCO.Leaflet";
-@import "map/leaflet/VCO.Leaflet.IE";
-@import "map/leaflet/VCO.Map.Leaflet";
-@import "map/leaflet/VCO.Leaflet.MiniMap";
-@import "map/leaflet/VCO.Leaflet.Mapbox";
+@import "map/openlayers/VCO.Map.OpenLayers";
 
 @import "map/VCO.MapMarker";
 @import "map/VCO.ImageMarker";
