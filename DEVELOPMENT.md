@@ -77,10 +77,28 @@ StoryMap JSON is validated against `schema/storymap.schema.json`:
 
 ## Exchange format
 
-StoryMapJS data can be exchanged as IIIF Presentation 3.0 manifests — see
-[docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md)
-(`public/examples-iiif/` holds converted fixtures, validated in CI via
-`npm run validate:iiif`).
+StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
+(object or URL):
+
+- **Legacy JSON** — `{ "storymap": { "slides": [...] } }` (schema in
+  `schema/storymap.schema.json`)
+- **IIIF Presentation 3.0 manifests** — see
+  [docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md);
+  detection is automatic (`@context`/`type: "Manifest"`). Converted fixtures
+  live in `public/examples-iiif/` (validated against the official IIIF
+  validator via `npm run validate:iiif`; legacy fixtures via
+  `npm run validate`).
+
+## Styling and fonts
+
+- SASS with `@use` only (no `@import`), no vendor prefixes, no deprecation
+  warnings; stylelint runs with zero disabled rules.
+- Font themes (`src/scss/fonts/font.*.scss`) declare `@font-face` rules via
+  the `@fontsource-utils/scss` `faces()` mixin with `pkg:` imports; binaries
+  are emitted to `dist/css/fonts/files/` by `tasks/build-fonts.mjs`.
+- Vendored libraries replaced by npm packages: `morpheus` (animation).
+  `src/core/Load.ts` remains a typed vendored copy of rgrove/lazyload (not
+  published on npm).
 
 ## OpenLayers notes
 

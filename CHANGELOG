@@ -1,3 +1,22 @@
+1.0.0 (unreleased)
+------------------------
+Viewer-only restructure of the repository:
+- Removed the editor Flask backend, CDN staging and all legacy build artifacts
+- Replaced webpack with Vite (dev/build/preview), default Vite project layout
+- Converted the source to strict TypeScript (target ES2022, noImplicitAny, no explicit any)
+- Replaced Leaflet with OpenLayers; IIIF Image API replaces Zoomify (breaking: map_type "zoomify" is gone, use "iiif")
+- Converted Less to SASS with zero deprecation warnings (@use only, no @import, no vendor prefixes, no postcss-scss)
+- Fonts bundled via @fontsource + @fontsource-utils/scss mixins (woff2, latin subsets); no runtime font CDN requests
+- New exchange format: IIIF Presentation API 3.0 manifests (docs/storymap-as-iiif-manifest.md) with navPlace geo +
+  a storymap: extension; all example fixtures converted and validated against the official IIIF validator;
+  StoryMap reads both legacy JSON and Presentation 3 manifests
+- JSON Schema for storymap data: runtime validation with console error reporting + CLI validator
+- ESLint (all rules enabled, TS mixins per the handbook replace runtime classMixin), Stylelint (zero disabled
+  rules), Prettier, GitHub Actions for CI (lint/typecheck/validate/tests/build/e2e) and release packaging
+- Dropped code for pre-2022 browsers: XHR -> fetch, removed vendor detection, engine workarounds, pollers,
+  minEmoji sprite polyfill and Knight Lab tracking
+- Bug fixes: null-offset crashes, IIIF source races, unique-id generation, swipe direction check, empty-block cleanup
+
 0.9.5 (2025-11-05)
 * Implement basic Audio and Video media types
 
