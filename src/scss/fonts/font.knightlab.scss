@@ -12,12 +12,11 @@ Knight Lab Specific
 @import "@fontsource-variable/open-sans";
 
 // Font Variables
-$font-main: "Bitter", Georgia, "Times New Roman", Times, serif;
-$font-secondary: "Roboto Slab", Georgia, "Times New Roman", Times, serif;
-$font-navigation: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-main: "Bitter", georgia, "Times New Roman", times, serif;
+$font-secondary: "Roboto Slab", georgia, "Times New Roman", times, serif;
+$font-navigation: "Open Sans", "Helvetica Neue", helvetica, arial, sans-serif;
 $font-marker: $font-secondary;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 16px;
 $base-font-weight: 400;
 
@@ -40,4 +39,4 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";

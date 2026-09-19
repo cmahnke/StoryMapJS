@@ -96,6 +96,7 @@
         width: auto;
         float: none;
     }
+
     h1,
     h2,
     h3,
@@ -104,27 +105,33 @@
     h6 {
         clear: none;
     }
+
     table {
         border-collapse: collapse;
         border-spacing: 0;
     }
+
     ol,
     ul {
         list-style: none;
     }
-    q:before,
-    q:after,
-    blockquote:before,
-    blockquote:after {
+
+    q::before,
+    q::after,
+    blockquote::before,
+    blockquote::after {
         content: "";
     }
+
     a:focus {
         outline: thin dotted;
     }
+
     a:hover,
     a:active {
         outline: 0;
     }
+
     article,
     aside,
     details,
@@ -137,6 +144,7 @@
     section {
         display: block;
     }
+
     audio,
     canvas,
     video {
@@ -149,6 +157,7 @@
     audio:not([controls]) {
         display: none;
     }
+
     div {
         max-width: none;
     }
@@ -163,45 +172,37 @@
         position: relative;
         vertical-align: baseline;
     }
+
     sup {
         top: -0.5em;
     }
+
     sub {
         bottom: -0.25em;
     }
 
-    /*	Img border in a's and image quality
-		Based on: http://github.com/necolas/normalize.css
-	------------------------------------------------------------------------------------------- */
-    img {
-    }
-
-    /*	Forms
-		Based on: http://github.com/necolas/normalize.css
-	------------------------------------------------------------------------------------------- */
-    button,
-    input,
-    select,
-    textarea {
-    }
     button,
     input {
         line-height: normal; // FF3/4 have !important on line-height in UA stylesheet
     }
+
     button,
     input[type="button"],
     input[type="reset"],
     input[type="submit"] {
         cursor: pointer; // Cursors on all buttons applied consistently
-        appearance: button; // Style clicable inputs in iOS
+        appearance: auto; // Style clicable inputs in iOS
     }
+
     input[type="search"] {
         // Appearance in Safari/Chrome
         appearance: textfield;
     }
+
     input[type="search"]::-webkit-search-decoration {
         appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
     }
+
     textarea {
         overflow: auto; // Remove vertical scrollbar in IE6-9
         vertical-align: top; // Readability and alignment cross-browser

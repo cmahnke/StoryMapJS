@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /* Requires Variables.less
 ================================================== */
 
@@ -5,49 +7,52 @@
     width: 50%;
     max-width: 50%;
     min-width: 120px;
-    padding: 0 20px 0 20px;
+    padding: 0 20px;
     display: table-cell;
     display: block;
     vertical-align: middle;
     text-align: left;
-    //float:left;
+
+    // float:left;
     text-shadow: none;
     color: $color-text;
+
     p {
         color: $color-text;
     }
-    .vco-text-content-container {
-        .vco-text-content {
-        }
-    }
+
     h2.vco-headline-title,
     h2.vco-headline {
         margin-top: 0;
         color: $color-header-text;
     }
+
     .vco-headline-date,
     h3.vco-headline-date {
         font-family: $font-main;
         font-size: $base-font-size;
         line-height: $base-font-size;
         font-weight: normal;
-        margin: 0 0 2px 0;
-        color: lighten($color-text, 25);
+        margin: 0 0 2px;
+        color: color.adjust($color-text, $lightness: 25);
+
         small {
             font-size: $base-font-size;
             line-height: $base-font-size;
             font-weight: normal;
-            color: lighten($color-text, 25);
+            color: color.adjust($color-text, $lightness: 25);
         }
     }
+
     .vco-text-date {
         display: inline-block;
         margin-top: 10px;
         font-size: 12px;
-        &:after {
-            //margin-left:3px;
-            //color:#999;
-            //font-weight:normal;
+
+        &::after {
+            // margin-left:3px;
+            // color:#999;
+            // font-weight:normal;
         }
     }
 }
@@ -59,9 +64,11 @@
     .vco-text p {
         color: $color-text-inverted !important;
         text-shadow: 1px 1px 2px #000;
+
         .vco-headline-date,
         h3.vco-headline-date {
             color: $color-text-inverted !important;
+
             small {
                 color: $color-text-inverted !important;
             }
@@ -78,19 +85,5 @@
         min-width: auto;
         float: none;
         margin-top: 20px;
-        .vco-text-content-container {
-            .vco-text-content {
-            }
-        }
     }
-}
-
-/* Mobile, iPhone
-================================================== */
-.vco-mobile {
-}
-
-/* Mobile, iPhone and skinny
-================================================== */
-.vco-mobile.vco-skinny {
 }

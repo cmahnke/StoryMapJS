@@ -7,8 +7,11 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+
     @include user-select(none);
+
     position: relative;
+
     img,
     embed,
     object,
@@ -17,6 +20,7 @@
         max-width: 100%;
         position: relative;
     }
+
     .vco-slider-background {
         position: absolute;
         top: 0;
@@ -26,20 +30,23 @@
         z-index: 1;
         pointer-events: none;
     }
+
     .vco-slider-touch-mask {
         z-index: 25;
-
-        top: 0px;
-        left: 0px;
+        top: 0;
+        left: 0;
     }
+
     .vco-slider-container-mask {
         text-align: center;
-        //overflow: scroll;
+
+        // overflow: scroll;
         z-index: 5;
+
         .vco-slider-container {
             position: absolute;
-            top: 0px;
-            left: 0px;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             text-align: center;

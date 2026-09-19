@@ -17,7 +17,8 @@
         font-weight: $font-headings-weight;
         font-size: $font-size-headings;
         line-height: $font-headings-lineheight;
-        //margin-bottom:0;
+
+        // margin-bottom:0;
     }
 
     h2.vco-headline-title {
@@ -29,19 +30,13 @@
         font-family: $font-main;
         font-size: $base-font-size;
         line-height: 1.3em;
-        //margin-top:0;
-    }
 
-    ul {
+        // margin-top:0;
     }
 
     .vco-media .vco-media-wikipedia h4 a {
         font-size: $font-size-headings-small;
         line-height: $font-size-headings-small;
-    }
-
-    .vco-caption,
-    .vco-credit {
     }
 
     .vcard {
@@ -55,6 +50,7 @@
     .vco-slide-calltoaction-button-text {
         font-family: $font-navigation;
         text-transform: $font-navigation-text-transform;
+
         .vco-slidenav-title {
             line-height: 1.3em !important;
         }
@@ -64,13 +60,9 @@
     h3.vco-headline-date {
         font-family: $font-headline-date !important;
         text-transform: $font-headings-text-transform !important;
+
         small {
             font-weight: normal !important;
-        }
-    }
-
-    .vco-menubar {
-        .vco-menubar-button {
         }
     }
 

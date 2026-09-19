@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /*	Mixins.scss
 	Snippets of reusable CSS to develop faster and keep code readable
  * ----------------------------------------------------------------- */
@@ -20,7 +22,8 @@
 // Background Opacity
 @mixin background-opacity($opacity: 100) {
     /* Fallback for web browsers that doesn't support RGBa */
-    background: rgb(0, 0, 0) transparent;
+    background: rgb(0 0 0) transparent;
+
     /* RGBa with 0.6 opacity */
     background: rgba(0, 0, 0, ($opacity / 100));
 }
@@ -29,6 +32,7 @@
 @mixin background-color-opacity($cr: 0, $cg: 0, $cb: 0, $opacity: 100) {
     /* Fallback for web browsers that doesn't support RGBa */
     background: rgb($cr, $cg, $cb) transparent;
+
     /* RGBa with 0.6 opacity */
     background: rgba($cr, $cg, $cb, ($opacity / 100));
 }
@@ -49,13 +53,20 @@
     border-top-right-radius: $radius;
     border-top-left-radius: $radius;
 }
+
 @mixin border-right-radius($radius) {
     border-bottom-right-radius: $radius;
+    border-top-right-radius: $radius;
 }
+
 @mixin border-bottom-radius($radius) {
+    border-bottom-right-radius: $radius;
     border-bottom-left-radius: $radius;
 }
+
 @mixin border-left-radius($radius) {
+    border-bottom-left-radius: $radius;
+    border-top-left-radius: $radius;
 }
 
 // Box Shadow
@@ -86,18 +97,24 @@
 
 // Clear Fix
 @mixin clearfix {
-    &:before,
-    &:after {
+    &::before,
+    &::after {
         display: table;
         content: "";
     }
-    &:after {
+
+    &::after {
         clear: both;
     }
 }
 
 @mixin translucent-background($color: #fff, $alpha: 1) {
-    background-color: hsla(hue($color), saturation($color), lightness($color), $alpha);
+    background-color: hsla(
+        color.hue($color),
+        color.saturation($color),
+        color.lightness($color),
+        $alpha
+    );
 }
 
 // Center-align a block level element
@@ -110,7 +127,7 @@
 // Create Vertical Gradient
 @mixin gradient-vertical($startColor: #555, $endColor: #333) {
     background-repeat: repeat-x;
-    background-image: linear-gradient(top, $startColor, $endColor);
+    background-image: linear-gradient(to top, );
 }
 
 // GRADIENTS

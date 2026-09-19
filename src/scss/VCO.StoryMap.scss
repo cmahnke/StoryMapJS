@@ -12,7 +12,6 @@
 /* Includes
 ================================================== */
 @import "Variables"; // Variables (easy way to make style changes)
-
 @import "core/Mixins"; // Less shortcuts and functions
 @import "core/Reset"; // CSS Reset
 @import "Typography";
@@ -27,31 +26,23 @@
 @import "ui/VCO.MenuBar";
 @import "ui/VCO.MenuBar.Button";
 @import "ui/VCO.Message";
-
 @import "animation/VCO.Animate";
-
 @import "slider/VCO.Slide";
 @import "slider/VCO.SlideNav";
 @import "slider/VCO.StorySlider";
-
 @import "media/VCO.Media";
 @import "media/types/VCO.Media.Text";
 @import "media/types/VCO.Media.Image";
 @import "media/types/VCO.Media.Twitter";
 @import "media/types/VCO.Media.Blockquote";
-@import "media/types/VCO.Media.Flickr";
 @import "media/types/VCO.Media.Instagram";
 @import "media/types/VCO.Media.Profile";
-@import "media/types/VCO.Media.YouTube";
 @import "media/types/VCO.Media.IFrame";
 @import "media/types/VCO.Media.Wikipedia";
-
 @import "map/openlayers/VCO.Map.OpenLayers";
-
 @import "map/VCO.MapMarker";
 @import "map/VCO.ImageMarker";
 @import "map/VCO.Map";
-
 @import "snapmap/VCO.SnapMap";
 
 /* StoryMap
@@ -63,7 +54,9 @@
     line-height: normal;
     overflow: hidden;
     position: relative;
+
     @include user-select(none);
+
     *,
     *::before,
     *::after {
@@ -76,45 +69,54 @@
 .vco-layout-portrait {
     .vco-storyslider {
         padding-top: 10px;
-        @include box-shadow(0px -3px 6px rgba(0, 0, 0, 0.2));
+
+        @include box-shadow(0 -3px 6px rgba(0, 0, 0, 0.2));
     }
 }
+
 /* Landscape
 ================================================== */
 .vco-layout-landscape {
     .vco-storyslider {
-        padding-top: 0px;
-        //this._el.slider_container_mask.style.width = this.options.width  + "px";
-        //this._el.slider_container_mask.style.left =  this.options.width  + "px";
+        padding-top: 0;
+
+        // this._el.slider_container_mask.style.width = this.options.width  + "px";
+        // this._el.slider_container_mask.style.left =  this.options.width  + "px";
         position: absolute;
         width: 50%;
         left: 50%;
         overflow: visible;
-        //padding-left:10%;
+
+        // padding-left:10%;
         .vco-slider-background {
             margin-left: -20%;
             width: 120%;
             overflow: hidden;
+
             @include gradient-horizontal(
                 rgba(256, 256, 256, 0.0001),
                 rgba(256, 256, 256, 0.85),
                 0%,
                 15%
             );
-            //@include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
+
+            // @include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
         }
+
         .vco-slider-container-mask {
             overflow: visible;
 
-            //.translucent-background(#FFF, 0.70);
-            //@include gradient-horizontal(rgba(256,256,256,.0001), rgba(256,256,256,0.85), 0%, 25%);
-            //@include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
-            //@include gradient-radial(rgba(256,256,256,0.85); $outer-color: rgba(256,256,256,.0001));
+            // .translucent-background(#FFF, 0.70);
+            // @include gradient-horizontal(rgba(256,256,256,.0001), rgba(256,256,256,0.85), 0%, 25%);
+            // @include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
+            // @include gradient-radial(rgba(256,256,256,0.85); $outer-color: rgba(256,256,256,.0001));
         }
     }
 }
+
 /* Default Fonts
 ================================================== */
+
 /*
 .vco-storymap {
 	font-family:'Pontano Sans',sans-serif !important;

@@ -13,12 +13,11 @@ https://fonts.google.com/specimen/Unica+One
 @import "@fontsource-variable/vollkorn/wght-italic.css";
 
 // Font Variables
-$font-main: "Vollkorn", Georgia, serif;
-$font-secondary: "Unica One", "Helvetica Neue", Helvetica, Arial, "MS Trebuchet", sans-serif;
+$font-main: "Vollkorn", georgia, serif;
+$font-secondary: "Unica One", "Helvetica Neue", helvetica, arial, "MS Trebuchet", sans-serif;
 $font-navigation: $font-secondary;
 $font-marker: $font-secondary;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 17px;
 $base-font-weight: 400;
 
@@ -41,4 +40,4 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: uppercase;
 
-@import "_font.base";
+@import "font.base";

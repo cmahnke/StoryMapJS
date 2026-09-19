@@ -16,7 +16,6 @@ $font-secondary: "Fjalla One", sans-serif;
 $font-navigation: $font-main;
 $font-marker: $font-navigation;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 17px;
 $base-font-weight: 400;
 
@@ -39,7 +38,7 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";
 
 .vco-timeline {
     .vco-headline-date,

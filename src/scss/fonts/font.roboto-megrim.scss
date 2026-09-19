@@ -11,12 +11,11 @@ https://fonts.google.com/specimen/Megrim
 @import "@fontsource/megrim";
 
 // Font Variables
-$font-main: "Roboto Slab", Georgia, serif;
-$font-secondary: "Megrim", "Helvetica Neue", Helvetica, Arial, "MS Trebuchet", sans-serif;
+$font-main: "Roboto Slab", georgia, serif;
+$font-secondary: "Megrim", "Helvetica Neue", helvetica, arial, "MS Trebuchet", sans-serif;
 $font-navigation: $font-secondary;
 $font-marker: $font-secondary;
 $font-headline-date: $font-main;
-
 $base-font-size: 17px;
 $base-font-weight: 300;
 
@@ -39,4 +38,4 @@ $font-marker-text-transform: normal;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";

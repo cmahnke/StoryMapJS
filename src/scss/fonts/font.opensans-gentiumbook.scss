@@ -19,7 +19,6 @@ $font-secondary: "Open Sans", sans-serif;
 $font-navigation: $font-secondary;
 $font-marker: $font-secondary;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 17px;
 $base-font-weight: 400;
 
@@ -42,7 +41,7 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";
 
 .vco-timeline {
     .vco-headline-date,

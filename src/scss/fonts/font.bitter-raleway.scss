@@ -16,10 +16,9 @@ https://fonts.google.com/specimen/Raleway
 // Font Variables
 $font-main: "Raleway", sans-serif;
 $font-secondary: "Bitter", serif;
-$font-navigation: "Helvetica Neue", Helvetica, Arial, "MS Trebuchet", sans-serif;
+$font-navigation: "Helvetica Neue", helvetica, arial, "MS Trebuchet", sans-serif;
 $font-marker: $font-secondary;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 16px;
 $base-font-weight: 300;
 
@@ -42,4 +41,4 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";

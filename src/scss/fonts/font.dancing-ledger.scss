@@ -13,10 +13,9 @@ https://fonts.google.com/specimen/Ledger
 // Font Variables
 $font-main: "Ledger", serif;
 $font-secondary: "Dancing Script", cursive;
-$font-navigation: $font-main; //'Helvetica Neue', Helvetica, Arial, "MS Trebuchet", sans-serif;
+$font-navigation: $font-main; // 'Helvetica Neue', Helvetica, Arial, "MS Trebuchet", sans-serif;
 $font-marker: $font-secondary;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 16px;
 $base-font-weight: 400;
 
@@ -39,4 +38,4 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";

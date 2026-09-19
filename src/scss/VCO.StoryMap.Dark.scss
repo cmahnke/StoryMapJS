@@ -11,8 +11,8 @@
 
 /* Includes
 ================================================== */
+@use "sass:color";
 @import "Variables.Dark"; // Variables (easy way to make style changes)
-
 @import "core/Mixins"; // Less shortcuts and functions
 @import "core/Reset"; // CSS Reset
 @import "Typography";
@@ -27,13 +27,10 @@
 @import "ui/VCO.MenuBar";
 @import "ui/VCO.MenuBar.Button";
 @import "ui/VCO.Message";
-
 @import "animation/VCO.Animate";
-
 @import "slider/VCO.Slide";
 @import "slider/VCO.SlideNav";
 @import "slider/VCO.StorySlider";
-
 @import "media/VCO.Media";
 @import "media/types/VCO.Media.Text";
 @import "media/types/VCO.Media.Image";
@@ -45,13 +42,10 @@
 @import "media/types/VCO.Media.YouTube";
 @import "media/types/VCO.Media.IFrame";
 @import "media/types/VCO.Media.Wikipedia";
-
 @import "map/openlayers/VCO.Map.OpenLayers";
-
 @import "map/VCO.MapMarker";
 @import "map/VCO.ImageMarker";
 @import "map/VCO.Map";
-
 @import "snapmap/VCO.SnapMap";
 
 /* StoryMap
@@ -63,6 +57,7 @@
     line-height: normal;
     overflow: hidden;
     position: relative;
+
     @include user-select(none);
 }
 
@@ -71,55 +66,66 @@
 .vco-layout-portrait {
     .vco-storyslider {
         padding-top: 10px;
-        @include box-shadow(0px -3px 6px rgba(0, 0, 0, 0.2));
+
+        @include box-shadow(0 -3px 6px rgba(0, 0, 0, 0.2));
     }
 }
+
 /* Landscape
 ================================================== */
 .vco-layout-landscape {
     .vco-storyslider {
-        padding-top: 0px;
-        //this._el.slider_container_mask.style.width = this.options.width  + "px";
-        //this._el.slider_container_mask.style.left =  this.options.width  + "px";
+        padding-top: 0;
+
+        // this._el.slider_container_mask.style.width = this.options.width  + "px";
+        // this._el.slider_container_mask.style.left =  this.options.width  + "px";
         position: absolute;
         width: 50%;
         left: 50%;
         overflow: visible;
-        //padding-left:10%;
+
+        // padding-left:10%;
         .vco-slider-background {
             margin-left: -20%;
             width: 120%;
             overflow: hidden;
+
             @include gradient-horizontal(
                 rgba(256, 256, 256, 0.0001),
                 rgba(256, 256, 256, 0.85),
                 0%,
                 15%
             );
-            //@include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
+
+            // @include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
         }
+
         .vco-slider-container-mask {
             overflow: visible;
 
-            //.translucent-background(#FFF, 0.70);
-            //@include gradient-horizontal(rgba(256,256,256,.0001), rgba(256,256,256,0.85), 0%, 25%);
-            //@include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
-            //@include gradient-radial(rgba(256,256,256,0.85); $outer-color: rgba(256,256,256,.0001));
+            // .translucent-background(#FFF, 0.70);
+            // @include gradient-horizontal(rgba(256,256,256,.0001), rgba(256,256,256,0.85), 0%, 25%);
+            // @include gradient-horizontal-three-colors(rgba(256,256,256,.0001); $mid-color: rgba(256,256,256,0.85); $color-stop: 10%; $end-color: rgba(256,256,256,.50));
+            // @include gradient-radial(rgba(256,256,256,0.85); $outer-color: rgba(256,256,256,.0001));
         }
+
         .vco-slidenav-next,
         .vco-slidenav-previous {
-            .vco-slidenav-icon:before {
+            .vco-slidenav-icon::before {
                 background-color: $color-background;
-                //.translucent-background($color-background, .85);
-                //.box-shadow(1px 1px 7px rgba(0,0,0,.30));
+
+                // .translucent-background($color-background, .85);
+                // .box-shadow(1px 1px 7px rgba(0,0,0,.30));
                 padding: 20px;
-                border: 1px solid darken($color-background, 30);
+                border: 1px solid color.adjust($color-background, $lightness: -30);
             }
+
             .vco-slidenav-icon,
             .vco-slidenav-title,
             .vco-slidenav-description {
                 text-shadow: none;
             }
+
             .vco-slidenav-title,
             .vco-slidenav-description {
                 display: none;
@@ -128,21 +134,27 @@
 
         .vco-slidenav-previous {
             left: -100%;
-            margin-left: 0px;
-            //z-index:26;
-            .vco-slidenav-icon:before {
+            margin-left: 0;
+
+            // z-index:26;
+            .vco-slidenav-icon::before {
                 @include border-right-radius(7px);
-                //border-left: 0;
+
+                // border-left: 0;
             }
         }
+
         .vco-slidenav-next {
-            //margin-left:0px;
+            // margin-left:0px;
             right: 130px;
-            .vco-slidenav-icon:before {
+
+            .vco-slidenav-icon::before {
                 @include border-left-radius(7px);
-                //border-right: 0;
+
+                // border-right: 0;
             }
         }
+
         .vco-slidenav-previous:hover {
             .vco-slidenav-icon {
                 margin-left: -4px;
@@ -150,8 +162,10 @@
         }
     }
 }
+
 /* Default Fonts
 ================================================== */
+
 /*
 .vco-storymap {
 	font-family:'Pontano Sans',sans-serif !important;

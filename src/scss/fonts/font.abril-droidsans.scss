@@ -18,7 +18,6 @@ $font-secondary: "Abril Fatface", cursive;
 $font-navigation: $font-main;
 $font-marker: $font-main;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 16px;
 $base-font-weight: 400;
 
@@ -41,4 +40,4 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";

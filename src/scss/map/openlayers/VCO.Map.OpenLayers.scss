@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /* Requires Variables
 ================================================= */
 .vco-map {
@@ -19,7 +21,7 @@
         position: absolute;
         bottom: 0;
         right: 0;
-        background-color: rgba(255, 255, 255, 0.75);
+        background-color: rgb(255 255 255 / 75%);
         font-size: 10px;
         padding: 1px 4px;
         z-index: 1000;
@@ -28,23 +30,26 @@
             color: #666;
             text-decoration: none;
         }
+
         .vco-knightlab-brand,
         a.vco-knightlab-brand {
             margin-right: 5px;
             text-shadow:
-                0px 0px 1px #fff,
-                0px 0px 1px #fff,
-                0px 0px 5px #fff;
+                0 0 1px #fff,
+                0 0 1px #fff,
+                0 0 5px #fff;
             font-size: 14px;
             font-weight: bold;
+
             span {
                 color: $color-theme;
                 display: inline-block;
                 transform: rotate(45deg);
             }
+
             &:hover {
                 text-decoration: none;
-                color: lighten($color-theme, 15%);
+                color: color.adjust($color-theme, $lightness: 15%);
             }
         }
     }
@@ -53,11 +58,13 @@
     .ol-overviewmap {
         left: 8px;
         bottom: 8px;
+
         .ol-overviewmap-map {
             border: none;
         }
+
         button {
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgb(0 0 0 / 40%);
         }
     }
 }
@@ -77,6 +84,7 @@
 .vco-skinny {
     .vco-map-attribution {
         font-size: 8px;
+
         .vco-knightlab-brand,
         a.vco-knightlab-brand {
             font-size: 12px;

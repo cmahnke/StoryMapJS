@@ -15,11 +15,10 @@ https://fonts.google.com/specimen/Unica+One
 
 // Font Variables
 $font-main: "Fauna One", serif;
-$font-secondary: "Playfair Display", Georgia, serif;
+$font-secondary: "Playfair Display", georgia, serif;
 $font-navigation: $font-main;
 $font-marker: $font-secondary;
 $font-headline-date: $font-navigation;
-
 $base-font-size: 17px;
 $base-font-weight: 400;
 
@@ -42,4 +41,4 @@ $font-marker-text-transform: none;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "_font.base";
+@import "font.base";

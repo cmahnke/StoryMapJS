@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /* SlideNav
 ================================================== */
 
@@ -12,36 +14,29 @@
 
     .vco-slidenav-content-container {
         height: 200px;
-        width: 00px;
+        width: 00;
         position: absolute;
     }
+
     .vco-slidenav-title,
     .vco-slidenav-description {
         width: 100%;
-        //word-break:break-all;
+
+        // word-break:break-all;
 
         word-break: break-all;
-
-        /* Non standard for webkit */
-        word-break: break-word;
-
+        overflow-wrap: anywhere;
         hyphens: auto;
 
         @include opacity(15);
-        a {
-        }
-        small {
-        }
     }
+
     .vco-slidenav-title {
         margin-top: 10px;
-        font-size: $base-font-size;
-        line-height: $base-font-size;
         font-size: $base-font-size-small;
         line-height: $base-font-size-small;
-        //font-weight: bold;
-    }
-    .vco-slidenav-description {
+
+        // font-weight: bold;
     }
 }
 
@@ -54,21 +49,24 @@
         .vco-slidenav-title,
         .vco-slidenav-description {
             text-shadow: 1px 1px 1px $color-background;
-            //color: $color-foreground;
+
+            // color: $color-foreground;
             color: $color-background;
         }
+
         &.vco-slidenav-inverted {
             .vco-slidenav-icon,
             .vco-slidenav-title,
             .vco-slidenav-description {
-                //color:$color-background;
+                // color:$color-background;
                 color: $color-foreground;
                 text-shadow: 1px 1px 1px $color-foreground;
             }
         }
     }
+
     .vco-slidenav-icon {
-        font-family: "vco-icons";
+        font-family: vco-icons, sans-serif;
         speak: none;
         font-style: normal;
         font-weight: normal;
@@ -80,6 +78,7 @@
         font-size: 32px;
         margin-bottom: 5px;
     }
+
     &:hover {
         .vco-slidenav-title,
         .vco-slidenav-description {
@@ -92,12 +91,15 @@
     text-align: right;
     margin-right: 10px;
     right: 100px;
+
     .vco-slidenav-icon {
         margin-left: 100 - 24px;
-        &:before {
+
+        &::before {
             content: "\e64f";
         }
     }
+
     &:hover {
         .vco-slidenav-icon {
             margin-left: 100 - 20px;
@@ -108,12 +110,15 @@
 .vco-slidenav-previous {
     text-align: left;
     margin-left: 10px;
+
     .vco-slidenav-icon {
-        margin-left: 0px;
-        &:before {
+        margin-left: 0;
+
+        &::before {
             content: "\e650";
         }
     }
+
     &:hover {
         .vco-slidenav-icon {
             margin-left: -4px;
@@ -126,12 +131,15 @@
 .vco-skinny {
     .vco-slidenav-next {
         right: 32px;
+
         .vco-slidenav-icon {
             margin-left: 32 - 24px;
         }
+
         &:hover {
             .vco-slidenav-icon {
                 margin-left: 32 - 20px;
+
                 @include opacity(100);
             }
         }
@@ -141,6 +149,7 @@
         &:hover {
             .vco-slidenav-icon {
                 margin-left: -4px;
+
                 @include opacity(100);
             }
         }
@@ -151,24 +160,29 @@
         .vco-slidenav-content-container {
             width: 32px;
             height: 32px;
+
             .vco-slidenav-icon,
             .vco-slidenav-title,
             .vco-slidenav-description {
-                //color:$color-background;
+                // color:$color-background;
             }
+
             &.vco-slidenav-inverted {
                 .vco-slidenav-icon,
                 .vco-slidenav-title,
                 .vco-slidenav-description {
                     color: $color-background;
-                    //color: $color-foreground;
+
+                    // color: $color-foreground;
                 }
             }
         }
+
         .vco-slidenav-title,
         .vco-slidenav-description {
             display: none;
         }
+
         .vco-slidenav-icon {
             @include opacity(33);
         }
@@ -181,14 +195,18 @@
     .vco-slidenav-next {
         &:hover {
             right: 70px;
+
             .vco-slidenav-icon {
                 margin-left: 32 - 24px;
+
                 @include opacity(100);
             }
         }
+
         &:active {
             .vco-slidenav-icon {
-                margin-left: 0px;
+                margin-left: 0;
+
                 @include opacity(100);
             }
         }
@@ -197,11 +215,13 @@
     .vco-slidenav-previous {
         &:hover {
             .vco-slidenav-icon {
-                //margin-left: 0px;
+                // margin-left: 0px;
                 margin-left: 100 - 20px;
+
                 @include opacity(100);
             }
         }
+
         &:active {
             .vco-slidenav-icon {
                 @include opacity(100);
@@ -220,6 +240,7 @@
                 @include opacity(33);
             }
         }
+
         &:active {
             .vco-slidenav-icon {
                 @include opacity(100);
@@ -247,20 +268,23 @@
         .vco-slidenav-next,
         .vco-slidenav-previous {
             .vco-slidenav-icon {
-                &:before {
-                    //background-color:$color-background;
+                &::before {
+                    // background-color:$color-background;
                     background-color: $color-foreground;
-                    //.translucent-background($color-background, .85);
-                    //.box-shadow(1px 1px 7px rgba(0,0,0,.30));
+
+                    // .translucent-background($color-background, .85);
+                    // .box-shadow(1px 1px 7px rgba(0,0,0,.30));
                     padding: 20px;
-                    border: 1px solid darken($color-background, 30);
+                    border: 1px solid color.adjust($color-background, $lightness: -30);
                 }
             }
+
             .vco-slidenav-icon,
             .vco-slidenav-title,
             .vco-slidenav-description {
                 text-shadow: none;
             }
+
             .vco-slidenav-title,
             .vco-slidenav-description {
                 display: none;
@@ -269,24 +293,28 @@
 
         .vco-slidenav-previous {
             left: -100%;
-            margin-left: 0px;
-            //z-index:26;
+            margin-left: 0;
+
+            // z-index:26;
             .vco-slidenav-icon {
-                &:before {
+                &::before {
                     @include border-right-radius(7px);
                 }
             }
+
             &:hover {
                 .vco-slidenav-icon {
                     margin-left: -4px;
                 }
             }
         }
+
         .vco-slidenav-next {
-            //margin-left:0px;
+            // margin-left:0px;
             right: 130px;
+
             .vco-slidenav-icon {
-                &:before {
+                &::before {
                     @include border-left-radius(7px);
                 }
             }

@@ -1,17 +1,21 @@
+@use "sass:color";
+
 /* MenuBar Button
 ================================================== */
 
 .vco-menubar-button {
-    border-left: 1px solid darken($color-background, 10);
+    border-left: 1px solid color.adjust($color-background, $lightness: -10);
     font-size: 14px;
-    padding: 6px 12px 6px 12px;
-    //position:relative;
-    //top:-24px;
+    padding: 6px 12px;
+
+    // position:relative;
+    // top:-24px;
     background-color: fadeout($ui-background-color, 10%);
     background-color: $color-background;
     cursor: pointer;
     font-weight: bold;
     color: $color-text;
+
     .vco-icon-arrow-up,
     .vco-icon-arrow-down {
         display: inline-block;
@@ -34,6 +38,7 @@
             background-color: fadeout($ui-background-color, 33%);
             color: $color-text;
         }
+
         &:active {
             background: $color-theme;
             color: $color-background;
@@ -41,35 +46,22 @@
     }
 }
 
-@keyframes invertToBlack {
+@keyframes invert-to-black {
     from {
         background-color: #fff;
     }
+
     to {
         background-color: #000;
     }
 }
-invertToBlack {
-    from {
-        background: #fff;
-    }
-    to {
-        background: #000;
-    }
-}
-@keyframes invertToWhite {
+
+@keyframes invert-to-white {
     from {
         background-color: #000;
     }
+
     to {
         background-color: #fff;
-    }
-}
-invertToWhite {
-    from {
-        background: #000;
-    }
-    to {
-        background: #fff;
     }
 }
