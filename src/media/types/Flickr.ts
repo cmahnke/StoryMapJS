@@ -55,16 +55,17 @@ export default class Flickr extends Media {
             throw "Invalid Flickr URL";
         }
         const pos = idx + marker.length;
-        this.media_id = this.data.url.substr(pos).split("/")[1];
+        this.media_id = this.data.url.slice(pos).split("/")[1];
     }
 
-    createMedia(d) {
+    createMedia(d: unknown) {
+        const data = d as { sizes: { size: { label: string; source: string }[] } };
         const best_size = this.sizes(this.options.height);
-        let size = d.sizes.size[d.sizes.size.length - 2].source;
+        let size = data.sizes.size[data.sizes.size.length - 2].source;
 
-        for (let i = 0; i < d.sizes.size.length; i++) {
-            if (d.sizes.size[i].label === best_size) {
-                size = d.sizes.size[i].source;
+        for (let i = 0; i < data.sizes.size.length; i++) {
+            if (data.sizes.size[i].label === best_size) {
+                size = data.sizes.size[i].source;
             }
         }
 
@@ -75,7 +76,7 @@ export default class Flickr extends Media {
         this.onLoaded();
     }
 
-    sizes(s) {
+    sizes(s: number): string {
         let _size;
 
         if (s <= 75) {

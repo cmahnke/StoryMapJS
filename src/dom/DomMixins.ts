@@ -26,7 +26,7 @@ export default class DomMixins {
 
     /*	Adding, Hiding, Showing etc
 	================================================== */
-    show(animate) {
+    show(animate: boolean): void {
         if (animate) {
             /*
 			this.animator = Animate(this._el.container, {
@@ -40,24 +40,24 @@ export default class DomMixins {
         }
     }
 
-    hide(animate) {
+    hide(animate: boolean): void {
         this._el.container.style.display = "none";
     }
 
-    addTo(container) {
+    addTo(container: HTMLElement): void {
         container.appendChild(this._el.container);
         this.onAdd();
     }
 
-    removeFrom(container) {
+    removeFrom(container: HTMLElement): void {
         container.removeChild(this._el.container);
         this.onRemove();
     }
 
     /*	Animate to Position
 	================================================== */
-    animatePosition(pos, el, use_percent) {
-        const ani = {
+    animatePosition(pos: Record<string, number>, el: HTMLElement, use_percent: boolean): void {
+        const ani: Record<string, unknown> = {
             duration: this.options.duration,
             easing: this.options.ease,
         };
@@ -94,13 +94,14 @@ export default class DomMixins {
 
     /*	Set the Position
 	================================================== */
-    setPosition(pos, el) {
+    setPosition(pos: Record<string, number>, el?: HTMLElement): void {
         for (const name in pos) {
             if (Object.hasOwn(pos, name)) {
                 if (el) {
-                    el.style[name] = pos[name] + "px";
+                    (el.style as unknown as Record<string, string>)[name] = pos[name] + "px";
                 } else {
-                    this._el.container.style[name] = pos[name] + "px";
+                    (this._el.container.style as unknown as Record<string, string>)[name] =
+                        pos[name] + "px";
                 }
             }
         }

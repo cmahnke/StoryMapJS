@@ -5,10 +5,10 @@
 
 export const ua = navigator.userAgent.toLowerCase();
 export const doc = document.documentElement;
-export const webkit = ua.indexOf("webkit") !== -1;
-export const chrome = ua.indexOf("chrome") !== -1;
-export const firefox = ua.indexOf("firefox") !== -1;
-export const android = ua.indexOf("android") !== -1;
+export const webkit = ua.includes("webkit");
+export const chrome = ua.includes("chrome");
+export const firefox = ua.includes("firefox");
+export const android = ua.includes("android");
 export const mobile = typeof orientation !== "undefined";
 export const touch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 export const webkit3d = "WebKitCSSMatrix" in window;

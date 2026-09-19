@@ -1,0 +1,573 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://example.org/ns/storymap/v1"
+    ],
+    "id": "https://example.org/storymap/ironmaiden",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "ironmaiden"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://en.wikipedia.org/wiki/Iron_Maiden",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Iron Maiden 2013 US Tour"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Earlier this year Iron Maiden announced they would be appearing on a limited, seven date tour in the US with opening band Megadeth.<br></br><b><i>An example of embedding Wikipedia.</i></b>"
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:background": {
+                "url": "http://www.psp-themes.net/data/media/7/iron%20maiden_6.jpg",
+                "color": "#cdbfe3",
+                "opacity": 25
+            },
+            "storymap:mediaCaption": "Iron Maiden",
+            "storymap:mediaCredit": "wikipedia",
+            "storymap:date": "2013",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/1/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/1/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -78.574619,
+                                35.74902
+                            ]
+                        },
+                        "properties": {
+                            "name": "Raleigh, North Carolina",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://www.youtube.com/watch?v=CYk56B9l4dU",
+                                "type": "Video"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 3"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Kicking off the tour at Time Warner Cable Music Pavilion, Raleigh, North Carolina.<br></br><b><i>Embed a YouTube video with a URL.</i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Iron Maiden 'The Trooper' Live",
+            "storymap:mediaCredit": "Youtube",
+            "storymap:date": "Sept 3",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -78.574619,
+                                35.74902
+                            ]
+                        },
+                        "properties": {
+                            "name": "Raleigh, North Carolina",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://twitter.com/IronMaiden/status/375889845094080512",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 5"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Bridgestone Arena, Nashville, Tennesee.<br></br><b><i>Example of embedding a tweet.<i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Iron Maiden Twitter crew",
+            "storymap:mediaCredit": "Twitter",
+            "storymap:date": "Sept 5",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -86.778542,
+                                36.159862
+                            ]
+                        },
+                        "properties": {
+                            "name": "Nashville, Tennesee",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://soundcloud.com/slymnoncul/iron-maiden-fear-of-the-dark",
+                                "type": "Sound"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 7"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Sprint Center, Kansas City, Missouri. <br></br><b><i>Embed a track from Soundcloud like one of Iron Maiden fans' favorite live songs.</i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Iron Maiden 'Fear of the Dark' Live",
+            "storymap:mediaCredit": "Soundcloud",
+            "storymap:date": "Sept 7",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -94.58053,
+                                39.097911
+                            ]
+                        },
+                        "properties": {
+                            "name": "Kansas City, Missouri",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://storify.com/GtRiffOfTheDay/the-trooper-iron-maiden",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 8"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Verizon Wireless Amphitheatre, St Louis, Missouri.<br></br><b><i>Embed a Storify like this riff lesson.</i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Iron Maiden 'The Trooper' Riff Lesson",
+            "storymap:mediaCredit": "GtRiffOfTheDay",
+            "storymap:date": "Sept 8",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -84.3063,
+                                34.054259
+                            ]
+                        },
+                        "properties": {
+                            "name": "St Louis, Missouri",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://vine.co/v/h1dPDlW2ZMa",
+                                "type": "Video"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 10"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Austin 360 Amphitheater, Austin, TX.<br></br><b><i>Embed a Vine like this one of the crowd in Austin.</i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Iron Maiden crowd in Austin, TX",
+            "storymap:mediaCredit": "Bon Scott",
+            "storymap:date": "Sept 10",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -97.740047,
+                                30.26674
+                            ]
+                        },
+                        "properties": {
+                            "name": "Austin, TX",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://www.revolvermag.com/wp-content/gallery/iron-maiden_1/06_ironmaiden.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 12"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Mandalay Bay Events Center, Las Vegas, Nevada.<br></br><b><i>Insert a photo that is hosted on the web.</i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Bruce Dickinson live in Vegas",
+            "storymap:mediaCredit": "Stephanie Cabral",
+            "storymap:date": "Sept 12",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.17673,
+                                36.095857
+                            ]
+                        },
+                        "properties": {
+                            "name": "Las Vegas, Nevada",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://vimeo.com/74553894",
+                                "type": "Video"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sept 13"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Ending the US tour at San Manuel Amphitheatre, San Bernardino, California.<br></br><b><i>Embed a Vimeo using the URL.</i></b>"
+                ]
+            },
+            "storymap:mediaCaption": "Iron Maiden San Bernardino",
+            "storymap:mediaCredit": "Kaley Nelson",
+            "storymap:date": "Sept 13",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -117.401991,
+                                34.203284
+                            ]
+                        },
+                        "properties": {
+                            "name": "San Bernardino, California",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/ironmaiden/canvas/9",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/ironmaiden/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/ironmaiden/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://www.flickr.com/photos/39746512@N05/8921983686/in/photolist-eApuUW-faUEup-fb9Vsd-fb9VAE-fb9VR5-fEvX7Y-fEvWA9-fqZdrk-freuPd-fEemy2-fEvVSb-fretQ1-fqZctP-fEema2-fretMs-fqZcme-fEvWCU-fEekJT-fEemDc-freu4L-fEvVKw-fEvVNU-freu7j-fqZcX8-fEvWgW-fqZcvX-fqZcEk-fEemt4-fqZcyx-fEvX4Y-freuhu-fEvWFE-fqZcQx-fEeky6-freuoj-fEvWbb-fEvW4S-fEemnt-fEvWnE-freu9U-fEekQt-fEekDR-fEem6F-fEvWPC-fEvVYj-fEvWqo-fEvWZb-fEvWUL-fb9z5b-fEemk2-fqZd7T",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/ironmaiden/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Iron Maiden 2013 US Tour"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Iron Maiden used some of their set from their 7th Tour of a 7th Tour in 1988 for their album Seventh Son of a Seventh Son.<br></br><b><i>Embed from Flickr.</i></b>"
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCaption": "Iron Maiden set in Madrid",
+            "storymap:mediaCredit": "dr_zoidberg",
+            "storymap:date": "2013",
+            "navPlace": {
+                "id": "https://example.org/storymap/ironmaiden/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/ironmaiden/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -117.401991,
+                                34.203284
+                            ]
+                        },
+                        "properties": {
+                            "name": "San Bernardino",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

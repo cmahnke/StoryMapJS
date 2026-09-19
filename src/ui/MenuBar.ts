@@ -38,7 +38,7 @@ export default class MenuBar {
 
     /*	Constructor
 	================================================== */
-    constructor(elem, parent_elem, options) {
+    constructor(elem: HTMLElement | string, parent_elem?: HTMLElement, options?: object) {
         // DOM ELEMENTS
         this._el = {
             parent: {},
@@ -85,7 +85,7 @@ export default class MenuBar {
 
     /*	Public
 	================================================== */
-    show(d?) {
+    show(d?: number): void {
         let _duration = this.options.duration;
         if (d) {
             _duration = d;
@@ -99,7 +99,7 @@ export default class MenuBar {
 		*/
     }
 
-    hide(top) {
+    hide(top: number): void {
         /*
 		this.animator = Animate(this._el.container, {
 			top: 		top,
@@ -109,13 +109,13 @@ export default class MenuBar {
 		*/
     }
 
-    setSticky(y) {
+    setSticky(y: number): void {
         this.options.menubar_default_y = y;
     }
 
     /*	Color
 	================================================== */
-    setColor(inverted) {
+    setColor(inverted: boolean): void {
         if (inverted) {
             this._el.container.className = "vco-menubar vco-menubar-inverted";
         } else {
@@ -125,22 +125,22 @@ export default class MenuBar {
 
     /*	Update Display
 	================================================== */
-    updateDisplay(w?, h?, a?) {
+    updateDisplay(w?: number, h?: number, a?: boolean): void {
         this._updateDisplay(w, h, a);
     }
 
     /*	Events
 	================================================== */
 
-    _onButtonOverview(e) {
+    _onButtonOverview(e: Event) {
         this.fire("overview", e);
     }
 
-    _onButtonBackToStart(e) {
+    _onButtonBackToStart(e: Event) {
         this.fire("back_to_start", e);
     }
 
-    _onButtonCollapseMap(e) {
+    _onButtonCollapseMap(e: Event) {
         if (this.collapsed) {
             this.collapsed = false;
             this.show();
@@ -218,7 +218,7 @@ export default class MenuBar {
     _initEvents() {}
 
     // Update Display
-    _updateDisplay(width?, height?, animate?) {
+    _updateDisplay(width?: number, height?: number, animate?: boolean): void {
         if (width) {
             this.options.width = width;
         }

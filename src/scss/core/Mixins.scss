@@ -16,7 +16,7 @@
 
 // Opacity
 @mixin opacity($opacity: 100) {
-    opacity: ($opacity / 100);
+    opacity: (calc( / 100));
 }
 
 // Background Opacity
@@ -25,7 +25,7 @@
     background: rgb(0 0 0) transparent;
 
     /* RGBa with 0.6 opacity */
-    background: rgba(0, 0, 0, ($opacity / 100));
+    background: rgba(0, 0, 0, (calc( / 100)));
 }
 
 // Background Color Opacity
@@ -34,7 +34,7 @@
     background: rgb($cr, $cg, $cb) transparent;
 
     /* RGBa with 0.6 opacity */
-    background: rgba($cr, $cg, $cb, ($opacity / 100));
+    background: rgba($cr, $cg, $cb, (calc( / 100)));
 }
 
 // Slide Text Shadow
@@ -109,12 +109,7 @@
 }
 
 @mixin translucent-background($color: #fff, $alpha: 1) {
-    background-color: hsla(
-        color.hue($color),
-        color.saturation($color),
-        color.lightness($color),
-        $alpha
-    );
+    background-color: rgba($color, $alpha);
 }
 
 // Center-align a block level element
@@ -127,7 +122,7 @@
 // Create Vertical Gradient
 @mixin gradient-vertical($startColor: #555, $endColor: #333) {
     background-repeat: repeat-x;
-    background-image: linear-gradient(to top, );
+    background-image: linear-gradient(to top);
 }
 
 // GRADIENTS

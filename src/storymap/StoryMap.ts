@@ -244,7 +244,7 @@ class StoryMap {
         }
 
         // handle Stamen change
-        if (this.options.map_type.indexOf("stamen") === 0) {
+        if (this.options.map_type.startsWith("stamen")) {
             const old_type = this.options.map_type;
             if (old_type === "stamen:watercolor") {
                 this.options.map_type = "ch-watercolor";
@@ -374,7 +374,7 @@ class StoryMap {
     }
 
     // Update View
-    _updateDisplay(map_height?, animate?, d?) {
+    _updateDisplay(map_height?: number, animate?: boolean, d?: number) {
         let duration = this.options.duration,
             display_class = this.options.base_class;
 
@@ -509,18 +509,18 @@ class StoryMap {
     /*	Events
 	================================================== */
 
-    _onDataLoaded(e?) {
+    _onDataLoaded(e?: unknown) {
         this.fire("dataloaded");
         this._initLayout();
         this._initEvents();
         this.ready = true;
     }
 
-    _onTitle(e) {
+    _onTitle(e: unknown) {
         this.fire("title", e);
     }
 
-    _onColorChange(e) {
+    _onColorChange(e: { color?: unknown; image?: unknown }) {
         if (e.color || e.image) {
             this._menubar.setColor(true);
         } else {
@@ -528,7 +528,7 @@ class StoryMap {
         }
     }
 
-    _onSlideChange(e) {
+    _onSlideChange(e: { current_slide: number }) {
         if (this.current_slide !== e.current_slide) {
             this.current_slide = e.current_slide;
             this._map.goTo(this.current_slide);
@@ -536,7 +536,7 @@ class StoryMap {
         }
     }
 
-    _onMapChange(e) {
+    _onMapChange(e: { current_marker: number }) {
         if (this.current_slide !== e.current_marker) {
             this.current_slide = e.current_marker;
             this._storyslider.goTo(this.current_slide);
@@ -544,24 +544,24 @@ class StoryMap {
         }
     }
 
-    _onOverview(e) {
+    _onOverview(e?: unknown) {
         this._map.markerOverview();
     }
 
-    _onBackToStart(e) {
+    _onBackToStart(e?: unknown) {
         this.current_slide = 0;
         this._map.goTo(this.current_slide);
         this._storyslider.goTo(this.current_slide);
         this.fire("change", { current_slide: this.current_slide }, this);
     }
 
-    _onMenuBarCollapse(e) {
+    _onMenuBarCollapse(e: { y: number }) {
         this._updateDisplay(e.y, true);
     }
 
-    _onMouseClick(e) {}
+    _onMouseClick(e?: Event) {}
 
-    _fireMouseEvent(e) {
+    _fireMouseEvent(e: Event) {
         if (!this._loaded) {
             return;
         }

@@ -1,10 +1,11 @@
 @use "sass:color";
+@use "../Variables" as *;
 
 /* MenuBar Button
 ================================================== */
 
 .vco-menubar-button {
-    border-left: 1px solid color.adjust($color-background, $lightness: -10);
+    border-left: 1px solid color.adjust($color-background, $lightness: -10%);
     font-size: 14px;
     padding: 6px 12px;
 

@@ -1,14 +1,23 @@
+@use "pkg:@fontsource-utils/scss" as fontsource;
+@use "pkg:@fontsource/old-standard-tt/scss" as old_standard_tt;
+@use "../Variables" as *;
+@use "font.base" as base;
+@include fontsource.faces(
+    $metadata: old_standard_tt.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
 /*	Font Old Standard
 https://fonts.google.com/specimen/Old+Standard+TT
 ---------------------------------------------------- */
 
-// Main Variables
-@import "../Variables";
-
 // Font Import
-@import "@fontsource/old-standard-tt/400.css";
-@import "@fontsource/old-standard-tt/700.css";
-@import "@fontsource/old-standard-tt/400-italic.css";
 
 // Font Variables
 $font-main: "Old Standard TT", serif;
@@ -38,4 +47,25 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: uppercase;
 
-@import "font.base";
+@include base.font-base(
+    (
+        font-main: $font-main,
+        font-secondary: $font-secondary,
+        font-navigation: $font-navigation,
+        font-marker: $font-marker,
+        font-headline-date: $font-headline-date,
+        base-font-size: $base-font-size,
+        base-font-weight: $base-font-weight,
+        font-blockquote: $font-blockquote,
+        font-blockquote-weight: $font-blockquote-weight,
+        font-blockquote-style: $font-blockquote-style,
+        font-size-headings: $font-size-headings,
+        font-headings-lineheight: $font-headings-lineheight,
+        font-headings-text-transform: $font-headings-text-transform,
+        font-headings-weight: $font-headings-weight,
+        font-size-headings-small: $font-size-headings-small,
+        font-size-headline-title: $font-size-headline-title,
+        font-navigation-text-transform: $font-navigation-text-transform,
+        font-marker-text-transform: $font-marker-text-transform,
+    )
+);

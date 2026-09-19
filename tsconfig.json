@@ -7,7 +7,6 @@
         "resolveJsonModule": true,
         "types": ["vite/client"],
         "strict": true,
-        "noImplicitAny": false,
         "strictNullChecks": false,
         "noEmit": true,
         "isolatedModules": true,

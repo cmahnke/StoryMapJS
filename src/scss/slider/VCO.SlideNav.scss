@@ -1,4 +1,6 @@
 @use "sass:color";
+@use "../Variables" as *;
+@use "../core/Mixins" as *;
 
 /* SlideNav
 ================================================== */
@@ -275,7 +277,7 @@
                     // .translucent-background($color-background, .85);
                     // .box-shadow(1px 1px 7px rgba(0,0,0,.30));
                     padding: 20px;
-                    border: 1px solid color.adjust($color-background, $lightness: -30);
+                    border: 1px solid color.adjust($color-background, $lightness: -30%);
                 }
             }
 

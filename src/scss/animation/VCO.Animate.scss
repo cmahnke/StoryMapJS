@@ -1,3 +1,6 @@
+@use "../Variables" as *;
+@use "../core/Mixins" as *;
+
 .vcoanimate {
     transform: translateZ(0);
     perspective: 1000;

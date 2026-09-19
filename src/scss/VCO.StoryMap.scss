@@ -11,39 +11,39 @@
 
 /* Includes
 ================================================== */
-@import "Variables"; // Variables (easy way to make style changes)
-@import "core/Mixins"; // Less shortcuts and functions
-@import "core/Reset"; // CSS Reset
-@import "Typography";
+@use "Variables" as *; // Variables (easy way to make style changes)
+@use "core/Mixins" as *; // Less shortcuts and functions
+@use "core/Reset" as *; // CSS Reset
+@use "Typography" as *;
 
 // Icons
-@import "icons/Icons";
+@use "icons/Icons" as *;
 
 //	Components
-@import "core/VCO";
+@use "core/VCO" as *;
 
 //	Components
-@import "ui/VCO.MenuBar";
-@import "ui/VCO.MenuBar.Button";
-@import "ui/VCO.Message";
-@import "animation/VCO.Animate";
-@import "slider/VCO.Slide";
-@import "slider/VCO.SlideNav";
-@import "slider/VCO.StorySlider";
-@import "media/VCO.Media";
-@import "media/types/VCO.Media.Text";
-@import "media/types/VCO.Media.Image";
-@import "media/types/VCO.Media.Twitter";
-@import "media/types/VCO.Media.Blockquote";
-@import "media/types/VCO.Media.Instagram";
-@import "media/types/VCO.Media.Profile";
-@import "media/types/VCO.Media.IFrame";
-@import "media/types/VCO.Media.Wikipedia";
-@import "map/openlayers/VCO.Map.OpenLayers";
-@import "map/VCO.MapMarker";
-@import "map/VCO.ImageMarker";
-@import "map/VCO.Map";
-@import "snapmap/VCO.SnapMap";
+@use "ui/VCO.MenuBar" as *;
+@use "ui/VCO.MenuBar.Button" as *;
+@use "ui/VCO.Message" as *;
+@use "animation/VCO.Animate" as *;
+@use "slider/VCO.Slide" as *;
+@use "slider/VCO.SlideNav" as *;
+@use "slider/VCO.StorySlider" as *;
+@use "media/VCO.Media" as *;
+@use "media/types/VCO.Media.Text" as *;
+@use "media/types/VCO.Media.Image" as *;
+@use "media/types/VCO.Media.Twitter" as *;
+@use "media/types/VCO.Media.Blockquote" as *;
+@use "media/types/VCO.Media.Instagram" as *;
+@use "media/types/VCO.Media.Profile" as *;
+@use "media/types/VCO.Media.IFrame" as *;
+@use "media/types/VCO.Media.Wikipedia" as *;
+@use "map/openlayers/VCO.Map.OpenLayers" as *;
+@use "map/VCO.MapMarker" as *;
+@use "map/VCO.ImageMarker" as *;
+@use "map/VCO.Map" as *;
+@use "snapmap/VCO.SnapMap" as *;
 
 /* StoryMap
 ================================================== */

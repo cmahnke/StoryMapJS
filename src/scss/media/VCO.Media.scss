@@ -1,4 +1,6 @@
 @use "sass:color";
+@use "../Variables" as *;
+@use "../core/Mixins" as *;
 
 /* Requires Variables.less
 ================================================== */

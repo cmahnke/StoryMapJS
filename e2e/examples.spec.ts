@@ -24,7 +24,10 @@ for (const name of exampleNames) {
         await page.goto(`/harness.html?example=${encodeURIComponent(name)}`);
 
         await expect
-            .poll(() => page.evaluate(() => (window as unknown as { __smReady?: boolean }).__smReady), { timeout: 30_000 })
+            .poll(
+                () => page.evaluate(() => (window as unknown as { __smReady?: boolean }).__smReady),
+                { timeout: 30_000 },
+            )
             .toBe(true);
 
         const state = await page.evaluate(() => ({
@@ -48,7 +51,9 @@ for (const name of exampleNames) {
                 await next.click();
                 await page.waitForTimeout(1500);
                 expect(
-                    await page.evaluate(() => (window as unknown as { __smErrors?: string[] }).__smErrors),
+                    await page.evaluate(
+                        () => (window as unknown as { __smErrors?: string[] }).__smErrors,
+                    ),
                     `window errors after navigation in ${name}`,
                 ).toEqual([]);
             }

@@ -10,25 +10,23 @@ export { MediaType };
 export { setLanguage } from "./language/Language";
 
 /* Transitional references deprecated as of 0.7.7 */
-function trace(msg) {
+function trace(msg: unknown): void {
     console.log(msg);
 }
 window.trace = trace;
 
-function getJSON(url, onload) {
-    const httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                const data = JSON.parse(httpRequest.responseText);
-                onload(data);
-            } else {
-                alert("There was a problem with the request.");
+function getJSON(url: string, onload: (data: unknown) => void): void {
+    fetch(url)
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
             }
-        }
-    };
-    httpRequest.open("GET", url);
-    httpRequest.send();
+            throw new Error(`HTTP ${response.status}`);
+        })
+        .then((data) => onload(data))
+        .catch(() => {
+            alert("There was a problem with the request.");
+        });
 }
 
 import { loadCSS } from "./core/Load";

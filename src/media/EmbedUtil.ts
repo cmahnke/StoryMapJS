@@ -66,7 +66,7 @@ const DROP_TAGS = [
     "SELECT",
 ];
 
-function parseInert(html) {
+function parseInert(html: string): Document {
     return new DOMParser().parseFromString(html, "text/html");
 }
 
@@ -74,7 +74,7 @@ function parseInert(html) {
 	unparseable, or uses any other protocol (javascript:, data:, ...).
 	Relative and protocol-relative URLs resolve against the document.
 ================================================== */
-export function validateWebURL(url) {
+export function validateWebURL(url: string | null): string | null {
     if (!url) {
         return null;
     }
@@ -92,9 +92,9 @@ export function validateWebURL(url) {
 	Also accepts a bare URL for the src. Returns null if no safe
 	src can be extracted.
 ================================================== */
-export function buildIframe(html) {
+export function buildIframe(html: string): HTMLIFrameElement | null {
     const pasted = parseInert(html).querySelector("iframe");
-    let src = null;
+    let src: string | null = null;
 
     if (pasted) {
         src = validateWebURL(pasted.getAttribute("src"));
@@ -131,26 +131,26 @@ export function buildIframe(html) {
 	except a validated href on links), unknown tags are unwrapped, and
 	executable/embedding tags are dropped with their contents.
 ================================================== */
-export function sanitizeBlockquote(html) {
+export function sanitizeBlockquote(html: string): DocumentFragment {
     const fragment = document.createDocumentFragment();
     appendSanitized(parseInert(html).body, fragment);
     return fragment;
 }
 
-function appendSanitized(node, parent) {
+function appendSanitized(node: Node, parent: Node): void {
     for (let i = 0; i < node.childNodes.length; i++) {
         const child = node.childNodes[i];
         if (child.nodeType === 3) {
             parent.appendChild(document.createTextNode(child.nodeValue));
         } else if (child.nodeType === 1) {
             const tag = child.nodeName.toUpperCase();
-            if (DROP_TAGS.indexOf(tag) !== -1) {
+            if (DROP_TAGS.includes(tag)) {
                 continue;
             }
-            if (BLOCKQUOTE_TAGS.indexOf(tag) !== -1) {
+            if (BLOCKQUOTE_TAGS.includes(tag)) {
                 const el = document.createElement(tag);
                 if (tag === "A") {
-                    const href = validateWebURL(child.getAttribute("href"));
+                    const href = validateWebURL((child as Element).getAttribute("href"));
                     if (href) {
                         el.setAttribute("href", href);
                         el.setAttribute("target", "_blank");

@@ -138,7 +138,7 @@ export default class OpenLayers extends Map {
                 if (_map_type_arr.length > 2) {
                     // new form mapbox URL:
                     // mapbox://styles/nuknightlab/cjl6w8oio0agu2sltd04tp1kx
-                    const this_mapbox_map = _map_type_arr[2].substr("//styles/".length);
+                    const this_mapbox_map = _map_type_arr[2].slice("//styles/".length);
                     mapbox_url =
                         "https://api.mapbox.com/styles/v1/" +
                         this_mapbox_map +

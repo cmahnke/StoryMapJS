@@ -1,0 +1,878 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://example.org/ns/storymap/v1"
+    ],
+    "id": "https://example.org/storymap/seurat",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "seurat"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/seurat/canvas/1",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "A Sunday on La Grande Jatte <br><small>Georges Seurat</small>"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "In his best-known and largest painting, Georges Seurat depicted people relaxing in a suburban park on an island in the Seine River called La Grande Jatte."
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:background": {
+                "url": "http://gigapixel.knightlab.com/seurat/seurat_portrait.jpg",
+                "color": "#000",
+                "opacity": 50
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/2",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Small Horizontal Brushstrokes"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Work began in 1884. The artist worked on the painting in several campaigns, beginning in 1884 with a layer of small horizontal brushstrokes of complementary colors."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -132.1875,
+                                75.71563324165896
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/3",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Complementary Colors"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "The complementary colors give the painting a unified sense of color"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -20.478515625,
+                                77.62241984285832
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 4,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/4",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Small Dots"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "He later added small dots, also in complementary colors."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -20.478515625,
+                                77.62241984285832
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 7,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/5",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Dots as Solid Forms from a Distance"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "The dots appear as solid and luminous forms when seen from a distance."
+                ]
+            },
+            "storymap:mediaCaption": "Seurat made several studies for the large painting including a smaller version. Study for La Grand Jatte, 1884. ",
+            "storymap:mediaCredit": "Georges Seurat",
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -20.478515625,
+                                77.62241984285832
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 4,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/6",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Pointillism"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Seurat's use of this highly systematic and \"scientific\" technique, subsequently called Pointillism, distinguished his art from the more intuitive approach to painting used by the Impressionists."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                79.62890625,
+                                77.63654163009744
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 7,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/7",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Modern Life"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Although Seurat embraced the subject matter of modern life preferred by artists such as Claude Monet and Pierre-Auguste Renoir, he went beyond their concern for capturing the accidental and instantaneous qualities of light in nature."
+                ]
+            },
+            "storymap:mediaCaption": "La plage de Trouville, 1870, National Gallery, London. ",
+            "storymap:mediaCredit": "Claude Monet",
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -9.140625,
+                                72.71190310803662
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 4,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/8",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Permanence"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Seurat sought to evoke permanence by recalling the art of the past, especially Egyptian and Greek sculpture and even Italian Renaissance frescoes."
+                ]
+            },
+            "storymap:mediaCaption": "Riace bronzes, examples of proto classic bronze sculpture",
+            "storymap:mediaCredit": "<a href='http://en.wikipedia.org/wiki/Ancient_Greek_sculpture' target='_blank'>Wikipedia</a>",
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                49.5703125,
+                                75.32002523220804
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 5,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/9",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Procession"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Seurat explained to the French poet Gustave Kahn, \"The Panathenaeans of Phidias formed a procession. I want to make modern people, in their essential traits, move about as they do on those friezes, and place them on canvases organized by harmonies of color.\""
+                ]
+            },
+            "storymap:mediaCaption": "Cattle led to sacrifice, South XLV, 137–140, British Museum.",
+            "storymap:mediaCredit": "Wikipedia",
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -65.126953125,
+                                75.45307133006602
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 4,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/10",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/10/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/10/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/10"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Critics"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Some contemporary critics, however, found his figures to be less a nod to earlier art history than a commentary on the posturing and artificiality of modern Parisian society."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/10/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/10/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -95.44921875,
+                                17.14079039331665
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 4,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/11",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/11/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/11/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/11"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Frame"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Seurat made the final changes to La Grande Jatte in 1889. He restretched the canvas in order to add a painted border of red, orange, and blue dots that provides a visual transition between the interior of the painting and his specially designed white frame."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/11/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/11/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -99.84374999999999,
+                                -35.46066995149529
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/12",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/12/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/12/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/12"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Inscriptions"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Inscribed at lower right: Seurat"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/seurat/canvas/12/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/seurat/canvas/12/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                128.056640625,
+                                -30.826780904779774
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 5,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/seurat/canvas/13",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/seurat/canvas/13/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/seurat/canvas/13/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/seurat/canvas/13"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Info"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<strong>Georges Seurat (Creator)1859 - 1891</strong><br> <strong>Physical Format:</strong> w3079.75 x h2076.45 in <br><strong>See on institution's site:</strong> The Art Institute of Chicago<br> <strong>Medium:</strong> Oil on canvas<br><strong>Nationality:</strong> French"
+                ]
+            },
+            "storymap:mediaCaption": "Island of La Grande Jatte",
+            "storymap:mediaCredit": "Stamen Maps"
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/seurat/map-config",
+            "type": "Service",
+            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "storymap:mapAsImage": true,
+            "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+            "storymap:originalZoomify": {
+                "attribution": "",
+                "height": 19970,
+                "path": "http://gigapixel.knightlab.com/seurat/",
+                "tolerance": 0.9,
+                "width": 30000
+            },
+            "storymap:mapType": "iiif",
+            "storymap:fontCss": "stock:opensans-gentiumbook"
+        }
+    ]
+}

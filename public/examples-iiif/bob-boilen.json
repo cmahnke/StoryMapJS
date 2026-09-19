@@ -1,0 +1,341 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://example.org/ns/storymap/v1"
+    ],
+    "id": "https://example.org/storymap/bob-boilen",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "bob-boilen"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/bob-boilen/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/bob-boilen/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/bob-boilen/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Bob Boilen saw 462 shows in 2012&nbsp;and saved tickets, wristbands and media passes whenever he could. This is modeled off of the <a href=\"http://http://apps.npr.org/bob-boilens-wristbands-2012/\" target=\"_blank\" rel=\"nofollow\" title=\"Link: http://http://apps.npr.org/bob-boilens-wristbands-2012/\">interactive made by the NPR apps team</a>, with information from <a href=\"http://www.npr.org/blogs/bestmusic2012/2012/12/27/168153049/bob-boilens-243-favorite-concerts-of-2012\" target=\"_blank\" rel=\"nofollow\">Bob's blog post</a> about the year in shows.<div><span><br></span></div>"
+                            },
+                            "target": "https://example.org/storymap/bob-boilen/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Bob Boilen's Wristbands 2012"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Bob Boilen saw 462 shows in 2012&nbsp;and saved tickets, wristbands and media passes whenever he could. This is modeled off of the <a href=\"http://http://apps.npr.org/bob-boilens-wristbands-2012/\" target=\"_blank\" rel=\"nofollow\" title=\"Link: http://http://apps.npr.org/bob-boilens-wristbands-2012/\">interactive made by the NPR apps team</a>, with information from <a href=\"http://www.npr.org/blogs/bestmusic2012/2012/12/27/168153049/bob-boilens-243-favorite-concerts-of-2012\" target=\"_blank\" rel=\"nofollow\">Bob's blog post</a> about the year in shows.<div><span><br></span></div>"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/bob-boilen/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/bob-boilen/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/bob-boilen/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": ""
+                            },
+                            "target": "https://example.org/storymap/bob-boilen/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Regina Spektor"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/bob-boilen/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/bob-boilen/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                115.312498,
+                                -20.632784250388013
+                            ]
+                        },
+                        "properties": {
+                            "name": "Chicago",
+                            "zoom": 0,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/bob-boilen/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/bob-boilen/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/bob-boilen/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": ""
+                            },
+                            "target": "https://example.org/storymap/bob-boilen/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Bjork"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/bob-boilen/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/bob-boilen/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -127.968752,
+                                -81.41393328285108
+                            ]
+                        },
+                        "properties": {
+                            "name": "Elgin",
+                            "zoom": 1,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/bob-boilen/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/bob-boilen/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/bob-boilen/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": ""
+                            },
+                            "target": "https://example.org/storymap/bob-boilen/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Passion Pit"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/bob-boilen/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/bob-boilen/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -144.93768564062503,
+                                56.57475925328157
+                            ]
+                        },
+                        "properties": {
+                            "name": "Elgin",
+                            "zoom": 0,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/bob-boilen/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/bob-boilen/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/bob-boilen/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": ""
+                            },
+                            "target": "https://example.org/storymap/bob-boilen/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sigur Ros"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/bob-boilen/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/bob-boilen/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -83.06268764062503,
+                                81.67643911611405
+                            ]
+                        },
+                        "properties": {
+                            "name": "Elgin",
+                            "zoom": 2,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/bob-boilen/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/bob-boilen/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/bob-boilen/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": ""
+                            },
+                            "target": "https://example.org/storymap/bob-boilen/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Grimes"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/bob-boilen/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/bob-boilen/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -63.020425200000034,
+                                83.88290776053405
+                            ]
+                        },
+                        "properties": {
+                            "name": "Elgin",
+                            "zoom": 1,
+                            "line": true,
+                            "icon": "http://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-pushpin.png"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/bob-boilen/map-config",
+            "type": "Service",
+            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "storymap:mapType": "http://apps.npr.org/bob-boilens-wristbands-2012/img/tiles/{z}/{x}/{y}.jpg",
+            "storymap:fontCss": "stock:dancing-ledger",
+            "storymap:language": "en"
+        }
+    ]
+}

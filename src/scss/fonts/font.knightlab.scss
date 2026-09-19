@@ -1,15 +1,46 @@
+@use "pkg:@fontsource-utils/scss" as fontsource;
+@use "pkg:@fontsource/bitter/scss" as bitter;
+@use "pkg:@fontsource-variable/roboto-slab/scss" as roboto_slab;
+@use "pkg:@fontsource-variable/open-sans/scss" as open_sans;
+@use "../Variables" as *;
+@use "font.base" as base;
+@include fontsource.faces(
+    $metadata: bitter.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+@include fontsource.faces(
+    $metadata: roboto_slab.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+@include fontsource.faces(
+    $metadata: open_sans.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
 /*	Font Default
 
 Knight Lab Specific
 ----------------------------------------------------- */
 
-// Main Variables
-@import "../Variables";
-
 // Font Import
-@import "@fontsource/bitter";
-@import "@fontsource-variable/roboto-slab";
-@import "@fontsource-variable/open-sans";
 
 // Font Variables
 $font-main: "Bitter", georgia, "Times New Roman", times, serif;
@@ -39,4 +70,25 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "font.base";
+@include base.font-base(
+    (
+        font-main: $font-main,
+        font-secondary: $font-secondary,
+        font-navigation: $font-navigation,
+        font-marker: $font-marker,
+        font-headline-date: $font-headline-date,
+        base-font-size: $base-font-size,
+        base-font-weight: $base-font-weight,
+        font-blockquote: $font-blockquote,
+        font-blockquote-weight: $font-blockquote-weight,
+        font-blockquote-style: $font-blockquote-style,
+        font-size-headings: $font-size-headings,
+        font-headings-lineheight: $font-headings-lineheight,
+        font-headings-text-transform: $font-headings-text-transform,
+        font-headings-weight: $font-headings-weight,
+        font-size-headings-small: $font-size-headings-small,
+        font-size-headline-title: $font-size-headline-title,
+        font-navigation-text-transform: $font-navigation-text-transform,
+        font-marker-text-transform: $font-marker-text-transform,
+    )
+);

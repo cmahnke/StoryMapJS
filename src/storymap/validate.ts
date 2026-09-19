@@ -68,7 +68,10 @@ function validateAgainstSchema(
 
     // $ref / $defs
     if (schemaNode.$ref) {
-        const refPath = schemaNode.$ref.replace(/^#\//, "").replace(/~1/g, "/").replace(/~0/g, "~");
+        const refPath = schemaNode.$ref
+            .replace(/^#\//, "")
+            .replaceAll("~1", "/")
+            .replaceAll("~0", "~");
         let node: SchemaNode = SCHEMA;
         for (const part of refPath.split("/")) node = node[part] as SchemaNode;
         validateAgainstSchema(value, node, path, errors);
@@ -134,17 +137,18 @@ function validateAgainstSchema(
 
     // object constraints
     if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        const record = value as Record<string, unknown>;
         if (schemaNode.required) {
             for (const key of schemaNode.required) {
-                if (!(key in value)) {
+                if (!(key in record)) {
                     errors.push({ path, message: `missing required property "${key}"` });
                 }
             }
         }
         if (schemaNode.properties) {
             for (const [key, propSchema] of Object.entries(schemaNode.properties)) {
-                if (key in value) {
-                    validateAgainstSchema(value[key], propSchema, `${path}.${key}`, errors);
+                if (key in record) {
+                    validateAgainstSchema(record[key], propSchema, `${path}.${key}`, errors);
                 }
             }
         }

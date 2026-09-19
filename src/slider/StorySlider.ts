@@ -668,21 +668,21 @@ export default class StorySlider {
 
     /*	Events
 	================================================== */
-    _onBackgroundChange(e) {
+    _onBackgroundChange(e: SlideBackgroundChange) {
         const slide_background = this._slides[this.current_slide].getBackground();
         this.changeBackground(e);
         this.fire("colorchange", slide_background);
     }
 
-    _onMessageClick(e) {
+    _onMessageClick(e?: unknown) {
         this._message.hide();
     }
 
-    _onSwipeNoDirection(e) {
+    _onSwipeNoDirection(e?: unknown) {
         this.goTo(this.current_slide);
     }
 
-    _onNavigation(e) {
+    _onNavigation(e: { direction: string }) {
         if (e.direction === "next" || e.direction === "left") {
             this.next();
         } else if (e.direction === "previous" || e.direction === "right") {
@@ -691,11 +691,11 @@ export default class StorySlider {
         this.fire("nav_" + e.direction, this.data);
     }
 
-    _onSlideAdded(e) {
+    _onSlideAdded(e?: unknown) {
         this.fire("slideAdded", this.data);
     }
 
-    _onSlideRemoved(e) {
+    _onSlideRemoved(e?: unknown) {
         this.fire("slideAdded", this.data);
     }
 
@@ -708,9 +708,9 @@ export default class StorySlider {
         }
     }
 
-    _onMouseClick(e) {}
+    _onMouseClick(e?: Event) {}
 
-    _fireMouseEvent(e) {
+    _fireMouseEvent(e: Event) {
         if (!this._loaded) {
             return;
         }

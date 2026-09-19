@@ -1,83 +1,113 @@
+@use "sass:map";
+@use "../Variables" as *;
+
 /*	Font Base
 ----------------------------------------------------- */
-.vco-storymap {
-    font-family: $font-main;
-    font-weight: $base-font-weight;
-    font-size: $base-font-size;
-    line-height: 1.3em;
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: $font-secondary;
-        text-transform: $font-headings-text-transform;
-        font-weight: $font-headings-weight;
-        font-size: $font-size-headings;
-        line-height: $font-headings-lineheight;
+@mixin font-base($theme: ()) {
+    $theme: map.merge(
+        (
+            font-main: $font-main,
+            font-secondary: $font-secondary,
+            font-navigation: $font-main,
+            font-marker: $font-secondary,
+            font-headline-date: $font-main,
+            base-font-size: $base-font-size,
+            base-font-weight: normal,
+            font-blockquote: $font-main,
+            font-blockquote-weight: normal,
+            font-blockquote-style: italic,
+            font-size-headings: 46px,
+            font-headings-lineheight: 1.3em,
+            font-headings-text-transform: none,
+            font-headings-weight: bold,
+            font-size-headings-small: 24px,
+            font-size-headline-title: 58px,
+            font-navigation-text-transform: none,
+            font-marker-text-transform: none,
+        ),
+        $theme
+    );
 
-        // margin-bottom:0;
-    }
-
-    h2.vco-headline-title {
-        font-size: $font-size-headline-title;
-        line-height: $font-size-headline-title;
-    }
-
-    p {
-        font-family: $font-main;
-        font-size: $base-font-size;
+    .vco-storymap {
+        font-family: map.get($theme, font-main);
+        font-weight: map.get($theme, base-font-weight);
+        font-size: map.get($theme, base-font-size);
         line-height: 1.3em;
 
-        // margin-top:0;
-    }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: map.get($theme, font-secondary);
+            text-transform: map.get($theme, font-headings-text-transform);
+            font-weight: map.get($theme, font-headings-weight);
+            font-size: map.get($theme, font-size-headings);
+            line-height: map.get($theme, font-headings-lineheight);
 
-    .vco-media .vco-media-wikipedia h4 a {
-        font-size: $font-size-headings-small;
-        line-height: $font-size-headings-small;
-    }
-
-    .vcard {
-        font-family: $font-navigation !important;
-        font-weight: normal !important;
-    }
-
-    .vco-slidenav-next,
-    .vco-slidenav-previous,
-    .vco-message,
-    .vco-slide-calltoaction-button-text {
-        font-family: $font-navigation;
-        text-transform: $font-navigation-text-transform;
-
-        .vco-slidenav-title {
-            line-height: 1.3em !important;
+            // margin-bottom:0;
         }
-    }
 
-    .vco-headline-date,
-    h3.vco-headline-date {
-        font-family: $font-headline-date !important;
-        text-transform: $font-headings-text-transform !important;
+        h2.vco-headline-title {
+            font-size: map.get($theme, font-size-headline-title);
+            line-height: map.get($theme, font-size-headline-title);
+        }
 
-        small {
+        p {
+            font-family: map.get($theme, font-main);
+            font-size: map.get($theme, base-font-size);
+            line-height: 1.3em;
+
+            // margin-top:0;
+        }
+
+        .vco-media .vco-media-wikipedia h4 a {
+            font-size: map.get($theme, font-size-headings-small);
+            line-height: map.get($theme, font-size-headings-small);
+        }
+
+        .vcard {
+            font-family: map.get($theme, font-navigation) !important;
             font-weight: normal !important;
         }
+
+        .vco-slidenav-next,
+        .vco-slidenav-previous,
+        .vco-message,
+        .vco-slide-calltoaction-button-text {
+            font-family: map.get($theme, font-navigation);
+            text-transform: map.get($theme, font-navigation-text-transform);
+
+            .vco-slidenav-title {
+                line-height: 1.3em !important;
+            }
+        }
+
+        .vco-headline-date,
+        h3.vco-headline-date {
+            font-family: map.get($theme, font-headline-date) !important;
+            text-transform: map.get($theme, font-headings-text-transform) !important;
+
+            small {
+                font-weight: normal !important;
+            }
+        }
+
+        blockquote,
+        blockquote p {
+            font-style: map.get($theme, font-blockquote-style);
+            font-weight: map.get($theme, font-blockquote-weight);
+            line-height: 1.3;
+        }
     }
 
-    blockquote,
-    blockquote p {
-        font-style: $font-blockquote-style;
-        font-weight: $font-blockquote-weight;
-        line-height: 1.3;
+    input[type="text"].editor-headline {
+        font-family: map.get($theme, font-secondary);
+        text-transform: map.get($theme, font-headings-text-transform);
+        font-weight: map.get($theme, font-headings-weight);
+        font-size: map.get($theme, font-size-headings);
+        line-height: map.get($theme, font-size-headings);
     }
-}
-
-input[type="text"].editor-headline {
-    font-family: $font-secondary;
-    text-transform: $font-headings-text-transform;
-    font-weight: $font-headings-weight;
-    font-size: $font-size-headings;
-    line-height: $font-size-headings;
 }

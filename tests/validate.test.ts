@@ -36,7 +36,7 @@ test("requires slides", () => {
 });
 
 test("reports all errors, not just the first", () => {
-    const data = {
+    const data: Record<string, unknown> = {
         storymap: {
             map_as_image: "yes", // wrong type
             iiif: {}, // missing url
@@ -54,7 +54,7 @@ test("reports all errors, not just the first", () => {
 });
 
 test("accepts null string fields (loose real-world data)", () => {
-    const data = {
+    const data: Record<string, unknown> = {
         storymap: {
             slides: [
                 {

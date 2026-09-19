@@ -28,6 +28,9 @@ jobs:
             - name: Validate storymap fixtures
               run: npm run validate
 
+            - name: Validate IIIF manifests
+              run: npm run validate:iiif
+
             - name: Unit tests (vitest)
               run: npm test
 

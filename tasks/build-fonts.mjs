@@ -14,7 +14,8 @@ const filesDir = join(outDir, "files");
 
 mkdirSync(filesDir, { recursive: true });
 
-// Resolve bare "@fontsource/..." imports through node_modules
+// Resolve bare "@fontsource/..." imports through node_modules,
+// and "pkg:..." URLs via dart-sass's NodePackageImporter.
 const nodeImporter = {
     findFileUrl(url) {
         if (!url.startsWith("@")) return null;
@@ -25,6 +26,7 @@ const nodeImporter = {
         }
     },
 };
+const pkgImporter = new sass.NodePackageImporter();
 
 function findFontFile(baseName) {
     for (const scope of ["@fontsource", "@fontsource-variable"]) {
@@ -49,7 +51,7 @@ const themes = readdirSync(fontDir).filter((f) => /^font\.[\w-]+\.scss$/.test(f)
 for (const theme of themes) {
     const source = readFileSync(join(fontDir, theme), "utf8");
     const result = sass.compileString(source, {
-        importers: [nodeImporter],
+        importers: [pkgImporter, nodeImporter],
         loadPaths: [fontDir, join(root, "src/scss")],
         url: new URL("file://" + join(fontDir, theme)),
     });

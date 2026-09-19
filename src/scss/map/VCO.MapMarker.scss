@@ -1,3 +1,6 @@
+@use "../Variables" as *;
+@use "../core/Mixins" as *;
+
 /* Requires Variables.less
 ================================================== */
 $leaflet-offset: 6px;
@@ -25,7 +28,7 @@ $map-icon-width: 38px;
 
         // overflow:hidden;
         top: -($map-icon-size - $leaflet-offset);
-        left: -(($map-icon-width / 2) - $leaflet-offset);
+        left: -((calc(-icon-width / 2)) - $leaflet-offset);
     }
 
     // Map Pin

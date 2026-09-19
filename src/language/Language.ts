@@ -13,8 +13,8 @@ const EN: Record<string, unknown> = localeModules["./locale/en.json"]?.default |
 
 let Language: LanguageEntry = {};
 
-function getLanguage(code) {
-    const lang = JSON.parse(JSON.stringify(localeModules[`./locale/${code}.json`]?.default || {}));
+function getLanguage(code: string): Record<string, unknown> {
+    const lang = structuredClone(localeModules[`./locale/${code}.json`]?.default || {});
     for (const k in EN) {
         if (lang[k]) {
             if (typeof EN[k] == "object") {
@@ -27,7 +27,7 @@ function getLanguage(code) {
     return lang;
 }
 
-function setLanguage(code) {
+function setLanguage(code: string): LanguageEntry {
     Language = getLanguage(code);
     return Language;
 }

@@ -1,7 +1,7 @@
 import { classMixin, mergeData } from "../core/Util";
 import Events from "../core/Events";
 import Dom from "../dom/Dom";
-import { DomEvent } from "../dom/DomEvent";
+import { DomEvent, type LegacyEvent } from "../dom/DomEvent";
 import { touch } from "../core/Browser";
 import Ease from "../animation/Ease";
 import Animate from "morpheus";
@@ -72,7 +72,7 @@ export class Draggable {
         move: "touchmove",
     };
 
-    constructor(drag_elem, options, move_elem) {
+    constructor(drag_elem: HTMLElement, options: Record<string, unknown>, move_elem?: HTMLElement) {
         // DOM ELements
         this._el = {
             drag: drag_elem,
@@ -151,7 +151,7 @@ export class Draggable {
         mergeData(this.options, options);
     }
 
-    enable(e) {
+    enable(e?: LegacyEvent): void {
         // Temporarily disableing this until I have time to fix some issues.
         //DomEvent.addListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         //DomEvent.addListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
@@ -175,7 +175,7 @@ export class Draggable {
         }
     }
 
-    updateConstraint(c) {
+    updateConstraint(c: DraggableOptions["constraint"]): void {
         this.options.constraint = c;
 
         // Temporary until issues are fixed
@@ -183,7 +183,7 @@ export class Draggable {
 
     /*	Private Methods
 	================================================== */
-    _onDragStart(e) {
+    _onDragStart(e: LegacyEvent) {
         if (touch) {
             if (e.originalEvent) {
                 this.data.pagex.start = e.originalEvent.touches[0].screenX;
@@ -207,14 +207,14 @@ export class Draggable {
         }
 
         this.data.pos.start = Dom.getPosition(this._el.drag);
-        this.data.time.start = new Date().getTime();
+        this.data.time.start = Date.now();
 
         this.fire("dragstart", this.data);
         DomEvent.addListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.addListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
     }
 
-    _onDragEnd(e) {
+    _onDragEnd(e: LegacyEvent) {
         this.data.sliding = false;
         DomEvent.removeListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.removeListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
@@ -224,7 +224,7 @@ export class Draggable {
         this._momentum();
     }
 
-    _onDragMove(e) {
+    _onDragMove(e: LegacyEvent) {
         e.preventDefault();
         this.data.sliding = true;
 
@@ -282,8 +282,8 @@ export class Draggable {
             //this.options.momentum_multiplier = this.options.momentum_multiplier * 2;
         }
 
-        pos_adjust.time = (new Date().getTime() - this.data.time.start) * 10;
-        pos_change.time = (new Date().getTime() - this.data.time.start) * 10;
+        pos_adjust.time = (Date.now() - this.data.time.start) * 10;
+        pos_change.time = (Date.now() - this.data.time.start) * 10;
 
         pos_change.x =
             this.options.momentum_multiplier *

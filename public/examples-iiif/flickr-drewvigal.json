@@ -1,0 +1,1189 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://example.org/ns/storymap/v1"
+    ],
+    "id": "https://example.org/storymap/flickr-drewvigal",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "flickr-drewvigal"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://farm8.staticflickr.com/7452/buddyicons/15482523@N00.jpg?profile",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "<span class=\"vco-snapmap-instagram\">Fullname<small><a href=\"https://www.flickr.com/photos/drewvigal\" target=\"_blank\"><span class=\"vco-icon-flickr\"></span> drewvigal</a></small></span>"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5559/14462761661_5e7a29cfa1_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "You look amazing... Hug yourself. #wheelofniceness"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">43</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.558755,
+                                55.672864
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5559/14462761661_5e7a29cfa1_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm3.staticflickr.com/2906/14467316921_98d5910bbf_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "NYT Design (cc: @kuene, @niederme)"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">39</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.563872,
+                                55.674503
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm3.staticflickr.com/2906/14467316921_98d5910bbf_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5573/14294022087_0851ba4294_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "How's your beer sense?"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">43</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.529909,
+                                55.664971
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5573/14294022087_0851ba4294_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5277/14457784346_228e814bd5_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Wet wheels. Just like home #portland."
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">48</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.563872,
+                                55.674503
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5277/14457784346_228e814bd5_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3843/14309373429_6561f4fd2b_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "LeGoar!"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">27</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.576113,
+                                55.678619
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3843/14309373429_6561f4fd2b_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3916/14473055256_999f3d85e5_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Last day in CPH"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">27</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.594023,
+                                55.674676
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3916/14473055256_999f3d85e5_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5233/14309815329_191216fb0b_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Thanks @myrthu!"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">29</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.656298,
+                                55.62566
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5233/14309815329_191216fb0b_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/9",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5509/14310872907_a5f77dd9e3_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Flight delay = one last glass of Carlsberg"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">39</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.646656,
+                                55.628416
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5509/14310872907_a5f77dd9e3_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/10",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/10/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/10/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5118/14522026773_0dbdb5f23b_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/10"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "The arm rest on our international flight still had the ash trays. So retro Norwegian Air Shuttle! Or was it Euro Atlantic. I couldn't tell."
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">38</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/10/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/10/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -118.404142,
+                                33.940972
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5118/14522026773_0dbdb5f23b_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/11",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/11/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/11/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm3.staticflickr.com/2901/14559641993_7f0b4f382e_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/11"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Tots!"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">64</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/11/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/11/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.641098,
+                                45.559028
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm3.staticflickr.com/2901/14559641993_7f0b4f382e_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/12",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/12/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/12/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3851/14547827025_1ee69dcdbc_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/12"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sidecar"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">68</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/12/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/12/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.647227,
+                                45.559222
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3851/14547827025_1ee69dcdbc_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/13",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/13/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/13/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3866/14396115930_fcef9ab7be_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/13"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "A touch of Looney Tunes"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">38</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/13/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/13/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -121.512271,
+                                45.715741
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3866/14396115930_fcef9ab7be_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/14",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/14/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/14/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3870/14582370934_f43fe87c83_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/14"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Put a bird on it"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">69</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/14/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/14/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -121.510804,
+                                45.7089
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3870/14582370934_f43fe87c83_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/15",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/15/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/15/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5503/14608469012_68c7062ab6_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/15"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Commute"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">55</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/15/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/15/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.672716,
+                                45.532647
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5503/14608469012_68c7062ab6_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/16",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/16/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/16/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3843/14628668162_e67ea911a8_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/16"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Intersection"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">40</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/16/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/16/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.6768,
+                                45.529
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3843/14628668162_e67ea911a8_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/17",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/17/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/17/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3883/14630609092_ba461e5c03_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/17"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "upload"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">41</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/17/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/17/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.6768,
+                                45.529
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3883/14630609092_ba461e5c03_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/18",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/18/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/18/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3911/14636554165_0925fcb898_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/18"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Catching up with Bernie Foster, publisher of The Skanner."
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">65</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/18/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/18/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.670509,
+                                45.562958
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3911/14636554165_0925fcb898_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/19",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/19/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/19/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm3.staticflickr.com/2912/14471105858_8b768e0887_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/19"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "upload"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">79</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/19/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/19/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.630034,
+                                45.564611
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm3.staticflickr.com/2912/14471105858_8b768e0887_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/20",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/20/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/20/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3884/14471202298_644fb506d9_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/20"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "upload"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">82</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/20/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/20/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.630111,
+                                45.56437
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3884/14471202298_644fb506d9_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/canvas/21",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-drewvigal/canvas/21/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-drewvigal/canvas/21/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm3.staticflickr.com/2895/14501031158_a274076838_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-drewvigal/canvas/21"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Me and @albertocairo"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr-views\">51</span>"
+                ]
+            },
+            "storymap:mediaCredit": "drewvigal",
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-drewvigal/canvas/21/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-drewvigal/canvas/21/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.679459,
+                                45.524929
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm3.staticflickr.com/2895/14501031158_a274076838_s.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/flickr-drewvigal/map-config",
+            "type": "Service",
+            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "storymap:mapAsImage": false
+        }
+    ]
+}

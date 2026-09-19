@@ -33,15 +33,16 @@ export default class Wikipedia extends Media {
             callbackPrefix + this.media_id.replace(/[^0-9a-z]/gi, "").slice(0, maxIDLength);
         const api_url = `https://${api_language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${this.media_id}&exintro=1&format=json&callback=${callbackName}`;
         const callbackScript = document.createElement("script");
-        window[callbackName] = (data) => {
+        (window as unknown as Record<string, unknown>)[callbackName] = (data: unknown) => {
             this.createMedia(data);
         };
         callbackScript.src = api_url;
         document.body.appendChild(callbackScript);
     }
 
-    createMedia(d) {
-        if (d.query) {
+    createMedia(d: unknown) {
+        const data = d as { query?: unknown };
+        if (data.query) {
             let content;
             const wiki = {
                 entry: {} as Record<string, string>,
@@ -52,7 +53,8 @@ export default class Wikipedia extends Media {
                 text_array: [] as string[],
             };
 
-            wiki.entry = getObjectAttributeByIndex(d.query.pages, 0);
+            const pages = data.query as { pages: Record<string, unknown> };
+            wiki.entry = getObjectAttributeByIndex(pages.pages, 0) as Record<string, string>;
             wiki.extract = wiki.entry.extract;
             wiki.title = wiki.entry.title;
 

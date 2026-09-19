@@ -1,15 +1,25 @@
+@use "pkg:@fontsource-utils/scss" as fontsource;
+@use "pkg:@fontsource/rufina/scss" as rufina;
+@use "../Variables" as *;
+@use "font.base" as base;
+@include fontsource.faces(
+    $metadata: rufina.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
 /*	Font Rufina & Sintony
 
 https: //fonts.google.com/specimen/Rufina
 https: //fonts.google.com/specimen/Sintony
 ----------------------------------------------------- */
 
-// Main Variables
-@import "../Variables";
-
 // Font Import
-@import "@fontsource/rufina/400.css";
-@import "@fontsource/rufina/700.css";
 
 // Font Variables
 $font-main: "Sintony", sans-serif;
@@ -39,4 +49,25 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "font.base";
+@include base.font-base(
+    (
+        font-main: $font-main,
+        font-secondary: $font-secondary,
+        font-navigation: $font-navigation,
+        font-marker: $font-marker,
+        font-headline-date: $font-headline-date,
+        base-font-size: $base-font-size,
+        base-font-weight: $base-font-weight,
+        font-blockquote: $font-blockquote,
+        font-blockquote-weight: $font-blockquote-weight,
+        font-blockquote-style: $font-blockquote-style,
+        font-size-headings: $font-size-headings,
+        font-headings-lineheight: $font-headings-lineheight,
+        font-headings-text-transform: $font-headings-text-transform,
+        font-headings-weight: $font-headings-weight,
+        font-size-headings-small: $font-size-headings-small,
+        font-size-headline-title: $font-size-headline-title,
+        font-navigation-text-transform: $font-navigation-text-transform,
+        font-marker-text-transform: $font-marker-text-transform,
+    )
+);

@@ -1,3 +1,6 @@
+@use "../../Variables" as *;
+@use "../../core/Mixins" as *;
+
 .vco-media {
     .vco-media-wikipedia {
         // font-size: @base-font;

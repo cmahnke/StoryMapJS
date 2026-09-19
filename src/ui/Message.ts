@@ -35,7 +35,11 @@ export default class Message {
 
     /*	Constructor
 	================================================== */
-    constructor(data, options?, add_to_container?) {
+    constructor(
+        data?: Record<string, unknown>,
+        options?: Record<string, unknown>,
+        add_to_container?: HTMLElement,
+    ) {
         // DOM ELEMENTS
         this._el = {
             parent: {},
@@ -73,17 +77,17 @@ export default class Message {
 
     /*	Public
 	================================================== */
-    updateMessage(t) {
+    updateMessage(t: string): void {
         this._updateMessage(t);
     }
 
     /*	Update Display
 	================================================== */
-    updateDisplay(w?, h?) {
+    updateDisplay(w?: number, h?: number): void {
         this._updateDisplay(w, h);
     }
 
-    _updateMessage(t?) {
+    _updateMessage(t?: string): void {
         if (!t) {
             if (Language) {
                 this._el.message.innerHTML = Language.messages.loading;
@@ -122,7 +126,7 @@ export default class Message {
     }
 
     // Update Display
-    _updateDisplay(width?, height?, animate?) {}
+    _updateDisplay(width?: number, height?: number, animate?: boolean): void {}
 }
 
 classMixin(Message, Events, DomMixins);

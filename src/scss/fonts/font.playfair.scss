@@ -1,17 +1,36 @@
+@use "pkg:@fontsource-utils/scss" as fontsource;
+@use "pkg:@fontsource/playfair-display-sc/scss" as playfair_display_sc;
+@use "pkg:@fontsource-variable/playfair-display/scss" as playfair_display;
+@use "../Variables" as *;
+@use "font.base" as base;
+@include fontsource.faces(
+    $metadata: playfair_display_sc.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+@include fontsource.faces(
+    $metadata: playfair_display.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
 /*	Font Playfair & Playfair SC
 
 https://fonts.google.com/specimen/Playfair+Display
 https://fonts.google.com/specimen/Playfair+Display+SC
 ----------------------------------------------------- */
 
-// Main Variables
-@import "../Variables";
-
 // Font Import
-@import "@fontsource/playfair-display-sc";
-@import "@fontsource/playfair-display-sc/400-italic.css";
-@import "@fontsource-variable/playfair-display";
-@import "@fontsource-variable/playfair-display/wght-italic.css";
 
 // Font Variables
 $font-main: "Playfair Display", serif;
@@ -41,4 +60,25 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "font.base";
+@include base.font-base(
+    (
+        font-main: $font-main,
+        font-secondary: $font-secondary,
+        font-navigation: $font-navigation,
+        font-marker: $font-marker,
+        font-headline-date: $font-headline-date,
+        base-font-size: $base-font-size,
+        base-font-weight: $base-font-weight,
+        font-blockquote: $font-blockquote,
+        font-blockquote-weight: $font-blockquote-weight,
+        font-blockquote-style: $font-blockquote-style,
+        font-size-headings: $font-size-headings,
+        font-headings-lineheight: $font-headings-lineheight,
+        font-headings-text-transform: $font-headings-text-transform,
+        font-headings-weight: $font-headings-weight,
+        font-size-headings-small: $font-size-headings-small,
+        font-size-headline-title: $font-size-headline-title,
+        font-navigation-text-transform: $font-navigation-text-transform,
+        font-marker-text-transform: $font-marker-text-transform,
+    )
+);

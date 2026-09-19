@@ -45,8 +45,9 @@ export default class SoundCloud extends Media {
         );
     }
 
-    createMedia(d) {
-        this._el.content_item.innerHTML = d.html;
+    createMedia(d: unknown) {
+        const data = d as { html: string };
+        this._el.content_item.innerHTML = data.html;
 
         this.soundCloudCreated = true;
 

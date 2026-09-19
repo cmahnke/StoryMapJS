@@ -50,7 +50,7 @@ class Loader {
     declare "queue": Record<string, PendingResource[]>;
     declare "head": HTMLElement;
 
-    constructor(document) {
+    constructor(document: Document) {
         this.doc = document;
         this.pending = {};
         this.queue = { css: [], js: [] };
@@ -68,9 +68,9 @@ class Loader {
     @return {HTMLElement}
     @private
     */
-    createNode(name, attrs?) {
+    createNode(name: string, attrs?: Record<string, string>): HTMLElement {
         const node = this.doc.createElement(name);
-        let attr;
+        let attr: string;
 
         for (attr in attrs) {
             if (Object.hasOwn(attrs, attr)) {
@@ -90,9 +90,9 @@ class Loader {
     @param {String} type resource type ('css' or 'js')
     @private
     */
-    finish(type) {
+    finish(type: string) {
         const p = this.pending[type];
-        let callback, urls;
+        let callback: PendingResource["callback"], urls: string[];
 
         if (p) {
             callback = p.callback;
@@ -132,13 +132,19 @@ class Loader {
       be executed in this object's context
     @private
     */
-    load(type, urls?, callback?, obj?, context?) {
+    load(
+        type: string,
+        urls?: string | string[],
+        callback?: (obj: unknown) => void,
+        obj?: unknown,
+        context?: unknown,
+    ) {
         const _finish = function (this: Loader) {
             this.finish(type);
         }.bind(this);
         const isCSS = type === "css";
-        const nodes = [];
-        let i, len, node, p, url;
+        const nodes: HTMLElement[] = [];
+        let i: number, len: number, node: HTMLElement, p: PendingResource | undefined, url: string;
 
         if (urls) {
             // If urls is a string, wrap it in an array. Otherwise assume it's an
@@ -176,7 +182,7 @@ class Loader {
                 });
             } else {
                 node = this.createNode("script", { src: url });
-                node.async = false;
+                (node as HTMLScriptElement).async = false;
             }
 
             node.className = "lazyload";
@@ -206,7 +212,12 @@ class Loader {
       will be executed in this object's context
     @static
     */
-    css(urls, callback, obj, context) {
+    css(
+        urls: string | string[],
+        callback?: (obj: unknown) => void,
+        obj?: unknown,
+        context?: unknown,
+    ): void {
         this.load("css", urls, callback, obj, context);
     }
 
@@ -230,16 +241,31 @@ class Loader {
       will be executed in this object's context
     @static
     */
-    js(urls, callback, obj, context) {
+    js(
+        urls: string | string[],
+        callback?: (obj: unknown) => void,
+        obj?: unknown,
+        context?: unknown,
+    ): void {
         this.load("js", urls, callback, obj, context);
     }
 }
 
-function loadJS(urls, callback, obj?, context?) {
+function loadJS(
+    urls: string | string[],
+    callback?: (obj: unknown) => void,
+    obj?: unknown,
+    context?: unknown,
+): void {
     loader.js(urls, callback, obj, context);
 }
 
-function loadCSS(urls, callback, obj?, context?) {
+function loadCSS(
+    urls: string | string[],
+    callback?: (obj: unknown) => void,
+    obj?: unknown,
+    context?: unknown,
+): void {
     loader.css(urls, callback, obj, context);
 }
 

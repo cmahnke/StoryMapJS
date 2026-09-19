@@ -1,16 +1,27 @@
+@use "pkg:@fontsource-utils/scss" as fontsource;
+@use "pkg:@fontsource/abril-fatface/scss" as abril_fatface;
+@use "../Variables" as *;
+@use "font.base" as base;
+@include fontsource.faces(
+    $metadata: abril_fatface.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
 /*	Font Abril Fatface & Noto Sans (formerly Droid Sans)
 
 https://fonts.google.com/specimen/Abril+Fatface
 https://fonts.google.com/noto/specimen/Noto+Sans
 // ----------------------------------------------------- */
 
-// Main Variables
-@import "../Variables";
-
 // Font Import
 // as of 2022, Droid Sans was replaced with Noto Sans
 // https: //github.com/google/fonts/issues/4469
-@import "@fontsource/abril-fatface";
 
 // Font Variables
 $font-main: "Noto Sans", sans-serif;
@@ -40,4 +51,25 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "font.base";
+@include base.font-base(
+    (
+        font-main: $font-main,
+        font-secondary: $font-secondary,
+        font-navigation: $font-navigation,
+        font-marker: $font-marker,
+        font-headline-date: $font-headline-date,
+        base-font-size: $base-font-size,
+        base-font-weight: $base-font-weight,
+        font-blockquote: $font-blockquote,
+        font-blockquote-weight: $font-blockquote-weight,
+        font-blockquote-style: $font-blockquote-style,
+        font-size-headings: $font-size-headings,
+        font-headings-lineheight: $font-headings-lineheight,
+        font-headings-text-transform: $font-headings-text-transform,
+        font-headings-weight: $font-headings-weight,
+        font-size-headings-small: $font-size-headings-small,
+        font-size-headline-title: $font-size-headline-title,
+        font-navigation-text-transform: $font-navigation-text-transform,
+        font-marker-text-transform: $font-marker-text-transform,
+    )
+);

@@ -3,7 +3,7 @@ import Events from "../core/Events";
 import Ease from "../animation/Ease";
 import { Browser } from "../core/Browser";
 import { classMixin, mergeData } from "../core/Util";
-import { DomEvent } from "../dom/DomEvent";
+import { DomEvent, type LegacyEvent } from "../dom/DomEvent";
 import type { AnimateOptions, AnimationHandle } from "../types";
 
 /*    Swipable
@@ -62,7 +62,11 @@ export default class Swipable {
 
     //_el: {},
 
-    constructor(drag_elem, move_elem, options) {
+    constructor(
+        drag_elem: HTMLElement,
+        move_elem?: HTMLElement,
+        options?: Record<string, unknown>,
+    ) {
         this.mousedrag = {
             down: "mousedown",
             up: "mouseup",
@@ -147,7 +151,7 @@ export default class Swipable {
         mergeData(this.options, options);
     }
 
-    enable(e) {
+    enable(e?: LegacyEvent): void {
         DomEvent.addListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.addListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
         this.data.pos.start = 0 as unknown as { x: number; y: number }; //VCO.Dom.getPosition(this._el.move);
@@ -169,14 +173,14 @@ export default class Swipable {
         }
     }
 
-    updateConstraint(c) {
+    updateConstraint(c: SwipableOptions["constraint"]): void {
         this.options.constraint = c;
         // Temporary until issues are fixed
     }
 
     /*    Private Methods
     ================================================== */
-    _onDragStart(e) {
+    _onDragStart(e: LegacyEvent) {
         if (this.animator) {
             this.animator.stop();
         }
@@ -200,13 +204,13 @@ export default class Swipable {
             //this._el.move.style.top = this.data.pagey.start - (this._el.move.offsetHeight / 2) + "px";
         }
         this.data.pos.start = { x: this._el.move.offsetLeft, y: this._el.move.offsetTop };
-        this.data.time.start = new Date().getTime();
+        this.data.time.start = Date.now();
         this.fire("dragstart", this.data);
         DomEvent.addListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.addListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
     }
 
-    _onDragEnd(e) {
+    _onDragEnd(e: LegacyEvent) {
         this.data.sliding = false;
         DomEvent.removeListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.removeListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
@@ -214,7 +218,7 @@ export default class Swipable {
         this._momentum();
     }
 
-    _onDragMove(e) {
+    _onDragMove(e: LegacyEvent) {
         const change = {
             x: 0,
             y: 0,
@@ -267,8 +271,8 @@ export default class Swipable {
         let swipe = false;
         const _swipe_direction = "";
         this.data.direction = null;
-        pos_adjust.time = (new Date().getTime() - this.data.time.start) * 10;
-        pos_change.time = (new Date().getTime() - this.data.time.start) * 10;
+        pos_adjust.time = (Date.now() - this.data.time.start) * 10;
+        pos_change.time = (Date.now() - this.data.time.start) * 10;
         pos_change.x =
             this.options.momentum_multiplier *
             (Math.abs(this.data.pagex.end) - Math.abs(this.data.pagex.start));

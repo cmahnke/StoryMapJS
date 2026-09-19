@@ -25,6 +25,8 @@ test("IIIF example renders on the OpenLayers canvas", async ({ page }) => {
         )
         .toBe(true);
 
-    const errors = await page.evaluate(() => (window as unknown as { __smErrors?: string[] }).__smErrors);
+    const errors = await page.evaluate(
+        () => (window as unknown as { __smErrors?: string[] }).__smErrors,
+    );
     expect(errors).toEqual([]);
 });

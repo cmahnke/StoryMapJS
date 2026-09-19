@@ -14,22 +14,26 @@ interface VCOEventStore {
 export default class Events {
     declare "_vco_events": VCOEventStore;
     //addEventListener(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
-    on(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
+    on(/*String*/ type: string, /*Function*/ fn: unknown, /*(optional) Object*/ context?: unknown) {
         const events = (this._vco_events = this._vco_events || {});
         events[type] = events[type] || [];
         events[type].push({
-            action: fn,
+            action: fn as (...args: unknown[]) => unknown,
             context: context || this,
         });
         return this;
     }
 
-    hasEventListeners(/*String*/ type) /*-> Boolean*/ {
+    hasEventListeners(/*String*/ type: string) /*-> Boolean*/ {
         const k = "_vco_events";
         return k in this && type in this[k] && this[k][type].length > 0;
     }
 
-    off(/*String*/ type, /*Function*/ fn, /*(optional) Object*/ context) {
+    off(
+        /*String*/ type: string,
+        /*Function*/ fn: unknown,
+        /*(optional) Object*/ context?: unknown,
+    ) {
         if (!this.hasEventListeners(type)) {
             return this;
         }
@@ -46,7 +50,7 @@ export default class Events {
         return this;
     }
 
-    fire(/*String*/ type, /*(optional) Object*/ data) {
+    fire(/*String*/ type: string, /*(optional) Object*/ data?: unknown) {
         if (!this.hasEventListeners(type)) {
             return this;
         }
@@ -56,7 +60,7 @@ export default class Events {
                 type: type,
                 target: this,
             },
-            data,
+            data as Record<string, unknown> | undefined,
         );
 
         const listeners = this._vco_events[type].slice();

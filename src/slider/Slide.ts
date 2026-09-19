@@ -227,7 +227,7 @@ export default class Slide {
 
     /*	Events
 	================================================== */
-    _onCallToAction(e) {
+    _onCallToAction(e: Event) {
         this.fire("call_to_action", e);
     }
 

@@ -1,17 +1,25 @@
+@use "pkg:@fontsource-utils/scss" as fontsource;
+@use "pkg:@fontsource/gentium-book-plus/scss" as gentium_book_plus;
+@use "../Variables" as *;
+@use "font.base" as base;
+@include fontsource.faces(
+    $metadata: gentium_book_plus.$metadata,
+    $weights: all,
+    $styles: all,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
 /*	Font Open Sans & Gentium Book Basic
 
 https://fonts.google.com/specimen/Open+Sans
 https://fonts.google.com/specimen/Gentium+Book+Plus
 ----------------------------------------------------- */
 
-// Main Variables
-@import "../Variables";
-
 // Font Import
-@import "@fontsource/gentium-book-plus/400.css";
-@import "@fontsource/gentium-book-plus/700.css";
-@import "@fontsource/gentium-book-plus/400-italic.css";
-@import "@fontsource/gentium-book-plus/700-italic.css";
 
 // Font Variables
 $font-main: "Gentium Book Basic", serif;
@@ -41,7 +49,28 @@ $font-marker-text-transform: $font-headings-text-transform;
 // Navigation
 $font-navigation-text-transform: none;
 
-@import "font.base";
+@include base.font-base(
+    (
+        font-main: $font-main,
+        font-secondary: $font-secondary,
+        font-navigation: $font-navigation,
+        font-marker: $font-marker,
+        font-headline-date: $font-headline-date,
+        base-font-size: $base-font-size,
+        base-font-weight: $base-font-weight,
+        font-blockquote: $font-blockquote,
+        font-blockquote-weight: $font-blockquote-weight,
+        font-blockquote-style: $font-blockquote-style,
+        font-size-headings: $font-size-headings,
+        font-headings-lineheight: $font-headings-lineheight,
+        font-headings-text-transform: $font-headings-text-transform,
+        font-headings-weight: $font-headings-weight,
+        font-size-headings-small: $font-size-headings-small,
+        font-size-headline-title: $font-size-headline-title,
+        font-navigation-text-transform: $font-navigation-text-transform,
+        font-marker-text-transform: $font-marker-text-transform,
+    )
+);
 
 .vco-timeline {
     .vco-headline-date,

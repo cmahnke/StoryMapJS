@@ -6,4 +6,4 @@ https://fonts.google.com/specimen/PT+Sans
 https://fonts.google.com/specimen/PT+Serif
 ----------------------------------------------------- */
 
-@import "font.pt";
+@use "font.pt" as *;

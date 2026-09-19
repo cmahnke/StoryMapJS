@@ -75,6 +75,13 @@ StoryMap JSON is validated against `schema/storymap.schema.json`:
 - in the browser on load — all errors are reported via `console.error`
 - in CI / CLI — `npm run validate` (all `public/examples/*.json`)
 
+## Exchange format
+
+StoryMapJS data can be exchanged as IIIF Presentation 3.0 manifests — see
+[docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md)
+(`public/examples-iiif/` holds converted fixtures, validated in CI via
+`npm run validate:iiif`).
+
 ## OpenLayers notes
 
 - `src/map/openlayers/Map.OpenLayers.ts` implements the Map contract

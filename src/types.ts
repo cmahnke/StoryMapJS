@@ -112,7 +112,13 @@ export interface StorymapOptions {
     slide_default_fade: string;
     menubar_default_y: number;
     path_gfx: string;
-    zoomify: { path: string; width: string; height: string; tolerance: number; attribution: string };
+    zoomify: {
+        path: string;
+        width: string;
+        height: string;
+        tolerance: number;
+        attribution: string;
+    };
     script_path: string;
     language: string;
     api_key_flickr: string;

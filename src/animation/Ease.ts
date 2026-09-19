@@ -52,36 +52,36 @@ interface KeySplineInstance {
 type KeySplineConstructor = new (a: number[]) => KeySplineInstance;
 
 function KeySpline(this: KeySplineInstance, a: number[]) {
-    this.get = function (aX) {
+    this.get = function (aX: number) {
         if (a[0] === a[1] && a[2] === a[3]) return aX; // linear
         return CalcBezier(GetTForX(aX), a[1], a[3]);
     };
 
-    function A(aA1, aA2) {
+    function A(aA1: number, aA2: number) {
         return 1.0 - 3.0 * aA2 + 3.0 * aA1;
     }
 
-    function B(aA1, aA2) {
+    function B(aA1: number, aA2: number) {
         return 3.0 * aA2 - 6.0 * aA1;
     }
 
-    function C(aA1) {
+    function C(aA1: number) {
         return 3.0 * aA1;
     }
 
     // Returns x(t) given t, x1, and x2, or y(t) given t, y1, and y2.
 
-    function CalcBezier(aT, aA1, aA2) {
+    function CalcBezier(aT: number, aA1: number, aA2: number) {
         return ((A(aA1, aA2) * aT + B(aA1, aA2)) * aT + C(aA1)) * aT;
     }
 
     // Returns dx/dt given t, x1, and x2, or dy/dt given t, y1, and y2.
 
-    function GetSlope(aT, aA1, aA2) {
+    function GetSlope(aT: number, aA1: number, aA2: number) {
         return 3.0 * A(aA1, aA2) * aT * aT + 2.0 * B(aA1, aA2) * aT + C(aA1);
     }
 
-    function GetTForX(aX) {
+    function GetTForX(aX: number) {
         // Newton raphson iteration
         let aGuessT = aX;
         for (let i = 0; i < 4; ++i) {
@@ -111,33 +111,33 @@ export default class Ease {
         return spline.get(t);
     }
 
-    easeInSpline(t) {
+    easeInSpline(t: number): number {
         const spline = new Ease.KeySpline(Easings.easein);
         return spline.get(t);
     }
 
-    easeInOutExpo(t) {
+    easeInOutExpo(t: number): number {
         const spline = new Ease.KeySpline(Easings.easein);
         return spline.get(t);
     }
 
-    easeOut(t) {
+    easeOut(t: number): number {
         return Math.sin((t * Math.PI) / 2);
     }
 
-    easeOutStrong(t) {
+    easeOutStrong(t: number): number {
         return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
     }
 
-    easeIn(t) {
+    easeIn(t: number): number {
         return t * t;
     }
 
-    easeInStrong(t) {
+    easeInStrong(t: number): number {
         return t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
     }
 
-    easeOutBounce(pos) {
+    easeOutBounce(pos: number): number {
         if (pos < 1 / 2.75) {
             return 7.5625 * pos * pos;
         } else if (pos < 2 / 2.75) {
@@ -149,17 +149,17 @@ export default class Ease {
         }
     }
 
-    easeInBack(pos) {
+    easeInBack(pos: number): number {
         const s = 1.70158;
         return pos * pos * ((s + 1) * pos - s);
     }
 
-    easeOutBack(pos) {
+    easeOutBack(pos: number): number {
         const s = 1.70158;
         return (pos = pos - 1) * pos * ((s + 1) * pos + s) + 1;
     }
 
-    bounce(t) {
+    bounce(t: number): number {
         if (t < 1 / 2.75) {
             return 7.5625 * t * t;
         }
@@ -172,7 +172,7 @@ export default class Ease {
         return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
     }
 
-    bouncePast(pos) {
+    bouncePast(pos: number): number {
         if (pos < 1 / 2.75) {
             return 7.5625 * pos * pos;
         } else if (pos < 2 / 2.75) {
@@ -184,37 +184,37 @@ export default class Ease {
         }
     }
 
-    swingTo(pos) {
+    swingTo(pos: number): number {
         const s = 1.70158;
         return (pos -= 1) * pos * ((s + 1) * pos + s) + 1;
     }
 
-    swingFrom(pos) {
+    swingFrom(pos: number): number {
         const s = 1.70158;
         return pos * pos * ((s + 1) * pos - s);
     }
 
-    elastic(pos) {
+    elastic(pos: number): number {
         return -1 * Math.pow(4, -8 * pos) * Math.sin(((pos * 6 - 1) * (2 * Math.PI)) / 2) + 1;
     }
 
-    spring(pos) {
+    spring(pos: number): number {
         return 1 - Math.cos(pos * 4.5 * Math.PI) * Math.exp(-pos * 6);
     }
 
-    blink(pos, blinks) {
+    blink(pos: number, blinks?: number): number {
         return Math.round(pos * (blinks || 5)) % 2;
     }
 
-    pulse(pos, pulses) {
+    pulse(pos: number, pulses?: number): number {
         return -Math.cos(pos * ((pulses || 5) - 0.5) * 2 * Math.PI) / 2 + 0.5;
     }
 
-    wobble(pos) {
+    wobble(pos: number): number {
         return -Math.cos(pos * Math.PI * (9 * pos)) / 2 + 0.5;
     }
 
-    sinusoidal(pos) {
+    sinusoidal(pos: number): number {
         return -Math.cos(pos * Math.PI) / 2 + 0.5;
     }
 
@@ -223,57 +223,57 @@ export default class Ease {
         return this.sinusoidal(pos < 0 ? 0 : pos > 1 ? 1 : pos);
     }
 
-    mirror(pos) {
+    mirror(pos: number): number {
         if (pos < 0.5) return this.sinusoidal(pos * 2);
         else return this.sinusoidal(1 - (pos - 0.5) * 2);
     }
 
     // accelerating from zero velocity
-    easeInQuad(t) {
+    easeInQuad(t: number): number {
         return t * t;
     }
     // decelerating to zero velocity
-    easeOutQuad(t) {
+    easeOutQuad(t: number): number {
         return t * (2 - t);
     }
     // acceleration until halfway, then deceleration
-    easeInOutQuad(t) {
+    easeInOutQuad(t: number): number {
         return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
     }
     // accelerating from zero velocity
-    easeInCubic(t) {
+    easeInCubic(t: number): number {
         return t * t * t;
     }
     // decelerating to zero velocity
-    easeOutCubic(t) {
+    easeOutCubic(t: number): number {
         return --t * t * t + 1;
     }
     // acceleration until halfway, then deceleration
-    easeInOutCubic(t) {
+    easeInOutCubic(t: number): number {
         return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
     }
     // accelerating from zero velocity
-    easeInQuart(t) {
+    easeInQuart(t: number): number {
         return t * t * t * t;
     }
     // decelerating to zero velocity
-    easeOutQuart(t) {
+    easeOutQuart(t: number): number {
         return 1 - --t * t * t * t;
     }
     // acceleration until halfway, then deceleration
-    easeInOutQuart(t) {
+    easeInOutQuart(t: number): number {
         return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
     }
     // accelerating from zero velocity
-    easeInQuint(t) {
+    easeInQuint(t: number): number {
         return t * t * t * t * t;
     }
     // decelerating to zero velocity
-    easeOutQuint(t) {
+    easeOutQuint(t: number): number {
         return 1 + --t * t * t * t * t;
     }
     // acceleration until halfway, then deceleration
-    easeInOutQuint(t) {
+    easeInOutQuint(t: number): number {
         return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
     }
 }

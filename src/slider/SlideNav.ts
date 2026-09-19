@@ -143,16 +143,18 @@ export default class SlideNav {
             this.animator_position.stop();
         }
 
-        let prop_to_set;
+        let prop_to_set: string;
         if (ani.right) {
             prop_to_set = "right";
         } else {
             prop_to_set = "left";
         }
         if (use_percent) {
-            this._el.container.style[prop_to_set] = _start_value + "%";
+            (this._el.container.style as unknown as Record<string, string>)[prop_to_set] =
+                _start_value + "%";
         } else {
-            this._el.container.style[prop_to_set] = _start_value + "px";
+            (this._el.container.style as unknown as Record<string, string>)[prop_to_set] =
+                _start_value + "px";
         }
 
         this.animator_position = Animate(this._el.container, ani);

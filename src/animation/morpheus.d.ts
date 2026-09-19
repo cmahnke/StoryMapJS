@@ -14,7 +14,10 @@ declare module "morpheus" {
     }
 
     interface Morpheus {
-        (elements: HTMLElement | HTMLElement[] | NodeListOf<HTMLElement>, options: MorpheusOptions): MorpheusHandle;
+        (
+            elements: HTMLElement | HTMLElement[] | NodeListOf<HTMLElement>,
+            options: MorpheusOptions,
+        ): MorpheusHandle;
         tween(
             this: unknown,
             duration: number,
@@ -22,7 +25,7 @@ declare module "morpheus" {
             done?: () => void,
             ease?: ((t: number) => number) | string,
             from?: number,
-            to?: number
+            to?: number,
         ): MorpheusHandle;
         getStyle(el: HTMLElement, property: string): unknown;
         bezier(points: number[][], pos: number): number[];
