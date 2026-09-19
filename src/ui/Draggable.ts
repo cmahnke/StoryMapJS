@@ -289,8 +289,8 @@ export class DraggableBase {
         pos_adjust.x = Math.round(pos_change.x / pos_change.time);
         pos_adjust.y = Math.round(pos_change.y / pos_change.time);
 
-        this.data.new_pos.x = Math.min(this.data.pos.end.x + pos_adjust.x);
-        this.data.new_pos.y = Math.min(this.data.pos.end.y + pos_adjust.y);
+        this.data.new_pos.x = this.data.pos.end.x + pos_adjust.x;
+        this.data.new_pos.y = this.data.pos.end.y + pos_adjust.y;
 
         if (!this.options.enable.x) {
             this.data.new_pos.x = this.data.pos.start.x;

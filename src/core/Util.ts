@@ -21,9 +21,9 @@ export function convertUnixTime(str: string): string {
     // created for Instagram. It's ISO8601-ish
     // 2013-12-09 01:56:28
     const pattern = /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})/;
-    let date_parts;
-    if (str.match(pattern)) {
-        date_parts = str.match(pattern).slice(1);
+    const date_parts = str.match(pattern)?.slice(1);
+    if (!date_parts) {
+        return str;
     }
     const date_array = [];
     for (let i = 0; i < date_parts.length; i++) {
@@ -130,9 +130,9 @@ export function unique_ID(size: number, prefix?: string): string {
     function getRandomNumber(range: number): number {
         return Math.floor(Math.random() * range);
     }
-    function getRandomChar(): string | undefined {
+    function getRandomChar(): string {
         const chars = "abcdefghijklmnopqurstuvwxyz";
-        return chars.at(getRandomNumber(32));
+        return chars.charAt(getRandomNumber(chars.length));
     }
     function randomID(size: number): string {
         let str = "";

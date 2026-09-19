@@ -337,8 +337,12 @@ class MapBase {
 
     setMapOffset(left: number, top: number): void {
         // Update Component Displays
-        this.options.map_center_offset.left = left;
-        this.options.map_center_offset.top = top;
+        if (!this.options.map_center_offset) {
+            this.options.map_center_offset = { left: left, top: top };
+        } else {
+            this.options.map_center_offset.left = left;
+            this.options.map_center_offset.top = top;
+        }
     }
 
     calculateMinMaxZoom(): void {

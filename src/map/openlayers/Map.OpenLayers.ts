@@ -198,12 +198,17 @@ export default class OpenLayers extends Map {
                             attributions: this.options.iiif.attribution || [],
                         });
                         iiif_layer.setSource(source);
-                        source.once("change", () => {
-                            if (source.getState() === "ready") {
-                                this._markerOverview();
-                                this._onTilesLoaded(undefined);
-                            }
-                        });
+                        if (source.getState() === "ready") {
+                            this._markerOverview();
+                            this._onTilesLoaded(undefined);
+                        } else {
+                            source.once("change", () => {
+                                if (source.getState() === "ready") {
+                                    this._markerOverview();
+                                    this._onTilesLoaded(undefined);
+                                }
+                            });
+                        }
                     })
                     .catch((err) =>
                         console.error(
@@ -362,8 +367,9 @@ export default class OpenLayers extends Map {
                 }
 
                 if (
-                    (this.options.map_center_offset && this.options.map_center_offset.left !== 0) ||
-                    this.options.map_center_offset.top !== 0
+                    this.options.map_center_offset &&
+                    (this.options.map_center_offset.left !== 0 ||
+                        this.options.map_center_offset.top !== 0)
                 ) {
                     calculated_zoom = calculated_zoom - 1;
                 }
@@ -557,6 +563,9 @@ export default class OpenLayers extends Map {
 
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
             const source = this._tile_layer.getSource();
+            if (!source) {
+                return;
+            }
             const fit = () => {
                 try {
                     const grid = source.getTileGrid();
@@ -591,8 +600,9 @@ export default class OpenLayers extends Map {
             this.bounds_array = this._getAllMarkersBounds(this._markers);
 
             if (
-                (this.options.map_center_offset && this.options.map_center_offset.left !== 0) ||
-                this.options.map_center_offset.top !== 0
+                this.options.map_center_offset &&
+                (this.options.map_center_offset.left !== 0 ||
+                    this.options.map_center_offset.top !== 0)
             ) {
                 if (this.bounds_array && this.bounds_array.length) {
                     const view_coords = this._markerCoordsToViewCoords(this.bounds_array);
@@ -658,13 +668,11 @@ export default class OpenLayers extends Map {
             this._map.updateSize();
 
             // Check to see if it's an overview
-            if (
-                this._markers[this.current_marker].data.type &&
-                this._markers[this.current_marker].data.type === "overview"
-            ) {
+            const marker = this._markers[this.current_marker];
+            if (marker && marker.data.type && marker.data.type === "overview") {
                 this._markerOverview();
-            } else {
-                this._viewTo(this._markers[this.current_marker].data.location, {
+            } else if (marker && marker.data.location) {
+                this._viewTo(marker.data.location, {
                     zoom: this._getMapZoom(),
                 });
             }
