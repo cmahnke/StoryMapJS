@@ -49,6 +49,7 @@ class MapBase {
     declare "data": StorymapData;
     declare "options": StorymapOptions;
     declare "animator": AnimationHandle | null;
+    declare "_transition_duration": number;
     declare "timer": ReturnType<typeof setTimeout> | null;
     declare "touch_scale": number;
     declare "scroll": ScrollState;
@@ -150,6 +151,7 @@ class MapBase {
 
         // Animation
         this.animator = null;
+        this._transition_duration = this.options.duration;
 
         // Timer
         this.timer = null;
@@ -183,6 +185,11 @@ class MapBase {
 
             this.current_marker = n;
 
+            // Scale the transition duration with the jump distance so that
+            // out-of-order navigation glides instead of flicking
+            const steps = Math.abs(n - previous_marker);
+            this._transition_duration = Math.max(600, Math.min(1000 + steps * 120, 2000));
+
             const marker = this._markers[this.current_marker];
 
             // Stop animation
@@ -206,7 +213,9 @@ class MapBase {
                 if (change) {
                     // Set Map View
                     if (marker.data.location) {
-                        this._viewTo(marker.data.location);
+                        this._viewTo(marker.data.location, {
+                            duration: this._transition_duration,
+                        });
                     } else {
                         // nothing to show
                     }
@@ -222,6 +231,7 @@ class MapBase {
                         this._viewTo(marker.data.location, {
                             calculate_zoom: this.options.calculate_zoom,
                             zoom: zoom,
+                            duration: this._transition_duration,
                         });
 
                         // Show Line

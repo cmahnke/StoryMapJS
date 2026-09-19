@@ -40,7 +40,14 @@ export default class Video extends Media {
         if (media_type) {
             source_item.type = media_type;
         }
-        media_item.innerHTML += "Your browser doesn't support HTML5 video with " + source_item.type;
+        // append as a text node: re-serializing innerHTML would replace the
+        // source element and drop its error listener, leaving the loading
+        // message on screen forever
+        media_item.appendChild(
+            document.createTextNode(
+                "Your browser doesn't support HTML5 video with " + source_item.type,
+            ),
+        );
         this.player_element = media_item;
     }
 

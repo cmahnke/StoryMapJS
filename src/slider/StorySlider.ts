@@ -251,7 +251,13 @@ class StorySliderBase {
         }
 
         if (n < this._slides.length && n >= 0) {
+            // Scale the transition duration with the jump distance so that
+            // out-of-order navigation glides instead of flicking; the map
+            // computes the very same value to keep both in sync
+            const previous_slide = this.current_slide;
             this.current_slide = n;
+            const steps = Math.abs(n - previous_slide);
+            const transition_duration = Math.max(600, Math.min(1000 + steps * 120, 2000));
 
             // Stop animation
             if (this.animator) {
@@ -265,11 +271,13 @@ class StorySliderBase {
                 this._el.slider_container.style.left = -(this.slide_spacing * n) + "px";
                 this._onSlideChange(displayupdate);
             } else {
+                // fire the change event at animation start so the map and the
+                // slider animate simultaneously
+                this._onSlideChange(displayupdate);
                 this.animator = Animate(this._el.slider_container, {
                     left: -(this.slide_spacing * n) + "px",
-                    duration: this.options.duration,
+                    duration: transition_duration,
                     easing: this.options.ease,
-                    complete: this._onSlideChange(displayupdate),
                 });
             }
 

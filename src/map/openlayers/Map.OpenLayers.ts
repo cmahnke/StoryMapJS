@@ -1,6 +1,7 @@
 import OlMap from "ol/Map";
 import View from "ol/View";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import VectorTileLayer from "ol/layer/VectorTile";
 import { XYZ, OSM, IIIF } from "ol/source";
 import VectorSource from "ol/source/Vector";
 import LineString from "ol/geom/LineString";
@@ -11,6 +12,7 @@ import type Projection from "ol/proj/Projection";
 import { boundingExtent } from "ol/extent";
 import OverviewMap from "ol/control/OverviewMap";
 import { defaults as interactionDefaults } from "ol/interaction";
+import { applyStyle } from "ol-mapbox-style";
 
 import "ol/ol.css";
 
@@ -222,6 +224,11 @@ export default class OpenLayers extends Map {
 
             case "http":
             case "https":
+                // style JSON URLs (e.g. https://tiles.openfreemap.org/styles/bright)
+                // render a vector style, tile template URLs stay raster
+                if (!map_type.includes("{z}")) {
+                    return this._createVectorStyleLayer(map_type);
+                }
                 return new TileLayer({
                     source: new XYZ({ url: map_type, attributions: [], crossOrigin: "anonymous" }),
                 });
@@ -235,10 +242,31 @@ export default class OpenLayers extends Map {
                     }),
                 });
 
-            case "osm":
+            case "osm": {
+                // "osm:<style>" uses an OpenFreeMap vector style (osm:bright ->
+                // https://tiles.openfreemap.org/styles/bright), plain "osm" stays
+                // the classic raster tiles
+                const style_name = _map_type_arr.length > 1 ? _map_type_arr[1] : "";
+                if (style_name) {
+                    return this._createVectorStyleLayer(
+                        `https://tiles.openfreemap.org/styles/${style_name}`,
+                    );
+                }
+                return new TileLayer({ source: new OSM({ attributions: [] }) });
+            }
             default: // osm is the default now
                 return new TileLayer({ source: new OSM({ attributions: [] }) });
         }
+    }
+
+    _createVectorStyleLayer(style_url: string): TileLayer {
+        // Mapbox style JSONs (OpenFreeMap, Mapbox) are applied onto a single
+        // vector tile layer, including its background and label decluttering
+        const layer = new VectorTileLayer({ declutter: true });
+        applyStyle(layer, style_url).catch((err: unknown) =>
+            console.error("Vector map style could not be loaded:", style_url, err),
+        );
+        return layer as unknown as TileLayer;
     }
 
     /*	Create Mini Map
@@ -323,7 +351,7 @@ export default class OpenLayers extends Map {
         return coords.map((c) => fromLonLat(c));
     }
 
-    _fitView(ol_map: OlMap, coords: number[][]): void {
+    _fitView(ol_map: OlMap, coords: number[][], duration = 0): void {
         if (!coords || !coords.length) return;
         const view_coords = this._markerCoordsToViewCoords(coords);
         const extent = boundingExtent(view_coords);
@@ -331,6 +359,8 @@ export default class OpenLayers extends Map {
             size: ol_map.getSize(),
             padding: [15, 15, 15, 15],
             maxZoom: 12,
+            duration: duration,
+            easing: this.options.ease as ((t: number) => number) | undefined,
         });
     }
 
@@ -430,11 +460,16 @@ export default class OpenLayers extends Map {
         this._map.getView().animate({
             center: this._toViewCoords(loc),
             duration: this.options.duration,
+            easing: this.options.ease as ((t: number) => number) | undefined,
         });
     }
 
     _zoomTo(z: number, animate?: boolean): void {
-        this._map.getView().animate({ zoom: z, duration: this.options.duration });
+        this._map.getView().animate({
+            zoom: z,
+            duration: this.options.duration,
+            easing: this.options.ease as ((t: number) => number) | undefined,
+        });
     }
 
     _viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {
@@ -458,7 +493,7 @@ export default class OpenLayers extends Map {
                 if (opts.duration === 0) {
                     _animate = false;
                 } else {
-                    _duration = this.options.duration;
+                    _duration = opts.duration;
                 }
             }
 
@@ -476,6 +511,7 @@ export default class OpenLayers extends Map {
             center: this._toViewCoords(_location),
             zoom: _zoom,
             duration: _animate ? _duration : 0,
+            easing: this.options.ease as ((t: number) => number) | undefined,
         });
 
         if (this._mini_map && this.options.width > this.options.skinny_size) {
@@ -498,7 +534,9 @@ export default class OpenLayers extends Map {
     }
 
     _getMapZoom(): number {
-        return Math.round(this._map.getView().getZoom() || 0);
+        // fractional zoom on purpose: overview fits produce non-integer zooms and
+        // rounding here would snap the view on the next navigation
+        return this._map.getView().getZoom() || 0;
     }
 
     _getMapCenter(offset?: boolean): LatLngLiteral {
@@ -570,9 +608,15 @@ export default class OpenLayers extends Map {
                 try {
                     const grid = source.getTileGrid();
                     if (grid) {
+                        const offset = this.options.map_center_offset;
+                        const has_offset = offset && (offset.left !== 0 || offset.top !== 0);
                         this._map.getView().fit(grid.getExtent(), {
                             size: this._map.getSize(),
                             padding: [0, 0, 0, 0],
+                            // an animated fit would be cancelled by the setCenter
+                            // below, so keep it instant in that case
+                            duration: has_offset ? 0 : this._transition_duration,
+                            easing: this.options.ease as ((t: number) => number) | undefined,
                         });
                         if (this.options.map_center_offset) {
                             const view = this._map.getView();
@@ -622,11 +666,12 @@ export default class OpenLayers extends Map {
                     this._map.getView().animate({
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
-                        duration: this.options.duration,
+                        duration: this._transition_duration,
+                        easing: this.options.ease as ((t: number) => number) | undefined,
                     });
                 }
             } else {
-                this._fitView(this._map, this.bounds_array);
+                this._fitView(this._map, this.bounds_array, this._transition_duration);
             }
         }
 

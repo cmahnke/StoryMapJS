@@ -9,7 +9,8 @@
     "dependencies": {
         "@fontsource-utils/scss": "^0.2.4",
         "morpheus": "^0.7.2",
-        "ol": "^10.10.0"
+        "ol": "^10.10.0",
+        "ol-mapbox-style": "^13.5.1"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

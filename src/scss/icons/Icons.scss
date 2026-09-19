@@ -16,7 +16,8 @@
 
 [class^="vco-icon-"],
 [class*=" vco-icon-"] {
-    font-family: vco-icons;
+    /* icon font only: a generic fallback would render glyph codepoints as tofu */
+    font-family: vco-icons; /* stylelint-disable-line font-family-no-missing-generic-family-keyword */
     speak: none;
     font-variant: normal;
     text-transform: none;
