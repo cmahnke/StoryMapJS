@@ -413,18 +413,6 @@ class StorySliderBase {
                 }
                 bg_css += "opacity:0;";
                 bg_css +=
-                    "background-image: -webkit-linear-gradient(left, color-stop(rgba(" +
-                    bg_color_rgb +
-                    ",0.0001 ) " +
-                    bg_percent_start +
-                    "), color-stop(rgba(" +
-                    bg_color_rgb +
-                    "," +
-                    bg_alpha_end +
-                    ") " +
-                    bg_percent_end +
-                    "));";
-                bg_css +=
                     "background-image: linear-gradient(to right, rgba(" +
                     bg_color_rgb +
                     ",0.0001 ) " +

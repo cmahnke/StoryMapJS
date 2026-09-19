@@ -162,16 +162,8 @@ export class MediaBase {
                 }
             }
 
-            // Fix for max-width issues in Firefox
-            if (Browser.firefox) {
-                if (this._el.content_item.offsetWidth > this._el.content_item.offsetHeight) {
-                    this._el.content_item.style.width = "100%";
-                    this._el.content_item.style.maxWidth = "100%";
-                }
-
-                if (layout === "portrait") {
-                    this._el.content_item.style.maxHeight = "none";
-                }
+            if (layout === "portrait") {
+                this._el.content_item.style.maxHeight = "none";
             }
             if (this._state.media_loaded) {
                 if (this._el.credit) {

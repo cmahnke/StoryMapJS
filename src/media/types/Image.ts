@@ -45,9 +45,6 @@ export default class Image extends Media {
     }
 
     _updateMediaDisplay(layout?: string) {
-        if (Browser.firefox) {
-            //this._el.content_item.style.maxWidth = (this.options.width/2) - 40 + "px";
-            this._el.content_item.style.width = "auto";
-        }
+        // modern browsers size media correctly without engine-specific fixes
     }
 }
