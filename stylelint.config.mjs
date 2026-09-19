@@ -40,7 +40,6 @@ export default {
         "declaration-block-no-shorthand-property-overrides": null,
         "declaration-block-no-redundant-longhand-properties": null,
         "import-notation": null,
-        "selector-type-case": null,
     },
     ignoreFiles: ["dist/**", "node_modules/**", "compiled/**"],
 };
