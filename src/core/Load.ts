@@ -41,19 +41,13 @@ class Loader {
     declare "doc": any;
     declare "pending": any;
     declare "queue": any;
-    declare "styleSheets": any;
-    declare "env": any;
     declare "head": any;
-    declare "pollCount": any;
 
     constructor(document) {
         this.doc = document
         this.pending = {}
         this.queue = { css: [], js: [] };
-        this.styleSheets = document.styleSheets
-        this.env = this.getEnv()
         this.head = this.doc.head || this.doc.getElementsByTagName('head')[0];
-        this.pollCount = 0
 
     }
 
@@ -102,42 +96,15 @@ class Loader {
             urls = p.urls;
 
             urls.shift();
-            this.pollCount = 0;
 
             // If this is the last of the pending URLs, execute the callback and
             // start the next request in the queue (if any).
             if (!urls.length) {
                 callback && callback.call(p.context, p.obj);
                 this.pending[type] = null;
-                this.queue[type].length && this.load(type, undefined, undefined, undefined, undefined);
+                this.queue[type].length && this.load(type);
             }
         }
-    }
-
-    /**
-    Populates the <code>env</code> variable with user agent and feature test
-    information.
-
-    @method getEnv
-    @private
-    */
-    getEnv() {
-        var ua = navigator.userAgent;
-
-        var env: any = {
-            // True if this browser supports disabling async mode on dynamically
-            // created script nodes. See
-            // http://wiki.whatwg.org/wiki/Dynamic_Script_Execution_Order
-            async: this.doc.createElement('script').async === true
-        };
-
-        (env.webkit = /AppleWebKit\//.test(ua)) ||
-        (env.ie = /MSIE/.test(ua)) ||
-        (env.opera = /Opera/.test(ua)) ||
-        (env.gecko = /Gecko\//.test(ua)) ||
-        (env.unknown = true);
-
-        return env;
     }
 
     /**
@@ -162,7 +129,7 @@ class Loader {
       be executed in this object's context
     @private
     */
-    load(type, urls, callback, obj, context) {
+    load(type, urls?, callback?, obj?, context?) {
         var _finish = function(this: any) { this.finish(type); }.bind(this),
             isCSS = type === 'css',
             nodes = [],
@@ -179,32 +146,13 @@ class Loader {
             // Create a request object for each URL. If multiple URLs are specified,
             // the callback will only be executed after all URLs have been loaded.
             //
-            // Sadly, Firefox and Opera are the only browsers capable of loading
-            // scripts in parallel while preserving execution order. In all other
-            // browsers, scripts must be loaded sequentially.
-            //
-            // All browsers respect CSS specificity based on the order of the link
-            // elements in the DOM, regardless of the order in which the stylesheets
-            // are actually downloaded.
-            if (isCSS || this.env.async || this.env.gecko || this.env.opera) {
-                // Load in parallel.
-                this.queue[type].push({
-                    urls: urls,
-                    callback: callback,
-                    obj: obj,
-                    context: context
-                });
-            } else {
-                // Load sequentially.
-                for (i = 0, len = urls.length; i < len; ++i) {
-                    this.queue[type].push({
-                        urls: [urls[i]],
-                        callback: i === len - 1 ? callback : null, // callback is only added to the last URL
-                        obj: obj,
-                        context: context
-                    });
-                }
-            }
+            // Load in parallel.
+            this.queue[type].push({
+                urls: urls,
+                callback: callback,
+                obj: obj,
+                context: context
+            });
         }
 
         // If a previous load request of this type is currently in progress, we'll
@@ -220,7 +168,7 @@ class Loader {
             url = pendingUrls[i];
 
             if (isCSS) {
-                node = this.env.gecko ? this.createNode('style') : this.createNode('link', {
+                node = this.createNode('link', {
                     href: url,
                     rel: 'stylesheet'
                 });
@@ -231,31 +179,7 @@ class Loader {
 
             node.className = 'lazyload';
             node.setAttribute('charset', 'utf-8');
-
-            if (this.env.ie && !isCSS) {
-                node.onreadystatechange = function() {
-                    if (/loaded|complete/.test(node.readyState)) {
-                        node.onreadystatechange = null;
-                        _finish();
-                    }
-                };
-            } else if (isCSS && (this.env.gecko || this.env.webkit)) {
-                // Gecko and WebKit don't support the onload event on link nodes.
-                if (this.env.webkit) {
-                    // In WebKit, we can poll for changes to document.styleSheets to
-                    // figure out when stylesheets have loaded.
-                    p.urls[i] = node.href; // resolve relative URLs (or polling won't work)
-                    this.pollWebKit();
-                } else {
-                    // In Gecko, we can import the requested URL into a <style> node and
-                    // poll for the existence of node.sheet.cssRules. Props to Zach
-                    // Leatherman for calling my attention to this technique.
-                    node.innerHTML = '@import "' + url + '";';
-                    this.pollGecko(node);
-                }
-            } else {
-                node.onload = node.onerror = _finish;
-            }
+            node.onload = node.onerror = _finish;
 
             nodes.push(node);
         }
@@ -265,87 +189,6 @@ class Loader {
         }
     }
 
-    /**
-    Begins polling to determine when the specified stylesheet has finished loading
-    in Gecko. Polling stops when all pending stylesheets have loaded or after 10
-    seconds (to prevent stalls).
-
-    Thanks to Zach Leatherman for calling my attention to the @import-based
-    cross-domain technique used here, and to Oleg Slobodskoi for an earlier
-    same-domain implementation. See Zach's blog for more details:
-    http://www.zachleat.com/web/2010/07/29/load-css-dynamically/
-
-    @method pollGecko
-    @param {HTMLElement} node Style node to poll.
-    @private
-    */
-    pollGecko(node) {
-        var hasRules;
-
-        try {
-            // We don't really need to store this value or ever refer to it again, but
-            // if we don't store it, Closure Compiler assumes the code is useless and
-            // removes it.
-            hasRules = !!node.sheet.cssRules;
-        } catch (ex) {
-            // An exception means the stylesheet is still loading.
-            this.pollCount += 1;
-
-            if (this.pollCount < 200) {
-                var self = this;
-                setTimeout(function() { self.pollGecko(node); }, 50);
-            } else {
-                // We've been polling for 10 seconds and nothing's happened. Stop
-                // polling and finish the pending requests to avoid blocking further
-                // requests.
-                hasRules && this.finish('css');
-            }
-
-            return;
-        }
-
-        // If we get here, the stylesheet has loaded.
-        this.finish('css');
-    }
-
-    /**
-    Begins polling to determine when pending stylesheets have finished loading
-    in WebKit. Polling stops when all pending stylesheets have loaded or after 10
-    seconds (to prevent stalls).
-
-    @method pollWebKit
-    @private
-    */
-    pollWebKit() {
-        var css = this.pending.css,
-            i;
-
-        if (css) {
-            i = this.styleSheets.length;
-
-            // Look for a stylesheet matching the pending URL.
-            while (--i >= 0) {
-                if (this.styleSheets[i].href === css.urls[0]) {
-                    this.finish('css');
-                    break;
-                }
-            }
-
-            this.pollCount += 1;
-
-            if (css) {
-                if (this.pollCount < 200) {
-                    setTimeout(this.pollWebKit.bind(this), 50);
-                } else {
-                    // We've been polling for 10 seconds and nothing's happened, which may
-                    // indicate that the stylesheet has been removed from the document
-                    // before it had a chance to load. Stop polling and finish the pending
-                    // request to prevent blocking further requests.
-                    this.finish('css');
-                }
-            }
-        }
-    }
 
     /**
     Requests the specified CSS URL or URLs and executes the specified

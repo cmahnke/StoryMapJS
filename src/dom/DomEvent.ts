@@ -1,75 +1,29 @@
-import { Browser } from "../core/Browser";
 import { stamp } from "../core/Util";
 
 /*	DomEvent
-	Inspired by Leaflet 
+	Inspired by Leaflet
 	DomEvent contains functions for working with DOM events.
 ================================================== */
-// TODO stamp
 
 var DomEvent: any = {
-	/* inpired by John Resig, Dean Edwards and YUI addEvent implementations */
-	addListener: function (/*HTMLElement*/ obj, /*String*/ type, /*Function*/ fn, /*Object*/ context) {
-		var id = stamp(fn),
-			key = '_vco_' + type + id;
-
-		if (obj[key]) {
-			return;
-		}
-
-		var handler = function (e) {
-			return fn.call(context || obj, e || DomEvent._getEvent());
+	addListener: function (obj, type, fn, context) {
+		const handler = function (e) {
+			return fn.call(context || obj, e);
 		};
 
-		if (Browser.touch && (type === 'dblclick') && this.addDoubleTapListener) {
-			this.addDoubleTapListener(obj, handler, id);
-		} else if ('addEventListener' in obj) {
-			if (type === 'mousewheel') {
-				obj.addEventListener('DOMMouseScroll', handler, false);
-				obj.addEventListener(type, handler, false);
-			} else if ((type === 'mouseenter') || (type === 'mouseleave')) {
-				var originalHandler = handler,
-					newType = (type === 'mouseenter' ? 'mouseover' : 'mouseout');
-				handler = function (e) {
-					if (!DomEvent._checkMouse(obj, e)) {
-						return;
-					}
-					return originalHandler(e);
-				};
-				obj.addEventListener(newType, handler, false);
-			} else {
-				obj.addEventListener(type, handler, false);
-			}
-		} else if ('attachEvent' in obj) {
-			obj.attachEvent("on" + type, handler);
-		}
-
-		obj[key] = handler;
+		obj.addEventListener(type, handler, false);
+		obj['_vco_' + type + stamp(fn)] = handler;
 	},
 
-	removeListener: function (/*HTMLElement*/ obj, /*String*/ type, /*Function*/ fn, /*Object*/ context) {
-		var id = stamp(fn),
-			key = '_vco_' + type + id,
-			handler = obj[key];
+	removeListener: function (obj, type, fn, context) {
+		const key = '_vco_' + type + stamp(fn);
+		const handler = obj[key];
 
 		if (!handler) {
 			return;
 		}
 
-		if (Browser.touch && (type === 'dblclick') && this.removeDoubleTapListener) {
-			this.removeDoubleTapListener(obj, id);
-		} else if ('removeEventListener' in obj) {
-			if (type === 'mousewheel') {
-				obj.removeEventListener('DOMMouseScroll', handler, false);
-				obj.removeEventListener(type, handler, false);
-			} else if ((type === 'mouseenter') || (type === 'mouseleave')) {
-				obj.removeEventListener((type === 'mouseenter' ? 'mouseover' : 'mouseout'), handler, false);
-			} else {
-				obj.removeEventListener(type, handler, false);
-			}
-		} else if ('detachEvent' in obj) {
-			obj.detachEvent("on" + type, handler);
-		}
+		obj.removeEventListener(type, handler, false);
 		obj[key] = null;
 	},
 
@@ -91,38 +45,21 @@ var DomEvent: any = {
 		return (related !== el);
 	},
 
-	/*jshint noarg:false */ // evil magic for IE
-	_getEvent: function () {
-		var e = window.event;
-		if (!e) {
-			var caller = arguments.callee.caller;
-			while (caller) {
-				e = caller['arguments'][0];
-				if (e && window.Event === e.constructor) {
-					break;
-				}
-				caller = caller.caller;
-			}
-		}
-		return e;
-	},
-	/*jshint noarg:false */
-
-	stopPropagation: function (/*Event*/ e) {
+	stopPropagation: function (e) {
 		if (e.stopPropagation) {
 			e.stopPropagation();
 		} else {
 			e.cancelBubble = true;
 		}
 	},
-	
-	disableClickPropagation: function (/*HTMLElement*/ el) {
+
+	disableClickPropagation: function (el) {
 		DomEvent.addListener(el, 'mousedown', DomEvent.stopPropagation);
 		DomEvent.addListener(el, 'click', DomEvent.stopPropagation);
 		DomEvent.addListener(el, 'dblclick', DomEvent.stopPropagation);
 	},
 
-	preventDefault: function (/*Event*/ e) {
+	preventDefault: function (e) {
 		if (e.preventDefault) {
 			e.preventDefault();
 		} else {
@@ -135,16 +72,8 @@ var DomEvent: any = {
 		DomEvent.stopPropagation(e);
 	},
 
-
 	getWheelDelta: function (e) {
-		var delta = 0;
-		if (e.wheelDelta) {
-			delta = e.wheelDelta / 120;
-		}
-		if (e.detail) {
-			delta = -e.detail / 3;
-		}
-		return delta;
+		return -e.deltaY / 40;
 	}
 };
 

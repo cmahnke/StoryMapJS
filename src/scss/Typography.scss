@@ -24,8 +24,6 @@
 		small {
 			display:block;
 			margin-top:5px;
-			font-size: $base-font-size-large;
-			line-height:$base-font-size-large;
 		}
 	}
 	
@@ -44,9 +42,7 @@
 
 			color: lighten($color-dark, 40%);
 			text-decoration: none;
-			background-image: -moz-linear-gradient(top, fade(lighten($color-dark, 40%), 0%) 50%, fade(lighten($color-dark, 40%), 60%) 50%);
-			background-image: -webkit-linear-gradient(top, fade(lighten($color-dark, 40%), 0%) 50%, fade(lighten($color-dark, 40%), 60%) 50%);
-			background-image: -o-linear-gradient(top, fade(lighten($color-dark, 40%), 0%) 50%, fade(lighten($color-dark, 40%), 60%) 50%);
+			background-image: linear-gradient(to top, fade(lighten($color-dark, 40%), 0%) 50%, fade(lighten($color-dark, 40%), 60%) 50%);
 			background-image: linear-gradient(to bottom, fade(lighten($color-dark, 40%), 0%) 50%, fade(lighten($color-dark, 40%), 60%) 50%);
 			background-repeat: repeat-x;
 			background-size: 2px 2px;
@@ -103,8 +99,6 @@
 	blockquote, blockquote p {
 		font-family: $font-serif;
 		color: lighten($color-dark, 60%);
-		font-size: $base-font-size-large;
-		line-height:$base-font-size-large;
 		text-align:left;
 		background:transparent;
 		border:0px;
@@ -112,8 +106,6 @@
 		cite {
 			font-family: $font-sanserif;
 			font-size: $base-font-size-small;
-			color: lighten($color-dark, 40%);
-			display:block;
 			text-align:right;
 			font-style: normal;
 			
@@ -125,7 +117,6 @@
 	blockquote p:before {
 		content: open-quote;
 		display:inline-block;
-		font-size: $base-font-size-xlarge;
 		position: relative;  
 		top: 8px;
 		margin-right:5px;
@@ -133,10 +124,6 @@
 	}
 	blockquote p:after {
 		content: close-quote;
-		display:inline-block;
-		font-size: $base-font-size-xlarge;
-		position: relative;  
-		top: 8px;
 		margin-left:3px;
 		
 	}
@@ -150,7 +137,6 @@
 	
 	.vcard {
 		font-family: $font-main;
-		font-size: $base-font-size;
 		line-height:$base-font-size;
 	}
 	
@@ -158,7 +144,6 @@
 		ul {
 			padding:0px;
 			padding-left:30px;
-			margin:0;
 			li {
 				margin-bottom:5px;
 			}
@@ -169,10 +154,7 @@
 
 	.vco-note {
 		display:block;
-		font-family: $font-main;
-		font-style: italic;
 		background-color:lighten($color-dark, 90%);
-		font-size:$base-font-size;
 		line-height:$base-font-size+2;
 		padding:10px;
 		@include border-radius(7px);

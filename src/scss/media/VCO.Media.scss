@@ -31,8 +31,6 @@
 				}
 				[class^="vco-icon-"], [class*=" vco-icon-"] {
 					font-size:$base-font-size-xlarge;
-					color:$ui-background-color;
-					text-align:center;
 				}
 			}
 			
@@ -48,7 +46,6 @@
 /* Media Shodow 
 ================================================== */
 .vco-media-shadow {
-	position: relative;
 	z-index: 1;
 	//background:$color-background;
 	@include box-shadow(1px 1px 7px rgba(0,0,0,.50));
@@ -94,7 +91,6 @@
 		text-decoration:none;
 	}
 	a:hover {
-		text-decoration: none;
 		.fn, .nickname {
 			color:$color-theme;
 			//text-decoration: underline;
@@ -111,18 +107,14 @@
 	}
 	.nickname {
 		margin-top:1px;
-		display:block;
 		color: lighten($color-dark, 40%);
 	}
 		
 	.avatar {
 		float:left;
-		display: block;
 		width: 32px;
 		height: 32px;
 		img {
-			-moz-border-radius: 5px;
-			-webkit-border-radius: 5px;
 			border-radius: 5px;
 		}
 	}
@@ -151,7 +143,6 @@
 	text-align: left;
 	margin-right: auto;
 	margin-left: auto;
-	margin-top: 10px;
 	color: #666666;
 	font-size: $base-font-size-small;
 	line-height: 14px;
@@ -184,7 +175,6 @@
 		width:100%;
 		height:auto;
 		float: none;
-		display:block;
 		
 		.vco-media-content-container {
 			.vco-media-content{
@@ -202,10 +192,6 @@
 }
 .vco-skinny {
 	.vco-media {
-		width:100%;
-		height:auto;
-		float: none;
-		display:block;
 		.vco-media-content-container {
 			.vco-media-content{
 		

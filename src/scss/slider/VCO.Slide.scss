@@ -51,23 +51,20 @@
 		display:none;
 		@include opacity(50);
 		background: no-repeat center center; 
-		-webkit-background-size: cover;
-		   -moz-background-size: cover;
-		     -o-background-size: cover;
+		background-size: cover;
+
+
 			    background-size: cover;
 	}
 	.vco-slide-scrollable-container {
 		display:table;
 		table-layout: fixed;
-		height:100%;
 		z-index:1;
 	}
 	.vco-slide-content-container {
 		display:table-cell;
 		vertical-align:middle;
 		position:relative;
-		width:100%;
-		height:100%;
 		
 		z-index:3;
 		.vco-slide-content {
@@ -124,25 +121,18 @@
 				//display:table-cell;
 				//vertical-align:middle;
 				text-align:center;
-				position:relative;
-				width:100%;
-				min-width:50%;
 				max-width:100%;
 				//height:100%;
 				float: none;
-				margin-top:auto;
-				margin-bottom:auto;
 				//margin-right:auto;
 				img, embed, object, video, iframe {
 					//width:100%;
 				}
 			}
 			.vco-text {
-				width:				100%;
 				display:			block;
 				margin-left:		auto;
 				margin-right:		auto;
-				text-align: 		center;
 				h2 {
 					margin-top: 	20px;
 					margin-bottom: 	20px;
@@ -159,13 +149,9 @@
 	.vco-slide-content-container {
 		.vco-slide-content {
 			//width:100%;
-			text-align:center;
 			.vco-text {
 				max-width:80%;
 				width:80%;
-				display:block;
-				margin-left:auto;
-				margin-right:auto;
 				//float:left;
 			}
 		}
@@ -222,12 +208,12 @@
 ================================================== */
 .vco-slide.vco-full-image-background {
 	background: no-repeat center center; 
-	-webkit-background-size: cover;
-	   -moz-background-size: cover;
-	     -o-background-size: cover;
+	background-size: cover;
+
+
 		    background-size: cover;
 	//filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.myBackground.jpg', sizingMethod='scale');
-	//-ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='myBackground.jpg', sizingMethod='scale')";
+
 	background-position:center 25%;
 	text-shadow: 1px 1px 2px #000;
 	.vco-slide-content-container {
@@ -237,7 +223,6 @@
 		text-shadow: 1px 1px 2px #000;
 	}
 	.vco-caption, .vco-credit {
-		text-shadow: 1px 1px 2px #000;
 	}
 	
 	.vco-media-twitter, .vco-media-blockquote {
@@ -281,15 +266,10 @@
 					//position:static;
 					vertical-align:baseline;
 					height:auto;
-					margin-bottom:20px;
 					max-height:50%;
 				}
 				.vco-text {
-					display:block;
-					height:auto;
-					vertical-align:baseline;
 					//position:static;
-					width:100%;
 					max-width:100%;
 					min-width:0;
 					float:none;
@@ -316,28 +296,14 @@
 			height:auto;
 			vertical-align:baseline;
 			.vco-slide-content {
-				display:block;
 				position:static;
 				vertical-align:baseline;
 				height:auto;
 				.vco-media {
 					position:static;
-					width:100%;
-					height:auto;
-					float: none;
-					display:block;
 
 				}
 				.vco-text {
-					display:block;
-					height:auto;
-					vertical-align:baseline;
-					position:static;
-					width:100%;
-					max-width:100%;
-					min-width:0;
-					float:none;
-					padding: 0;
 					.vco-text-content-container {
 						padding-left:10px;
 						padding-right:10px;

@@ -3,17 +3,11 @@
 .vco-map {
 	/*
 	.leaflet-zoom-anim .leaflet-zoom-animated {
-		-webkit-transition: -webkit-transform 0.8s cubic-bezier(0.25,0.1,0.25,0.75);
-		   -moz-transition: -moz-transform 0.8s cubic-bezier(0.25,0.1,0.25,0.75);
-		     -o-transition: -o-transform 0.8s cubic-bezier(0.25,0.1,0.25,0.75);
 		        transition: transform 0.8s cubic-bezier(0.25,0.1,0.25,0.75);
 	}
 	*/
 	/*
 	.leaflet-zoom-anim .leaflet-zoom-animated {
-		-webkit-transition: -webkit-transform 1s cubic-bezier(1, 0, 0, 1);
-		   -moz-transition: -moz-transform 1s cubic-bezier(1, 0, 0, 1);
-		     -o-transition: -o-transform 1s cubic-bezier(1, 0, 0, 1);
 		        transition: transform 1s cubic-bezier(1, 0, 0, 1); 
 	}
 	*/
@@ -35,8 +29,7 @@
 					color:$color-theme;
 					display:inline-block;
 					transform:rotate(45deg);
-					-ms-transform:rotate(45deg); /* IE 9 */
-					-webkit-transform:rotate(45deg); /* Opera, Chrome, and Safari */
+					transform:rotate(45deg); /* Opera, Chrome, and Safari */
 				}
 				&:hover {
 					text-decoration:none;
@@ -63,9 +56,6 @@
 	.leaflet-fade-anim .leaflet-tile,
 	.leaflet-fade-anim .leaflet-popup {
 		opacity: 0;
-		-webkit-transition: opacity 0.5s linear;
-		   -moz-transition: opacity 0.5s linear;
-		     -o-transition: opacity 0.5s linear;
 		        transition: opacity 0.5s linear;
 	}
 	.leaflet-fade-anim .leaflet-tile-loaded,
@@ -73,30 +63,21 @@
 		opacity: 1;
 	}
 	.leaflet-zoom-anim .leaflet-zoom-animated {
-		-webkit-transition: -webkit-transform 1s cubic-bezier(0.75, 0.1, 0.2, 1);
-		   -moz-transition: -moz-transform 1s cubic-bezier(0.75, 0.1, 0.2, 1);
-		     -o-transition: -o-transform 1s cubic-bezier(0.75, 0.1, 0.2, 1);
 		        transition: transform 1s cubic-bezier(0.75, 0.1, 0.2, 1); 
-		-webkit-transform: translateZ(0);
-		-webkit-perspective: 1000;
-		-webkit-backface-visibility: hidden;
+		transform: translateZ(0);
+		perspective: 1000;
+		backface-visibility: hidden;
 	}
 	&.vco-map-touch-zoom {
 		.leaflet-zoom-anim .leaflet-zoom-animated {
-			-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
-			   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
-			     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);
 			        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
-			-webkit-transform: translateZ(0);
-			-webkit-perspective: 1000;
-			-webkit-backface-visibility: hidden;
+			transform: translateZ(0);
+			perspective: 1000;
+			backface-visibility: hidden;
 		}
 	}
 	/*
 	.leaflet-zoom-anim .leaflet-zoom-animated {
-		-webkit-transition: none;
-		   -moz-transition: none;
-		     -o-transition: none;
 		        transition: none; 
 	}
 	*/
@@ -117,7 +98,6 @@
 	
 	.leaflet-container {
 		//background-color: $color-foreground;
-		background-color: transparent;
 		//background: $color-foreground url("cartographer.jpg") repeat;
 		
 	}
@@ -145,7 +125,6 @@
 		height: 20px;
 		position: relative;
 		overflow: hidden;
-		display:none;
 	}
 	
 	.leaflet-bar {
@@ -169,7 +148,6 @@
 			right:auto;
 		}
 		.leaflet-top {
-			bottom: 0;
 			top: 28px;
 		}
 		.leaflet-left {
@@ -185,7 +163,6 @@
 	}
 	.leaflet-bottom {
 		//position:relative;
-		bottom: 0;
 		top: auto;
 	}
 }
@@ -196,7 +173,6 @@
 }
 .vco-mobile.vco-skinny {
 	.leaflet-control-zoom, .leaflet-control-layers {
-		display:none;
 	}
 	.leaflet-container {
 		.leaflet-control-attribution {
@@ -210,10 +186,6 @@
 .vco-skinny {
 	
 	.leaflet-container .leaflet-control-attribution{
-		background-color:transparent;
-		box-shadow:none;
-		margin:0;
-		border:none;
 		font-size:8px;
 		.vco-knightlab-brand, a.vco-knightlab-brand {
 			font-size:12px;

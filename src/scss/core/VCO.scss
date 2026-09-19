@@ -1,7 +1,6 @@
 /* Disable Text selection when dragging
 ================================================== */
 .vco-dragging {
-	-webkit-touch-callout: none;
 	
 	@include user-select(none);
 }

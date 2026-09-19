@@ -19,15 +19,12 @@
 		//word-break:break-all;
 
 				
-	    -ms-word-break: break-all;
+
 	        word-break: break-all;
 
 	        /* Non standard for webkit */
 	        word-break: break-word;
 
-	   -webkit-hyphens: auto;
-	      -moz-hyphens: auto;
-	       -ms-hyphens: auto;
 	           hyphens: auto;
 			   
 		@include opacity(15);
@@ -47,7 +44,6 @@
 		//font-weight: bold;
 	}
 	.vco-slidenav-description {
-		font-size: $base-font-size-small;
 	}
 	
 }
@@ -153,7 +149,6 @@
 			width:32px;
 			height:32px;
 			.vco-slidenav-icon, .vco-slidenav-title, .vco-slidenav-description {
-				color: $color-foreground;
 				//color:$color-background;
 			}
 			&.vco-slidenav-inverted {
@@ -203,7 +198,6 @@
 		&:active {
 			.vco-slidenav-icon {
 			   @include opacity(100);
-			   margin-left: -4px;
 			}
 		}
 	}

@@ -24,8 +24,7 @@ const storymapAnimate = function() {
 	var doc = document,
 		win = window,
 		perf = win.performance,
-		perfNow = perf && (perf.now || (perf as any).webkitNow || (perf as any).msNow || (perf as any).mozNow),
-		now = perfNow ? function () { return perfNow.call(perf) } : function () { return +new Date() },
+		now = function () { return perf.now() },
 		html = doc.documentElement,
 		fixTs = false, // feature detected below
 		thousand = 1000,
@@ -39,72 +38,21 @@ const storymapAnimate = function() {
 		// these elements do not require 'px'
 		unitless = { lineHeight: 1, zoom: 1, zIndex: 1, opacity: 1, transform: 1};
 
-  // which property name does this browser use for transform
-	var transform = function () {
-		var styles = doc.createElement('a').style,
-			props = ['webkitTransform', 'MozTransform', 'OTransform', 'msTransform', 'Transform'],
-			i;
-
-		for (i = 0; i < props.length; i++) {
-			if (props[i] in styles) return props[i]
-		};
-	}();
-
-	// does this browser support the opacity property?
-	var opacity = function () {
-		return typeof doc.createElement('a').style.opacity !== 'undefined'
-	}();
+	// which property name does this browser use for transform
+	var transform = 'transform';
 
 	// initial style is determined by the elements themselves
-	var getStyle = doc.defaultView && doc.defaultView.getComputedStyle ?
-	function (el, property) {
-		property = property == 'transform' ? transform : property
+	var getStyle = function (el, property) {
 		property = camelize(property)
 		var value = null,
 			computed = doc.defaultView.getComputedStyle(el, '');
 
 		computed && (value = computed[property]);
 		return el.style[property] || value;
-	} : (html as any).currentStyle ?
-
-    function (el, property) {
-		property = camelize(property)
-
-		if (property == 'opacity') {
-			var val = 100
-			try {
-				val = el.filters['DXImageTransform.Microsoft.Alpha'].opacity
-			} catch (e1) {
-				try {
-					val = el.filters('alpha').opacity
-				} catch (e2) {
-
-				}
-			}
-			return val / 100
-		}
-		var value = el.currentStyle ? el.currentStyle[property] : null
-		return el.style[property] || value
-	} :
-
-    function (el, property) {
-		return el.style[camelize(property)]
-    }
+	};
 
   var frame = function () {
-    // native animation frames
-    // http://webstuff.nfshost.com/anim-timing/Overview.html
-    // http://dev.chromium.org/developers/design-documents/requestanimationframe-implementation
-    return win.requestAnimationFrame  ||
-      (win as any).webkitRequestAnimationFrame ||
-      (win as any).mozRequestAnimationFrame    ||
-      (win as any).msRequestAnimationFrame     ||
-      (win as any).oRequestAnimationFrame      ||
-      function (callback) {
-        win.setTimeout(function () {
-          callback(+new Date())
-        }, 17) // when I was 17..
-      }
+    return win.requestAnimationFrame.bind(win)
   }()
 
   var children = []
@@ -126,7 +74,6 @@ const storymapAnimate = function() {
     var i, count = children.length
     // if we're using a high res timer, make sure timestamp is not the old epoch-based value.
     // http://updates.html5rocks.com/2012/05/requestAnimationFrame-API-now-with-sub-millisecond-precision
-    if (perfNow && timestamp > 1e12) timestamp = now()
 	if (fixTs) timestamp = now()
     for (i = count; i--;) {
       children[i](timestamp)
@@ -405,9 +352,7 @@ const storymapAnimate = function() {
           v = getTweenVal(pos, units, begin, end, k, i)
           k == 'transform' ?
             els[i].style[transform] = formatTransform(v) :
-            k == 'opacity' && !opacity ?
-              (els[i].style.filter = 'alpha(opacity=' + (v * 100) + ')') :
-              (els[i].style[camelize(k)] = v)
+            (els[i].style[camelize(k)] = v)
         }
       }
     }, complete, ease] as any)

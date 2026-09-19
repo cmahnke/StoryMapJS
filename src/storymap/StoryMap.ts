@@ -236,12 +236,6 @@ class StoryMap {
 		} else {
 			self._loadLanguage();
 		}
-
- 		// Emoji Support to Chrome?
-		if (Browser.chrome) {
-			loadCSS(urljoin(this.options.script_path,"../css/fonts/font.emoji.css"), function() {
-			});
-		}
   }
 
 	/*	Load Language

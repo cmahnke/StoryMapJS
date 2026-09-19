@@ -28,18 +28,14 @@
 	}
 	
 	ul {
-		font-family: $font-main;
 	}
 	
 	.vco-media .vco-media-wikipedia h4 a {
-		font-family: $font-main;
-		font-weight:$font-headings-weight;
 		font-size:$font-size-headings-small;
 		line-height:$font-size-headings-small;
 	}
 	
 	.vco-caption, .vco-credit {
-		font-family: $font-main;
 	}
 	
 	.vcard {
@@ -49,7 +45,6 @@
 	
 	.vco-slidenav-next, .vco-slidenav-previous, .vco-message, .vco-slide-calltoaction-button-text {
 		font-family: $font-navigation;
-		font-weight:$font-headings-weight;
 		text-transform: $font-navigation-text-transform;
 		.vco-slidenav-title {
 			line-height:1.3em !important;
@@ -58,7 +53,6 @@
 	
 	.vco-headline-date, h3.vco-headline-date {
 		font-family: $font-headline-date !important;
-		font-weight:normal !important;
 		text-transform: $font-headings-text-transform !important;
 		small {
 			font-weight:normal !important;
@@ -66,15 +60,12 @@
 	}
 	
 	.vco-menubar {
-		font-family: $font-navigation;
-		text-transform: $font-navigation-text-transform;
 		.vco-menubar-button {
 			
 		}
 	}
 	
 	blockquote, blockquote p {
-		font-family: $font-main;
 		font-style: $font-blockquote-style;
 		font-weight:$font-blockquote-weight;
 		line-height:1.3;

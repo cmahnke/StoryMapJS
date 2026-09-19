@@ -9,8 +9,6 @@
 	------------------------------------------------------------------------------------------- */
 	
 	div * {
-		-webkit-box-sizing:content-box;
-		   -moz-box-sizing:content-box;
 		        box-sizing:content-box;
 	}
 	
@@ -74,37 +72,25 @@
 		Based on: http://github.com/necolas/normalize.css
 	------------------------------------------------------------------------------------------- */
 	img {
-		border: 0;
-		-ms-interpolation-mode: bicubic;
 	}
 
 	/*	Forms
 		Based on: http://github.com/necolas/normalize.css
 	------------------------------------------------------------------------------------------- */
 	button, input, select, textarea {
-	  font-size: 100%;
-	  margin: 0;
-	  vertical-align: baseline;
 	}
 	button, input {
 	  line-height: normal; // FF3/4 have !important on line-height in UA stylesheet
 	}
-	button::-moz-focus-inner, input::-moz-focus-inner { // Inner padding and border oddities in FF3/4
-	  border: 0;
-	  padding: 0;
-	}
 	button, input[type="button"], input[type="reset"], input[type="submit"] {
 	  cursor: pointer; // Cursors on all buttons applied consistently
-	  -webkit-appearance: button; // Style clicable inputs in iOS
+	  appearance: button; // Style clicable inputs in iOS
 	}
 	input[type="search"] { // Appearance in Safari/Chrome
-	  -webkit-appearance: textfield;
-	  -webkit-box-sizing: content-box;
-	     -moz-box-sizing: content-box;
-	          box-sizing: content-box;
+	  appearance: textfield;
 	}
 	input[type="search"]::-webkit-search-decoration {
-	  -webkit-appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
+	  appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
 	}
 	textarea {
 	  overflow: auto; // Remove vertical scrollbar in IE6-9

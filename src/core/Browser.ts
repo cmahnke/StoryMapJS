@@ -1,65 +1,42 @@
 /*
-	Based on Leaflet Browser
-	Browser handles different browser and feature detections for internal  use.
+	Browser handles feature detection for internal use.
+	Modern browsers (2022+) only - legacy vendor sniffing removed.
 */
-
-const legacyNav = navigator as any;
-const legacyWin = window as any;
 
 export const ua = navigator.userAgent.toLowerCase();
 export const doc = document.documentElement;
 export const webkit = ua.indexOf('webkit') !== -1;
-export const ie = 'ActiveXObject' in window;
-export const phantomjs = ua.indexOf('phantom') !== -1;
-export const android23 = ua.search('android [23]') !== -1;
+export const chrome = ua.indexOf('chrome') !== -1;
+export const firefox = ua.indexOf('firefox') !== -1;
+export const android = ua.indexOf('android') !== -1;
 export const mobile = typeof orientation !== 'undefined';
-export const msPointer = legacyNav.msPointerEnabled && legacyNav.msMaxTouchPoints && !window.PointerEvent;
-export const pointer = (window.PointerEvent && legacyNav.pointerEnabled && navigator.maxTouchPoints) || msPointer;
-export const ie3d = ie && ('transition' in doc.style);
-export const webkit3d = ('WebKitCSSMatrix' in window) && ('m11' in new window.WebKitCSSMatrix()) && !android23;
-export const gecko3d = 'MozPerspective' in doc.style;
-export const opera3d = 'OTransition' in doc.style;
-export const opera = legacyWin.opera;
-export const touch = !window.L_NO_TOUCH && !phantomjs
-    && (pointer || 'ontouchstart' in window || (legacyWin.DocumentTouch && document instanceof legacyWin.DocumentTouch));
-
-export let retina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
+export const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+export const webkit3d = 'WebKitCSSMatrix' in window;
+export let retina = window.devicePixelRatio > 1;
 if (!retina && 'matchMedia' in window) {
-    var windowMediaMatches = window.matchMedia('(min-resolution:144dpi)');
-    retina = windowMediaMatches && windowMediaMatches.matches;
+    const windowMediaMatches = window.matchMedia('(min-resolution:144dpi)');
+    retina = windowMediaMatches.matches;
 }
 
 export const Browser = {
-    ie: ie,
-    ielt9: ie && !document.addEventListener,
+    ie: false,
     webkit: webkit,
-    chrome: ua.indexOf('chrome') !== -1,
-    firefox: (ua.indexOf('gecko') !== -1) && !webkit && !(<any>window).opera && !ie,
-    android: ua.indexOf('android') !== -1,
-    android23: android23,
-    ie3d: ie3d,
+    chrome: chrome,
+    firefox: firefox,
+    android: android,
+    ie3d: 'transition' in doc.style,
     webkit3d: webkit3d,
-    gecko3d: gecko3d,
-    opera3d: opera3d,
-    any3d: !legacyWin.L_DISABLE_3D && (ie3d || webkit3d || gecko3d || opera3d) && !phantomjs,
+    gecko3d: 'MozPerspective' in doc.style,
+    any3d: (webkit3d || 'MozPerspective' in doc.style),
     mobile: mobile,
     mobileWebkit: mobile && webkit,
     mobileWebkit3d: mobile && webkit3d,
-    mobileOpera: mobile && legacyWin.opera,
-    touch: !! touch,
-    msPointer: !! msPointer,
-    pointer: !! pointer,
-    retina: !! retina,
+    touch: touch,
+    pointer: true,
+    retina: retina,
     orientation: function() {
-        var w = window.innerWidth,
-            h = window.innerHeight,
-            _orientation = "portrait";
-        if (w > h) {
-            _orientation = "landscape";
-        }
-        if (Math.abs((window as any).orientation) == 90) {
-            //_orientation = "landscape";
-        }
-        return _orientation;
+        const w = window.innerWidth,
+            h = window.innerHeight;
+        return (w > h) ? "landscape" : "portrait";
     }
 };

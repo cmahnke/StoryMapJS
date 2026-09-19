@@ -43,12 +43,10 @@
 			content:'Likes';
 			margin-left:3px;
 			color:#999;
-			font-weight:normal;
 			margin-right:10px;
 		}
 	}
 	.vco-snapmap-user-description, .vco-snapmap-user-location {
-		font-family:$font-main;
 		//font-size:12px;
 		//width:50%;
 		display:block;
@@ -92,14 +90,9 @@
 		
 		.vco-snapmap-instagram-website,
 		.vco-snapmap-instagram-website a {
-			font-weight:normal;
-			display:block;
 			margin:0;
-			color:#999;
 			&:after {
 				margin-left:0;
-				color:#999;
-				font-weight:normal;
 			}
 		}
 		
@@ -108,24 +101,13 @@
 	}
 	
 	.vco-snapmap-user-location {
-		font-weight:bold;
-		font-size:12px;
-		text-align:center;
 	}
 	.vco-snapmap-flickr-views {
-		display:block;
-		font-family:$font-main;
-		font-weight:bold;
-		margin-top:10px;
-		font-size:12px;
 		&:before {
 			
 		}
 		&:after {
 			content:'Views';
-			margin-left:3px;
-			color:#999;
-			font-weight:normal;
 		}
 	}
 }

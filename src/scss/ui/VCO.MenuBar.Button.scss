@@ -52,7 +52,7 @@
 		background-color:#000;
 	}
 }
-@-webkit-keyframes invertToBlack {
+ invertToBlack {
 	from {background:#FFF;}
 	to {background:#000;}
 }
@@ -60,7 +60,7 @@
 	from {background-color:#000;}
 	to {background-color:#FFF;}
 }
-@-webkit-keyframes invertToWhite{
+ invertToWhite{
 	from {background:#000;}
 	to {background:#FFF;}
 }

@@ -1,7 +1,7 @@
 .vcoanimate {
-	-webkit-transform: translateZ(0);
-	-webkit-perspective: 1000;
-	-webkit-backface-visibility: hidden;
+	transform: translateZ(0);
+	perspective: 1000;
+	backface-visibility: hidden;
 }
 
 .vco-animate {
