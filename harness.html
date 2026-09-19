@@ -29,9 +29,11 @@
             });
 
             const params = new URLSearchParams(window.location.search);
-            const name = params.get("example");
+            const manifest = params.get("manifest");
+            const name = manifest !== null ? manifest : params.get("example");
+            const base = manifest !== null ? "/examples-iiif/" : "/examples/";
 
-            fetch("/examples/" + name + ".json")
+            fetch(base + name + ".json")
                 .then(function (r) {
                     return r.json();
                 })

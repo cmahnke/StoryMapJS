@@ -97,18 +97,18 @@ content:
 
 ## Manifest ↔ storymap root
 
-| IIIF                    | StoryMap                    | Notes                                                          |
-| ----------------------- | --------------------------- | -------------------------------------------------------------- |
-| `id`                    | —                           | `https://example.org/storymap/<name>` (absolute URIs required) |
-| `type`                  | —                           | `"Manifest"`                                                   |
-| `label`                 | —                           | Language map, e.g. `{"none": ["StoryMapJS"]}`                  |
-| `items`                 | `storymap.slides`           | One Canvas per slide, in slide order                           |
-| `summary`               | —                           | Optional language map                                          |
-| `provider`              | —                           | Optional publishing institution                                |
-| `behavior`              | —                           | `["paged"]` — the story is consumed slide by slide             |
-| `requiredStatement`     | `storymap.iiif.attribution` | Only when an attribution is present                            |
-| `navPlace` _(optional)_ | —                           | Optional manifest-level aggregation of canvas locations        |
-| `service` (map config)  | `storymap.*` map settings   | See "StoryMap-specific terms" below                            |
+| IIIF                    | StoryMap                    | Notes                                                                                                                             |
+| ----------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                    | —                           | `https://example.org/storymap/<name>` (absolute URIs required)                                                                    |
+| `type`                  | —                           | `"Manifest"`                                                                                                                      |
+| `label`                 | `storymap.title` (extra)    | Language map, e.g. `{"none": ["StoryMapJS"]}`; the legacy format has no title field, so readers keep it as an extra `title` field |
+| `items`                 | `storymap.slides`           | One Canvas per slide, in slide order                                                                                              |
+| `summary`               | —                           | Optional language map                                                                                                             |
+| `provider`              | —                           | Optional publishing institution                                                                                                   |
+| `behavior`              | —                           | `["paged"]` — the story is consumed slide by slide                                                                                |
+| `requiredStatement`     | `storymap.iiif.attribution` | Only when an attribution is present                                                                                               |
+| `navPlace` _(optional)_ | —                           | Optional manifest-level aggregation of canvas locations                                                                           |
+| `service` (map config)  | `storymap.*` map settings   | See "StoryMap-specific terms" below                                                                                               |
 
 ## Canvas ↔ slide
 
@@ -267,6 +267,10 @@ Canvas objects are open for extension terms, so slide-specific StoryMap data is
 carried directly on the Canvas: `storymap:type`, `storymap:group`,
 `storymap:background`, `storymap:mediaCaption`, `storymap:mediaCredit`,
 `storymap:date` (see the Canvas table above).
+
+Readers must use the prefixed term for the slide type (`storymap:type`): the
+bare `type` key of a Canvas is the IIIF class type (`"Canvas"`) and can never
+carry the StoryMap slide type.
 
 ## Validator interop
 

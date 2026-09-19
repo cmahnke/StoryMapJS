@@ -2,7 +2,9 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 
-const files = execSync("grep -rl 'fontsource' src/scss/fonts --include='*.scss'", { encoding: "utf8" })
+const files = execSync("grep -rl 'fontsource' src/scss/fonts --include='*.scss'", {
+    encoding: "utf8",
+})
     .split("\n")
     .filter(Boolean);
 
@@ -26,13 +28,15 @@ for (const file of files) {
     for (const pkg of pkgs) {
         const alias = aliasFor(pkg);
         useLines.push(`@use "pkg:${pkg}/scss" as ${alias};`);
-        includeLines.push(`@include fontsource.faces($metadata: ${alias}.$metadata, $weights: all, $styles: all);`);
+        includeLines.push(
+            `@include fontsource.faces($metadata: ${alias}.$metadata, $weights: all, $styles: all);`,
+        );
     }
     void useLines;
 
     // replace the import lines with the @use/@include block, placed before everything else
     const filtered = lines.filter(
-        (l) => !/^@import "@fontsource/.test(l) && !/^@import "@fontsource-variable/.test(l)
+        (l) => !/^@import "@fontsource/.test(l) && !/^@import "@fontsource-variable/.test(l),
     );
     const out = [...useLines, "", ...includeLines, "", ...filtered];
     writeFileSync(file, out.join("\n"));

@@ -1,5 +1,6 @@
 import { mergeData, updateData } from "../core/Util";
 import { validateStorymapAndReport } from "./validate";
+import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
 import Dom from "../dom/Dom";
 import Ease from "../animation/Ease";
 import { setLanguage } from "../language/Language";
@@ -48,7 +49,7 @@ class StoryMapBase {
     //initialize: function (elem, data, options,listeners) {
     constructor(
         elem: string | HTMLElement,
-        data: string | StorymapDataWrapper,
+        data: string | StorymapDataWrapper | Record<string, unknown>,
         options?: Partial<StorymapOptions>,
         listeners?: Record<string, StoryMapListener | StoryMapListener[]>,
     ) {
@@ -184,21 +185,30 @@ class StoryMapBase {
 
     /* Initialize the data
 	================================================== */
-    _initData(data: string | StorymapDataWrapper) {
+    _initData(data: string | StorymapDataWrapper | Record<string, unknown>) {
         if (typeof data === "string") {
             fetch(data)
                 .then((response) => response.json())
-                .then((result) => {
-                    validateStorymapAndReport(result, data);
-                    this.data = result.storymap;
+                .then((result: unknown) => {
+                    if (isPresentation3Manifest(result)) {
+                        this.data = manifestToStorymapData(result);
+                    } else {
+                        validateStorymapAndReport(result, data);
+                        this.data = (result as StorymapDataWrapper).storymap;
+                    }
                     this._initOptions();
                 });
         } else if (typeof data === "object") {
-            validateStorymapAndReport(data);
-            if (data.storymap) {
-                this.data = data.storymap;
+            if (isPresentation3Manifest(data)) {
+                this.data = manifestToStorymapData(data);
             } else {
-                console.error("StoryMapJS: data must have a storymap property");
+                const wrapper = data as StorymapDataWrapper;
+                validateStorymapAndReport(wrapper);
+                if (wrapper.storymap) {
+                    this.data = wrapper.storymap;
+                } else {
+                    console.error("StoryMapJS: data must have a storymap property");
+                }
             }
             this._initOptions();
         } else {

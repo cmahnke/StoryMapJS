@@ -1,7 +1,6 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
-import { Browser } from "../../core/Browser";
 
 /*	Media.Image
 	Produces image assets.

@@ -40,6 +40,7 @@ export interface StorymapSlideMedia {
 export interface StorymapSlideBackground {
     url?: string | null;
     color?: string | null;
+    opacity?: number;
 }
 
 export interface StorymapSlide {
