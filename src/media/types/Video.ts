@@ -11,8 +11,6 @@ export default class Video extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        const _api_url = "";
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -28,13 +26,20 @@ export default class Video extends Media {
         const source_item = this._el.source_item as HTMLSourceElement;
 
         // Media Loaded Event
-        media_item.addEventListener("canplay", (e) => {
-            console.log("load event", e);
+        media_item.addEventListener("canplay", () => {
             this.onLoaded();
         });
 
+        // Load Error Event (the source element fires it, not the media element)
+        source_item.addEventListener("error", () => {
+            this.loadErrorDisplay(Language.messages.error + " " + this.options.media_name);
+        });
+
         source_item.src = this.data.url;
-        source_item.type = this._getType(this.data.url, this.data.mediatype.match_str);
+        const media_type = this._getType(this.data.url, this.data.mediatype.match_str);
+        if (media_type) {
+            source_item.type = media_type;
+        }
         media_item.innerHTML += "Your browser doesn't support HTML5 video with " + source_item.type;
         this.player_element = media_item;
     }
@@ -54,6 +59,9 @@ export default class Video extends Media {
     _getType(url: string, reg: string | RegExp) {
         const ext = url.match(reg);
         let type = "video/";
+        if (!ext) {
+            return type;
+        }
         switch (ext[1]) {
             case "mp4":
                 type += "mp4";
@@ -62,7 +70,7 @@ export default class Video extends Media {
                 type += "webm";
                 break;
             default:
-                type = "video";
+                type = "";
                 break;
         }
         return type;

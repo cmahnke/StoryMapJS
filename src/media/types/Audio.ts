@@ -11,8 +11,6 @@ export default class Audio extends Media {
     /*	Load the media
 	================================================== */
     _loadMedia() {
-        const _api_url = "";
-
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -28,14 +26,21 @@ export default class Audio extends Media {
         const source_item = this._el.source_item as HTMLSourceElement;
 
         // Media Loaded Event
-        media_item.addEventListener("canplay", (e) => {
-            console.log("load event", e);
+        media_item.addEventListener("canplay", () => {
             this.onLoaded();
         });
 
+        // Load Error Event (the source element fires it, not the media element)
+        source_item.addEventListener("error", () => {
+            this.loadErrorDisplay(Language.messages.error + " " + this.options.media_name);
+        });
+
         source_item.src = this.data.url;
-        source_item.type = this._getType(this.data.url, this.data.mediatype.match_str);
-        media_item.innerHTML += "Your browser doesn't support HTML5 video with " + source_item.type;
+        const media_type = this._getType(this.data.url, this.data.mediatype.match_str);
+        if (media_type) {
+            source_item.type = media_type;
+        }
+        media_item.innerHTML += "Your browser doesn't support HTML5 audio with " + source_item.type;
         this.player_element = media_item;
     }
 
@@ -54,6 +59,9 @@ export default class Audio extends Media {
     _getType(url: string, reg: string | RegExp) {
         const ext = url.match(reg);
         let type = "audio/";
+        if (!ext) {
+            return type;
+        }
         switch (ext[1]) {
             case "mp3":
                 type += "mpeg";
@@ -65,7 +73,7 @@ export default class Audio extends Media {
                 type += "mp4";
                 break;
             default:
-                type = "audio";
+                type = "";
                 break;
         }
         return type;

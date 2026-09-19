@@ -2,6 +2,7 @@
     "name": "English",
     "lang": "en",
     "messages": {
+        "error": "Error loading",
         "loading": "Loading",
         "wikipedia": "From Wikipedia, the free encyclopedia",
         "start": "Start Exploring"
