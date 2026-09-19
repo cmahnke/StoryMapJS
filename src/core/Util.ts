@@ -127,20 +127,20 @@ export function findArrayNumberByUniqueID(id, array, prop) {
 }
 
 export function unique_ID(size, prefix?) {
-    const getRandomNumber = function (range) {
+    function getRandomNumber(range) {
         return Math.floor(Math.random() * range);
-    };
-    const getRandomChar = function () {
+    }
+    function getRandomChar() {
         const chars = "abcdefghijklmnopqurstuvwxyz";
         return chars.substr(getRandomNumber(32), 1);
-    };
-    const randomID = function (size) {
+    }
+    function randomID(size) {
         let str = "";
         for (let i = 0; i < size; i++) {
             str += getRandomChar();
         }
         return str;
-    };
+    }
     if (prefix) {
         return prefix + "-" + randomID(size);
     } else {
