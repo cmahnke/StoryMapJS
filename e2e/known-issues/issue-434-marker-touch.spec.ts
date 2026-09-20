@@ -32,3 +32,21 @@ test("issue #434: tapping a map marker navigates to its slide", async ({ page })
     );
     expect(current).toBeGreaterThan(0);
 });
+
+test("issue #434: markers have an adequate touch target size", async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 700 });
+    await page.goto(harnessUrl("issue-506-marker-sync"));
+    await waitForStoryMap(page);
+    await page.waitForTimeout(1500);
+
+    const box = await page.evaluate(() => {
+        const marker = document.querySelector("#storymap-embed .vco-map .vco-mapmarker");
+        if (!marker) return null;
+        const r = marker.getBoundingClientRect();
+        return { w: r.width, h: r.height };
+    });
+    expect(box).not.toBeNull();
+    // enlarged invisible tap target: at least 44px in both dimensions
+    expect(box!.w).toBeGreaterThanOrEqual(44);
+    expect(box!.h).toBeGreaterThanOrEqual(44);
+});

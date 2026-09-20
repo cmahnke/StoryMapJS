@@ -15,6 +15,7 @@ import { boundingExtent } from "ol/extent";
 import OverviewMap from "ol/control/OverviewMap";
 import { defaults as interactionDefaults } from "ol/interaction";
 import { applyStyle } from "ol-mapbox-style";
+import IIIFInfo, { type ImageInformationResponse } from "ol/format/IIIFInfo";
 
 import "ol/ol.css";
 
@@ -28,6 +29,14 @@ import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../
 ================================================= */
 
 const MAX_ZOOM = 19;
+
+/**
+ * Zoom ladder for image-space maps (issue #465): rung 0 shows any image fully
+ * zoomed out, finer rungs reach sub-pixel detail. It keeps view zooms,
+ * marker zooms and tile loading on one consistent ladder (tile enqueueing
+ * silently drops tiles otherwise).
+ */
+const IMAGE_RESOLUTIONS = Array.from({ length: 25 }, (_, i) => 2 ** (16 - i));
 
 export default class OpenLayers extends Map {
     declare "_map": OlMap;
@@ -59,7 +68,13 @@ export default class OpenLayers extends Map {
                 center: [0, 0],
                 zoom: 0,
                 minZoom: 0,
-                maxZoom: is_image_map ? 12 : MAX_ZOOM,
+                maxZoom: is_image_map ? IMAGE_RESOLUTIONS.length - 1 : MAX_ZOOM,
+                // image maps live outside the 4326 world: opt out of the
+                // global-projection constraints (they cap resolution at
+                // fit-the-world and clamp the center to [-90, 90]) and use
+                // the image zoom ladder instead of the default one
+                // (issue #465)
+                ...(is_image_map ? { multiWorld: true, resolutions: IMAGE_RESOLUTIONS } : {}),
                 ...user_view_options,
             }),
         });
@@ -202,11 +217,19 @@ export default class OpenLayers extends Map {
                 const iiif_layer: TileLayer = new TileLayer();
                 fetch(this.options.iiif.url)
                     .then((r) => r.json())
-                    .then((info: { width: number; height: number }) => {
+                    .then((info: unknown) => {
+                        // parse the service description into proper tile
+                        // source options (base URL, version, tiling) so tile
+                        // URLs are valid and the grid matches the service
+                        const parsed = new IIIFInfo(
+                            info as ImageInformationResponse,
+                        ).getTileSourceOptions();
+                        const fallback = info as { width: number; height: number };
                         const source = new IIIF({
-                            url: this.options.iiif.url,
+                            ...(parsed ?? {}),
                             projection: "EPSG:4326",
-                            size: [info.width, info.height],
+                            size: [fallback.width, fallback.height],
+                            crossOrigin: "anonymous",
                             attributions: this.options.iiif.attribution || [],
                         });
                         iiif_layer.setSource(source);
@@ -291,11 +314,21 @@ export default class OpenLayers extends Map {
         }
 
         this._tile_layer_mini = this._createTileLayer(this.options.map_type);
+        const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
         this._mini_map = new OverviewMap({
             view: new View({
                 projection: this._map.getView().getProjection(),
                 center: this._map.getView().getCenter(),
                 zoom: this.zoom_min_max.min || 0,
+                // same reasoning as the main image view: no world constraints
+                ...(is_image_map
+                    ? {
+                          multiWorld: true,
+                          resolutions: IMAGE_RESOLUTIONS,
+                          minZoom: 0,
+                          maxZoom: IMAGE_RESOLUTIONS.length - 1,
+                      }
+                    : {}),
             }),
             layers: [this._tile_layer_mini],
             collapseLabel: "\u00bb",
@@ -306,6 +339,58 @@ export default class OpenLayers extends Map {
 
         if (this.bounds_array && this.bounds_array.length) {
             this._fitView(this._mini_map.getOverviewMap(), this.bounds_array);
+        }
+
+        if (this.options.map_type === "iiif" && this.options.map_as_image) {
+            // in image mode there are no geo markers to fit, so show the
+            // whole image instead (issues #465, #355)
+            this._fitMiniMapToImage();
+        }
+    }
+
+    _fitMiniMapToImage(): void {
+        const fit_mini_image = () => {
+            try {
+                const mini_source = this._tile_layer_mini.getSource() as {
+                    getTileGrid?: () => { getExtent(): number[] };
+                } | null;
+                const grid = mini_source?.getTileGrid?.();
+                if (grid) {
+                    const overview_map = this._mini_map.getOverviewMap();
+                    const raw_size = overview_map.getSize();
+                    // the minimap may still be collapsed (no layout size yet)
+                    const size =
+                        raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 150];
+                    overview_map.getView().fit(grid.getExtent(), {
+                        size: size,
+                    });
+                }
+            } catch (e) {
+                console.warn("IIIF minimap fit failed:", e);
+            }
+        };
+        const mini_source = this._tile_layer_mini.getSource();
+        if (mini_source) {
+            if (mini_source.getState() === "ready") {
+                fit_mini_image();
+            } else {
+                mini_source.once("change", () => {
+                    if (mini_source.getState() === "ready") fit_mini_image();
+                });
+            }
+        } else {
+            // the mini layer sets its source asynchronously
+            this._tile_layer_mini.once("change:source", () => {
+                const src = this._tile_layer_mini.getSource();
+                if (!src) return;
+                if (src.getState() === "ready") {
+                    fit_mini_image();
+                } else {
+                    src.once("change", () => {
+                        if (src.getState() === "ready") fit_mini_image();
+                    });
+                }
+            });
         }
     }
 
@@ -620,25 +705,29 @@ export default class OpenLayers extends Map {
                 try {
                     const grid = source.getTileGrid();
                     if (grid) {
-                        const offset = this.options.map_center_offset;
-                        const has_offset = offset && (offset.left !== 0 || offset.top !== 0);
-                        this._map.getView().fit(grid.getExtent(), {
-                            size: this._map.getSize(),
-                            padding: [0, 0, 0, 0],
-                            // an animated fit would be cancelled by the setCenter
-                            // below, so keep it instant in that case
-                            duration: has_offset ? 0 : (duration ?? this._transition_duration),
+                        // compute the fit target directly and animate once (a
+                        // fit() followed by setCenter() would cancel the fit
+                        // animation, issue #465)
+                        const extent = grid.getExtent();
+                        const size = this._map.getSize();
+                        const resolution_x = (extent[2] - extent[0]) / (size[0] || 1);
+                        const resolution_y = (extent[3] - extent[1]) / (size[1] || 1);
+                        const resolution = Math.max(resolution_x, resolution_y);
+                        const view = this._map.getView();
+                        const zoom = view.getZoomForResolution(resolution);
+                        const center_px = [
+                            (extent[0] + extent[2]) / 2,
+                            (extent[1] + extent[3]) / 2,
+                        ];
+                        const projection = view.getProjection();
+                        const location = this._fromViewCoords(center_px, projection);
+                        const offset_location = this._getMapCenterOffset(location, zoom);
+                        view.animate({
+                            center: this._toViewCoords(offset_location),
+                            zoom: zoom,
+                            duration: duration ?? this._transition_duration,
                             easing: this.options.ease as ((t: number) => number) | undefined,
                         });
-                        if (this.options.map_center_offset) {
-                            const view = this._map.getView();
-                            const zoom = view.getZoom();
-                            const center = this._getMapCenterOffset(
-                                { lat: view.getCenter()[1], lon: view.getCenter()[0] },
-                                zoom,
-                            );
-                            view.setCenter(this._toViewCoords(center));
-                        }
                     }
                 } catch (e) {
                     console.warn("IIIF overview fit failed:", e);

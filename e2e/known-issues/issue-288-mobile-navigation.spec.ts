@@ -4,9 +4,9 @@ import { getState, harnessUrl, waitForStoryMap } from "./helpers";
 /**
  * KNOWN ISSUE #288 — "Storymap filling mobile screen prevents navigation past
  * the storymap"
- * PARTIALLY APPLIES: navigation IS possible on a small screen, but only via
- * the small floating slidenav icon — the .vco-slidenav-next container itself
- * collapses to 0x0 on skinny layouts, so the hit target is tiny.
+ * FIXED: on skinny layouts the map viewport uses `touch-action: pan-y`, so
+ * vertical swipes scroll the embedding page instead of being captured as map
+ * pans, while navigation controls keep working.
  */
 test("issue #288: navigation works on a small (mobile) screen", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 720 });
@@ -22,4 +22,19 @@ test("issue #288: navigation works on a small (mobile) screen", async ({ page })
     const state = await getState(page);
     expect(state.errors).toEqual([]);
     expect(state.currentSlide).toBe(1);
+});
+
+test("issue #288: vertical page scrolls pass through the map on skinny layouts", async ({
+    page,
+}) => {
+    await page.setViewportSize({ width: 390, height: 720 });
+    await page.goto(harnessUrl("issue-506-marker-sync"));
+    await waitForStoryMap(page);
+
+    const touchAction = await page.evaluate(() => {
+        const viewport = document.querySelector("#storymap-embed .vco-map .ol-viewport");
+        return viewport ? getComputedStyle(viewport).touchAction : null;
+    });
+    // vertical swipes must reach the page (pan-y), not be captured by the map
+    expect(touchAction).toContain("pan-y");
 });

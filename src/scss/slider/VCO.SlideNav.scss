@@ -42,6 +42,17 @@
     }
 }
 
+.vco-slidenav-next,
+.vco-slidenav-previous {
+    .vco-slidenav-icon {
+        // 44px minimum touch target (issues #288, #434); the negative
+        // margins keep the glyph exactly where it was
+        padding: 10px;
+        min-width: 24px;
+        margin: -10px -10px -5px;
+    }
+}
+
 /* ICONS AND NAVIGATION HOVER AND COLOR
 ================================================== */
 .vco-slidenav-next,

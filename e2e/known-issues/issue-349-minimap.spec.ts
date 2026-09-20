@@ -34,12 +34,12 @@ test("issue #349/#107: the minimap renders collapsed at the top left", async ({ 
     expect(minimap!.withinMap).toBe(true);
 });
 
-test.fail("issue #465/#355: the minimap view is fitted to the image extent", async ({ page }) => {
+test("issue #465/#355: the minimap view is fitted to the image extent", async ({ page }) => {
     await page.goto(harnessUrl("iiif-wellcome"));
     await waitForStoryMap(page);
     await page.waitForTimeout(2500);
 
-    const minimap = await page.evaluate(() => {
+    const minimap = await page.evaluate(async () => {
         const sm = window as unknown as {
             __sm?: {
                 _map?: {
@@ -48,23 +48,28 @@ test.fail("issue #465/#355: the minimap view is fitted to the image extent", asy
                             getView(): { getCenter(): number[]; getZoom(): number };
                         };
                     };
-                    _map?: { getSize(): number[] };
+                    options: {
+                        iiif: { url: string };
+                    };
                 };
             };
         };
         const mini = sm.__sm?._map?._mini_map;
         if (!mini) return null;
-        const view = mini.getOverviewMap().getView();
-        const center = view.getCenter();
-        // the iiif image space extent is [0, 0, width, height] in EPSG:4326
-        return { center, zoom: view.getZoom() };
+        const info = (await fetch(sm.__sm!._map!.options.iiif.url).then((r) => r.json())) as {
+            width: number;
+            height: number;
+        };
+        const center = mini.getOverviewMap().getView().getCenter();
+        return { center, width: info.width, height: info.height };
     });
 
     expect(minimap).not.toBeNull();
-    // the minimap view must be anchored inside the image extent, not at [0,0]
-    expect(minimap!.center).not.toBeNull();
-    expect(minimap!.center![0]).toBeGreaterThan(0);
-    expect(minimap!.center![1]).toBeGreaterThan(0);
+    // the minimap is centered on the image (within 5% of the image dims)
+    expect(Math.abs(minimap!.center![0] - minimap!.width / 2)).toBeLessThan(minimap!.width * 0.05);
+    expect(Math.abs(minimap!.center![1] + minimap!.height / 2)).toBeLessThan(
+        minimap!.height * 0.05,
+    );
 });
 
 test("issue #369: the minimap tracks the main map extent (by design)", async ({ page }) => {

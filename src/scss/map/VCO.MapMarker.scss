@@ -40,6 +40,14 @@ $map-icon-width: 38px;
         text-shadow: rgb(0 0 0 / 66%) 0 2px 5px;
     }
 
+    .vco-mapmarker,
+    .vco-mapmarker-active {
+        // enlarged invisible tap target (issue #434); the negative margins
+        // keep the pin glyph exactly where it was
+        padding: 4px;
+        margin: -4px;
+    }
+
     .vco-mapmarker {
         color: #a5a5a5;
     }

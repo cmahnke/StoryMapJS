@@ -11,26 +11,61 @@ test("issue #418: the iiif overview view fits the whole image", async ({ page })
     await waitForStoryMap(page);
     await page.waitForTimeout(2500);
 
-    const fit = await page.evaluate(() => {
+    const fit = await page.evaluate(async () => {
         const sm = window as unknown as {
             __sm?: {
                 _map?: {
-                    _map?: { getView(): { getZoom(): number; calculateExtent?(): number[] } };
+                    _map?: {
+                        getView(): {
+                            getZoom(): number;
+                            getCenter(): number[];
+                            calculateExtent?(size: number[]): number[];
+                        };
+                        getSize(): number[];
+                    };
+                    options: {
+                        iiif: { url: string };
+                        map_center_offset: { left: number; top: number };
+                    };
                 };
             };
         };
-        const view = sm.__sm?._map?._map?.getView();
-        if (!view) return null;
-        const zoom = view.getZoom();
-        const extent = view.calculateExtent ? view.calculateExtent() : null;
-        return { zoom, extent };
+        const map = sm.__sm?._map;
+        const view = map?._map?.getView();
+        if (!map || !view) return null;
+        const info = (await fetch(map.options.iiif.url).then((r) => r.json())) as {
+            width: number;
+            height: number;
+        };
+        const size = map._map!.getSize();
+        const resolution = Math.max(info.width / size[0], info.height / size[1]);
+        const offset = map.options.map_center_offset;
+        return {
+            width: info.width,
+            height: info.height,
+            expectedZoom: Math.log2(65536 / resolution),
+            expectedCenter: [
+                info.width / 2 - offset.left * resolution,
+                -info.height / 2 + offset.top * resolution,
+            ],
+            actualZoom: view.getZoom(),
+            actualCenter: view.getCenter(),
+            extent: view.calculateExtent ? view.calculateExtent(size) : null,
+        };
     });
 
     expect(fit).not.toBeNull();
-    // overview zoom must be low enough to show the entire image (0..3 range
-    // for full-image fits in EPSG:4326 image space)
-    expect(fit!.zoom).toBeLessThanOrEqual(3);
-    expect(fit!.extent!.length).toBe(4);
+    // the settled zoom matches the fit zoom on the image ladder
+    expect(Math.abs(fit!.actualZoom - fit!.expectedZoom)).toBeLessThan(0.05);
+    // the settled center matches the offset image center (within 2px)
+    expect(Math.abs(fit!.actualCenter[0] - fit!.expectedCenter[0])).toBeLessThan(2);
+    expect(Math.abs(fit!.actualCenter[1] - fit!.expectedCenter[1])).toBeLessThan(2);
+    // the visible extent covers the whole image (1px tolerance for float math)
+    const [x0, y0, x1, y1] = fit!.extent!;
+    expect(x0).toBeLessThanOrEqual(1);
+    expect(y0).toBeLessThanOrEqual(-fit!.height + 1);
+    expect(x1).toBeGreaterThanOrEqual(fit!.width - 1);
+    expect(y1).toBeGreaterThanOrEqual(-1);
 });
 
 /**

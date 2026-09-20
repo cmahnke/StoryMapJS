@@ -82,8 +82,14 @@
 }
 
 /* Mobile, iPhone and skinny
-================================================= */
+================================================== */
 .vco-skinny {
+    // let vertical page scrolls pass through the map instead of being
+    // captured as map pans (issue #288); horizontal drags still pan
+    .vco-map .ol-viewport {
+        touch-action: pan-y;
+    }
+
     .vco-map-attribution {
         font-size: 8px;
 

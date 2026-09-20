@@ -79,7 +79,9 @@ class TextBase {
     }
 
     addDateText(str: string) {
-        this._el.date.innerHTML = str;
+        if (this._el.date) {
+            this._el.date.innerHTML = str;
+        }
     }
 
     /*	Events
@@ -106,8 +108,11 @@ class TextBase {
             this._el.container,
         );
 
-        // Date
-        this._el.date = Dom.create("h3", "vco-headline-date", this._el.content_container);
+        // Date (only rendered when the slide has one; issue #286)
+        if (this.data.date && this.data.date.created_time && this.data.date.created_time !== "") {
+            this._el.date = Dom.create("h3", "vco-headline-date", this._el.content_container);
+            this.addDateText(convertUnixTime(this.data.date.created_time));
+        }
 
         // Headline
         if (this.data.headline !== "") {

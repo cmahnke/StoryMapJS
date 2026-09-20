@@ -96,7 +96,7 @@ export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false
         {
             type: "image",
             name: "Image",
-            match_str: /jpg|jpeg|png|gif/i,
+            match_str: /jpg|jpeg|png|gif|webp/i,
             cls: Image,
         },
         {
