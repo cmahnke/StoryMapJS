@@ -132,17 +132,10 @@ class TextBase {
                 this.data.date.created_time !== ""
             ) {
                 if (this.data.date.created_time.length > 10) {
-                    if (typeof moment !== "undefined") {
-                        text_content +=
-                            "<div class='vco-text-date'>" +
-                            moment(this.data.date.created_time, "YYYY-MM-DD h:mm:ss").fromNow() +
-                            "</div>";
-                    } else {
-                        text_content +=
-                            "<div class='vco-text-date'>" +
-                            convertUnixTime(this.data.date.created_time) +
-                            "</div>";
-                    }
+                    text_content +=
+                        "<div class='vco-text-date'>" +
+                        convertUnixTime(this.data.date.created_time) +
+                        "</div>";
                 }
             }
 
