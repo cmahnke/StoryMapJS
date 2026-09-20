@@ -260,6 +260,14 @@ function loadJS(
     loader.js(urls, callback, obj, context);
 }
 
+/**
+ * Append one or more stylesheets to the document head.
+ *
+ * @param urls - A stylesheet URL or a list of URLs.
+ * @param callback - Invoked when the stylesheets have finished loading.
+ * @param obj - Optional context object passed back to the callback.
+ * @param context - Optional identifier carried through the loader.
+ */
 function loadCSS(
     urls: string | string[],
     callback?: (obj: unknown) => void,

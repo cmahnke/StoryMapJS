@@ -27,6 +27,12 @@ function getLanguage(code: string): Record<string, unknown> {
     return lang;
 }
 
+/**
+ * Switch the active UI language.
+ *
+ * @param code - A locale code for which a locale file exists (e.g. `"en"`).
+ * @returns The language entry that is now active.
+ */
 function setLanguage(code: string): LanguageEntry {
     Language = getLanguage(code);
     return Language;

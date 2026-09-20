@@ -17,6 +17,21 @@ import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOption
 
 type StoryMapListener = (e: unknown) => void;
 
+/**
+ * Interactive StoryMap viewer.
+ *
+ * Renders a storymap JSON document (or a IIIF Presentation 3 manifest) into an
+ * element: an OpenLayers map on one side and a slide slider on the other.
+ *
+ * @example
+ * ```ts
+ * import { StoryMap } from "storymapjs";
+ * // from an inline data object
+ * const map = new StoryMap("embed", { storymap: { ... } }, { start_at_slide: 2 });
+ * // or straight from a source file (storymap JSON or IIIF manifest)
+ * const map2 = new StoryMap(document.getElementById("embed"), "./my-storymap.json");
+ * ```
+ */
 class StoryMapBase {
     declare "_loaded": { storyslider: boolean; map: boolean };
     declare mouseEventToLatLng: (e: unknown) => unknown;
@@ -49,7 +64,18 @@ class StoryMapBase {
 
     /*	Private Methods
 	================================================== */
-    //initialize: function (elem, data, options,listeners) {
+    /**
+     * Create a StoryMap inside the given element.
+     *
+     * @param elem - The container element, or its DOM id.
+     * @param data - Either an inline storymap document (`{ storymap: ... }`),
+     *   an inline IIIF Presentation 3 manifest, or the URL of a source file
+     *   (storymap JSON or IIIF manifest) that is fetched automatically.
+     * @param options - Optional {@link StorymapOptions} overrides (map type,
+     *   lines, fonts, animation, raw OpenLayers options via `map_options`...).
+     * @param listeners - Optional event listeners keyed by event name
+     *   (`change`, `title`, `loaded`, ...) attached on creation.
+     */
     constructor(
         elem: string | HTMLElement,
         data: string | StorymapDataWrapper | Record<string, unknown>,
@@ -194,7 +220,12 @@ class StoryMapBase {
     _initData(data: string | StorymapDataWrapper | Record<string, unknown>) {
         if (typeof data === "string") {
             fetch(data)
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("HTTP " + response.status + " " + response.statusText);
+                    }
+                    return response.json();
+                })
                 .then((result: unknown) => {
                     if (isPresentation3Manifest(result)) {
                         this.data = manifestToStorymapData(result);
@@ -203,6 +234,10 @@ class StoryMapBase {
                         this.data = (result as StorymapDataWrapper).storymap;
                     }
                     this._initOptions();
+                })
+                .catch((err: unknown) => {
+                    console.error("StoryMapJS: could not load storymap data from " + data, err);
+                    this.fire("error", { message: String(err), source: data });
                 });
         } else if (typeof data === "object") {
             if (isPresentation3Manifest(data)) {
@@ -294,6 +329,12 @@ class StoryMapBase {
 
     /*	Navigation
 	================================================== */
+    /**
+     * Navigate to a slide by index.
+     *
+     * @param n - Zero-based slide index; the map animates to the slide's
+     *   marker (or the overview when `n` is 0 for storymaps with one).
+     */
     goTo(n: number) {
         if (n !== this.current_slide) {
             this.current_slide = n;
@@ -302,6 +343,10 @@ class StoryMapBase {
         }
     }
 
+    /**
+     * Re-measure the container and re-layout the map, slider and menubar.
+     * Called automatically on resize (see the `trackResize` option).
+     */
     updateDisplay() {
         if (this.ready) {
             this._updateDisplay();

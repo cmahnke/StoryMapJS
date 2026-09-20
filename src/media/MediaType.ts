@@ -34,6 +34,14 @@ type MediaTypeEntry = Omit<MediaTypeMatch, "match_str"> & {
     match_str: string | RegExp;
 };
 
+/**
+ * Resolve the media handler for a slide's media object: matches the URL (and
+ * optional explicit `type`) against the supported media types — YouTube,
+ * Vimeo, images, audio, video, ...
+ *
+ * @param m - The slide media definition.
+ * @returns The matching media type entry, or `false` for unknown media.
+ */
 export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false {
     let media: MediaTypeEntry | undefined;
     const media_types: MediaTypeEntry[] = [
