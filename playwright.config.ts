@@ -26,6 +26,13 @@ export default defineConfig({
             reuseExistingServer: true,
             timeout: 60_000,
         },
+        {
+            // dev server: the embed page falls back to the source entry here
+            command: "npx vite --port 8500 --strictPort",
+            url: "http://localhost:8500/index.html",
+            reuseExistingServer: true,
+            timeout: 120_000,
+        },
     ],
     reporter: [["list"]],
 });

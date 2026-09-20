@@ -97,29 +97,15 @@ export default class OpenLayers extends Map {
 
         // Create Overall Connection Line
         this._line = this._createLine();
-        this._line.setStyle(
-            new Style({
-                stroke: new Stroke({
-                    color: this.options.line_color_inactive,
-                    width: this.options.line_weight,
-                }),
-            }),
-        );
+        this._line.setStyle(this._lineStyle(this.options.line_color_inactive));
         this._addLineToMap(this._line);
         this._line.setOpacity(this.options.line_opacity);
 
         // Create Active Line
         this._line_active = this._createLine();
-        this._line_active.setStyle(
-            new Style({
-                stroke: new Stroke({
-                    color: this.options.line_color,
-                    width: this.options.line_weight,
-                }),
-            }),
-        );
+        this._line_active.setStyle(this._lineStyle(this.options.line_color));
         this._addLineToMap(this._line_active);
-        this._line.setOpacity(this.options.line_opacity);
+        this._line_active.setOpacity(1);
 
         if (this.options.map_as_image) {
             this._line_active.setVisible(false);
@@ -545,15 +531,28 @@ export default class OpenLayers extends Map {
     /*	Line
 	================================================== */
 
+    /**
+     * Stroke style for the route lines: the dash pattern and line join are
+     * applied at init too, matching the original rendering (the lines are
+     * dashed "5,5" by default, not solid).
+     */
+    _lineStyle(color: string): Style {
+        return new Style({
+            stroke: new Stroke({
+                color: color,
+                width: this.options.line_weight,
+                lineDash: String(this.options.line_dash)
+                    .split(",")
+                    .map((v) => Number(v)),
+                lineJoin: this.options.line_join as CanvasLineJoin,
+            }),
+        });
+    }
+
     _createLine(d?: StorymapSlide): VectorLayer {
         return new VectorLayer({
             source: new VectorSource({ features: [] }),
-            style: new Style({
-                stroke: new Stroke({
-                    color: this.options.line_color,
-                    width: this.options.line_weight,
-                }),
-            }),
+            style: this._lineStyle(this.options.line_color),
         });
     }
 
@@ -927,17 +926,7 @@ export default class OpenLayers extends Map {
                 case "line_opacity":
                 case "line_dash":
                 case "line_join": {
-                    const stroke = (color: string) =>
-                        new Style({
-                            stroke: new Stroke({
-                                color: color,
-                                width: this.options.line_weight,
-                                lineDash: String(this.options.line_dash)
-                                    .split(",")
-                                    .map((v) => Number(v)),
-                                lineJoin: this.options.line_join as CanvasLineJoin,
-                            }),
-                        });
+                    const stroke = (color: string) => this._lineStyle(color);
                     this._line.setStyle(stroke(this.options.line_color_inactive));
                     this._line.setOpacity(this.options.line_opacity);
                     this._line.setVisible(this.options.show_lines);

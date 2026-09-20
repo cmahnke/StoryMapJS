@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="description" content="StoryMapJS Embed">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-touch-fullscreen" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <link rel="stylesheet" href="../css/storymap.css">
@@ -22,7 +23,15 @@
   <div id="storymap-embed"></div>
 
   <script type="module">
-    import { StoryMap } from "../js/storymap.js";
+    let StoryMap;
+    try {
+      // production (and preview): the built bundle next to this page
+      ({ StoryMap } = await import("../js/storymap.js"));
+    } catch {
+      // dev server (npm run dev): dist/ is not served; the source entry
+      // brings the widget styles along as bundled CSS
+      ({ StoryMap } = await import("/src/main.ts"));
+    }
 
     let storymap;
     const urlParams = new URLSearchParams(window.location.search);
