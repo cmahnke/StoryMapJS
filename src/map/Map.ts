@@ -382,7 +382,11 @@ class MapBase {
 
     initialMapLocation(): void {
         if (this._loaded.data && this._loaded.map) {
-            this.goTo(this.options.start_at_slide, true);
+            // don't clobber navigation that already happened while the map was
+            // still loading (the first loadend can arrive late)
+            if (this.current_marker === 0) {
+                this.goTo(this.options.start_at_slide, true);
+            }
             this._initialMapLocation();
         }
     }
@@ -509,7 +513,7 @@ class MapBase {
         return undefined;
     }
 
-    _markerOverview(): void {}
+    _markerOverview(duration?: number): void {}
 
     _initialMapLocation(): void {}
 

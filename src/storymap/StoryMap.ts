@@ -620,12 +620,17 @@ class StoryMapBase {
         if (!this.options.trackResize) {
             return;
         }
-        // Debounce so that continuous resizes don't trigger a layout storm
+        // Leading + trailing debounce: the first resize event re-layouts
+        // immediately (instant feedback), the trailing one settles after the
+        // resize burst ends.
         const onResize = () => {
             if (this._resize_timer) {
                 clearTimeout(this._resize_timer);
+            } else {
+                this.updateDisplay();
             }
             this._resize_timer = setTimeout(() => {
+                this._resize_timer = null;
                 this.updateDisplay();
             }, 200);
         };
@@ -709,10 +714,13 @@ class StoryMapBase {
     _onFullscreenChange() {
         const active = document.fullscreenElement === this._el.container;
         this._menubar.setFullscreenState(active);
-        // re-measure: fullscreen changes the container size
-        if (active) {
-            this.updateDisplay();
-        }
+        // re-measure once the browser has applied the fullscreen layout
+        // (the container resizes asynchronously after the event)
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                this.updateDisplay();
+            });
+        });
     }
 
     _onBackToStart(e?: unknown) {

@@ -607,7 +607,7 @@ export default class OpenLayers extends Map {
         // OpenLayers renders independently; nothing to subscribe for initial location
     }
 
-    _markerOverview(): void {
+    _markerOverview(duration?: number): void {
         // Hide Active Line
         this._line_active.setVisible(false);
 
@@ -627,7 +627,7 @@ export default class OpenLayers extends Map {
                             padding: [0, 0, 0, 0],
                             // an animated fit would be cancelled by the setCenter
                             // below, so keep it instant in that case
-                            duration: has_offset ? 0 : this._transition_duration,
+                            duration: has_offset ? 0 : (duration ?? this._transition_duration),
                             easing: this.options.ease as ((t: number) => number) | undefined,
                         });
                         if (this.options.map_center_offset) {
@@ -678,7 +678,7 @@ export default class OpenLayers extends Map {
                     this._map.getView().animate({
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
-                        duration: this._transition_duration,
+                        duration: duration ?? this._transition_duration,
                         easing: this.options.ease as ((t: number) => number) | undefined,
                     });
                 }
@@ -694,7 +694,7 @@ export default class OpenLayers extends Map {
                     view.animate({
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
-                        duration: this._transition_duration,
+                        duration: duration ?? this._transition_duration,
                         easing: this.options.ease as ((t: number) => number) | undefined,
                     });
                 }
@@ -771,7 +771,7 @@ export default class OpenLayers extends Map {
         }
     }
 
-    _updateMapDisplay(animate?: boolean, d?: number): void {
+    _updateMapDisplay(animate?: boolean, d?: number, instant?: boolean): void {
         if (animate) {
             const duration = d ? d : this.options.duration;
             if (this.timer) {
@@ -779,11 +779,13 @@ export default class OpenLayers extends Map {
             }
 
             this.timer = setTimeout(() => {
-                this._refreshMap();
+                this._refreshMap(false);
             }, duration);
         } else {
             if (!this.timer) {
-                this._refreshMap();
+                // size changes (resize/fullscreen) re-fit instantly so marker
+                // overlays don't chase an animated view
+                this._refreshMap(instant !== false);
             }
         }
 
@@ -792,7 +794,7 @@ export default class OpenLayers extends Map {
         }
     }
 
-    _refreshMap(): void {
+    _refreshMap(instant = false): void {
         if (this._map) {
             if (this.timer) {
                 clearTimeout(this.timer);
@@ -804,13 +806,36 @@ export default class OpenLayers extends Map {
             // Check to see if it's an overview
             const marker = this._markers[this.current_marker];
             if (marker && marker.data.type && marker.data.type === "overview") {
-                this._markerOverview();
+                this._markerOverview(instant ? 0 : undefined);
+                if (instant) {
+                    this._map.renderSync();
+                }
             } else if (marker && marker.data.location) {
-                this._viewTo(marker.data.location, {
-                    zoom: this._getMapZoom(),
-                });
+                if (instant) {
+                    this._setViewInstant(marker.data.location, this._getMapZoom());
+                } else {
+                    this._viewTo(marker.data.location, {
+                        zoom: this._getMapZoom(),
+                    });
+                }
             }
         }
+    }
+
+    /**
+     * Set the view synchronously (resize path): OL's animate() applies its
+     * end state asynchronously which can leave marker overlays rendering
+     * stale positions after a size change.
+     */
+    _setViewInstant(loc: StorymapSlideLocation, zoom: number): void {
+        let _location: LatLngLiteral = { lat: loc.lat, lon: loc.lon };
+        if (this.options.map_center_offset) {
+            _location = this._getMapCenterOffset(_location, zoom);
+        }
+        const view = this._map.getView();
+        view.setZoom(zoom);
+        view.setCenter(this._toViewCoords(_location));
+        this._map.renderSync();
     }
 }
 

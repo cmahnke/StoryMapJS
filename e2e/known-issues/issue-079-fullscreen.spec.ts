@@ -29,6 +29,30 @@ test("issue #79: fullscreen button toggles document fullscreen state", async ({ 
     await expect(page.locator("#storymap-embed:fullscreen")).toHaveCount(0);
 });
 
+test("issue #79: the storymap fills the viewport in fullscreen", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 700 });
+    await page.goto(harnessUrl("issue-506-marker-sync"));
+    await waitForStoryMap(page);
+
+    await page.locator("#storymap-embed .vco-menubar-button:has(.vco-icon-resize-full)").click();
+    await expect(page.locator("#storymap-embed:fullscreen")).toBeVisible();
+
+    // the deferred re-measure (double rAF) must size the layout to the screen
+    await page.waitForTimeout(500);
+    const sized = await page.evaluate(() => {
+        const el = document.querySelector("#storymap-embed");
+        const r = el?.getBoundingClientRect();
+        return {
+            w: Math.round(r?.width ?? 0),
+            h: Math.round(r?.height ?? 0),
+            vw: window.innerWidth,
+            vh: window.innerHeight,
+        };
+    });
+    expect(sized.w).toBe(sized.vw);
+    expect(sized.h).toBe(sized.vh);
+});
+
 test("issue #79: the fullscreen button can be disabled via options", async ({ page }) => {
     await page.goto(harnessUrl("issue-506-marker-sync", { fullscreen: false }));
     await waitForStoryMap(page);
