@@ -7,7 +7,7 @@ import { harnessUrl, waitForStoryMap } from "./helpers";
  * font theme at runtime via the library.
  */
 test("issue #474: a stock font theme loads via the font_css option", async ({ page }) => {
-    await page.goto(harnessUrl("gameofthrones", { font_css: "stock:lustria-lato" }));
+    await page.goto(harnessUrl("katrina", { font_css: "stock:lustria-lato" }));
     await waitForStoryMap(page);
     await page.waitForTimeout(1500);
 
@@ -21,6 +21,6 @@ test("issue #474: a stock font theme loads via the font_css option", async ({ pa
     });
 
     expect(fonts.fontLinks.length).toBeGreaterThan(0);
-    // the gameofthrones fixture uses the lustria-lato theme
+    // the font_css option applies the lustria-lato theme
     expect(fonts.fontLinks.join(" ")).toContain("lustria");
 });

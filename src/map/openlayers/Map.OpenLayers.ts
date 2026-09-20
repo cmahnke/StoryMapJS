@@ -428,14 +428,12 @@ export default class OpenLayers extends Map {
         if (this._map.getView().getProjection().getCode() === "EPSG:4326") {
             return;
         }
-        const real = this._markers.filter((m) => m.data.real_marker && m.data.location?.lon !== undefined);
-        const unwrapped = this._unwrapLongitudes(
-            real.map((m) => m.data.location.lon as number),
+        const real = this._markers.filter(
+            (m) => m.data.real_marker && m.data.location?.lon !== undefined,
         );
+        const unwrapped = this._unwrapLongitudes(real.map((m) => m.data.location.lon as number));
         real.forEach((m, i) => {
-            m._overlay?.setPosition(
-                fromLonLat([unwrapped[i], m.data.location.lat as number]),
-            );
+            m._overlay?.setPosition(fromLonLat([unwrapped[i], m.data.location.lat as number]));
         });
     }
 

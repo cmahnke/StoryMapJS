@@ -1,46 +1,114 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>StoryMapJS Demo</title>
         <meta charset="utf-8" />
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            html,
-            body {
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                margin: 0;
-            }
-            #storymap-embed {
-                width: 100%;
-                height: 100%;
-            }
-        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>StoryMapJS</title>
+        <meta
+            name="description"
+            content="Maps that tell stories. StoryMapJS is a viewer for place-based slide stories, built on OpenLayers."
+        />
+        <link rel="stylesheet" href="./site.css" />
+        <script type="module" src="/src/site/site.ts"></script>
     </head>
 
-    <body>
-        <div id="storymap-embed"></div>
+    <body class="sm-site">
+        <nav class="sm-nav-top">
+            <a class="sm-brand" href="./index.html">StoryMap <span>JS</span></a>
+            <ul>
+                <li><a href="https://github.com/cmahnke/StoryMapJS">GitHub</a></li>
+                <li>
+                    <a href="https://github.com/cmahnke/StoryMapJS/issues">Issues</a>
+                </li>
+            </ul>
+        </nav>
 
-        <script type="module">
-            import { StoryMap } from "./src/main.ts";
+        <header class="sm-header">
+            <h1>StoryMap <span>JS</span></h1>
+            <p class="sm-tagline">Maps that tell stories.</p>
+            <a class="sm-button sm-button-solid" href="#overview">Learn more</a>
+        </header>
 
-            function onStoryMapTitle(e) {
-                document.title = "StoryMapJS: " + e.title;
-            }
+        <nav id="navbar-secondary" class="sm-subnav" aria-label="Page navigation">
+            <div class="sm-subnav-inner">
+                <span class="sm-brand-sm">StoryMap <span>JS</span></span>
+                <ul>
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#examples">Examples</a></li>
+                    <li><a href="./docs/readme.html">README</a></li>
+                    <li>
+                        <a href="./docs/migration.html">Migration guide</a>
+                    </li>
+                    <li><a href="./docs/iiif.html">IIIF docs</a></li>
+                </ul>
+            </div>
+        </nav>
 
-            // The constructor accepts a source file URL directly; it fetches
-            // the storymap JSON (or an IIIF manifest) and validates it
-            window.storymap = new StoryMap(
-                "storymap-embed",
-                "./football.json",
-                {},
-                {
-                    title: onStoryMapTitle,
-                },
-            );
-        </script>
+        <!-- The widget runs in its own document: its CSS can never mix with
+             the page chrome (and vice versa). -->
+        <iframe class="sm-demo-frame" src="./demo.html" title="StoryMapJS demo"></iframe>
+
+        <section id="overview" class="sm-section">
+            <div class="sm-grid">
+                <div>
+                    <h2>Overview</h2>
+                    <p>
+                        StoryMapJS tells stories on the web that highlight the locations of a series
+                        of events. This repository is a TypeScript rewrite of the original Knight
+                        Lab viewer: it renders storymap JSON (and IIIF manifests) on modern web
+                        maps, without the authoring tool.
+                    </p>
+                    <p>
+                        The viewer is published as an ES module and works with plain maps as well as
+                        <em>gigapixel</em> images served over the IIIF Image API.
+                    </p>
+                </div>
+                <div>
+                    <h3>Highlights</h3>
+                    <ul>
+                        <li>
+                            Vanilla ES2022 TypeScript, maps powered by
+                            <a href="https://openlayers.org/">OpenLayers</a>.
+                        </li>
+                        <li>
+                            IIIF Image API support for really big images, from single artworks to
+                            multi-page scans.
+                        </li>
+                        <li>
+                            Validated storymap JSON — the
+                            <a href="https://github.com/cmahnke/StoryMapJS/tree/main/schema"
+                                >JSON schema</a
+                            >
+                            catches broken data before your readers do.
+                        </li>
+                        <li>
+                            Accessibility and dateline fixes, right-to-left locales, and route
+                            distance display.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="examples" class="sm-section sm-section-grey">
+            <div class="sm-section-inner" style="padding: 56px 24px">
+                <h2>Examples</h2>
+                <div class="sm-cards" id="examples-cards">
+                    <!-- Populated by /src/site/site.ts from the fixture list -->
+                </div>
+            </div>
+        </section>
+
+        <footer class="sm-footer">
+            <p>
+                A fork of
+                <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+                rewritten in TypeScript. Original tool by
+                <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a
+                >. Available under the
+                <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a>
+                license.
+            </p>
+        </footer>
     </body>
 </html>

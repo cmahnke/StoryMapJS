@@ -1,59 +1,43 @@
 <!doctype html>
 <html>
     <head>
-        <script
-            crossorigin
-            src="https://unpkg.com/react@16.7.0/umd/react.production.min.js"
-        ></script>
-        <script
-            crossorigin
-            src="https://unpkg.com/react-dom@16.7.0/umd/react-dom.production.min.js"
-        ></script>
-        <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-        <style>
-            div#mapdiv {
-                height: 600px;
-            }
-        </style>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="//cdn.knightlab.com/libs/storymapjs/latest/css/storymap.css" />
-        <script
-            type="text/javascript"
-            src="//cdn.knightlab.com/libs/storymapjs/latest/js/storymap-min.js"
-        ></script>
+        <title>StoryMapJS React example</title>
+        <link rel="stylesheet" href="../../dist/css/storymap.css" />
     </head>
     <body>
-        <div>Content above React container</div>
-        <div id="react-container"></div>
-        <div>Content below React container</div>
+        <div id="root"></div>
 
-        <script type="text/babel">
-            /**
-             * Alternatively: create a React Component and create the StoryMap
-             * object in componentDidMount() and componentDidUpdate() functions.
-             */
-            const storymap_url =
-                "//uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
+        <script type="module">
+            // The fork ships an ES module only (no KLStoryMap global). The
+            // relative paths assume the repository root is served statically
+            // and `npm run build` has produced dist/. React is loaded from
+            // esm.sh so the example stays dependency-free.
+            import { StoryMap } from "../../dist/js/storymap.js";
+            import React from "https://esm.sh/react@18";
+            import { createRoot } from "https://esm.sh/react-dom@18/client";
+
+            const storymap_url = "../../public/examples/katrina.json";
             const storymap_options = {};
 
-            ReactDOM.render(
-                <div>
-                    <p>A React-rendered paragraph above StoryMap</p>
-                    <div id="mapdiv"></div>
-                    <p>A React-rendered paragraph below StoryMap</p>
-                </div>,
-                document.getElementById("react-container"),
-                function () {
-                    var storymap = new KLStoryMap.StoryMap(
-                        "mapdiv",
-                        storymap_url,
-                        storymap_options,
-                    );
-                    window.onresize = function (event) {
-                        storymap.updateDisplay();
-                    };
-                },
-            );
+            function App() {
+                const ref = React.useRef(null);
+
+                React.useEffect(() => {
+                    const storymap = new StoryMap(ref.current, storymap_url, storymap_options);
+                    window.storymap = storymap;
+                    const onResize = () => storymap.updateDisplay();
+                    window.addEventListener("resize", onResize);
+                    return () => window.removeEventListener("resize", onResize);
+                }, []);
+
+                return React.createElement("div", {
+                    ref: ref,
+                    style: { width: "100%", height: "600px" },
+                });
+            }
+
+            createRoot(document.getElementById("root")).render(React.createElement(App));
         </script>
     </body>
 </html>

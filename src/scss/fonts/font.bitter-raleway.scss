@@ -4,7 +4,8 @@
 @use "../Variables" as *;
 @use "font.base" as base;
 @include fontsource.faces(
-    $metadata: bitter.$metadata, $family: "Bitter",
+    $metadata: bitter.$metadata,
+    $family: "Bitter",
     $weights: all,
     $styles: all,
     $subsets: (
@@ -14,7 +15,8 @@
     $formats: woff2
 );
 @include fontsource.faces(
-    $metadata: raleway.$metadata, $family: "Raleway",
+    $metadata: raleway.$metadata,
+    $family: "Raleway",
     $weights: all,
     $styles: all,
     $subsets: (

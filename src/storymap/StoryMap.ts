@@ -704,7 +704,13 @@ class StoryMapBase {
     /** Keep the URL hash in sync with the current slide (#slide-N). */
     _syncHash() {
         try {
-            history.replaceState(null, "", "#slide-" + this.current_slide);
+            // preserve the query string: pages like the embed player carry
+            // their configuration in it (?url=..., ?example=...)
+            history.replaceState(
+                null,
+                "",
+                window.location.pathname + window.location.search + "#slide-" + this.current_slide,
+            );
         } catch {
             // non-browser or sandboxed contexts
         }

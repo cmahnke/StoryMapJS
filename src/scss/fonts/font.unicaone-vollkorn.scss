@@ -14,7 +14,8 @@
     $formats: woff2
 );
 @include fontsource.faces(
-    $metadata: vollkorn.$metadata, $family: "Vollkorn",
+    $metadata: vollkorn.$metadata,
+    $family: "Vollkorn",
     $weights: all,
     $styles: all,
     $subsets: (

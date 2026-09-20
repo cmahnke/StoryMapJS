@@ -5,7 +5,8 @@
 @use "../Variables" as *;
 @use "font.base" as base;
 @include fontsource.faces(
-    $metadata: bitter.$metadata, $family: "Bitter",
+    $metadata: bitter.$metadata,
+    $family: "Bitter",
     $weights: all,
     $styles: all,
     $subsets: (
@@ -15,7 +16,8 @@
     $formats: woff2
 );
 @include fontsource.faces(
-    $metadata: roboto_slab.$metadata, $family: "Roboto Slab",
+    $metadata: roboto_slab.$metadata,
+    $family: "Roboto Slab",
     $weights: all,
     $styles: all,
     $subsets: (
@@ -25,7 +27,8 @@
     $formats: woff2
 );
 @include fontsource.faces(
-    $metadata: open_sans.$metadata, $family: "Open Sans",
+    $metadata: open_sans.$metadata,
+    $family: "Open Sans",
     $weights: all,
     $styles: all,
     $subsets: (

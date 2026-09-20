@@ -1,0 +1,425 @@
+/*
+ * Site chrome for the landing/docs pages (index.html, demo.html, docs/*).
+ *
+ * This stylesheet is deliberately standalone: it shares nothing with the
+ * StoryMap widget styles (which live behind the .vco-* namespace and, on the
+ * landing page, inside the demo iframe). Everything is scoped under .sm-site
+ * so the chrome can never collide with the widget CSS.
+ */
+
+@use "sass:color";
+
+// ---------------------------------------------------------------------------
+// Palette / typography (own look, no external font or framework dependencies)
+// ---------------------------------------------------------------------------
+$sm-color-dark: #26272b;
+$sm-color-darker: #1c1d20;
+$sm-color-accent: #c34528;
+$sm-color-text: #3b3c40;
+$sm-color-muted: #7a7b80;
+$sm-color-bg: #fff;
+$sm-color-bg-grey: #f4f4f2;
+$sm-color-border: #e2e2df;
+$sm-font-stack: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+
+// ---------------------------------------------------------------------------
+// Scope root
+// ---------------------------------------------------------------------------
+.sm-site {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: $sm-font-stack;
+    font-size: 16px;
+    line-height: 1.6;
+    color: $sm-color-text;
+    background-color: $sm-color-bg;
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: inherit;
+    }
+
+    a {
+        color: $sm-color-accent;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    code,
+    pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+        background-color: $sm-color-bg-grey;
+        border-radius: 3px;
+    }
+
+    code {
+        padding: 1px 5px;
+    }
+
+    pre {
+        padding: 12px 16px;
+        overflow-x: auto;
+
+        code {
+            padding: 0;
+            background: none;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Buttons
+    // ---------------------------------------------------------------------
+    .sm-button {
+        display: inline-block;
+        padding: 10px 22px;
+        border: 1px solid $sm-color-accent;
+        border-radius: 4px;
+        color: $sm-color-accent;
+        background-color: transparent;
+        font-size: 0.95em;
+        cursor: pointer;
+
+        &:hover {
+            color: $sm-color-bg;
+            background-color: $sm-color-accent;
+            text-decoration: none;
+        }
+
+        &-solid {
+            color: $sm-color-bg;
+            background-color: $sm-color-accent;
+
+            &:hover {
+                background-color: color.adjust($sm-color-accent, $lightness: -12%);
+            }
+        }
+
+        &-dark {
+            color: $sm-color-bg;
+            border-color: $sm-color-dark;
+            background-color: $sm-color-dark;
+
+            &:hover {
+                background-color: $sm-color-darker;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Top navbar
+    // ---------------------------------------------------------------------
+    .sm-nav-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        background-color: $sm-color-darker;
+
+        .sm-brand {
+            color: $sm-color-bg;
+            font-size: 1.1em;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+
+            span {
+                color: $sm-color-accent;
+            }
+        }
+
+        ul {
+            display: flex;
+            gap: 18px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            a {
+                color: $sm-color-bg;
+                font-size: 0.85em;
+
+                &:hover {
+                    color: $sm-color-accent;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Product header + subnav
+    // ---------------------------------------------------------------------
+    .sm-header {
+        padding: 64px 24px 0;
+        text-align: center;
+        background-color: $sm-color-dark;
+        color: $sm-color-bg;
+
+        h1 {
+            margin: 0;
+            font-size: 3em;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+
+            span {
+                color: $sm-color-accent;
+            }
+        }
+
+        .sm-tagline {
+            margin: 8px 0 24px;
+            font-size: 1.3em;
+            font-weight: 300;
+            color: #b9babe;
+        }
+
+        .sm-button {
+            margin-bottom: 40px;
+        }
+    }
+
+    .sm-subnav {
+        background-color: $sm-color-dark;
+        border-top: 1px solid rgb(255 255 255 / 8%);
+
+        .sm-subnav-inner {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .sm-brand-sm {
+            color: $sm-color-bg;
+            font-size: 0.95em;
+            font-weight: 600;
+
+            span {
+                color: $sm-color-accent;
+            }
+        }
+
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 14px;
+            color: #d4d5d8;
+            font-size: 0.85em;
+
+            &:hover {
+                color: $sm-color-bg;
+                background-color: rgb(255 255 255 / 6%);
+                text-decoration: none;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Sections / layout
+    // ---------------------------------------------------------------------
+    .sm-section {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 56px 24px;
+
+        h2 {
+            margin: 0 0 20px;
+            font-size: 1.9em;
+            font-weight: 700;
+            color: $sm-color-dark;
+        }
+
+        h3 {
+            margin: 0 0 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: $sm-color-dark;
+        }
+
+        p {
+            margin: 0 0 12px;
+        }
+    }
+
+    .sm-section-grey {
+        max-width: none;
+        background-color: $sm-color-bg-grey;
+
+        > .sm-section-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0;
+        }
+    }
+
+    .sm-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+
+        @media (width <= 720px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    // Demo iframe: the widget lives in its own document, so its CSS can never
+    // mix with this chrome.
+    .sm-demo-frame {
+        width: 100%;
+        height: 78vh;
+        border: 0;
+        border-top: 1px solid $sm-color-border;
+        border-bottom: 1px solid $sm-color-border;
+        display: block;
+        background-color: $sm-color-bg-grey;
+    }
+
+    // ---------------------------------------------------------------------
+    // Example cards (Knight Lab #examples look, rebuilt)
+    // ---------------------------------------------------------------------
+    .sm-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+
+        @media (width <= 900px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (width <= 600px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .sm-card {
+        background-color: $sm-color-bg;
+        border: 1px solid $sm-color-border;
+        border-radius: 4px;
+        overflow: hidden;
+        transition: box-shadow 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+
+            .sm-card-title {
+                color: $sm-color-accent;
+            }
+        }
+
+        .sm-card-media {
+            aspect-ratio: 16 / 9;
+            display: block;
+            background-color: $sm-color-dark;
+            background-position: center;
+            background-size: cover;
+        }
+
+        .sm-card-body {
+            padding: 12px 14px;
+
+            .sm-card-title {
+                margin: 0;
+                font-size: 0.95em;
+                font-weight: 600;
+                color: $sm-color-dark;
+            }
+
+            .sm-card-kind {
+                margin: 4px 0 0;
+                font-size: 0.78em;
+                color: $sm-color-muted;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Docs pages (README/migration/IIIF HTML versions)
+    // ---------------------------------------------------------------------
+    .sm-docs {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 48px 24px;
+
+        h1 {
+            margin: 0 0 24px;
+            font-size: 2.2em;
+            color: $sm-color-dark;
+        }
+
+        h2 {
+            margin: 32px 0 12px;
+            padding-top: 16px;
+            border-top: 1px solid $sm-color-border;
+            font-size: 1.5em;
+            color: $sm-color-dark;
+        }
+
+        h3 {
+            margin: 24px 0 8px;
+            font-size: 1.15em;
+            color: $sm-color-dark;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+
+            th,
+            td {
+                padding: 8px 10px;
+                border: 1px solid $sm-color-border;
+                text-align: left;
+            }
+
+            th {
+                background-color: $sm-color-bg-grey;
+            }
+        }
+
+        blockquote {
+            margin: 16px 0;
+            padding: 4px 16px;
+            border-left: 4px solid $sm-color-accent;
+            color: $sm-color-muted;
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Footer
+    // ---------------------------------------------------------------------
+    .sm-footer {
+        padding: 32px 24px;
+        background-color: $sm-color-darker;
+        color: #a9aaae;
+        font-size: 0.82em;
+        text-align: center;
+
+        a {
+            color: #d4d5d8;
+
+            &:hover {
+                color: $sm-color-bg;
+            }
+        }
+
+        p {
+            margin: 4px 0;
+        }
+    }
+}

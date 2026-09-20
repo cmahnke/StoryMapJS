@@ -64,7 +64,9 @@ export default class YouTube extends Media {
         } else if (this.data.url.match("/embed/")) {
             this.media_id.id = this.data.url.split("embed/")[1].split(/[?&]/)[0];
         } else if (this.data.url.match(/v\/|v=|youtu\.be\/|shorts\//)) {
-            this.media_id.id = this.data.url.split(/v\/|v=|youtu\.be\/|shorts\//)[1].split(/[?&]/)[0];
+            this.media_id.id = this.data.url
+                .split(/v\/|v=|youtu\.be\/|shorts\//)[1]
+                .split(/[?&]/)[0];
         } else {
             console.log("YouTube in URL but not a valid video");
         }

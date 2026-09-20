@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Migration guide — StoryMapJS</title>
+        <meta name="description" content="Migration guide — StoryMapJS documentation" />
+        <link rel="stylesheet" href="../site.css" />
+    </head>
+    <body class="sm-site">
+        
+    <nav class="sm-nav-top">
+        <a class="sm-brand" href="../index.html">StoryMap <span>JS</span></a>
+        <ul>
+            <li><a href="https://github.com/cmahnke/StoryMapJS">GitHub</a></li>
+            <li><a href="https://github.com/cmahnke/StoryMapJS/issues">Issues</a></li>
+        </ul>
+    </nav>
+    <nav class="sm-subnav" aria-label="Page navigation">
+        <div class="sm-subnav-inner">
+            <span class="sm-brand-sm">Documentation</span>
+            <ul>
+                <li><a href="../index.html#overview">Overview</a></li>
+                <li><a href="../index.html#examples">Examples</a></li>
+                <li><a href="./readme.html">README</a></li>
+                <li><a href="./migration.html">Migration guide</a></li>
+                <li><a href="./iiif.html">IIIF docs</a></li>
+            </ul>
+        </div>
+    </nav>
+        <main class="sm-docs">
+            <h1>Migrating from the Knight Lab StoryMapJS</h1>
+<p>This guide helps you move from the original Knight Lab StoryMapJS viewer
+(the <code>master</code> branch of this repository, distributed as a webpack UMD bundle
+with a <code>KLStoryMap</code> global) to the rewritten TypeScript/OpenLayers version
+(<code>refactor/vite-typescript</code> branch, ESM only).</p>
+<p>The rendering behavior, markup (<code>vco-*</code> classes), storymap JSON format and the
+<code>new StoryMap(elem, data, options, listeners)</code> constructor signature are
+unchanged, so most stories render identically. What changed is the delivery,
+the map engine and a few removed legacy paths.</p>
+<h2>Bundle and loading</h2>
+<table>
+<thead>
+<tr>
+<th>Knight Lab version (master)</th>
+<th>This version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;script src=&quot;https://cdn.knightlab.com/libs/storymapjs/latest/js/storymap.js&quot;&gt;</code> + <code>new KLStoryMap.StoryMap(...)</code> (UMD global)</td>
+<td><code>npm install</code> + ESM import: <code>import { StoryMap } from &quot;storymapjs&quot;</code></td>
+</tr>
+<tr>
+<td><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;.../css/storymap.css&quot;&gt;</code> loaded manually</td>
+<td>Import the CSS once (<code>import &quot;storymapjs/css/storymap.css&quot;</code> or the stylesheet from <code>dist/css/</code>); font themes load automatically via the <code>font_css</code> option</td>
+</tr>
+<tr>
+<td><code>main.js</code>/<code>main-min.js</code>, <code>compiled/</code></td>
+<td>single ESM bundle <code>dist/js/storymap.js</code></td>
+</tr>
+</tbody></table>
+<p>There is <strong>no UMD/IIFE bundle and no <code>KLStoryMap</code>/<code>VCO</code> global</strong> anymore. For
+script-tag embedding use the ES module:</p>
+<pre><code class="language-html">&lt;script type=&quot;module&quot;&gt;
+    import { StoryMap } from &quot;https://example.com/storymap/js/storymap.js&quot;;
+    const storymap = new StoryMap(&quot;storymap-embed&quot;, &quot;https://example.com/my-storymap.json&quot;);
+&lt;/script&gt;
+</code></pre>
+<h2>Constructor</h2>
+<p>The signature is the same:</p>
+<pre><code class="language-ts">new StoryMap(elem, data, options?, listeners?)
+</code></pre>
+<ul>
+<li><code>elem</code> — container element or DOM id (unchanged).</li>
+<li><code>data</code> — a storymap document (<code>{ storymap: ... }</code>), an <strong>IIIF Presentation 3
+manifest</strong>, or a <strong>URL of the source file</strong>, which is fetched and validated
+automatically (unchanged).</li>
+<li><code>options</code> — see below for removed/changed options.</li>
+<li><code>listeners</code> — event listeners keyed by name (unchanged); <code>storymap.on(...)</code>
+still works.</li>
+</ul>
+<p>New capabilities:</p>
+<ul>
+<li><strong>Resize handling</strong>: the viewer re-layouts automatically when its container
+resizes (disable with <code>trackResize: false</code>).</li>
+<li><strong>Fullscreen</strong>: a menubar fullscreen toggle driven by the standard HTML5
+fullscreen API (<code>fullscreen: false</code> hides the button).</li>
+<li><strong>Raw OpenLayers options</strong>: pass <code>map_options: { controls, interactions, view, element, ... }</code> to configure the underlying OpenLayers map; <code>element</code>
+(HTMLElement or DOM id) replaces the auto-created map container.</li>
+<li><strong>Runtime options</strong>: <code>storymap.setMapOption(name, value)</code> /
+<code>storymap.setMapOptions({...})</code> — e.g. switch <code>map_type</code> or line styling live.</li>
+</ul>
+<h2>Changed options and map types</h2>
+<table>
+<thead>
+<tr>
+<th>Old</th>
+<th>New</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>map_type: &quot;zoomify&quot;</code> (+ <code>options.zoomify</code>)</td>
+<td><code>map_type: &quot;iiif&quot;</code> with <code>options.iiif = { url, attribution }</code> (IIIF Image API 2/3)</td>
+</tr>
+<tr>
+<td><code>map_type: &quot;stamen:toner&quot;</code> etc.</td>
+<td><code>&quot;stamen:*&quot;</code> types are deprecated and remapped: <code>stamen:watercolor</code> → <code>ch-watercolor</code>, others → <code>osm:standard</code></td>
+</tr>
+<tr>
+<td>Stadia/M paid tiles via <code>map_access_token</code></td>
+<td>Recommended: free OpenStreetMap vector styles, e.g. <code>map_type: &quot;osm:bright&quot;</code> (OpenFreeMap), or any style JSON URL</td>
+</tr>
+<tr>
+<td><code>relative_date: true</code> (moment.js)</td>
+<td>removed — format dates in the story text</td>
+</tr>
+<tr>
+<td><code>zoomify</code> block in storymap data</td>
+<td>removed — see <code>iiif</code> above</td>
+</tr>
+<tr>
+<td><code>font_css: &quot;stock:&lt;name&gt;&quot;</code> (or a path)</td>
+<td>unchanged, plus the font files ship via <code>@fontsource-utils/scss</code>; no separate font CSS link needed</td>
+</tr>
+</tbody></table>
+<h2>Removed globals and exports</h2>
+<table>
+<thead>
+<tr>
+<th>Removed</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>KLStoryMap</code> / <code>VCO</code> global (UMD)</td>
+<td>ESM import of the named exports</td>
+</tr>
+<tr>
+<td><code>window.trace</code></td>
+<td><code>console.log</code></td>
+</tr>
+<tr>
+<td><code>getJSON(url, onload)</code></td>
+<td><code>fetch</code> / the StoryMap constructor&#39;s URL loading</td>
+</tr>
+<tr>
+<td><code>StamenTileLayer</code> export</td>
+<td><code>map_type: &quot;osm:bright&quot;</code> or another OpenFreeMap style</td>
+</tr>
+<tr>
+<td><code>ZoomifyTileLayer</code> export</td>
+<td><code>map_type: &quot;iiif&quot;</code></td>
+</tr>
+<tr>
+<td>Knight Lab usage tracking (gtag)</td>
+<td>none — nothing is sent</td>
+</tr>
+</tbody></table>
+<h2>Map engine: Leaflet → OpenLayers</h2>
+<ul>
+<li><code>storymap.map</code> now exposes the <strong>OpenLayers <code>Map</code></strong> instance instead of a
+Leaflet map. Port any direct Leaflet calls (e.g. <code>setView</code>, <code>flyTo</code>) to the
+OpenLayers API (<code>getView().animate(...)</code>, ...).</li>
+<li>Markers are DOM overlays (<code>.vco-mapmarker</code> / <code>.vco-mapmarker-active</code>) like
+before; the mini map is an OpenLayers <code>OverviewMap</code> control.</li>
+<li>New basemap options: vector styles via <code>map_type: &quot;osm:&lt;style&gt;&quot;</code> (OpenFreeMap)
+or a Mapbox style JSON URL.</li>
+</ul>
+<h2>Data and tooling</h2>
+<ul>
+<li>Storymap JSON is now validated against a JSON Schema (<code>schema/storymap.json</code>);
+invalid documents are reported to the console at load time.</li>
+<li>IIIF Presentation 3 manifests are accepted directly as storymap sources.</li>
+<li>The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
+Python authoring server are gone — this is a viewer-only library.</li>
+</ul>
+<h2>Events (unchanged)</h2>
+<p><code>change</code>, <code>change:map</code>-style events, <code>loaded</code>, <code>title</code>, <code>dataloaded</code>,
+<code>fontLoaded</code>, plus the listener map in the constructor — all work as before.</p>
+
+        </main>
+        
+    <footer class="sm-footer">
+        <p>
+            A fork of <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+            rewritten in TypeScript. Original tool by
+            <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
+            Available under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
+        </p>
+    </footer>
+    </body>
+</html>

@@ -2,27 +2,29 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" href="//cdn.knightlab.com/libs/storymapjs/latest/css/storymap.css" />
-        <script
-            type="text/javascript"
-            src="//cdn.knightlab.com/libs/storymapjs/latest/js/storymap-min.js"
-        ></script>
+        <title>StoryMapJS basic example</title>
+        <link rel="stylesheet" href="../../dist/css/storymap.css" />
     </head>
     <body>
         <div id="mapdiv" style="width: 100%; height: 600px"></div>
 
-        <script>
-            var storymap_url =
-                "//uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
-            var storymap_options = {};
+        <script type="module">
+            // The fork ships an ES module only (no KLStoryMap global). The
+            // relative paths assume the repository root is served statically
+            // and `npm run build` has produced dist/.
+            import { StoryMap } from "../../dist/js/storymap.js";
 
-            (function () {
-                var storymap = new KLStoryMap.StoryMap("mapdiv", storymap_url, storymap_options);
+            const storymap_url = "../../public/examples/katrina.json";
+            const storymap_options = {};
 
-                window.onresize = function (event) {
-                    storymap.updateDisplay();
-                };
-            })();
+            const storymap = new StoryMap("mapdiv", storymap_url, storymap_options);
+
+            window.onresize = function () {
+                storymap.updateDisplay();
+            };
+
+            // expose for the e2e tests
+            window.storymap = storymap;
         </script>
     </body>
 </html>

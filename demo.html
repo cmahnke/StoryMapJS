@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>StoryMapJS Remote JSON Demo</title>
+        <title>StoryMapJS Demo</title>
         <meta charset="utf-8" />
         <style>
             * {
@@ -31,19 +31,16 @@
                 document.title = "StoryMapJS: " + e.title;
             }
 
-            const url =
-                "https://uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/aryas-journey/published.json";
-            fetch(url)
-                .then((response) => response.json())
-                .then((data) => {
-                    window.storymap = new StoryMap(
-                        "storymap-embed",
-                        data,
-                        {},
-                        { title: onStoryMapTitle },
-                    );
-                })
-                .catch((error) => console.error("Error loading storymap data:", error));
+            // The constructor accepts a source file URL directly; it fetches
+            // the storymap JSON (or an IIIF manifest) and validates it
+            window.storymap = new StoryMap(
+                "storymap-embed",
+                "./football.json",
+                {},
+                {
+                    title: onStoryMapTitle,
+                },
+            );
         </script>
     </body>
 </html>

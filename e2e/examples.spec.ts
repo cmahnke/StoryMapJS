@@ -4,7 +4,8 @@ import { join } from "node:path";
 
 // Examples that use map_type "zoomify" - removed in favor of IIIF during the
 // migration, so their specs are skipped there. Recorded here as the baseline.
-const ZOOMIFY_EXAMPLES = new Set(["courbet", "gameofthrones", "jansteen", "seurat"]);
+// (gameofthrones and ironmaiden were removed over copyright concerns.)
+const ZOOMIFY_EXAMPLES = new Set(["courbet", "jansteen", "seurat"]);
 
 const exampleNames = readdirSync(join(process.cwd(), "public/examples"))
     .filter((f) => f.endsWith(".json"))
