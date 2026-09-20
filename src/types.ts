@@ -92,6 +92,13 @@ export interface StorymapOptions {
     map_as_image: boolean;
     map_access_token: string;
     map_background_color: string;
+    /**
+     * Raw OpenLayers map configuration. `controls` and `interactions` replace
+     * the StoryMapJS defaults, `view` is merged over the computed default view
+     * and `element` (an HTMLElement or DOM id) replaces the auto-created map
+     * container div.
+     */
+    map_options: StorymapMapOptions;
     map_popup: boolean;
     zoom_distance: number;
     calculate_zoom: boolean;
@@ -135,6 +142,20 @@ export interface AnimationHandle {
 }
 
 // ---------- map ----------
+
+/** OpenLayers passthrough options (see StorymapOptions.map_options) */
+export interface StorymapMapOptions {
+    /** HTMLElement or DOM id that becomes the real map container */
+    element?: HTMLElement | string;
+    /** Merged over the default view configuration */
+    view?: Record<string, unknown>;
+    /** Replaces the default (empty) controls list */
+    controls?: unknown[];
+    /** Replaces the default (empty) interactions list */
+    interactions?: unknown[];
+    /** Any other ol/Map constructor option (layers, pixelRatio, ...) */
+    [key: string]: unknown;
+}
 
 export interface LatLngLiteral {
     lat: number | undefined;

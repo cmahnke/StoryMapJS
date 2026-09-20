@@ -1,5 +1,7 @@
 import OlMap from "ol/Map";
 import View from "ol/View";
+import type { Control } from "ol/control";
+import type { Interaction } from "ol/interaction";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import VectorTileLayer from "ol/layer/VectorTile";
 import { XYZ, OSM, IIIF } from "ol/source";
@@ -41,16 +43,24 @@ export default class OpenLayers extends Map {
     _createMap(): void {
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
 
+        // Caller-supplied OpenLayers options: controls/interactions replace the
+        // defaults, view merges over the computed default, other options pass through
+        const user_map_options = this.options.map_options ?? {};
+        const { element: _element, view: user_view, ...passthrough } = user_map_options;
+        const user_view_options = (user_view ?? {}) as Record<string, unknown>;
+
         this._map = new OlMap({
+            ...passthrough,
             target: this._el.map,
-            controls: [],
-            interactions: [],
+            controls: (user_map_options.controls as Control[]) ?? [],
+            interactions: (user_map_options.interactions as Interaction[]) ?? [],
             view: new View({
                 projection: is_image_map ? "EPSG:4326" : "EPSG:3857",
                 center: [0, 0],
                 zoom: 0,
                 minZoom: 0,
                 maxZoom: is_image_map ? 12 : MAX_ZOOM,
+                ...user_view_options,
             }),
         });
 
@@ -696,6 +706,69 @@ export default class OpenLayers extends Map {
 
     /*	Display
 	================================================== */
+    /**
+     * Re-apply runtime-changed options (driven by StoryMap.setMapOptions).
+     * Only keys with an immediate effect are handled here; everything else is
+     * picked up on the next navigation or layout pass.
+     */
+    applyOptions(keys: string[]): void {
+        for (const key of keys) {
+            switch (key) {
+                case "map_type": {
+                    // Rebuild the tile layer for the new map type
+                    if (this._tile_layer) {
+                        this._map.removeLayer(this._tile_layer);
+                    }
+                    this._tile_layer = this._createTileLayer(this.options.map_type);
+                    this._map.addLayer(this._tile_layer);
+                    this._el.map.style.backgroundColor = this.options.map_background_color;
+                    break;
+                }
+                case "show_lines":
+                case "line_color":
+                case "line_color_inactive":
+                case "line_weight":
+                case "line_opacity":
+                case "line_dash":
+                case "line_join": {
+                    const stroke = (color: string) =>
+                        new Style({
+                            stroke: new Stroke({
+                                color: color,
+                                width: this.options.line_weight,
+                                lineDash: String(this.options.line_dash)
+                                    .split(",")
+                                    .map((v) => Number(v)),
+                                lineJoin: this.options.line_join as CanvasLineJoin,
+                            }),
+                        });
+                    this._line.setStyle(stroke(this.options.line_color_inactive));
+                    this._line.setOpacity(this.options.line_opacity);
+                    this._line.setVisible(this.options.show_lines);
+                    this._line_active.setStyle(stroke(this.options.line_color));
+                    this._line_active.setVisible(this.options.show_lines);
+                    break;
+                }
+                case "map_background_color":
+                    this._el.map.style.backgroundColor = this.options.map_background_color;
+                    break;
+                default:
+                    // map_center_offset, duration, ease, calculate_zoom etc.
+                    // take effect on the next navigation
+                    break;
+            }
+        }
+        // Re-fit the current view in case layer changes altered the rendering
+        if (this._markers.length > 0 && this.current_marker < this._markers.length) {
+            const marker = this._markers[this.current_marker];
+            if (marker.data.type === "overview") {
+                this._markerOverview();
+            } else if (marker.data.location) {
+                this._viewTo(marker.data.location, { duration: 0 });
+            }
+        }
+    }
+
     _updateMapDisplay(animate?: boolean, d?: number): void {
         if (animate) {
             const duration = d ? d : this.options.duration;

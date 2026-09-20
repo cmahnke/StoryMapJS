@@ -608,6 +608,9 @@ class MapBase {
         this._updateMapDisplay(animate, d);
     }
 
+    /** Re-apply runtime-changed options (no-op in the base class) */
+    applyOptions(_keys: string[]): void {}
+
     _initLayout(): void {
         // Create Layout
         this._el.map_mask = Dom.create("div", "vco-map-mask", this._el.container);

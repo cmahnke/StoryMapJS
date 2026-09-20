@@ -39,6 +39,8 @@ class StoryMapBase {
     declare "current_slide": number;
     declare "animator_map": AnimationHandle | null;
     declare "animator_storyslider": AnimationHandle | null;
+    declare "_resize_observer": ResizeObserver | null;
+    declare "_resize_timer": ReturnType<typeof setTimeout> | null;
     declare "fire": EventedInstance["fire"];
     declare "hasEventListeners": EventedInstance["hasEventListeners"];
 
@@ -176,6 +178,8 @@ class StoryMapBase {
         // Animation Objects
         this.animator_map = null;
         this.animator_storyslider = null;
+        this._resize_observer = null;
+        this._resize_timer = null;
 
         // Merge Options -- legacy, in case people still need to pass in
         mergeData(this.options, options);
@@ -302,6 +306,41 @@ class StoryMapBase {
         }
     }
 
+    /**
+     * Change a single map option at runtime and apply its effect immediately.
+     *
+     * Runtime-changeable options: `map_type` (rebuilds the tile layer),
+     * `show_lines`, `line_color`, `line_color_inactive`, `line_weight`,
+     * `line_opacity`, `line_dash`, `line_join`, `line_follows_path`,
+     * `show_history_line` (restyled instantly), `map_center_offset` (applied on
+     * the next navigation), `duration`, `ease`, `calculate_zoom`,
+     * `map_background_color`. All other options only take effect on the next
+     * navigation or require re-creating the StoryMap.
+     */
+    setMapOption(name: string, value: unknown) {
+        this.setMapOptions({ [name]: value } as Partial<StorymapOptions>);
+    }
+
+    /**
+     * Change several map options at runtime (see setMapOption).
+     */
+    setMapOptions(options: Partial<StorymapOptions>) {
+        mergeData(this.options, options);
+        if (this._map && this._map.options) {
+            mergeData(this._map.options, options);
+            this._map.applyOptions(Object.keys(options));
+        } else {
+            for (const key of Object.keys(options)) {
+                (this.options as Record<string, unknown>)[key] = (
+                    options as Record<string, unknown>
+                )[key];
+            }
+        }
+        if (this.ready) {
+            this.updateDisplay();
+        }
+    }
+
     /*	Private Methods
 	================================================== */
 
@@ -312,7 +351,10 @@ class StoryMapBase {
 
         // Create Layout
         this._el.menubar = Dom.create("div", "vco-menubar", this._el.container);
-        this._el.map = Dom.create("div", "vco-map", this._el.container);
+        this._el.map = this._resolveMapElement();
+        if (!this._el.map) {
+            this._el.map = Dom.create("div", "vco-map", this._el.container);
+        }
         this._el.storyslider = Dom.create("div", "vco-storyslider", this._el.container);
 
         // Initial Default Layout
@@ -515,7 +557,52 @@ class StoryMapBase {
         this.fire("dataloaded");
         this._initLayout();
         this._initEvents();
+        this._initResizeHandling();
         this.ready = true;
+    }
+
+    /*  Resize handling
+    ================================================== */
+    _initResizeHandling() {
+        if (!this.options.trackResize) {
+            return;
+        }
+        // Debounce so that continuous resizes don't trigger a layout storm
+        const onResize = () => {
+            if (this._resize_timer) {
+                clearTimeout(this._resize_timer);
+            }
+            this._resize_timer = setTimeout(() => {
+                this.updateDisplay();
+            }, 200);
+        };
+        if (typeof ResizeObserver !== "undefined") {
+            // covers containers resized by their embedding layout
+            this._resize_observer = new ResizeObserver(onResize);
+            this._resize_observer.observe(this._el.container);
+        }
+        window.addEventListener("resize", onResize);
+    }
+
+    /**
+     * Resolve a caller-supplied map element (options.map_options.element).
+     * The passed element is "replaced by the real one": it is adopted as the
+     * map container (given the vco-map class) and moved into place between
+     * the menubar and the story slider.
+     */
+    _resolveMapElement(): HTMLElement | null {
+        const element = this.options.map_options?.element;
+        if (!element) {
+            return null;
+        }
+        const el = typeof element === "string" ? Dom.get(element) : element;
+        if (!el) {
+            console.error("StoryMapJS: map_options.element not found: " + String(element));
+            return null;
+        }
+        el.classList.add("vco-map");
+        this._el.menubar.after(el);
+        return el;
     }
 
     _onTitle(e: unknown) {
