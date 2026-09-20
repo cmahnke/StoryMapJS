@@ -57,6 +57,13 @@
 
     @include user-select(none);
 
+    /* fullscreen: fill the screen and sit above everything else */
+    &:fullscreen {
+        width: 100%;
+        height: 100%;
+        background-color: $color-background;
+    }
+
     *,
     *::before,
     *::after {

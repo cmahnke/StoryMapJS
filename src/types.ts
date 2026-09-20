@@ -80,6 +80,8 @@ export interface StorymapOptions {
     call_to_action: boolean;
     call_to_action_text: string;
     menubar_height: number;
+    /** Show a fullscreen toggle button in the menubar (default: true) */
+    fullscreen: boolean;
     skinny_size: number;
     duration: number;
     ease: unknown;

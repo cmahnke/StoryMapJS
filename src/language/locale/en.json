@@ -13,6 +13,8 @@
         "backtostart": "Back To Beginning",
         "collapse_toggle": "Hide Map",
         "uncollapse_toggle": "Show Map",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Full Screen",
+        "exit_fullscreen": "Exit Full Screen"
     }
 }

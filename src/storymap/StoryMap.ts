@@ -156,6 +156,7 @@ class StoryMapBase {
             call_to_action: false,
             call_to_action_text: "",
             menubar_height: 0,
+            fullscreen: true,
             skinny_size: 650,
             // animation
             duration: 1000,
@@ -456,6 +457,7 @@ class StoryMapBase {
         this._menubar.on("collapse", this._onMenuBarCollapse, this);
         this._menubar.on("back_to_start", this._onBackToStart, this);
         this._menubar.on("overview", this._onOverview, this);
+        this._menubar.on("fullscreen", this._onFullscreenToggle, this);
 
         // StorySlider Events
         this._storyslider.on("change", this._onSlideChange, this);
@@ -463,6 +465,9 @@ class StoryMapBase {
 
         // Map Events
         this._map.on("change", this._onMapChange, this);
+
+        // Fullscreen state
+        document.addEventListener("fullscreenchange", this._onFullscreenChange.bind(this));
     }
 
     // Update View
@@ -685,6 +690,31 @@ class StoryMapBase {
         this._map.markerOverview();
     }
 
+    /**
+     * Toggle the native fullscreen API on the storymap container and keep the
+     * menubar button state in sync.
+     */
+    _onFullscreenToggle(e?: unknown) {
+        if (document.fullscreenElement === this._el.container) {
+            document.exitFullscreen().catch((err: unknown) => {
+                console.error("StoryMapJS: could not exit fullscreen", err);
+            });
+        } else {
+            this._el.container.requestFullscreen().catch((err: unknown) => {
+                console.error("StoryMapJS: could not enter fullscreen", err);
+            });
+        }
+    }
+
+    _onFullscreenChange() {
+        const active = document.fullscreenElement === this._el.container;
+        this._menubar.setFullscreenState(active);
+        // re-measure: fullscreen changes the container size
+        if (active) {
+            this.updateDisplay();
+        }
+    }
+
     _onBackToStart(e?: unknown) {
         this.current_slide = 0;
         this._map.goTo(this.current_slide);
@@ -738,18 +768,16 @@ class StoryMapBase {
 }
 
 export default class StoryMap extends Evented(StoryMapBase) {
-    declare static SCRIPT_PATH: string;
+    /**
+     * The library base path (the directory containing the module).
+     * Derived from `import.meta.url`, which works both for the source module
+     * (src/main.ts) and the built ESM bundle (js/storymap.js).
+     */
+    static SCRIPT_PATH = new URL("../", import.meta.url).href;
 
     constructor(...args: ConstructorParameters<typeof StoryMapBase>) {
         super(...args);
     }
 }
-
-// Calculates the script path and sets it as SCRIPT_PATH on the StoryMap class.
-// import.meta.url works both for the source module (src/main.ts) and the built
-// ESM bundle (js/storymap.js) — no UMD script tag sniffing needed.
-(function (StoryMapClass) {
-    StoryMapClass.SCRIPT_PATH = new URL("../", import.meta.url).href;
-})(StoryMap);
 
 export { StoryMap };

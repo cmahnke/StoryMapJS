@@ -38,6 +38,7 @@ class MenuBarBase {
             container: {},
             button_overview: {},
             button_backtostart: {},
+            button_fullscreen: {},
             button_collapse_toggle: {},
             arrow: {},
             line: {},
@@ -116,6 +117,19 @@ class MenuBarBase {
         }
     }
 
+    /**
+     * Reflect the fullscreen state in the button label/icon.
+     */
+    setFullscreenState(active: boolean): void {
+        const icon = active ? "vco-icon-resize-small" : "vco-icon-resize-full";
+        if (Browser.mobile) {
+            this._el.button_fullscreen.innerHTML = `<span class='${icon}'></span>`;
+        } else {
+            const label = active ? Language.buttons.exit_fullscreen : Language.buttons.fullscreen;
+            this._el.button_fullscreen.innerHTML = `${label} <span class='${icon}'></span>`;
+        }
+    }
+
     /*	Update Display
 	================================================== */
     updateDisplay(w?: number, h?: number, a?: boolean): void {
@@ -131,6 +145,10 @@ class MenuBarBase {
 
     _onButtonBackToStart(e: Event) {
         this.fire("back_to_start", e);
+    }
+
+    _onButtonFullscreen(e: Event) {
+        this.fire("fullscreen", e);
     }
 
     _onButtonCollapseMap(e: Event) {
@@ -174,6 +192,13 @@ class MenuBarBase {
         this._el.button_backtostart = Dom.create("span", "vco-menubar-button", this._el.container);
         DomEvent.addListener(this._el.button_backtostart, "click", this._onButtonBackToStart, this);
 
+        // Fullscreen toggle (hidden via CSS/display when disabled by options)
+        this._el.button_fullscreen = Dom.create("span", "vco-menubar-button", this._el.container);
+        DomEvent.addListener(this._el.button_fullscreen, "click", this._onButtonFullscreen, this);
+        if (this.options.fullscreen === false) {
+            this._el.button_fullscreen.style.display = "none";
+        }
+
         this._el.button_collapse_toggle = Dom.create(
             "span",
             "vco-menubar-button",
@@ -195,12 +220,15 @@ class MenuBarBase {
         if (Browser.mobile) {
             this._el.button_backtostart.innerHTML = "<span class='vco-icon-goback'></span>";
             this._el.button_collapse_toggle.innerHTML = "<span class='vco-icon-arrow-up'></span>";
+            this._el.button_fullscreen.innerHTML = "<span class='vco-icon-resize-full'></span>";
             this._el.container.setAttribute("ontouchstart", " ");
         } else {
             this._el.button_backtostart.innerHTML =
                 Language.buttons.backtostart + " <span class='vco-icon-goback'></span>";
             this._el.button_collapse_toggle.innerHTML =
                 Language.buttons.collapse_toggle + "<span class='vco-icon-arrow-up'></span>";
+            this._el.button_fullscreen.innerHTML =
+                Language.buttons.fullscreen + " <span class='vco-icon-resize-full'></span>";
         }
 
         if (this.options.layout === "landscape") {
