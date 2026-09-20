@@ -1,8 +1,23 @@
 {
-    "name": "StoryMapJS",
+    "name": "@projektemacher/storymapjs",
     "version": "0.9.6",
     "description": "StoryMapJS is a tool for telling stories through the context of places on a map. For more information, see storymap.knightlab.com",
-    "private": "true",
+    "license": "MPL-2.0",
+    "author": "Christian Mahnke <194820+cmahnke@users.noreply.github.com>",
+    "files": [
+        "dist",
+        "schema",
+        "README.md",
+        "CHANGELOG"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cmahnke/StoryMapJS.git"
+    },
+    "bugs": {
+        "url": "https://github.com/cmahnke/StoryMapJS/issues"
+    },
+    "homepage": "https://github.com/cmahnke/StoryMapJS#readme",
     "engines": {
         "node": ">=22"
     },
@@ -75,15 +90,5 @@
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/NUKnightLab/StoryMapJS.git"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/NUKnightLab/StoryMapJS/issues"
-    },
-    "homepage": "https://github.com/NUKnightLab/StoryMapJS#readme"
+    "keywords": []
 }

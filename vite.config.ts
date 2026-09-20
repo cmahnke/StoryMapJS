@@ -8,6 +8,7 @@ export default defineConfig({
     build: {
         outDir: "dist",
         assetsInlineLimit: 0,
+        sourcemap: true,
         lib: {
             entry: "src/main.ts",
             formats: ["es"],

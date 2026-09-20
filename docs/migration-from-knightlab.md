@@ -48,8 +48,10 @@ New capabilities:
 
 - **Resize handling**: the viewer re-layouts automatically when its container
   resizes (disable with `trackResize: false`).
+- **Fullscreen**: a menubar fullscreen toggle driven by the standard HTML5
+  fullscreen API (`fullscreen: false` hides the button).
 - **Raw OpenLayers options**: pass `map_options: { controls, interactions, view,
-element, ... }` to configure the underlying OpenLayers map; `element`
+  element, ... }` to configure the underlying OpenLayers map; `element`
   (HTMLElement or DOM id) replaces the auto-created map container.
 - **Runtime options**: `storymap.setMapOption(name, value)` /
   `storymap.setMapOptions({...})` — e.g. switch `map_type` or line styling live.
