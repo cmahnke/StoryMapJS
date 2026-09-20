@@ -171,6 +171,7 @@ class StoryMapBase {
             map_access_token:
                 "pk.eyJ1IjoibnVrbmlnaHRsYWIiLCJhIjoiczFmd0hPZyJ9.Y_afrZdAjo3u8sz_r8m2Yw", // default
             map_background_color: "#d9d9d9",
+            use_custom_markers: false,
             iiif: {
                 url: "",
                 attribution: "",
@@ -198,9 +199,6 @@ class StoryMapBase {
             language: "en",
         } as StorymapOptions;
 
-        // Current Slide
-        this.current_slide = this.options.start_at_slide;
-
         // Animation Objects
         this.animator_map = null;
         this.animator_storyslider = null;
@@ -209,6 +207,9 @@ class StoryMapBase {
 
         // Merge Options -- legacy, in case people still need to pass in
         mergeData(this.options, options);
+
+        // Current Slide (after the options merge so start_at_slide applies)
+        this.current_slide = this.options.start_at_slide;
 
         this._initData(data);
 

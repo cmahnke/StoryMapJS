@@ -1,0 +1,35 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Audio Video",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Audio slide",
+                    "text": "Should render an audio element."
+                },
+                "media": {
+                    "url": "/examples/assets/tone.mp3",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

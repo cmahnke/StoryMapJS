@@ -20,6 +20,8 @@ for (const name of exampleNames) {
     test(`example: ${name}`, async ({ page }) => {
         const pageErrors = await collectPageErrors(page);
         test.skip(ZOOMIFY_EXAMPLES.has(name), "zoomify removed in favor of IIIF");
+        // known-issue reproduction fixtures are exercised by e2e/known-issues/
+        test.skip(name.startsWith("issue-"), "covered by the known-issues suite");
 
         await page.goto(`/harness.html?example=${encodeURIComponent(name)}`);
 

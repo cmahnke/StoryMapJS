@@ -1,0 +1,78 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "show_lines": false,
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "No lines",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Paris",
+                    "text": "First point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Berlin",
+                    "text": "Second point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 52.52,
+                    "lon": 13.4,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Rome",
+                    "text": "Third point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 41.9,
+                    "lon": 12.49,
+                    "zoom": 6,
+                    "line": true
+                }
+            }
+        ]
+    }
+}

@@ -90,7 +90,7 @@ export default class OpenLayers extends Map {
                 }),
             }),
         );
-        this._map.addLayer(this._line);
+        this._addLineToMap(this._line);
         this._line.setOpacity(this.options.line_opacity);
 
         // Create Active Line
@@ -103,7 +103,7 @@ export default class OpenLayers extends Map {
                 }),
             }),
         );
-        this._map.addLayer(this._line_active);
+        this._addLineToMap(this._line_active);
         this._line.setOpacity(this.options.line_opacity);
 
         if (this.options.map_as_image) {
@@ -435,6 +435,8 @@ export default class OpenLayers extends Map {
     }
 
     _addLineToMap(line: VectorLayer): void {
+        // honor the show_lines option
+        line.setVisible(this.options.show_lines);
         this._map.addLayer(line);
     }
 

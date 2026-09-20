@@ -35,13 +35,22 @@
             const manifest = params.get("manifest");
             const name = manifest !== null ? manifest : params.get("example");
             const base = manifest !== null ? "/examples-iiif/" : "/examples/";
+            // optional inline options overrides for issue-reproduction tests
+            let optionsOverride = {};
+            if (params.get("options")) {
+                try {
+                    optionsOverride = JSON.parse(params.get("options"));
+                } catch (e) {
+                    window.__smErrors.push("harness: bad options param: " + e);
+                }
+            }
 
             fetch(base + name + ".json")
                 .then(function (r) {
                     return r.json();
                 })
                 .then(function (data) {
-                    window.__sm = new StoryMap("storymap-embed", data, {}, {});
+                    window.__sm = new StoryMap("storymap-embed", data, optionsOverride, {});
                     window.__smReady = true;
                 })
                 .catch(function (err) {
