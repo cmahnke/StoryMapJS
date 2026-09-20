@@ -39,6 +39,9 @@ class MenuBarBase {
             button_overview: {},
             button_backtostart: {},
             button_fullscreen: {},
+            progress: {},
+            progress_fill: {},
+            distance: {},
             button_collapse_toggle: {},
             arrow: {},
             line: {},
@@ -130,6 +133,43 @@ class MenuBarBase {
         }
     }
 
+    /**
+     * Update the progress indicator (issue #247); no-op when disabled.
+     */
+    setProgress(current: number, total: number): void {
+        if (!this.options.show_progress || !this._el.progress_fill) {
+            return;
+        }
+        const percent = total > 1 ? Math.round((current / (total - 1)) * 100) : 100;
+        this._el.progress_fill.style.width = percent + "%";
+        this._el.progress.setAttribute("role", "progressbar");
+        this._el.progress.setAttribute("aria-valuenow", String(current + 1));
+        this._el.progress.setAttribute("aria-valuemin", "1");
+        this._el.progress.setAttribute("aria-valuemax", String(total));
+        this._el.progress.setAttribute("aria-label", `${current + 1} / ${total}`);
+    }
+
+    /**
+     * Update the route distance display (issue #341); no-op when disabled or
+     * before the first reading.
+     */
+    setDistance(kilometers?: number): void {
+        if (!this.options.show_distance || !this._el.distance) {
+            return;
+        }
+        if (kilometers == null || !isFinite(kilometers)) {
+            this._el.distance.style.display = "none";
+            return;
+        }
+        this._el.distance.style.display = "";
+        const miles = kilometers * 0.621371;
+        const locale = typeof Language.lang === "string" && Language.lang ? Language.lang : "en";
+        this._el.distance.textContent =
+            kilometers >= 10
+                ? `${Math.round(kilometers).toLocaleString(locale)} km · ${Math.round(miles).toLocaleString("en-US")} mi`
+                : `${kilometers.toFixed(1)} km · ${miles.toFixed(1)} mi`;
+    }
+
     /*	Update Display
 	================================================== */
     updateDisplay(w?: number, h?: number, a?: boolean): void {
@@ -215,6 +255,21 @@ class MenuBarBase {
             this._el.button_overview.innerHTML = Language.buttons.overview;
         } else {
             this._el.button_overview.innerHTML = Language.buttons.map_overview;
+        }
+
+        // Progress indicator (issue #247)
+        if (this.options.show_progress) {
+            this._el.progress = Dom.create("span", "vco-menubar-progress", this._el.container);
+            this._el.progress_fill = Dom.create(
+                "span",
+                "vco-menubar-progress-fill",
+                this._el.progress,
+            );
+        }
+
+        // Route distance display (issue #341)
+        if (this.options.show_distance) {
+            this._el.distance = Dom.create("span", "vco-menubar-distance", this._el.container);
         }
 
         if (Browser.mobile) {

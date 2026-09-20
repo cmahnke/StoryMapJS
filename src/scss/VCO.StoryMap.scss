@@ -142,6 +142,8 @@
 /* Right to Left
 ================================================== */
 .vco-rtl {
+    direction: rtl;
+
     .vco-text-content,
     .vco-text,
     .vco-caption,
@@ -149,5 +151,32 @@
     .vco-headline,
     .vco-media-blockquote {
         text-align: right;
+    }
+
+    // mirror the slider navigation
+    .vco-slidenav-next {
+        right: auto;
+        left: 100px;
+        text-align: left;
+
+        .vco-slidenav-icon {
+            margin-left: 0;
+            margin-right: 100 - 24px;
+        }
+    }
+
+    .vco-slidenav-previous {
+        left: auto;
+        right: 100px;
+        text-align: right;
+
+        .vco-slidenav-icon {
+            margin-right: 0;
+            margin-left: 0;
+        }
+    }
+
+    .vco-marker-label {
+        transform: translateX(50%);
     }
 }

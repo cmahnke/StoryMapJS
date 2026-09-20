@@ -5,6 +5,7 @@
 export interface StorymapSlideText {
     headline?: string;
     text?: string;
+    text_align?: string;
 }
 
 export interface StorymapSlideLocation {
@@ -87,6 +88,18 @@ export interface StorymapOptions {
     ease: unknown;
     dragging: boolean;
     trackResize: boolean;
+    /** Re-fetch the source file on every load, bypassing caches (issue #417) */
+    nocache: boolean;
+    /** Advance slides automatically every N milliseconds; 0 disables (issue #380) */
+    autoplay: number;
+    /** Show a progress bar in the menubar (issue #247) */
+    show_progress: boolean;
+    /** Show the slide headline as a label on the active map marker (issue #243) */
+    marker_labels: boolean;
+    /** Default text alignment for slide text: left, center or right (issue #244) */
+    text_align: "left" | "center" | "right";
+    /** Override the overview fit center (issues #107, #271) */
+    map_overview_center: { lat: number; lon: number } | null;
     map_type: string;
     attribution: string;
     map_mini: boolean;
@@ -94,6 +107,12 @@ export interface StorymapOptions {
     map_as_image: boolean;
     map_access_token: string;
     map_background_color: string;
+    /** Slide text color override, sets --vco-color-text (issue #177) */
+    text_color: string;
+    /** Slide panel background color override (issue #177) */
+    text_background_color: string;
+    /** Show the great-circle route distance in the menubar (issue #341) */
+    show_distance: boolean;
     /**
      * Raw OpenLayers map configuration. `controls` and `interactions` replace
      * the StoryMapJS defaults, `view` is merged over the computed default view

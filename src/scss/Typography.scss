@@ -5,6 +5,11 @@
 .vco-storymap {
     font-family: $font-main;
 
+    // runtime-themable text colors (issue #177); set inline via the
+    // text_color/text_background_color options
+    --vco-color-text: #{$color-text};
+    --vco-color-text-muted: #{color.adjust($color-dark, $lightness: 40%)};
+
     h1,
     h2,
     h3 {
@@ -51,10 +56,10 @@
         font-size: $base-font-size;
 
         // font-family: $font-secondary;
-        color: color.adjust($color-dark, $lightness: 40%);
+        color: var(--vco-color-text-muted);
 
         a {
-            color: color.adjust($color-dark, $lightness: 40%);
+            color: var(--vco-color-text-muted);
             text-decoration: none;
             background-image: linear-gradient(
                 to top,

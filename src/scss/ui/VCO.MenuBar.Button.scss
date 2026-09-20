@@ -66,3 +66,34 @@
         background-color: #fff;
     }
 }
+
+/* Progress indicator (issue #247)
+================================================== */
+.vco-menubar-progress {
+    display: inline-block;
+    width: 80px;
+    height: 6px;
+    margin: 0 12px;
+    vertical-align: middle;
+    background-color: color.adjust($color-background, $lightness: -10%);
+    border-radius: 3px;
+    overflow: hidden;
+
+    .vco-menubar-progress-fill {
+        display: block;
+        height: 100%;
+        width: 0;
+        background-color: $color-theme;
+        border-radius: 3px;
+    }
+}
+
+/* Route distance display (issue #341)
+================================================== */
+.vco-menubar-distance {
+    display: inline-block;
+    margin: 0 12px;
+    vertical-align: middle;
+    font-size: $base-font-size-small;
+    color: $color-dark;
+}

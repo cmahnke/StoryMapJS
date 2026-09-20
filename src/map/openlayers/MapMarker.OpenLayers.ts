@@ -108,6 +108,17 @@ export default class OpenLayersMapMarker extends MapMarker {
                 this._marker.classList.add("vco-mapmarker");
                 this._marker.style.zIndex = "";
             }
+            // place-name label on the active marker (issue #243)
+            const old_label = this._marker.querySelector(".vco-marker-label");
+            if (old_label) {
+                old_label.remove();
+            }
+            if (a && this.options.marker_labels && this.data.text?.headline) {
+                const label = document.createElement("div");
+                label.className = "vco-marker-label";
+                label.textContent = this.data.text.headline;
+                this._marker.appendChild(label);
+            }
             // refresh media icon class
             const icon_el = this._marker.querySelector(".vco-mapmarker-icon");
             if (icon_el) {

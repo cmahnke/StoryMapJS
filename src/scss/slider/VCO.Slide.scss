@@ -44,7 +44,7 @@
     }
 
     .vco-slide-background {
-        background-color: $color-background;
+        background-color: var(--vco-color-text-background, #{$color-background});
         background-repeat: no-repeat;
         background-position: center center;
         background-size: cover;
@@ -284,6 +284,16 @@
             }
         }
     }
+}
+
+/* Text alignment (issue #244)
+================================================== */
+.vco-text-content-container.vco-text-align-center {
+    text-align: center;
+}
+
+.vco-text-content-container.vco-text-align-right {
+    text-align: right;
 }
 
 /* Text Background 

@@ -14,6 +14,9 @@ import GoogleDoc from "./types/GoogleDoc";
 import Slider from "./types/Slider";
 import IFrame from "./types/IFrame";
 import Website from "./types/Website";
+import Facebook from "./types/Facebook";
+import DocumentCloud from "./types/DocumentCloud";
+import Juxtapose from "./types/Juxtapose";
 import { Media } from "./Media";
 import { MediaTypeMatch, StorymapSlideMedia } from "../types";
 
@@ -129,6 +132,24 @@ export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false
             name: "iFrame",
             match_str: "iframe",
             cls: IFrame,
+        },
+        {
+            type: "facebook",
+            name: "Facebook",
+            match_str: "(www.)?facebook.com",
+            cls: Facebook,
+        },
+        {
+            type: "documentcloud",
+            name: "DocumentCloud",
+            match_str: "documentcloud.org/documents/",
+            cls: DocumentCloud,
+        },
+        {
+            type: "juxtapose",
+            name: "Juxtapose",
+            match_str: "juxtapose",
+            cls: Juxtapose,
         },
         {
             type: "blockquote",

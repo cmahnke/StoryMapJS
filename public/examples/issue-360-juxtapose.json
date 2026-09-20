@@ -1,0 +1,35 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Juxtapose embeds",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "JX slider",
+                    "text": "A before/after slider."
+                },
+                "media": {
+                    "url": "https://juxtapose.knightlab.com/frame/?uid=abc123",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

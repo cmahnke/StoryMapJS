@@ -13,5 +13,6 @@
         "collapse_toggle": "Skryť mapu",
         "uncollapse_toggle": "Zobraziť mapu",
         "swipe_to_navigate": "Navigujte potiahnutím prsta<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

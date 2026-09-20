@@ -13,5 +13,6 @@
         "collapse_toggle": "Απόκρυψη χάρτη",
         "uncollapse_toggle": "Εμφάνιση χάρτη",
         "swipe_to_navigate": "Κτυπήστε ελαφρά για περιήγηση<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

@@ -13,5 +13,6 @@
         "collapse_toggle": "Peida kaart",
         "uncollapse_toggle": "Näita kaarti",
         "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

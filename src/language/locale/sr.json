@@ -1,4 +1,4 @@
-﻿{
+{
     "name": "Srpski",
     "lang": "sr",
     "messages": {
@@ -12,5 +12,6 @@
         "collapse_toggle": "Sakrij mapu",
         "uncollapse_toggle": "Prikaži mapu",
         "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

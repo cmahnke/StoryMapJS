@@ -517,6 +517,15 @@ class MapBase {
 
     _initialMapLocation(): void {}
 
+    /**
+     * Great-circle length of the route through all markers in kilometers;
+     * `undefined` when the map cannot compute it or there are fewer than two
+     * markers (issue #341).
+     */
+    getRouteDistance(): number | undefined {
+        return undefined;
+    }
+
     /*	Events
 	================================================== */
     _onMarkerChange(e?: unknown): void {
@@ -633,6 +642,7 @@ class MapBase {
     _initData(): void {
         if (this.data.slides) {
             this._createMarkers(this.data.slides);
+            this._afterCreateMarkers();
             this._resetMarkersActive();
             if (this._markers.length > 0) {
                 this._markers[this.current_marker].active(true);
@@ -641,6 +651,9 @@ class MapBase {
             this._initialMapLocation();
         }
     }
+
+    /** Hook after marker creation (overridden per engine as needed) */
+    _afterCreateMarkers(): void {}
 
     _initEvents(): void {
         this._el.map.addEventListener("wheel", (e) => {

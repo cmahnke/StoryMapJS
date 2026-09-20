@@ -13,5 +13,6 @@
         "collapse_toggle": "Menüyü gizle",
         "uncollapse_toggle": "Menüyü göster",
         "swipe_to_navigate": "Dokun ve kaydır<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

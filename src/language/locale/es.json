@@ -13,5 +13,6 @@
         "collapse_toggle": "ocultar mapa",
         "uncollapse_toggle": "mostrar mapa",
         "swipe_to_navigate": "Deslizar para navegar<br><span class='vco-button'>Entendido</span>"
-    }
+    },
+    "direction": "ltr"
 }

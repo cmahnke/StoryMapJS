@@ -642,6 +642,32 @@ class StorySliderBase {
             this._swipable.on("swipe_right", this._onNavigation, this);
             this._swipable.on("swipe_nodirection", this._onSwipeNoDirection, this);
         }
+
+        // issue #472: keyboard navigation (the container is focusable)
+        this._el.container.setAttribute("tabindex", "0");
+        DomEvent.addListener(this._el.container, "keydown", this._onKeyDown, this);
+    }
+
+    _onKeyDown(e: Event) {
+        const key = (e as KeyboardEvent).key;
+        // don't hijack keys while typing in form fields or media embeds
+        const target = e.target as HTMLElement | null;
+        const tag = target?.tagName?.toLowerCase();
+        if (
+            tag === "input" ||
+            tag === "textarea" ||
+            tag === "select" ||
+            target?.isContentEditable
+        ) {
+            return;
+        }
+        if (key === "ArrowRight" || key === "ArrowDown") {
+            DomEvent.preventDefault(e);
+            this.next();
+        } else if (key === "ArrowLeft" || key === "ArrowUp") {
+            DomEvent.preventDefault(e);
+            this.previous();
+        }
     }
 
     _initData() {

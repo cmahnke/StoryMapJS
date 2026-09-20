@@ -4,11 +4,10 @@ import { harnessUrl, waitForStoryMap } from "./helpers";
 /**
  * KNOWN ISSUE #381 / #144 — "Minimap issues when path crosses International
  * Date Line" / "Crossing the dateline"
- * STILL APPLIES: the fit/line does not handle dateline-crossing marker sets —
- * markers land on opposite map copies (the horizontal spread spans nearly the
- * full viewport). Expected failure until dateline-aware fitting is added.
+ * FIXED: marker sets crossing the dateline are unwrapped for fits, lines and
+ * overlays, so all markers land on the same map copy.
  */
-test.fail("issue #381: markers across the dateline stay on the same map copy", async ({ page }) => {
+test("issue #381: markers across the dateline stay on the same map copy", async ({ page }) => {
     await page.goto(harnessUrl("issue-381-dateline"));
     await waitForStoryMap(page);
     await page.waitForTimeout(2500);

@@ -13,5 +13,6 @@
         "collapse_toggle": "Скрыть карту",
         "uncollapse_toggle": "Показать карту",
         "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

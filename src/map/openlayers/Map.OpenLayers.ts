@@ -419,6 +419,26 @@ export default class OpenLayers extends Map {
         marker.addTo(this._map);
     }
 
+    /**
+     * Position marker overlays on the unwrapped longitude path so they sit on
+     * the same world copy as the fitted view and the line (issue #381).
+     * Image-space coordinates are not degrees and stay untouched.
+     */
+    _afterCreateMarkers(): void {
+        if (this._map.getView().getProjection().getCode() === "EPSG:4326") {
+            return;
+        }
+        const real = this._markers.filter((m) => m.data.real_marker && m.data.location?.lon !== undefined);
+        const unwrapped = this._unwrapLongitudes(
+            real.map((m) => m.data.location.lon as number),
+        );
+        real.forEach((m, i) => {
+            m._overlay?.setPosition(
+                fromLonLat([unwrapped[i], m.data.location.lat as number]),
+            );
+        });
+    }
+
     _removeMarker(marker: OpenLayersMapMarker): void {
         if (marker && marker.data.real_marker) {
             marker._removeFrom(this._map);
@@ -437,7 +457,27 @@ export default class OpenLayers extends Map {
                 ]);
             }
         }
-        return coords;
+        // unwrap dateline crossings so fits don't span the whole globe
+        // (issue #381)
+        const lons = this._unwrapLongitudes(coords.map((c) => c[0] as number));
+        return coords.map((c, i) => [lons[i], c[1]]);
+    }
+
+    /**
+     * Normalize a longitude sequence so consecutive values differ by at most
+     * 180 degrees: markers keep their raw coordinates (OpenLayers wraps the
+     * display), but fits and lines use the unwrapped path (issue #381).
+     */
+    _unwrapLongitudes(lons: number[]): number[] {
+        if (lons.length === 0) return [];
+        const out = [lons[0]];
+        for (let i = 1; i < lons.length; i++) {
+            let lon = lons[i];
+            while (lon - out[i - 1] > 180) lon -= 360;
+            while (lon - out[i - 1] < -180) lon += 360;
+            out.push(lon);
+        }
+        return out;
     }
 
     _markerCoordsToViewCoords(coords: number[][]): number[][] {
@@ -534,7 +574,16 @@ export default class OpenLayers extends Map {
             source.addFeature(feature);
         }
         const coords = feature.getGeometry().getCoordinates();
-        coords.push(this._toViewCoords({ lat: d.location.lat, lon: d.location.lon }));
+        let lon = d.location.lon;
+        // unwrap dateline crossings against the previous point (issue #381).
+        // NB: read the previous longitude straight from meters — toLonLat()
+        // wraps into [-180, 180] and would collapse already-unwrapped values.
+        if (coords.length > 0 && lon !== undefined) {
+            const last_lon = coords[coords.length - 1][0] / 111319.49079327358;
+            while (lon - last_lon > 180) lon -= 360;
+            while (lon - last_lon < -180) lon += 360;
+        }
+        coords.push(this._toViewCoords({ lat: d.location.lat, lon }));
         feature.getGeometry().setCoordinates(coords);
     }
 
@@ -544,10 +593,12 @@ export default class OpenLayers extends Map {
             const lon = d.location ? d.location.lon : d.lon;
             return [lon, lat];
         });
+        const lons = this._unwrapLongitudes(pts.map((p) => p[0] as number));
+        const unwrapped = pts.map((p, i) => [lons[i], p[1]]);
         const source = line.getSource();
         source.clear();
         source.addFeature(
-            new Feature({ geometry: new LineString(this._markerCoordsToViewCoords(pts)) }),
+            new Feature({ geometry: new LineString(this._markerCoordsToViewCoords(unwrapped)) }),
         );
     }
 
@@ -661,8 +712,10 @@ export default class OpenLayers extends Map {
 
     _fromViewCoords(coord: number[], projection: Projection): LatLngLiteral {
         if (projection.getCode() === "EPSG:4326") return { lat: coord[1], lon: coord[0] };
+        // linear lon inversion without dateline wrapping (issue #381);
+        // lat uses the exact mercator inverse (6378137 = the 3857 sphere radius)
         const c = toLonLat(coord, projection);
-        return { lat: c[1], lon: c[0] };
+        return { lat: c[1], lon: (coord[0] / 6378137) * (180 / Math.PI) };
     }
 
     _getBoundsZoom(
@@ -692,6 +745,32 @@ export default class OpenLayers extends Map {
         // OpenLayers renders independently; nothing to subscribe for initial location
     }
 
+    /**
+     * Great-circle (haversine) length of the route through all markers in
+     * kilometers (issue #341).
+     */
+    getRouteDistance(): number | undefined {
+        const coords = this._markers
+            .map((m) => m.location())
+            .filter((l): l is LatLngLiteral => !!l && isFinite(l.lat) && isFinite(l.lon));
+        if (coords.length < 2) {
+            return undefined;
+        }
+        const R = 6371;
+        let total = 0;
+        for (let i = 1; i < coords.length; i++) {
+            const d_lat = ((coords[i].lat - coords[i - 1].lat) * Math.PI) / 180;
+            const d_lon = ((coords[i].lon - coords[i - 1].lon) * Math.PI) / 180;
+            const a =
+                Math.sin(d_lat / 2) ** 2 +
+                Math.cos((coords[i - 1].lat * Math.PI) / 180) *
+                    Math.cos((coords[i].lat * Math.PI) / 180) *
+                    Math.sin(d_lon / 2) ** 2;
+            total += 2 * R * Math.asin(Math.sqrt(a));
+        }
+        return total;
+    }
+
     _markerOverview(duration?: number): void {
         // Hide Active Line
         this._line_active.setVisible(false);
@@ -715,10 +794,13 @@ export default class OpenLayers extends Map {
                         const resolution = Math.max(resolution_x, resolution_y);
                         const view = this._map.getView();
                         const zoom = view.getZoomForResolution(resolution);
-                        const center_px = [
-                            (extent[0] + extent[2]) / 2,
-                            (extent[1] + extent[3]) / 2,
-                        ];
+                        const overview_center = this.options.map_overview_center;
+                        const center_px = overview_center
+                            ? this._toViewCoords({
+                                  lat: overview_center.lat,
+                                  lon: overview_center.lon,
+                              })
+                            : [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
                         const projection = view.getProjection();
                         const location = this._fromViewCoords(center_px, projection);
                         const offset_location = this._getMapCenterOffset(location, zoom);
@@ -744,7 +826,32 @@ export default class OpenLayers extends Map {
         } else {
             this.bounds_array = this._getAllMarkersBounds(this._markers);
 
-            if (
+            // user-selected overview centerpoint (issues #107, #271): fit the
+            // zoom to the markers but center on the configured location
+            const overview_center = this.options.map_overview_center;
+            if (overview_center && this.bounds_array && this.bounds_array.length) {
+                const view_coords = this._markerCoordsToViewCoords(this.bounds_array);
+                const extent = boundingExtent(view_coords);
+                const size = this._map.getSize();
+                const resolution = Math.max(
+                    (extent[2] - extent[0]) / (size[0] || 1),
+                    (extent[3] - extent[1]) / (size[1] || 1),
+                );
+                const zoom = Math.max(
+                    0,
+                    Math.round(this._map.getView().getZoomForResolution(resolution)) - 1,
+                );
+                const offset_location = this._getMapCenterOffset(
+                    { lat: overview_center.lat, lon: overview_center.lon },
+                    zoom,
+                );
+                this._map.getView().animate({
+                    center: this._toViewCoords(offset_location),
+                    zoom: zoom,
+                    duration: duration ?? this._transition_duration,
+                    easing: this.options.ease as ((t: number) => number) | undefined,
+                });
+            } else if (
                 this.options.map_center_offset &&
                 (this.options.map_center_offset.left !== 0 ||
                     this.options.map_center_offset.top !== 0)

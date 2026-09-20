@@ -13,5 +13,6 @@
         "collapse_toggle": "összecsuk",
         "uncollapse_toggle": "kinyit",
         "swipe_to_navigate": "Húzd el a navigációhoz<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

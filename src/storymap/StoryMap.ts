@@ -4,7 +4,7 @@ import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
 import Dom from "../dom/Dom";
 import Ease from "../animation/Ease";
-import { setLanguage } from "../language/Language";
+import { setLanguage, Language } from "../language/Language";
 import { Evented, type EventedInstance } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
@@ -54,6 +54,9 @@ class StoryMapBase {
     declare "current_slide": number;
     declare "animator_map": AnimationHandle | null;
     declare "animator_storyslider": AnimationHandle | null;
+    declare "_autoplay_timer": ReturnType<typeof setTimeout> | null;
+    declare "_autoplay_stopped": boolean;
+    declare "_hash_initialized": boolean;
     declare "_resize_observer": ResizeObserver | null;
     declare "_resize_timer": ReturnType<typeof setTimeout> | null;
     declare "fire": EventedInstance["fire"];
@@ -164,6 +167,12 @@ class StoryMapBase {
             // interaction
             dragging: true,
             trackResize: true,
+            nocache: false,
+            autoplay: 0,
+            show_progress: false,
+            marker_labels: false,
+            text_align: "left",
+            map_overview_center: null,
             map_type: "", // "osm:standard",
             attribution: "",
             map_mini: true,
@@ -172,6 +181,9 @@ class StoryMapBase {
             map_access_token:
                 "pk.eyJ1IjoibnVrbmlnaHRsYWIiLCJhIjoiczFmd0hPZyJ9.Y_afrZdAjo3u8sz_r8m2Yw", // default
             map_background_color: "#d9d9d9",
+            text_color: "",
+            text_background_color: "",
+            show_distance: false,
             use_custom_markers: false,
             iiif: {
                 url: "",
@@ -205,6 +217,9 @@ class StoryMapBase {
         this.animator_storyslider = null;
         this._resize_observer = null;
         this._resize_timer = null;
+        this._autoplay_timer = null;
+        this._autoplay_stopped = false;
+        this._hash_initialized = false;
 
         // Merge Options -- legacy, in case people still need to pass in
         mergeData(this.options, options);
@@ -221,7 +236,12 @@ class StoryMapBase {
 	================================================== */
     _initData(data: string | StorymapDataWrapper | Record<string, unknown>) {
         if (typeof data === "string") {
-            fetch(data)
+            // issue #417: optional cache-busting re-fetch of the source file
+            const url =
+                this.options.nocache === true
+                    ? data + (data.includes("?") ? "&" : "?") + "_=" + Date.now()
+                    : data;
+            fetch(url)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("HTTP " + response.status + " " + response.statusText);
@@ -302,6 +322,8 @@ class StoryMapBase {
 
     _loadLanguage() {
         setLanguage(this.options.language);
+        // the resolved locale decides the layout direction (issues #211, #245)
+        this.options.language = Language as unknown as string;
         this._loadFontCss();
         this._onDataLoaded();
     }
@@ -342,6 +364,10 @@ class StoryMapBase {
             this.current_slide = n;
             this._storyslider.goTo(this.current_slide);
             this._map.goTo(this.current_slide);
+            // programmatic navigation bypasses the change-event guards
+            this._syncHash();
+            this._scheduleAutoplay();
+            this._updateProgress();
         }
     }
 
@@ -386,6 +412,16 @@ class StoryMapBase {
             }
         }
         if (this.ready) {
+            // text color theming follows runtime option changes (issue #177)
+            if (this.options.text_color) {
+                this._el.container.style.setProperty("--vco-color-text", this.options.text_color);
+            }
+            if (this.options.text_background_color) {
+                this._el.container.style.setProperty(
+                    "--vco-color-text-background",
+                    this.options.text_background_color,
+                );
+            }
             this.updateDisplay();
         }
     }
@@ -397,6 +433,18 @@ class StoryMapBase {
     _initLayout() {
         this._el.container.className += " vco-storymap";
         this.options.base_class = this._el.container.className;
+
+        // Text color theming (issue #177): expose the text colors as CSS
+        // custom properties consumed by the slide typography
+        if (this.options.text_color) {
+            this._el.container.style.setProperty("--vco-color-text", this.options.text_color);
+        }
+        if (this.options.text_background_color) {
+            this._el.container.style.setProperty(
+                "--vco-color-text-background",
+                this.options.text_background_color,
+            );
+        }
 
         // Create Layout
         this._el.menubar = Dom.create("div", "vco-menubar", this._el.container);
@@ -612,6 +660,66 @@ class StoryMapBase {
         this._initEvents();
         this._initResizeHandling();
         this.ready = true;
+        this._startAutoplay();
+    }
+
+    /*  Autoplay (issue #380) and hash bookmarks (issue #146)
+    ================================================== */
+    _startAutoplay() {
+        this._stopAutoplay();
+        this._autoplay_stopped = false;
+        if (this.options.autoplay > 0) {
+            // any user interaction stops autoplay permanently
+            const stop = () => {
+                this._autoplay_stopped = true;
+                this._stopAutoplay();
+            };
+            this._el.container.addEventListener("pointerdown", stop, { once: true });
+            this._el.container.addEventListener("keydown", stop, { once: true });
+            this._el.container.addEventListener("touchstart", stop, { once: true });
+            this._scheduleAutoplay();
+        }
+    }
+
+    _scheduleAutoplay() {
+        this._stopAutoplay();
+        if (this.options.autoplay > 0 && !this._autoplay_stopped) {
+            this._autoplay_timer = setTimeout(() => {
+                this._autoplay_timer = null;
+                if (this.current_slide + 1 < this.data.slides.length) {
+                    this.goTo(this.current_slide + 1);
+                    this._scheduleAutoplay();
+                }
+            }, this.options.autoplay);
+        }
+    }
+
+    _stopAutoplay() {
+        if (this._autoplay_timer) {
+            clearTimeout(this._autoplay_timer);
+            this._autoplay_timer = null;
+        }
+    }
+
+    /** Keep the URL hash in sync with the current slide (#slide-N). */
+    _syncHash() {
+        try {
+            history.replaceState(null, "", "#slide-" + this.current_slide);
+        } catch {
+            // non-browser or sandboxed contexts
+        }
+    }
+
+    /** A #slide-N hash deep-links the storymap (applied on load + hashchange). */
+    _applyHashSlide(): boolean {
+        const match = /^#slide-(\d+)$/.exec(window.location.hash);
+        if (!match) return false;
+        const n = parseInt(match[1], 10);
+        if (n >= 0 && n < this.data.slides.length && n !== this.current_slide) {
+            this.goTo(n);
+            return true;
+        }
+        return false;
     }
 
     /*  Resize handling
@@ -680,6 +788,9 @@ class StoryMapBase {
             this.current_slide = e.current_slide;
             this._map.goTo(this.current_slide);
             this.fire("change", { current_slide: this.current_slide }, this);
+            this._syncHash();
+            this._scheduleAutoplay();
+            this._updateProgress();
         }
     }
 
@@ -688,6 +799,15 @@ class StoryMapBase {
             this.current_slide = e.current_marker;
             this._storyslider.goTo(this.current_slide);
             this.fire("change", { current_slide: this.current_slide }, this);
+            this._syncHash();
+            this._scheduleAutoplay();
+            this._updateProgress();
+        }
+    }
+
+    _updateProgress() {
+        if (this.options.show_progress && this._menubar) {
+            this._menubar.setProgress(this.current_slide, this.data.slides.length);
         }
     }
 
@@ -768,9 +888,31 @@ class StoryMapBase {
         this._onLoaded();
     }
 
+    /**
+     * Compute and display the great-circle distance of the marker route
+     * (issue #341); hidden when `show_distance` is off.
+     */
+    _updateDistance() {
+        if (!this.options.show_distance) {
+            return;
+        }
+        const km = this._map.getRouteDistance();
+        this._menubar.setDistance(km);
+    }
+
     _onLoaded() {
         if (this._loaded.storyslider && this._loaded.map) {
             this.fire("loaded", this.data);
+            if (!this._hash_initialized) {
+                this._hash_initialized = true;
+                // a #slide-N hash deep-links the initial slide (issue #146)
+                // and keeps working through the browser back/forward buttons
+                this._applyHashSlide();
+                window.addEventListener("hashchange", () => this._applyHashSlide());
+                this._syncHash();
+            }
+            this._updateProgress();
+            this._updateDistance();
         }
     }
 }

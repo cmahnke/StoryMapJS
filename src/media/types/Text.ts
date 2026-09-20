@@ -6,11 +6,13 @@ interface TextData {
     uniqueid?: string | null;
     headline?: string;
     text?: string;
+    text_align?: string;
     date?: { created_time?: string; [key: string]: unknown } | null;
 }
 
 interface TextOptions {
     title?: boolean;
+    text_align?: string;
 }
 
 class TextBase {
@@ -107,6 +109,16 @@ class TextBase {
             "vco-text-content-container",
             this._el.container,
         );
+
+        // Text alignment: per-slide override wins, then the storymap option
+        // (issue #244)
+        const align =
+            (this.data.text_align as string | undefined) ??
+            (this.options.text_align as string | undefined) ??
+            "left";
+        if (align === "center" || align === "right") {
+            this._el.content_container.classList.add("vco-text-align-" + align);
+        }
 
         // Date (only rendered when the slide has one; issue #286)
         if (this.data.date && this.data.date.created_time && this.data.date.created_time !== "") {

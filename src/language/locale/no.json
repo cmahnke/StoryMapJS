@@ -13,5 +13,6 @@
         "collapse_toggle": "Skjul kartet",
         "uncollapse_toggle": "Vis kartet",
         "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
-    }
+    },
+    "direction": "ltr"
 }

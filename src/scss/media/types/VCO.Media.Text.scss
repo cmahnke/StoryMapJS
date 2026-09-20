@@ -16,16 +16,16 @@
 
     // float:left;
     text-shadow: none;
-    color: $color-text;
+    color: var(--vco-color-text, #{$color-text});
 
     p {
-        color: $color-text;
+        color: var(--vco-color-text, #{$color-text});
     }
 
     h2.vco-headline-title,
     h2.vco-headline {
         margin-top: 0;
-        color: $color-header-text;
+        color: var(--vco-color-text, #{$color-header-text});
     }
 
     .vco-headline-date,

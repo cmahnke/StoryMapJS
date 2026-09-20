@@ -1,0 +1,44 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Route distance",
+                    "text": "Text color theming."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Second slide",
+                    "text": "More text."
+                },
+                "location": {
+                    "lat": 50.0,
+                    "lon": 10.0
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Third slide",
+                    "text": "Even more text."
+                },
+                "location": {
+                    "lat": 55.0,
+                    "lon": 10.0
+                }
+            }
+        ]
+    }
+}

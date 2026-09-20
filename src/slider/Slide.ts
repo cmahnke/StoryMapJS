@@ -290,7 +290,10 @@ class SlideBase {
 
         // Create Text
         if (this.has.text || this.has.headline) {
-            this._text = new Text(this.data.text, { title: this.has.title });
+            this._text = new Text(this.data.text, {
+                title: this.has.title,
+                text_align: this.options.text_align as string | undefined,
+            });
         }
 
         // Add to DOM

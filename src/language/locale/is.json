@@ -13,5 +13,6 @@
         "collapse_toggle": "Fela kortið",
         "uncollapse_toggle": "Sýna kortið",
         "swipe_to_navigate": "Strjúktu fyrir valmynd<br><span class='vco-button'>Allt í lagi</span>"
-    }
+    },
+    "direction": "ltr"
 }
