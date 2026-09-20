@@ -36,41 +36,34 @@
     let storymap;
     const urlParams = new URLSearchParams(window.location.search);
 
-    function onStoryMapTitle(e) {
-      document.title = "StoryMapJS: " + e.title;
-    }
+    const getStartSlide = () =>
+        urlParams.has("start_at_slide") ? parseInt(urlParams.get("start_at_slide"), 10) : 0;
 
-    function getStartSlide() {
-      var slide = 0;
-      if (urlParams.has('start_at_slide')) {
-        slide = parseInt(urlParams.get('start_at_slide'), 10);
-      }
-      return slide;
-    }
+    const onStoryMapTitle = (e) => {
+        document.title = "StoryMapJS: " + e.title;
+    };
 
-    function buildStoryMap(data) {
-        if (!data || !data.storymap) { return; }
-        const options = {
-            start_at_slide: getStartSlide()
-        };
+    const buildStoryMap = (data) => {
+        if (!data || !data.storymap) {
+            return;
+        }
+        const options = { start_at_slide: getStartSlide() };
         // font theme loading is handled by the library (data.font_css / stock:default)
-        storymap = new StoryMap('storymap-embed', data, options, {
-            title: onStoryMapTitle
+        storymap = new StoryMap("storymap-embed", data, options, {
+            title: onStoryMapTitle,
         });
-    }
+    };
 
-    (function() {
-        let storymap_url = urlParams.get('url');
-        // resolve the url parameter against the SITE ROOT (the directory
-        // containing embed/), not against embed/ — works with relative
-        // ("examples/katrina.json"), root-relative ("/examples/…") and full
-        // URLs, in dev, preview and GitHub Pages project subpaths
-        const siteRoot = new URL('..', window.location.href);
-        storymap_url = new URL(storymap_url, siteRoot).href;
-        fetch(storymap_url)
-            .then(response => response.json())
-            .then(data => buildStoryMap(data));
-    })();
+    // resolve the url parameter against the SITE ROOT (the directory
+    // containing embed/), not against embed/ — works with relative
+    // ("examples/katrina.json"), root-relative ("/examples/…") and full
+    // URLs, in dev, preview and GitHub Pages project subpaths
+    const siteRoot = new URL("..", window.location.href);
+    const storymapUrl = new URL(urlParams.get("url"), siteRoot).href;
+
+    fetch(storymapUrl)
+        .then((response) => response.json())
+        .then((data) => buildStoryMap(data));
   </script>
 </body>
 </html>

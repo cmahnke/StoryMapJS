@@ -27,7 +27,7 @@
 
             window.__smErrors = [];
             window.__smReady = false;
-            window.addEventListener("error", function (e) {
+            window.addEventListener("error", (e) => {
                 window.__smErrors.push(String(e.message || e));
             });
 
@@ -46,14 +46,14 @@
             }
 
             fetch(base + name + ".json")
-                .then(function (r) {
+                .then((r) => {
                     return r.json();
                 })
-                .then(function (data) {
+                .then((data) => {
                     window.__sm = new StoryMap("storymap-embed", data, optionsOverride, {});
                     window.__smReady = true;
                 })
-                .catch(function (err) {
+                .catch((err) => {
                     window.__smErrors.push(
                         "harness: " + (err && err.message ? err.message : String(err)),
                     );

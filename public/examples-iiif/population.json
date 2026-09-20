@@ -102,9 +102,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://i1133.photobucket.com/albums/m593/tuitu2u/History%20Pics%203/1790_Census_Map_zpsb0747a02.gif",
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Population_of_the_United_States%2C_excluding_Indians_not_taxed-_1790_to_1820._10._Distribution_in_1790._11._Distribution_in_1800._%28IA_dr_population-of-the-united-states-excluding-indians-not-taxed-1790-to-1820-1873003%29.jpg/960px-thumbnail.jpg",
                                 "type": "Image",
-                                "format": "image/gif"
+                                "format": "image/jpeg"
                             },
                             "target": "https://example.org/storymap/population/canvas/2"
                         }
@@ -222,9 +222,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://www.worldmapsonline.com/images/Cram/History/unitedstates1810.jpg",
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/United_States_1810-04-1810-10.png/960px-United_States_1810-04-1810-10.png",
                                 "type": "Image",
-                                "format": "image/jpeg"
+                                "format": "image/png"
                             },
                             "target": "https://example.org/storymap/population/canvas/4"
                         }
@@ -282,9 +282,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://www.flickr.com/photos/graysonfamily/349095341/",
-                                "type": "Text",
-                                "format": "text/html"
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Map_of_the_United_States_With_The_Recent_Counties%2C_Cities%2C_Villages_and_Internal_Improvements_in_the_Western_States._By_J.L._%28IA_dr_map-of-the-united-states-with-the-recent-counties-cities-villages-and-int-5463000%29.jpg/960px-thumbnail.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
                             },
                             "target": "https://example.org/storymap/population/canvas/5"
                         }
@@ -302,7 +302,7 @@
                 ]
             },
             "storymap:mediaCaption": "1820 Census Record",
-            "storymap:mediaCredit": "graysonfamily",
+            "storymap:mediaCredit": "David H. Burr, 1839 (Library of Congress)",
             "storymap:date": "1820",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/5/navplace",
@@ -342,9 +342,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://www.library.yale.edu/MapColl/oldsite/map/va1830.gif",
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Virginia_Constitutional_Convention_1829%E2%80%931830_District_Map.png/960px-Virginia_Constitutional_Convention_1829%E2%80%931830_District_Map.png",
                                 "type": "Image",
-                                "format": "image/gif"
+                                "format": "image/png"
                             },
                             "target": "https://example.org/storymap/population/canvas/6"
                         }
@@ -461,8 +461,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://vine.co/v/hijiWteL0aP",
-                                "type": "Video"
+                                "id": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Uncle_Tom%27s_Cabin_-_Eva_and_Tom.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
                             },
                             "target": "https://example.org/storymap/population/canvas/8"
                         }
@@ -476,7 +477,7 @@
             },
             "summary": {
                 "none": [
-                    "The mean is in Wirt County in what is now West Virginia. In 1852, Harriet Beecher Stowe's 'Uncle Tom's Cabin' was published, galvanizing the abolitionist movement.<br></br><span class='vco-note'>Embed a Vine URL like this one about Black History Month.</span>"
+                    "The mean is in Wirt County in what is now West Virginia. In 1852, Harriet Beecher Stowe's 'Uncle Tom's Cabin' was published, galvanizing the abolitionist movement.<br></br><span class='vco-note'>Illustration from Uncle Tom's Cabin (1871 edition), Wikimedia Commons.</span>"
                 ]
             },
             "storymap:mediaCaption": "Black History Month",
@@ -580,7 +581,7 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://www.examiner.com/images/blog/EXID8873/images/reconstruction_congress.jpg",
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/House_of_Representatives%2C_thirty-eighth_Congress_-_1864-%2765_LCCN2014646324.jpg/960px-House_of_Representatives%2C_thirty-eighth_Congress_-_1864-%2765_LCCN2014646324.jpg",
                                 "type": "Image",
                                 "format": "image/jpeg"
                             },
@@ -699,9 +700,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://storify.com/EJSham/minute-by-minute-coverage-of-the-columbus-indiana",
-                                "type": "Text",
-                                "format": "text/html"
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Sanborn_Fire_Insurance_Map_from_Columbus%2C_Bartholomew_County%2C_Indiana._LOC_sanborn02300_002-1.jpg/960px-Sanborn_Fire_Insurance_Map_from_Columbus%2C_Bartholomew_County%2C_Indiana._LOC_sanborn02300_002-1.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
                             },
                             "target": "https://example.org/storymap/population/canvas/12"
                         }
@@ -715,7 +716,7 @@
             },
             "summary": {
                 "none": [
-                    "Mean population is now 20 miles east of Columbus, IN. On July 25, 2013, a plane crashed into a house in Columbus. <br></br><span class='vco-note'>Using a Storify URL you can embed the sequence of events.</span>"
+                    "Mean population is now 20 miles east of Columbus, IN. On July 25, 2013, a plane crashed into a house in Columbus. <br></br><span class='vco-note'>Sanborn fire insurance map of Columbus, Indiana, Library of Congress.</span>"
                 ]
             },
             "storymap:mediaCaption": "Minute-by-minute coverage of the Columbus, Indiana, plane crash",
@@ -878,8 +879,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://vimeo.com/63929704",
-                                "type": "Video"
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Photograph_of_Immigrants_on_a_Ferry_Boat_Near_Ellis_Island.png/960px-Photograph_of_Immigrants_on_a_Ferry_Boat_Near_Ellis_Island.png",
+                                "type": "Image",
+                                "format": "image/png"
                             },
                             "target": "https://example.org/storymap/population/canvas/15"
                         }
@@ -893,7 +895,7 @@
             },
             "summary": {
                 "none": [
-                    "An old film from the time showing Gary, Indiana, which is near Owen County where the population mean is in 1920. Director/Photographer: Carl Lewis Gregory, Locations: Ellis Island in New York Harbor; the Gary, Indiana works of the United States Steel Corporation. <br></br><span class='vco-note'>Embed a Vimeo.</span>"
+                    "An old film from the time showing Gary, Indiana, which is near Owen County where the population mean is in 1920. Director/Photographer: Carl Lewis Gregory, Locations: Ellis Island in New York Harbor; the Gary, Indiana works of the United States Steel Corporation. <br></br><span class='vco-note'>Immigrants on a ferry boat near Ellis Island, Wikimedia Commons.</span>"
                 ]
             },
             "storymap:mediaCaption": "An American in the Making",
@@ -937,8 +939,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://www.dailymotion.com/embed/video/xwrxkb",
-                                "type": "Video"
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Judy_Garland_publicity_photo.png/960px-Judy_Garland_publicity_photo.png",
+                                "type": "Image",
+                                "format": "image/png"
                             },
                             "target": "https://example.org/storymap/population/canvas/16"
                         }
@@ -952,7 +955,7 @@
             },
             "summary": {
                 "none": [
-                    "Greene County, Indiana located 3 miles northeast of Linton. Judy Garland singing 'Bubbles' from 1930. <br></br><span class='vco-note'>Embed from Daily Motion.</span>"
+                    "Greene County, Indiana located 3 miles northeast of Linton. Judy Garland singing 'Bubbles' from 1930. <br></br><span class='vco-note'>Judy Garland publicity photo, Wikimedia Commons.</span>"
                 ]
             },
             "storymap:mediaCaption": "Judy Garland 1930",
@@ -996,7 +999,7 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://illinoisstatesoceity.typepad.com/photos/19411950_illinois_state_s/pearl5.jpg",
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/USS_SHAW_exploding_Pearl_Harbor_Nara_80-G-16871_2.jpg/960px-USS_SHAW_exploding_Pearl_Harbor_Nara_80-G-16871_2.jpg",
                                 "type": "Image",
                                 "format": "image/jpeg"
                             },
@@ -1174,8 +1177,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://vimeo.com/62707231",
-                                "type": "Video"
+                                "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Apollo_11_Launch2.jpg/960px-Apollo_11_Launch2.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
                             },
                             "target": "https://example.org/storymap/population/canvas/20"
                         }
@@ -1189,7 +1193,7 @@
             },
             "summary": {
                 "none": [
-                    "St. Clair County, Illinois is the new population center. In 1969, the US not only went west, but landed on the moon! Check out this cool <b>Vimeo</b> of the Apollo 11 trip in 100 seconds."
+                    "St. Clair County, Illinois is the new population center. In 1969, the US not only went west, but landed on the moon! This photo shows the Apollo 11 launch (Wikimedia Commons)."
                 ]
             },
             "storymap:mediaCaption": "Apollo 11 in 100 seconds",

@@ -282,7 +282,9 @@ class MapBase {
                                     lon: marker.data.location.lon,
                                 });
 
-                                this._replaceLines(this._line_active, lines_array);
+                                this._replaceLines(this._line_active, lines_array, {
+                                    duration: this._transition_duration,
+                                });
                             }
                         } else {
                             // Show Line
@@ -291,16 +293,20 @@ class MapBase {
                                 marker.data.real_marker &&
                                 this._markers[previous_marker].data.real_marker
                             ) {
-                                this._replaceLines(this._line_active, [
-                                    {
-                                        lat: marker.data.location.lat,
-                                        lon: marker.data.location.lon,
-                                    },
-                                    {
-                                        lat: this._markers[previous_marker].data.location.lat,
-                                        lon: this._markers[previous_marker].data.location.lon,
-                                    },
-                                ]);
+                                this._replaceLines(
+                                    this._line_active,
+                                    [
+                                        {
+                                            lat: marker.data.location.lat,
+                                            lon: marker.data.location.lon,
+                                        },
+                                        {
+                                            lat: this._markers[previous_marker].data.location.lat,
+                                            lon: this._markers[previous_marker].data.location.lon,
+                                        },
+                                    ],
+                                    { duration: this._transition_duration },
+                                );
                             }
                         }
                     } else {
@@ -475,7 +481,7 @@ class MapBase {
 
     _addToLine(line: VectorLayer | null, d: LinePoint): void {}
 
-    _replaceLines(line: VectorLayer | null, d: LinePoint[]): void {}
+    _replaceLines(line: VectorLayer | null, d: LinePoint[], animate?: { duration: number }): void {}
 
     _addLineToMap(line: VectorLayer): void {}
 

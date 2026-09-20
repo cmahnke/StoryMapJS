@@ -21,7 +21,7 @@
 
             const storymap = new StoryMap("mapdiv", storymap_url, storymap_options);
 
-            window.onresize = function () {
+            window.onresize = () => {
                 storymap.updateDisplay();
             };
 

@@ -46,6 +46,8 @@ export default class OpenLayers extends Map {
     declare "_tile_layer_mini": TileLayer;
     declare "_mini_map": OverviewMap;
     declare "_markers": OpenLayersMapMarker[];
+    /** rAF handle of the running active-line draw animation */
+    declare "_line_animation": number | null;
 
     /*	Create the Map
 	================================================== */
@@ -584,7 +586,13 @@ export default class OpenLayers extends Map {
         feature.getGeometry().setCoordinates(coords);
     }
 
-    _replaceLines(line: VectorLayer, array: LinePoint[]): void {
+    /**
+     * Replace a line's geometry. With `animate.duration > 0` the active line
+     * is drawn progressively, in sync with the view animation: the target
+     * path is truncated by cumulative length at the eased progress, so half
+     * way through the pan only half the route is red.
+     */
+    _replaceLines(line: VectorLayer, array: LinePoint[], animate?: { duration: number }): void {
         const pts = array.map((d) => {
             const lat = d.location ? d.location.lat : d.lat;
             const lon = d.location ? d.location.lon : d.lon;
@@ -592,11 +600,78 @@ export default class OpenLayers extends Map {
         });
         const lons = this._unwrapLongitudes(pts.map((p) => p[0] as number));
         const unwrapped = pts.map((p, i) => [lons[i], p[1]]);
+        const view_coords = this._markerCoordsToViewCoords(unwrapped);
         const source = line.getSource();
-        source.clear();
-        source.addFeature(
-            new Feature({ geometry: new LineString(this._markerCoordsToViewCoords(unwrapped)) }),
-        );
+
+        const setGeometry = (coords: number[][]) => {
+            source.clear();
+            source.addFeature(new Feature({ geometry: new LineString(coords) }));
+        };
+
+        this._cancelLineAnimation();
+
+        const duration = animate?.duration ?? 0;
+        if (duration <= 0 || view_coords.length < 2) {
+            setGeometry(view_coords);
+            return;
+        }
+
+        const easing = this.options.ease as ((t: number) => number) | undefined;
+        const total_length = this._pathLength(view_coords);
+        const start_time = performance.now();
+        const step = (now: number) => {
+            const t = Math.min(1, Math.max(0, (now - start_time) / duration));
+            const eased = easing ? easing(t) : t;
+            setGeometry(this._truncatePath(view_coords, eased * total_length));
+            this._line_animation = t < 1 ? requestAnimationFrame(step) : null;
+        };
+        this._line_animation = requestAnimationFrame(step);
+    }
+
+    /** Cancel a running active-line draw animation. */
+    _cancelLineAnimation(): void {
+        if (this._line_animation !== null) {
+            cancelAnimationFrame(this._line_animation);
+            this._line_animation = null;
+        }
+    }
+
+    /** Total euclidean length of a path in view coordinates. */
+    _pathLength(coords: number[][]): number {
+        let total = 0;
+        for (let i = 1; i < coords.length; i++) {
+            total += Math.hypot(coords[i][0] - coords[i - 1][0], coords[i][1] - coords[i - 1][1]);
+        }
+        return total;
+    }
+
+    /**
+     * The prefix of the path up to `length` (in view units), with the cut
+     * point interpolated inside its segment.
+     */
+    _truncatePath(coords: number[][], length: number): number[][] {
+        if (length <= 0 || coords.length < 2) {
+            return [];
+        }
+        const out = [coords[0]];
+        let acc = 0;
+        for (let i = 1; i < coords.length; i++) {
+            const seg = Math.hypot(
+                coords[i][0] - coords[i - 1][0],
+                coords[i][1] - coords[i - 1][1],
+            );
+            if (acc + seg >= length) {
+                const f = (length - acc) / seg;
+                out.push([
+                    coords[i - 1][0] + f * (coords[i][0] - coords[i - 1][0]),
+                    coords[i - 1][1] + f * (coords[i][1] - coords[i - 1][1]),
+                ]);
+                return out;
+            }
+            acc += seg;
+            out.push(coords[i]);
+        }
+        return out;
     }
 
     /*	Map
@@ -770,6 +845,7 @@ export default class OpenLayers extends Map {
 
     _markerOverview(duration?: number): void {
         // Hide Active Line
+        this._cancelLineAnimation();
         this._line_active.setVisible(false);
 
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
