@@ -8,7 +8,6 @@
   <meta name="apple-touch-fullscreen" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <link rel="stylesheet" href="../css/storymap.css">
-  <script type="text/javascript" src="../js/storymap.js"></script>
   <style>
     html, body {
       width: 100%;
@@ -22,23 +21,14 @@
 <body>
   <div id="storymap-embed"></div>
 
-  <script>
-    var storymap;
+  <script type="module">
+    import { StoryMap } from "../js/storymap.js";
+
+    let storymap;
     const urlParams = new URLSearchParams(window.location.search);
 
-	function onStoryMapTitle(e) {
+    function onStoryMapTitle(e) {
       document.title = "StoryMapJS: " + e.title;
-	};
-
-    function getScriptPath(scriptname) {
-      let scriptTags = document.getElementsByTagName('script');
-      for (const [i, tag] of Object.entries(scriptTags)) {
-        if (tag.src.match(scriptname)) {
-            let path = tag.src.split('?')[0].split('/').slice(0, -1).join('/');
-            return path;
-        }
-      }
-      return '';
     }
 
     function getStartSlide() {
@@ -51,12 +41,11 @@
 
     function buildStoryMap(data) {
         if (!data || !data.storymap) { return; }
-        var options = {
-            script_path: getScriptPath(/storymap(-min)?\.js/),
+        const options = {
             start_at_slide: getStartSlide()
         };
         // font theme loading is handled by the library (data.font_css / stock:default)
-        storymap = new KLStoryMap.StoryMap('storymap-embed', data, options, {
+        storymap = new StoryMap('storymap-embed', data, options, {
             title: onStoryMapTitle
         });
     }
@@ -67,12 +56,6 @@
             .then(response => response.json())
             .then(data => buildStoryMap(data));
     })();
-
-    window.onresize = function(event) {
-      if (storymap) {
-        storymap.updateDisplay();
-      }
-    }
   </script>
 </body>
 </html>

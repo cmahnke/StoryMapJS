@@ -275,7 +275,9 @@ class StoryMapBase {
         let font = this.options.font_css || "stock:default";
         if (font.startsWith("stock:")) {
             const font_name = font.split(":")[1] || "default";
-            font = "css/fonts/font." + font_name + ".css";
+            // resolved against the library location: one directory up from
+            // src/main.ts (dev) and js/storymap.js (build) in both cases
+            font = new URL("../css/fonts/font." + font_name + ".css", import.meta.url).href;
         } else if (!/^(http|https|\/\/)/.test(font)) {
             font = urljoin(this.options.script_path, font);
         }
@@ -697,13 +699,11 @@ export default class StoryMap extends Evented(StoryMapBase) {
     }
 }
 
-// Calculates the script path and sets it as SCRIPT_PATH on the StoryMap class
+// Calculates the script path and sets it as SCRIPT_PATH on the StoryMap class.
+// import.meta.url works both for the source module (src/main.ts) and the built
+// ESM bundle (js/storymap.js) — no UMD script tag sniffing needed.
 (function (StoryMapClass) {
-    const scripts = document.getElementsByTagName("script");
-    if (scripts.length > 0) {
-        const src = scripts[scripts.length - 1].src;
-        StoryMapClass.SCRIPT_PATH = src.substring(0, src.lastIndexOf("/"));
-    }
+    StoryMapClass.SCRIPT_PATH = new URL("../", import.meta.url).href;
 })(StoryMap);
 
 export { StoryMap };

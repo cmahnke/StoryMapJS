@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 
-// Library build: emits dist/js/storymap.js (UMD global "KLStoryMap"),
-// dist/js/storymap.es.js (ESM) and dist/css/storymap.css.
+// Library build: emits dist/js/storymap.js (ESM only) and dist/css/storymap.css.
 export default defineConfig({
     server: {
         port: 8000,
@@ -10,10 +9,9 @@ export default defineConfig({
         outDir: "dist",
         assetsInlineLimit: 0,
         lib: {
-            entry: "src/main.js",
-            name: "KLStoryMap",
-            formats: ["es", "umd"],
-            fileName: (format) => (format === "es" ? "js/storymap.es.js" : "js/storymap.js"),
+            entry: "src/main.ts",
+            formats: ["es"],
+            fileName: () => "js/storymap.js",
             cssFileName: "css/storymap",
         },
         rollupOptions: {

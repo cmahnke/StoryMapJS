@@ -6,6 +6,12 @@
     "engines": {
         "node": ">=22"
     },
+    "exports": {
+        ".": "./dist/js/storymap.js",
+        "./css/storymap.css": "./dist/css/storymap.css",
+        "./css/fonts/*": "./dist/css/fonts/*",
+        "./schema/*": "./schema/*"
+    },
     "dependencies": {
         "@fontsource-utils/scss": "^0.2.4",
         "morpheus": "^0.7.2",
