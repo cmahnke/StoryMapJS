@@ -1,7 +1,9 @@
 /* Example cards for the landing page. Curated, non-`issue-*` fixtures from
  * public/examples; each card opens the fixture in the built embed player.
- * The page chrome itself is site.css (compiled from src/scss/site/site.scss
- * by tasks/build-docs.mjs) — this script only adds the cards. */
+ * The page chrome is site.css (compiled from src/scss/site/site.scss by
+ * tasks/build-docs.mjs) — this script only adds the cards and the demo
+ * height adjustment. */
+
 const EXAMPLES: Array<{ id: string; title: string; kind: string }> = [
     { id: "katrina", title: "Hurricane Katrina", kind: "Map" },
     { id: "population", title: "US Population Shifts", kind: "Map" },
@@ -16,33 +18,47 @@ const EXAMPLES: Array<{ id: string; title: string; kind: string }> = [
 
 function card(ex: { id: string; title: string; kind: string }): HTMLAnchorElement {
     const a = document.createElement("a");
-    a.className = "sm-card";
+    a.className = "card";
     a.href = `./embed/index.html?url=${encodeURIComponent("examples/" + ex.id + ".json")}`;
-    // deterministic two-tone gradient instead of remote thumbnails
-    let hash = 0;
-    for (let i = 0; i < ex.id.length; i++) {
-        hash = (hash * 31 + ex.id.charCodeAt(i)) >>> 0;
-    }
-    const hue = hash % 360;
+
+    const header = document.createElement("span");
+    header.className = "header-image";
     const media = document.createElement("span");
-    media.className = "sm-card-media";
-    media.style.backgroundImage = `linear-gradient(135deg, hsl(${hue} 30% 30%), hsl(${(hue + 40) % 360} 45% 18%))`;
-    const body = document.createElement("span");
-    body.className = "sm-card-body";
+    media.className = "header-image-background bw";
+    // build-time screenshots (tasks/build-thumbnails.mjs); fall back to a
+    // deterministic two-tone gradient when a thumb is missing
+    media.style.backgroundImage = `url('./thumbs/${ex.id}.jpg'), linear-gradient(135deg, #b8b8b8, #646464)`;
+    media.setAttribute("role", "img");
+    media.setAttribute("aria-label", ex.title);
+    header.append(media);
+
+    const body = document.createElement("article");
+    body.className = "card-content";
     const title = document.createElement("h3");
-    title.className = "sm-card-title";
     title.textContent = ex.title;
-    const kind = document.createElement("p");
-    kind.className = "sm-card-kind";
-    kind.textContent = ex.kind;
-    body.append(title, kind);
-    a.append(media, body);
+    body.append(title);
+
+    const footer = document.createElement("footer");
+    footer.textContent = ex.kind;
+
+    a.append(header, body, footer);
     return a;
 }
 
 const target = document.getElementById("examples-cards");
 if (target) {
+    target.classList.add("cards-link");
     for (const ex of EXAMPLES) {
         target.append(card(ex));
     }
+}
+
+// the original sizes the homepage demo to the window height minus 20px
+const frame = document.getElementById("demo-frame") as HTMLIFrameElement | null;
+if (frame) {
+    const size = () => {
+        frame.style.height = window.innerHeight - 20 + "px";
+    };
+    size();
+    window.addEventListener("resize", size);
 }

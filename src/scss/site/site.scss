@@ -1,59 +1,63 @@
 /*
  * Site chrome for the landing/docs pages (index.html, demo.html, docs/*).
  *
- * This stylesheet is deliberately standalone: it shares nothing with the
- * StoryMap widget styles (which live behind the .vco-* namespace and, on the
- * landing page, inside the demo iframe). Everything is scoped under .sm-site
- * so the chrome can never collide with the widget CSS.
+ * Recreates the Knight Lab product page look with our own SCSS (no Knight
+ * Lab assets). It shares nothing with the StoryMap widget styles (which
+ * live behind the .vco-* namespace and, on the landing page, inside the
+ * demo iframe). Everything is scoped under .sm-site so the chrome can
+ * never collide with the widget CSS.
  */
 
 @use "sass:color";
 
 // ---------------------------------------------------------------------------
-// Palette / typography (own look, no external font or framework dependencies)
+// Palette / typography (orangeline's visual language, rebuilt)
 // ---------------------------------------------------------------------------
-$sm-color-dark: #26272b;
-$sm-color-darker: #1c1d20;
-$sm-color-accent: #c34528;
-$sm-color-text: #3b3c40;
-$sm-color-muted: #7a7b80;
-$sm-color-bg: #fff;
-$sm-color-bg-grey: #f4f4f2;
-$sm-color-border: #e2e2df;
-$sm-font-stack: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+$sm-color-text: #222;
+$sm-color-grey: #646464; // dark sections (moth), button text
+$sm-color-navbar: #484848; // dark navbar / accordion chevrons
+$sm-color-light: #f0f0f0; // header, grey sections, footer
+$sm-color-lighter: #f8f8f8; // accordion rows
+$sm-color-accent: #df4e13; // knight lab orange: tagline, hovers
+$sm-color-badge: #13a4df; // the blue "JS" badge
+$sm-color-badge-shadow: #108cbe;
+$sm-color-green: #24a549; // button-secondary
+$sm-color-green-border: #1f9040;
+$sm-color-border: #b8b8b8;
+$sm-color-border-light: #d4d4d4;
+$sm-font-serif: georgia, "Times New Roman", times, serif;
+$sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
 
 // ---------------------------------------------------------------------------
 // Scope root
 // ---------------------------------------------------------------------------
 .sm-site {
-    box-sizing: border-box;
     margin: 0;
-    font-family: $sm-font-stack;
-    font-size: 16px;
-    line-height: 1.6;
+    font-family: $sm-font-serif;
+    font-size: 18px;
+    line-height: 1.618;
     color: $sm-color-text;
-    background-color: $sm-color-bg;
+    background-color: #fff;
 
     *,
     *::before,
     *::after {
-        box-sizing: inherit;
+        box-sizing: border-box;
     }
 
     a {
-        color: $sm-color-accent;
-        text-decoration: none;
+        color: $sm-color-badge;
 
         &:hover {
-            text-decoration: underline;
+            color: $sm-color-accent;
         }
     }
 
     code,
     pre {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 0.9em;
-        background-color: $sm-color-bg-grey;
+        font-size: 0.85em;
+        background-color: $sm-color-light;
         border-radius: 3px;
     }
 
@@ -71,231 +75,377 @@ $sm-font-stack: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-
         }
     }
 
+    h2 {
+        font-family: $sm-font-serif;
+        font-style: italic;
+        font-size: 2.55rem;
+        font-weight: 700;
+        margin: 1.3rem 0 0.6rem;
+    }
+
+    h3 {
+        font-family: $sm-font-sans;
+        font-size: 1.44rem;
+        font-weight: 700;
+        margin: 1rem 0 0.4rem;
+    }
+
+    h5 {
+        font-family: $sm-font-sans;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0 0 0.2rem;
+    }
+
+    // ---------------------------------------------------------------------
+    // Product logo: serif italic wordmark + blue "JS" badge
+    // ---------------------------------------------------------------------
+    .product-logo {
+        font-family: $sm-font-serif;
+        font-style: italic;
+        font-weight: normal;
+        font-size: 3.82rem;
+        color: $sm-color-text;
+        margin: 0;
+
+        @media (width <= 767px) {
+            font-size: 2.55rem;
+        }
+
+        span {
+            display: inline-block;
+            position: relative;
+            vertical-align: text-top;
+            overflow: hidden;
+            background-color: $sm-color-badge;
+            border-radius: 4px;
+            color: #f3fbfe;
+            font-size: 0.4em;
+            font-style: normal;
+            line-height: 0.5em;
+            margin: 5px 5px 0 -10px;
+            padding: 0.4em 0.45em 0.3em;
+            text-shadow:
+                0 0 0 $sm-color-badge-shadow,
+                -1px 1px 0 $sm-color-badge-shadow,
+                -2px 2px 0 $sm-color-badge-shadow,
+                -3px 3px 0 $sm-color-badge-shadow;
+        }
+
+        &.product-logo-small {
+            font-size: 2.55rem;
+        }
+    }
+
+    .product-tagline {
+        font-family: $sm-font-serif;
+        font-style: italic;
+        color: $sm-color-accent;
+        margin: 0;
+    }
+
     // ---------------------------------------------------------------------
     // Buttons
     // ---------------------------------------------------------------------
-    .sm-button {
+    .button {
         display: inline-block;
-        padding: 10px 22px;
-        border: 1px solid $sm-color-accent;
+        position: relative;
+        overflow: hidden;
+        padding: 0.89rem 1.78rem 0.94rem;
+        border: 1px solid $sm-color-border-light;
         border-radius: 4px;
-        color: $sm-color-accent;
         background-color: transparent;
-        font-size: 0.95em;
+        color: $sm-color-grey;
+        font-family: $sm-font-sans;
+        font-size: 0.89rem;
+        text-align: center;
+        text-decoration: none;
+        text-shadow: none;
+        vertical-align: middle;
         cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow:
+            0 2px 5px 0 rgb(0 0 0 / 15%),
+            0 2px 2px 0 rgb(0 0 0 / 14%);
 
         &:hover {
-            color: $sm-color-bg;
-            background-color: $sm-color-accent;
+            background-color: #fdfdfd;
+            border-color: #d7d7d7;
+            color: $sm-color-grey;
             text-decoration: none;
         }
 
-        &-solid {
-            color: $sm-color-bg;
-            background-color: $sm-color-accent;
+        &:focus-visible {
+            outline: 2px solid $sm-color-badge;
+            outline-offset: 2px;
+        }
+
+        &.button-dark {
+            background-color: $sm-color-navbar;
+            border-color: #3b3b3b;
+            color: #e1e1e1;
 
             &:hover {
-                background-color: color.adjust($sm-color-accent, $lightness: -12%);
+                background-color: color.adjust($sm-color-navbar, $lightness: -8%);
+                color: #fff;
             }
         }
 
-        &-dark {
-            color: $sm-color-bg;
-            border-color: $sm-color-dark;
-            background-color: $sm-color-dark;
+        &.button-secondary {
+            background-color: $sm-color-green;
+            border-color: $sm-color-green-border;
+            color: #fdfffd;
+            font-weight: 600;
 
             &:hover {
-                background-color: $sm-color-darker;
+                background-color: color.adjust($sm-color-green, $lightness: -6%);
+                border-color: $sm-color-green-border;
+                color: #fff;
             }
+        }
+
+        &.button-large {
+            padding: 1.11rem 2.22rem;
+            font-size: 1.11rem;
+        }
+
+        &.button-small {
+            padding: 0.5rem 1.6rem;
+            font-size: 0.7rem;
         }
     }
 
     // ---------------------------------------------------------------------
-    // Top navbar
+    // Top navbar (dark)
     // ---------------------------------------------------------------------
-    .sm-nav-top {
+    .navbar {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 24px;
-        background-color: $sm-color-darker;
-
-        .sm-brand {
-            color: $sm-color-bg;
-            font-size: 1.1em;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-
-            span {
-                color: $sm-color-accent;
-            }
-        }
+        flex-wrap: nowrap;
+        align-items: stretch;
+        justify-content: center;
+        padding: 0;
+        font-family: $sm-font-sans;
+        font-size: 1rem;
 
         ul {
             display: flex;
-            gap: 18px;
+            flex-wrap: nowrap;
+            align-items: center;
             margin: 0;
             padding: 0;
             list-style: none;
 
+            &.nav-right {
+                margin-left: auto;
+            }
+        }
+
+        li {
+            display: block;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0.5rem 1rem;
+
             a {
-                color: $sm-color-bg;
-                font-size: 0.85em;
+                color: #fff;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                text-decoration: none;
 
                 &:hover {
                     color: $sm-color-accent;
-                    text-decoration: none;
+                }
+
+                span {
+                    color: $sm-color-accent;
                 }
             }
         }
-    }
 
-    // ---------------------------------------------------------------------
-    // Product header + subnav
-    // ---------------------------------------------------------------------
-    .sm-header {
-        padding: 64px 24px 0;
-        text-align: center;
-        background-color: $sm-color-dark;
-        color: $sm-color-bg;
-
-        h1 {
+        // flat, borderless buttons inside navbars (like the original)
+        .button {
             margin: 0;
-            font-size: 3em;
-            font-weight: 700;
-            letter-spacing: 0.01em;
+            border-width: 1px;
+            border-width: 0;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0.9rem 1rem;
 
-            span {
-                color: $sm-color-accent;
+            &.button-dark {
+                background-color: transparent;
+                border-color: rgb(255 255 255 / 10%);
             }
         }
 
-        .sm-tagline {
-            margin: 8px 0 24px;
-            font-size: 1.3em;
-            font-weight: 300;
-            color: #b9babe;
-        }
-
-        .sm-button {
-            margin-bottom: 40px;
-        }
-    }
-
-    .sm-subnav {
-        background-color: $sm-color-dark;
-        border-top: 1px solid rgb(255 255 255 / 8%);
-
-        .sm-subnav-inner {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1080px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .sm-brand-sm {
-            color: $sm-color-bg;
-            font-size: 0.95em;
-            font-weight: 600;
-
-            span {
-                color: $sm-color-accent;
-            }
-        }
-
-        ul {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-
-        a {
-            display: inline-block;
-            padding: 12px 14px;
-            color: #d4d5d8;
-            font-size: 0.85em;
+        .button-active {
+            background-color: $sm-color-border-light;
+            color: $sm-color-text;
 
             &:hover {
-                color: $sm-color-bg;
-                background-color: rgb(255 255 255 / 6%);
-                text-decoration: none;
+                background-color: $sm-color-border-light;
+            }
+        }
+    }
+
+    .navbar-dark {
+        background-color: $sm-color-navbar;
+
+        // the original hides the product navbar's right column on phones
+        @media (width <= 767px) {
+            ul.nav-right {
+                display: none;
             }
         }
     }
 
     // ---------------------------------------------------------------------
-    // Sections / layout
+    // Product header + subnav (light)
     // ---------------------------------------------------------------------
-    .sm-section {
-        max-width: 1080px;
-        margin: 0 auto;
-        padding: 56px 24px;
+    .header-product {
+        padding: 2rem 2rem 0;
+        margin-bottom: 0;
+        border-bottom: 1px solid $sm-color-border;
+        background-color: $sm-color-light;
+        text-align: center;
 
-        h2 {
-            margin: 0 0 20px;
-            font-size: 1.9em;
-            font-weight: 700;
-            color: $sm-color-dark;
+        .product-tagline {
+            font-size: 1.92rem;
+            margin-bottom: 1.5rem;
+
+            @media (width <= 767px) {
+                font-size: 1.2rem;
+            }
         }
 
-        h3 {
-            margin: 0 0 8px;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: $sm-color-dark;
-        }
-
-        p {
-            margin: 0 0 12px;
-        }
-    }
-
-    .sm-section-grey {
-        max-width: none;
-        background-color: $sm-color-bg-grey;
-
-        > .sm-section-inner {
-            max-width: 1080px;
-            margin: 0 auto;
+        // docs pages carry only the subnav — collapse the empty header area
+        &.header-product-docs {
             padding: 0;
         }
     }
 
-    .sm-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
+    .navbar-subnav {
+        margin-top: 1rem;
+        background-color: $sm-color-light;
 
-        @media (width <= 720px) {
-            grid-template-columns: 1fr;
+        // the original hides the subnav on phones entirely
+        @media (width <= 767px) {
+            display: none;
         }
+
+        .button {
+            border-color: $sm-color-border-light;
+            box-shadow: none;
+            color: $sm-color-grey;
+
+            &:hover {
+                color: $sm-color-text;
+                background-color: rgb(255 255 255 / 60%);
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------
+    // Layout: containers / grids / sections
+    // ---------------------------------------------------------------------
+    .container {
+        max-width: 992px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    .container-fluid {
+        max-width: none;
+        padding: 0;
+    }
+
+    .grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0;
+        text-align: left;
+
+        > .grid-item {
+            flex: 1;
+            max-width: 100%;
+            padding: 1rem;
+        }
+    }
+
+    .grid-size-2 > .grid-item {
+        flex: 0 0 50%;
+        max-width: 50%;
+
+        @media (width <= 767px) {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    .section {
+        padding-top: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .section-color {
+        padding: 2rem 0 3rem;
+        margin-bottom: 0;
+    }
+
+    .fill-color-grey {
+        background-color: $sm-color-light;
+    }
+
+    .note {
+        background-color: $sm-color-light;
+        border-radius: 8px;
+        color: #9c9c9c;
+        font-family: $sm-font-sans;
+        font-size: 0.9em;
+        font-style: italic;
+        line-height: 1.2em;
+        padding: 1rem;
+        margin: 1rem 0;
+        overflow: hidden;
+    }
+
+    .text-align-center {
+        text-align: center;
     }
 
     // Demo iframe: the widget lives in its own document, so its CSS can never
     // mix with this chrome.
-    .sm-demo-frame {
-        width: 100%;
-        height: 78vh;
-        border: 0;
-        border-top: 1px solid $sm-color-border;
-        border-bottom: 1px solid $sm-color-border;
+    .demo-frame {
         display: block;
-        background-color: $sm-color-bg-grey;
+        width: 100%;
+        border: 0;
+        background-color: $sm-color-light;
     }
 
     // ---------------------------------------------------------------------
-    // Example cards (Knight Lab #examples look, rebuilt)
+    // Example cards (thumbnails: grayscale -> color on hover)
     // ---------------------------------------------------------------------
-    .sm-cards {
+    .cards {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        width: 100%;
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+        text-align: left;
+
+        @media (width <= 1200px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
 
         @media (width <= 900px) {
             grid-template-columns: repeat(2, 1fr);
@@ -304,45 +454,169 @@ $sm-font-stack: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-
         @media (width <= 600px) {
             grid-template-columns: 1fr;
         }
+
+        .card {
+            padding: 0;
+            border: 1px solid $sm-color-border-light;
+            border-radius: 4px;
+            background-color: #fff;
+            overflow: hidden;
+
+            > a {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .header-image {
+                height: 200px;
+                margin: 0;
+                display: block;
+            }
+
+            .header-image-background {
+                display: block;
+                width: 100%;
+                height: 100%;
+                background-position: center;
+                background-size: cover;
+                background-color: $sm-color-grey;
+                transition: filter 0.3s ease;
+
+                &.bw {
+                    filter: grayscale(100%);
+                }
+            }
+
+            article.card-content {
+                padding: 0.8rem 1rem 0.4rem;
+
+                h3 {
+                    font-size: 1rem;
+                    margin: 0;
+                    color: $sm-color-text;
+                }
+            }
+
+            footer {
+                margin-top: auto;
+                padding: 0.6rem 1rem 0.8rem;
+                font-family: $sm-font-sans;
+                font-size: 0.75em;
+                color: #9c9c9c;
+            }
+
+            &:hover {
+                border-color: $sm-color-text;
+
+                .header-image-background.bw {
+                    filter: grayscale(0%);
+                }
+            }
+        }
     }
 
-    .sm-card {
-        background-color: $sm-color-bg;
-        border: 1px solid $sm-color-border;
-        border-radius: 4px;
-        overflow: hidden;
-        transition: box-shadow 0.15s ease;
+    // ---------------------------------------------------------------------
+    // FAQ accordion (checkbox hack)
+    // ---------------------------------------------------------------------
+    ul.accordion {
+        list-style: none;
+        margin: 2rem 0 0;
+        padding: 0;
+        font-family: $sm-font-sans;
+        font-size: 1rem;
 
-        &:hover {
-            box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+        li {
+            position: relative;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background-color: $sm-color-lighter;
+            border: 1px solid $sm-color-border-light;
+            border-radius: 8px;
 
-            .sm-card-title {
-                color: $sm-color-accent;
-            }
-        }
+            &:hover {
+                border-color: $sm-color-navbar;
 
-        .sm-card-media {
-            aspect-ratio: 16 / 9;
-            display: block;
-            background-color: $sm-color-dark;
-            background-position: center;
-            background-size: cover;
-        }
-
-        .sm-card-body {
-            padding: 12px 14px;
-
-            .sm-card-title {
-                margin: 0;
-                font-size: 0.95em;
-                font-weight: 600;
-                color: $sm-color-dark;
+                h3 {
+                    color: $sm-color-text;
+                }
             }
 
-            .sm-card-kind {
-                margin: 4px 0 0;
-                font-size: 0.78em;
-                color: $sm-color-muted;
+            input[type="checkbox"] {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 2;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            i {
+                position: absolute;
+                right: 0.9rem;
+                top: 1.05rem;
+                width: 12px;
+                height: 12px;
+
+                &::before,
+                &::after {
+                    content: "";
+                    position: absolute;
+                    background-color: $sm-color-navbar;
+                    width: 3px;
+                    height: 9px;
+                    transition: transform 0.3s ease;
+                }
+
+                &::before {
+                    transform: translate(3px, 1px) rotate(45deg);
+                }
+
+                &::after {
+                    transform: translate(6px, 1px) rotate(-45deg);
+                }
+            }
+
+            h3 {
+                font-size: 1.2rem;
+                font-weight: 700;
+                margin: 0.4rem 1.5rem 0.4rem 0.6rem;
+                color: $sm-color-text;
+            }
+
+            .accordion-content {
+                position: relative;
+                z-index: 1;
+                overflow: hidden;
+                max-height: 800px;
+                opacity: 1;
+                margin: 0.5rem 0 0.5rem 1rem;
+                font-size: 0.85em;
+                color: $sm-color-navbar;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+                p {
+                    margin: 0.4rem 0;
+                }
+            }
+
+            // collapsed state (checkboxes default to open like the original)
+            input[type="checkbox"]:not(:checked) ~ .accordion-content {
+                max-height: 0;
+                opacity: 0;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            input[type="checkbox"]:not(:checked) ~ i::before {
+                transform: translate(3px, 1px) rotate(-45deg);
+            }
+
+            input[type="checkbox"]:not(:checked) ~ i::after {
+                transform: translate(6px, 1px) rotate(45deg);
             }
         }
     }
@@ -353,73 +627,122 @@ $sm-font-stack: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-
     .sm-docs {
         max-width: 820px;
         margin: 0 auto;
-        padding: 48px 24px;
+        padding: 1rem 1rem 3rem;
+        text-align: left;
 
         h1 {
-            margin: 0 0 24px;
-            font-size: 2.2em;
-            color: $sm-color-dark;
-        }
-
-        h2 {
-            margin: 32px 0 12px;
-            padding-top: 16px;
-            border-top: 1px solid $sm-color-border;
-            font-size: 1.5em;
-            color: $sm-color-dark;
-        }
-
-        h3 {
-            margin: 24px 0 8px;
-            font-size: 1.15em;
-            color: $sm-color-dark;
+            font-family: $sm-font-serif;
+            font-style: italic;
+            font-size: 2.55rem;
+            margin: 1.3rem 0 0.6rem;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 16px 0;
+            margin: 1rem 0;
+            font-family: $sm-font-sans;
+            font-size: 0.85em;
 
             th,
             td {
-                padding: 8px 10px;
-                border: 1px solid $sm-color-border;
+                padding: 0.5rem 0.75rem;
+                border: 1px solid $sm-color-border-light;
                 text-align: left;
+                vertical-align: top;
             }
 
             th {
-                background-color: $sm-color-bg-grey;
+                background-color: $sm-color-light;
+            }
+
+            code {
+                background: none;
+                padding: 0;
             }
         }
 
         blockquote {
-            margin: 16px 0;
-            padding: 4px 16px;
-            border-left: 4px solid $sm-color-accent;
-            color: $sm-color-muted;
+            margin: 1rem 0;
+            padding: 0.25rem 1rem;
+            border-left: 4px solid $sm-color-border-light;
+            color: $sm-color-grey;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        // anchor targets behind the sticky-less subnav
+        [id] {
+            scroll-margin-top: 1rem;
         }
     }
 
     // ---------------------------------------------------------------------
-    // Footer
+    // Footer (light, Knight Lab style)
     // ---------------------------------------------------------------------
-    .sm-footer {
-        padding: 32px 24px;
-        background-color: $sm-color-darker;
-        color: #a9aaae;
-        font-size: 0.82em;
-        text-align: center;
+    .footer-knightlab {
+        padding: 60px 80px 30px;
+        font-family: $sm-font-sans;
+        font-size: 0.85em;
+        background-color: $sm-color-light;
+        border-top: 1px solid $sm-color-border;
 
-        a {
-            color: #d4d5d8;
+        .footer-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: left;
 
-            &:hover {
-                color: $sm-color-bg;
+            @media (width <= 767px) {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
         }
 
-        p {
-            margin: 4px 0;
+        .footer-brand {
+            font-weight: 700;
+            font-size: 1.4em;
+
+            span {
+                color: $sm-color-accent;
+            }
+        }
+
+        .footer-description {
+            max-width: 480px;
+        }
+
+        address,
+        .copyright {
+            display: block;
+            margin-top: 1.5rem;
+            font-style: normal;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        ul.list-social {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            padding: 0;
+            list-style: none;
+
+            a {
+                color: $sm-color-grey;
+                font-size: 1.1em;
+                font-weight: 700;
+
+                &:hover {
+                    color: $sm-color-accent;
+                }
+            }
         }
     }
 }

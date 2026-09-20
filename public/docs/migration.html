@@ -9,25 +9,37 @@
     </head>
     <body class="sm-site">
         
-    <nav class="sm-nav-top">
-        <a class="sm-brand" href="../index.html">StoryMap <span>JS</span></a>
+    <nav class="navbar navbar-dark">
         <ul>
-            <li><a href="https://github.com/cmahnke/StoryMapJS">GitHub</a></li>
-            <li><a href="https://github.com/cmahnke/StoryMapJS/issues">Issues</a></li>
+            <li class="logo">
+                <a href="../index.html">StoryMap <span>JS</span></a>
+            </li>
+        </ul>
+        <ul class="nav-right">
+            <li>
+                <a class="button button-dark button-active" href="https://github.com/cmahnke/StoryMapJS"
+                    >GitHub</a
+                >
+            </li>
+            <li>
+                <a class="button button-dark" href="https://github.com/cmahnke/StoryMapJS/issues"
+                    >Issues</a
+                >
+            </li>
         </ul>
     </nav>
-    <nav class="sm-subnav" aria-label="Page navigation">
-        <div class="sm-subnav-inner">
-            <span class="sm-brand-sm">Documentation</span>
+    <header class="header-product header-product-docs">
+        <nav id="navbar-secondary" class="navbar navbar-subnav" aria-label="Page navigation">
             <ul>
-                <li><a href="../index.html#overview">Overview</a></li>
-                <li><a href="../index.html#examples">Examples</a></li>
-                <li><a href="./readme.html">README</a></li>
-                <li><a href="./migration.html">Migration guide</a></li>
-                <li><a href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="../index.html#overview">Overview</a></li>
+                <li><a class="button" href="../index.html#examples">Examples</a></li>
+                <li><a class="button" href="./readme.html">README</a></li>
+                <li><a class="button" href="./migration.html">Migration guide</a></li>
+                <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="../index.html#help">Help</a></li>
             </ul>
-        </div>
-    </nav>
+        </nav>
+    </header>
         <main class="sm-docs">
             <h1>Migrating from the Knight Lab StoryMapJS</h1>
 <p>This guide helps you move from the original Knight Lab StoryMapJS viewer
@@ -180,13 +192,35 @@ Python authoring server are gone — this is a viewer-only library.</li>
 
         </main>
         
-    <footer class="sm-footer">
-        <p>
-            A fork of <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
-            rewritten in TypeScript. Original tool by
-            <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
-            Available under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
-        </p>
+    <footer class="footer-knightlab">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">StoryMap <span>JS</span></div>
+                <ul class="list-social">
+                    <li>
+                        <a href="https://github.com/cmahnke/StoryMapJS" title="StoryMapJS fork on GitHub"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a href="https://github.com/NUKnightLab/StoryMapJS" title="Upstream Knight Lab repository"
+                            >Upstream</a
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="footer-description">
+                <p>
+                    A TypeScript rewrite of
+                    <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+                    the original tool by
+                    <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
+                </p>
+                <span class="copyright">
+                    Released under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
+                </span>
+            </div>
+        </div>
     </footer>
     </body>
 </html>

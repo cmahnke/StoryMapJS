@@ -81,6 +81,7 @@
         "dev": "vite",
         "build": "node tasks/build-fonts.mjs && node tasks/build-docs.mjs && vite build && vite build --config vite.demo.config.ts",
         "docs": "node tasks/build-docs.mjs",
+        "thumbs": "node tasks/build-thumbnails.mjs",
         "preview": "vite preview",
         "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
         "dist": "npm run clean && npm run build && cp dist/js/storymap.js dist/js/storymap-min.js",

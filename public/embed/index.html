@@ -52,6 +52,12 @@
 
     (function() {
         let storymap_url = urlParams.get('url');
+        // resolve the url parameter against the SITE ROOT (the directory
+        // containing embed/), not against embed/ — works with relative
+        // ("examples/katrina.json"), root-relative ("/examples/…") and full
+        // URLs, in dev, preview and GitHub Pages project subpaths
+        const siteRoot = new URL('..', window.location.href);
+        storymap_url = new URL(storymap_url, siteRoot).href;
         fetch(storymap_url)
             .then(response => response.json())
             .then(data => buildStoryMap(data));
