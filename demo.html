@@ -32,10 +32,12 @@
             }
 
             // The constructor accepts a source file URL directly; it fetches
-            // the storymap JSON (or an IIIF manifest) and validates it
+            // the storymap JSON (or an IIIF manifest) and validates it.
+            // The demo story is the Knight Lab homepage's "US Westward
+            // Expansion" (self-hosted from storymap.knightlab.com's demo).
             window.storymap = new StoryMap(
                 "storymap-embed",
-                "./football.json",
+                "./demo.json",
                 {},
                 {
                     title: onStoryMapTitle,
