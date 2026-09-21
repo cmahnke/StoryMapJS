@@ -24,7 +24,11 @@ export default class Vimeo extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url.split(/video\/|\/\/vimeo\.com\//)[1].split(/[?&]/)[0];
+        const parts = this.data.url.split(/video\/|\/\/vimeo\.com\//);
+        if (!parts[1]) {
+            throw new Error("Invalid Vimeo URL");
+        }
+        this.media_id = parts[1].split(/[?&]/)[0];
 
         // API URL
         const api_url =
@@ -50,7 +54,7 @@ export default class Vimeo extends Media {
 
     _stopMedia() {
         try {
-            this.player.contentWindow.postMessage(
+            this.player?.contentWindow?.postMessage(
                 JSON.stringify({ method: "pause" }),
                 "https://player.vimeo.com",
             );

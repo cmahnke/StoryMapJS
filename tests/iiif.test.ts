@@ -144,7 +144,7 @@ test("converts a small manifest to storymap data", () => {
     expect(landfall.media?.url).toBe("https://example.org/images/landfall.jpg");
     expect(landfall.media?.caption).toBe("Landfall");
     expect(landfall.media?.credit).toBe("Weather Service");
-    expect(landfall.background).toEqual({ url: "https://example.org/bg.jpg", opacity: 25 });
+    expect(landfall.background).toEqual({ url: "https://example.org/bg.jpg" });
     expect(landfall.location?.lat).toBe(28.2);
     expect(landfall.location?.lon).toBe(-89.6);
     expect(landfall.location?.zoom).toBe(10);
@@ -298,7 +298,9 @@ test("maps the mapconfig service to storymap options fields", () => {
     expect(data.line_dash).toBe("1,2");
     expect(data.line_join).toBe("round");
     expect(data.use_custom_markers).toBe(true);
-    expect(data.zoomify).toEqual({ path: "https://old.example.org/tiles" });
+    // legacy zoomify options are not carried from manifests (the viewer
+    // deletes options.zoomify for manifest sources)
+    expect(data.zoomify).toBeUndefined();
 });
 
 test("maps requiredStatement to iiif.attribution", () => {

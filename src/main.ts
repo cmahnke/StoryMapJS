@@ -8,7 +8,7 @@ import "./scss/VCO.StoryMap.scss";
 /**
  * The interactive StoryMap viewer component.
  *
- * @see {@link StoryMapBase.constructor} for the constructor signature.
+ * @see {@link StoryMap.constructor} for the constructor signature.
  */
 export { StoryMap } from "./storymap/StoryMap";
 

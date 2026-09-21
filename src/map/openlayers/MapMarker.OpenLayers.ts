@@ -95,10 +95,6 @@ export default class OpenLayersMapMarker extends MapMarker {
         }
     }
 
-    _createPopup(d?: MapMarkerData, o?: StorymapOptions): void {
-        // popups intentionally not implemented (matching Leaflet version)
-    }
-
     _active(a: boolean): void {
         if (this.data.media && this.data.media.mediatype) {
             this.media_icon_class = "vco-mapmarker-icon vco-icon-" + this.data.media.mediatype.type;

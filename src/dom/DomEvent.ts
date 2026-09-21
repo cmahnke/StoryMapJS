@@ -48,53 +48,12 @@ const DomEvent = {
         (obj as unknown as Record<string, unknown>)[key] = null;
     },
 
-    _checkMouse: function (el: HTMLElement, e: MouseEvent): boolean {
-        let related = e.relatedTarget as Node | null;
-
-        if (!related) {
-            return true;
-        }
-
-        try {
-            while (related && related !== el) {
-                related = related.parentNode;
-            }
-        } catch {
-            return false;
-        }
-
-        return related !== el;
-    },
-
-    stopPropagation: function (e: Event): void {
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        } else {
-            e.cancelBubble = true;
-        }
-    },
-
-    disableClickPropagation: function (el: HTMLElement): void {
-        DomEvent.addListener(el, "mousedown", DomEvent.stopPropagation);
-        DomEvent.addListener(el, "click", DomEvent.stopPropagation);
-        DomEvent.addListener(el, "dblclick", DomEvent.stopPropagation);
-    },
-
     preventDefault: function (e: Event): void {
         if (e.preventDefault) {
             e.preventDefault();
         } else {
             e.returnValue = false;
         }
-    },
-
-    stop: function (e: Event): void {
-        DomEvent.preventDefault(e);
-        DomEvent.stopPropagation(e);
-    },
-
-    getWheelDelta: function (e: WheelEvent): number {
-        return -e.deltaY / 40;
     },
 };
 

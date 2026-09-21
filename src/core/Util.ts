@@ -195,21 +195,6 @@ export function getUrlVars(string: string): string[] & Record<string, string> {
 }
 
 export const ratio = {
-    square: function (size: { w: number; h: number }): { w: number; h: number } {
-        const s = {
-            w: 0,
-            h: 0,
-        };
-        if (size.w > size.h && size.h > 0) {
-            s.h = size.h;
-            s.w = size.h;
-        } else {
-            s.w = size.w;
-            s.h = size.w;
-        }
-        return s;
-    },
-
     r16_9: function (size: { w?: number; h?: number }): number {
         if (size.w !== null && (size.w as unknown as string) !== "") {
             return Math.round((size.w / 16) * 9);
@@ -217,13 +202,6 @@ export const ratio = {
             return Math.round((size.h / 9) * 16);
         } else {
             return 0;
-        }
-    },
-    r4_3: function (size: { w?: number; h?: number }): number {
-        if (size.w !== null && (size.w as unknown as string) !== "") {
-            return Math.round((size.w / 4) * 3);
-        } else if (size.h !== null && (size.h as unknown as string) !== "") {
-            return Math.round((size.h / 3) * 4);
         }
     },
 };

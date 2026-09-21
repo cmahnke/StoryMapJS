@@ -45,7 +45,7 @@ export default class OpenLayers extends Map {
     declare "_tile_layer": TileLayer;
     declare "_line": VectorLayer;
     declare "_line_active": VectorLayer;
-    declare "_tile_layer_mini": TileLayer;
+    declare "_tile_layer_mini": TileLayer | null;
     declare "_mini_map": OverviewMap;
     declare "_markers": OpenLayersMapMarker[];
     /** rAF handle of the running active-line draw animation */
@@ -172,12 +172,6 @@ export default class OpenLayers extends Map {
      */
     _addTileLayer(): void {
         this._tile_layer = this._createTileLayer(this.options.map_type);
-        // The IIIF layer sets its source asynchronously (after the info.json fetch)
-        if (this._tile_layer.getSource()) {
-            this._tile_layer.getSource().on("tileloadend", () => {
-                this._onTilesLoaded(undefined);
-            });
-        }
         this._map.addLayer(this._tile_layer);
     }
 
@@ -191,11 +185,14 @@ export default class OpenLayers extends Map {
     }
 
     /**
-     * Map tiles were allowed: attach the main tile layer and the minimap's
-     * deferred layer, then re-fit.
+     * Map tiles were allowed: attach the main tile layer, create the
+     * minimap's deferred layer if it was withheld, then re-fit.
      */
     _onTilesAllowed(): void {
         this._addTileLayer();
+        if (!this._tile_layer_mini) {
+            this._tile_layer_mini = this._createTileLayer(this.options.map_type);
+        }
         if (this._mini_map && this._tile_layer_mini) {
             const overview = this._mini_map.getOverviewMap();
             if (!overview.getLayers().getLength()) {
@@ -206,7 +203,7 @@ export default class OpenLayers extends Map {
             const marker = this._markers[this.current_marker];
             if (marker.data.type === "overview") {
                 this._markerOverview();
-            } else if (marker.location()) {
+            } else if (this._hasLocation(marker.data)) {
                 this._fitView(this._map, [[marker.data.location.lon, marker.data.location.lat]], 0);
             }
         }
@@ -296,33 +293,27 @@ export default class OpenLayers extends Map {
 
         switch (_map_type_arr[0]) {
             case "mapbox": {
-                let mapbox_url;
                 if (_map_type_arr.length > 2) {
-                    // new form mapbox URL:
-                    // mapbox://styles/nuknightlab/cjl6w8oio0agu2sltd04tp1kx
+                    // mapbox://styles/<user>/<style> URLs render via the
+                    // Mapbox styles tiles API (requires map_access_token)
                     const this_mapbox_map = _map_type_arr[2].slice("//styles/".length);
-                    mapbox_url =
+                    const mapbox_url =
                         "https://api.mapbox.com/styles/v1/" +
                         this_mapbox_map +
                         "/tiles/256/{z}/{x}/{y}@2x?access_token=" +
                         this.options.map_access_token;
-                } else {
-                    // legacy configuration
-                    // nuknightlab.cjl6w8oio0agu2sltd04tp1kx
-                    const mapbox_name = _map_type_arr[1];
-                    mapbox_url =
-                        "https://api.tiles.mapbox.com/v4/" +
-                        mapbox_name +
-                        "/{z}/{x}/{y}.png?access_token=" +
-                        this.options.map_access_token;
+                    return new TileLayer({
+                        source: new XYZ({
+                            url: mapbox_url,
+                            attributions: [],
+                            crossOrigin: "anonymous",
+                        }),
+                    });
                 }
-                return new TileLayer({
-                    source: new XYZ({
-                        url: mapbox_url,
-                        attributions: [],
-                        crossOrigin: "anonymous",
-                    }),
-                });
+                console.error(
+                    "StoryMapJS: legacy 'mapbox:<style>' map types are no longer supported (the Mapbox v4 tile API was retired); use 'mapbox://styles/<user>/<style>' with map_access_token instead.",
+                );
+                return new TileLayer({ source: new OSM({ attributions: [] }) });
             }
 
             case "stadia": {
@@ -361,7 +352,17 @@ export default class OpenLayers extends Map {
                         const parsed = new IIIFInfo(
                             info as ImageInformationResponse,
                         ).getTileSourceOptions();
-                        const fallback = info as { width: number; height: number };
+                        const fallback = info as { width?: number; height?: number };
+                        if (
+                            typeof fallback.width !== "number" ||
+                            typeof fallback.height !== "number"
+                        ) {
+                            console.error(
+                                "IIIF info.json is missing width/height:",
+                                this.options.iiif.url,
+                            );
+                            return;
+                        }
                         const source = new IIIF({
                             ...(parsed ?? {}),
                             projection: "EPSG:4326",
@@ -372,12 +373,10 @@ export default class OpenLayers extends Map {
                         iiif_layer.setSource(source);
                         if (source.getState() === "ready") {
                             this._markerOverview();
-                            this._onTilesLoaded(undefined);
                         } else {
                             source.once("change", () => {
                                 if (source.getState() === "ready") {
                                     this._markerOverview();
-                                    this._onTilesLoaded(undefined);
                                 }
                             });
                         }
@@ -494,9 +493,9 @@ export default class OpenLayers extends Map {
             this.bounds_array = this._getAllMarkersBounds(this._markers);
         }
 
-        this._tile_layer_mini = this._createTileLayer(this.options.map_type);
-        // consent mode: the minimap layer is only attached once map tiles
-        // are allowed (creating the layer object loads nothing)
+        // consent mode: the minimap layer is only created once map tiles are
+        // allowed — creating an IIIF/vector layer object fetches info.json or
+        // the style JSON immediately, which must not happen while denied
         const consent = consentManagerOf(this.options);
         const tile_service = consentMessage("consent_service_tiles", "map tiles");
         const tiles_allowed = !(
@@ -504,6 +503,7 @@ export default class OpenLayers extends Map {
             consent &&
             !consent.isGranted(tile_service)
         );
+        this._tile_layer_mini = tiles_allowed ? this._createTileLayer(this.options.map_type) : null;
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
         // Legacy zoomify maps are mercator-based: give the minimap a view
         // constrained to the pyramid's upper levels and fit the image's
@@ -556,7 +556,7 @@ export default class OpenLayers extends Map {
                       })(),
                   }
                 : {}),
-            layers: tiles_allowed ? [this._tile_layer_mini] : [],
+            layers: this._tile_layer_mini ? [this._tile_layer_mini] : [],
             // NB: label = the button shown when COLLAPSED (expands the
             // minimap), collapseLabel = shown when EXPANDED (collapses it) —
             // the chevrons point outward when collapsed and inward when open
@@ -568,8 +568,12 @@ export default class OpenLayers extends Map {
 
         if (zoomify_pyramid) {
             // show the image pyramid's extent in the minimap
-            this._mini_map.getOverviewMap().getView().fit(zoomify_pyramid.extent, {
-                size: this._mini_map.getOverviewMap().getSize(),
+            const overview_map = this._mini_map.getOverviewMap();
+            const raw_size = overview_map.getSize();
+            // the minimap may still be collapsed (no layout size yet)
+            const size = raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 150];
+            overview_map.getView().fit(zoomify_pyramid.extent, {
+                size: size,
             });
         } else if (!is_zoomify && this.bounds_array && this.bounds_array.length) {
             this._fitView(this._mini_map.getOverviewMap(), this.bounds_array);
@@ -583,9 +587,10 @@ export default class OpenLayers extends Map {
     }
 
     _fitMiniMapToImage(): void {
+        if (!this._tile_layer_mini) return;
         const fit_mini_image = () => {
             try {
-                const mini_source = this._tile_layer_mini.getSource() as {
+                const mini_source = this._tile_layer_mini?.getSource() as {
                     getTileGrid?: () => { getExtent(): number[] };
                 } | null;
                 const grid = mini_source?.getTileGrid?.();
@@ -615,7 +620,7 @@ export default class OpenLayers extends Map {
         } else {
             // the mini layer sets its source asynchronously
             this._tile_layer_mini.once("change:source", () => {
-                const src = this._tile_layer_mini.getSource();
+                const src = this._tile_layer_mini?.getSource();
                 if (!src) return;
                 if (src.getState() === "ready") {
                     fit_mini_image();
@@ -626,16 +631,6 @@ export default class OpenLayers extends Map {
                 }
             });
         }
-    }
-
-    /*	Create Background Map
-	================================================== */
-    _createBackgroundMap(tiles: unknown): void {
-        // Not needed with OpenLayers: the tile layer renders directly
-    }
-
-    _onTilesLoaded(e?: unknown): void {
-        // Tiles have rendered; nothing further to do in OpenLayers
     }
 
     /*	Create Markers
@@ -1078,10 +1073,6 @@ export default class OpenLayers extends Map {
         return fromLonLat([loc.lon, loc.lat]);
     }
 
-    _getMapLocation(m: LatLngLiteral): unknown {
-        return this._map.getPixelFromCoordinate(this._toViewCoords(m));
-    }
-
     _getMapZoom(): number {
         // fractional zoom on purpose: overview fits produce non-integer zooms and
         // rounding here would snap the view on the next navigation
@@ -1139,6 +1130,7 @@ export default class OpenLayers extends Map {
         if (!isFinite(resolution) || resolution <= 0) return 0;
 
         const z = this._map.getView().getZoomForResolution(resolution);
+        if (z === undefined || !isFinite(z)) return 0;
         return Math.max(0, Math.round(z));
     }
 
@@ -1188,7 +1180,7 @@ export default class OpenLayers extends Map {
             // pyramid level (the original renderer's overview); with the
             // panel offset the legacy renderer drops one zoom level
             const size = this._map.getSize();
-            const overview = this._zoomifyOverview([size[0] || 1280, size[1] || 450]);
+            const overview = this._zoomifyOverview([size?.[0] || 1280, size?.[1] || 450]);
             if (overview) {
                 const offset =
                     this.options.map_center_offset &&

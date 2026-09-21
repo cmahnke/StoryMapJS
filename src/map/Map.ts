@@ -220,7 +220,7 @@ class MapBase {
                         // nothing to show
                     }
                 } else {
-                    if (marker.data.location && marker.data.location.lat) {
+                    if (this._hasLocation(marker.data)) {
                         // Calculate Zoom
                         zoom = this._calculateZoomChange(
                             this._getMapCenter(true),
@@ -247,10 +247,7 @@ class MapBase {
                                 let retract_path_source: LinePoint[] | null = null;
                                 if (line_num < this.current_marker) {
                                     while (line_num < this.current_marker) {
-                                        if (
-                                            this._markers[line_num].data.location &&
-                                            this._markers[line_num].data.location.lat
-                                        ) {
+                                        if (this._hasLocation(this._markers[line_num].data)) {
                                             point = {
                                                 lat: this._markers[line_num].data.location.lat,
                                                 lon: this._markers[line_num].data.location.lon,
@@ -269,10 +266,7 @@ class MapBase {
                                     // map's retract animation).
                                     const traveled = [];
                                     for (let idx = 0; idx <= this.current_marker; idx++) {
-                                        if (
-                                            this._markers[idx].data.location &&
-                                            this._markers[idx].data.location.lat
-                                        ) {
+                                        if (this._hasLocation(this._markers[idx].data)) {
                                             traveled.push({
                                                 lat: this._markers[idx].data.location.lat,
                                                 lon: this._markers[idx].data.location.lon,
@@ -281,10 +275,7 @@ class MapBase {
                                     }
                                     const retract_path = [];
                                     for (let idx = 0; idx <= previous_marker; idx++) {
-                                        if (
-                                            this._markers[idx].data.location &&
-                                            this._markers[idx].data.location.lat
-                                        ) {
+                                        if (this._hasLocation(this._markers[idx].data)) {
                                             retract_path.push({
                                                 lat: this._markers[idx].data.location.lat,
                                                 lon: this._markers[idx].data.location.lon,
@@ -414,7 +405,6 @@ class MapBase {
             if (this.current_marker === 0) {
                 this.goTo(this.options.start_at_slide, true);
             }
-            this._initialMapLocation();
         }
     }
 
@@ -447,13 +437,21 @@ class MapBase {
     _createMarkers(array: StorymapSlide[]): void {
         for (let i = 0; i < array.length; i++) {
             this._createMarker(array[i]); // this must be called even for overview which has no marker or other logic must be fixed.
-            if (array[i].location && array[i].location.lat && this.options.show_lines) {
+            if (this._hasLocation(array[i]) && this.options.show_lines) {
                 this._addToLine(this._line, array[i]);
             }
         }
     }
 
-    _createLines(array: StorymapSlide[]): void {}
+    /**
+     * A slide has a real location: lat and lon are both numbers — lat 0 and
+     * lon 0 are valid coordinates and must not be treated as missing.
+     */
+    _hasLocation(d: StorymapSlide): boolean {
+        return (
+            !!d.location && typeof d.location.lat == "number" && typeof d.location.lon == "number"
+        );
+    }
 
     /*	Map Specific
 	================================================== */
@@ -523,10 +521,6 @@ class MapBase {
 
     _refreshMap(): void {}
 
-    _getMapLocation(m: LatLngLiteral): unknown {
-        return { x: 0, y: 0 };
-    }
-
     _getMapZoom(): number {
         return 1;
     }
@@ -545,8 +539,6 @@ class MapBase {
     }
 
     _markerOverview(duration?: number): void {}
-
-    _initialMapLocation(): void {}
 
     /**
      * Great-circle length of the route through all markers in kilometers;
@@ -611,8 +603,6 @@ class MapBase {
 
         this.scroll.timer = setTimeout(() => {
             this._scollZoom();
-            //e.preventDefault();
-            //e.stopPropagation(e);
         }, time_left);
     }
 
@@ -620,7 +610,6 @@ class MapBase {
         const current_zoom = this._getMapZoom();
 
         this.scroll.start_time = null;
-        //VCO.DomUtil.addClass(this._el.container, 'vco-map-touch-zoom');
         clearTimeout(this.scroll.timer);
         clearTimeout(this.scroll.timer_done);
 
@@ -632,7 +621,6 @@ class MapBase {
     }
 
     _scollZoomDone(e?: unknown): void {
-        //VCO.DomUtil.removeClass(this._el.container, 'vco-map-touch-zoom');
         this.touch_scale = 1;
     }
 
@@ -679,7 +667,6 @@ class MapBase {
                 this._markers[this.current_marker].active(true);
             }
             this._loaded.data = true;
-            this._initialMapLocation();
         }
     }
 

@@ -10,7 +10,6 @@ import { loadJS } from "../core/Load";
 	Main media template for media assets.
 	Takes a data object and populates a dom object
 ================================================== */
-// TODO add link
 
 /*	Options for Media and its subclasses: the fields Media itself sets
 	or reads. Everything else merged in via mergeData is absorbed by the
@@ -137,7 +136,7 @@ export class MediaBase {
                 const service = this.options.media_type as string;
                 let host = "";
                 try {
-                    host = new URL((this._media as { url?: string })?.url ?? "").host;
+                    host = new URL((this.data as { url?: string })?.url ?? "").host;
                 } catch {
                     // keep the empty host
                 }
@@ -156,18 +155,19 @@ export class MediaBase {
     }
 
     _beginLoad() {
-        try {
-            this.load_timer = setTimeout(() => {
+        // a sync throw inside a media type's _loadMedia (e.g. an unparseable
+        // media URL) must not escape the timer callback as an uncaught error
+        this.load_timer = setTimeout(() => {
+            try {
                 this._loadMedia();
                 this._state.loaded = true;
                 this._updateDisplay();
-            }, 1200);
-        } catch (e) {
-            console.log("Error loading media for ", this._media);
-            console.log(e);
-        }
-
-        //this._state.loaded = true;
+            } catch (e) {
+                console.log("Error loading media for ", this._media);
+                console.log(e);
+                this.loadErrorDisplay("Error loading media.");
+            }
+        }, 1200);
     }
 
     _showBlocked() {
@@ -280,7 +280,9 @@ export class MediaBase {
     }
 
     loadErrorDisplay(message: string) {
-        this._el.content.removeChild(this._el.content_item);
+        if (this._el.content_item && this._el.content_item.parentNode === this._el.content) {
+            this._el.content.removeChild(this._el.content_item);
+        }
         this._el.content_item = Dom.create(
             "div",
             "vco-media-item vco-media-loaderror",

@@ -121,6 +121,7 @@ export function DomMixed<T extends Constructor<DomMixedInstance>>(Base: T) {
             if (!animate) {
                 this._el.container.style.display = "block";
             }
+            // animated show is not implemented
         }
 
         hide(): void {

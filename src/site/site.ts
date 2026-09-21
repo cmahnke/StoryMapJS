@@ -18,10 +18,7 @@ const EXAMPLES: ExampleEntry[] = [
     { id: "katrina", title: "Hurricane Katrina", kind: "Map" },
     { id: "population", title: "US Population Shifts", kind: "Map" },
     { id: "marktwain", title: "Mark Twain's Travels", kind: "Map" },
-    { id: "nightwatch", title: "The Night Watch", kind: "Gigapixel" },
     { id: "seurat", title: "A Sunday on La Grande Jatte", kind: "Gigapixel" },
-    { id: "courbet", title: "The Painter's Studio", kind: "Gigapixel" },
-    { id: "jansteen", title: "Jan Steen", kind: "Gigapixel" },
     { id: "iiif-wellcome", title: "Wellcome Collection (IIIF)", kind: "IIIF" },
     { id: "president", title: "A Month in the Life of President Obama", kind: "Map" },
     // remote showcase examples, rendered by the embed player

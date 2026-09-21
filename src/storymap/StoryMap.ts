@@ -12,7 +12,6 @@ import MenuBar from "../ui/MenuBar";
 import StorySlider from "../slider/StorySlider";
 import { Browser } from "../core/Browser";
 import Animate from "morpheus";
-import { DomEvent } from "../dom/DomEvent";
 import type { Map as OlMap } from "ol";
 import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
 
@@ -35,8 +34,6 @@ type StoryMapListener = (e: unknown) => void;
  */
 class StoryMapBase {
     declare "_loaded": { storyslider: boolean; map: boolean };
-    declare mouseEventToLatLng: (e: unknown) => unknown;
-    declare mouseEventToLayerPoint: (e: unknown) => unknown;
     declare "on": EventedInstance["on"];
     declare "version": string;
     declare "ready": boolean;
@@ -136,7 +133,7 @@ class StoryMapBase {
 
         // Map
         this._map = {} as OpenLayersMap;
-        this.map = {} as OlMap; // For direct access to Leaflet Map
+        this.map = {} as OlMap; // direct access to the OpenLayers map
 
         // Menu Bar
         this._menubar = {} as MenuBar;
@@ -154,7 +151,7 @@ class StoryMapBase {
             width: this._el.container.offsetWidth,
             layout: "landscape", // portrait or landscape
             base_class: "",
-            default_bg_color: { r: 256, g: 256, b: 256 },
+            default_bg_color: { r: 255, g: 255, b: 255 },
             map_size_sticky: 2.5, // Set as division 1/3 etc
             map_center_offset: null, // takes object {top:0,left:0}
             less_bounce: false, // Less map bounce when calculating zoom, false is good when there are clusters of tightly grouped markers
@@ -289,7 +286,11 @@ class StoryMapBase {
                 this.data = manifestToStorymapData(result);
             } else {
                 validateStorymapAndReport(result, source);
-                this.data = (result as StorymapDataWrapper).storymap;
+                const wrapper = result as StorymapDataWrapper;
+                if (!wrapper.storymap) {
+                    throw new Error("StoryMapJS: data must have a storymap property");
+                }
+                this.data = wrapper.storymap;
             }
             this._initOptions();
         } catch (err: unknown) {
@@ -360,14 +361,16 @@ class StoryMapBase {
         setLanguage(this.options.language);
         // the resolved locale decides the layout direction (issues #211, #245)
         this.options.language = Language as unknown as string;
-        this._loadFontCss();
         this._onDataLoaded();
     }
 
     /*  Load the font theme stylesheet
     ================================================== */
     async _loadFontCss() {
-        let font = this.options.font_css || "stock:default";
+        // only genuinely external URLs ask for consent: stock: themes and
+        // relative paths resolve to same-origin / library assets
+        const original = this.options.font_css || "stock:default";
+        let font = original;
         if (font.startsWith("stock:")) {
             const font_name = font.split(":")[1] || "default";
             // resolved against the library location: one directory up from
@@ -377,7 +380,7 @@ class StoryMapBase {
             font = urljoin(this.options.script_path, font);
         }
         const manager = consentManagerOf(this.options);
-        const external = /^(http|https|\/\/)/.test(font);
+        const external = /^(http|https|\/\/)/.test(original);
         if (external && this.options.consent_required && manager) {
             // external font CSS is an external service — ask first
             const host = new URL(font.startsWith("//") ? "https:" + font : font).host;
@@ -416,7 +419,9 @@ class StoryMapBase {
      *   marker (or the overview when `n` is 0 for storymaps with one).
      */
     goTo(n: number) {
-        if (n !== this.current_slide) {
+        // out-of-range indices are ignored: they would desync the slider and
+        // map (no active slide) and write a broken #slide-N bookmark
+        if (n >= 0 && n < (this.data?.slides?.length ?? 0) && n !== this.current_slide) {
             this.current_slide = n;
             this._storyslider.goTo(this.current_slide);
             this._map.goTo(this.current_slide);
@@ -590,7 +595,6 @@ class StoryMapBase {
         // Check if skinny
         if (this.options.width <= this.options.skinny_size) {
             this.options.layout = "portrait";
-            //display_class += " vco-skinny";
         } else {
             this.options.layout = "landscape";
         }
@@ -716,6 +720,11 @@ class StoryMapBase {
         (this.options as Record<string, unknown>).consent_manager = new ConsentManager();
         this.fire("dataloaded");
         this._initLayout();
+        // font themes load once the layout exists: the consent ask for
+        // external font CSS needs a real container to render into
+        void this._loadFontCss().catch((err: unknown) => {
+            console.warn("StoryMapJS: font theme could not be loaded", err);
+        });
         this._initEvents();
         this._initResizeHandling();
         this.ready = true;
@@ -913,34 +922,14 @@ class StoryMapBase {
         this._map.goTo(this.current_slide);
         this._storyslider.goTo(this.current_slide);
         this.fire("change", { current_slide: this.current_slide }, this);
+        // keep hash, progress and autoplay in sync like the other paths
+        this._syncHash();
+        this._scheduleAutoplay();
+        this._updateProgress();
     }
 
     _onMenuBarCollapse(e: { y: number }) {
         this._updateDisplay(e.y, true);
-    }
-
-    _onMouseClick(e?: Event) {}
-
-    _fireMouseEvent(e: Event) {
-        if (!this._loaded) {
-            return;
-        }
-
-        let type = e.type;
-        type = type === "mouseenter" ? "mouseover" : type === "mouseleave" ? "mouseout" : type;
-
-        if (!this.hasEventListeners(type)) {
-            return;
-        }
-
-        if (type === "contextmenu") {
-            DomEvent.preventDefault(e);
-        }
-
-        this.fire(type, {
-            latlng: "something", //this.mouseEventToLatLng(e),
-            layerPoint: "something else", //this.mouseEventToLayerPoint(e)
-        });
     }
 
     _onMapLoaded() {

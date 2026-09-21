@@ -1,5 +1,4 @@
 @use "sass:color";
-@use "sass:math";
 
 /*	VARIABLES
 ----------------------------------------------------- */
@@ -23,7 +22,6 @@ $base-font-size-small: 11px;
 $base-font-size-large: 24px;
 $base-font-size-xlarge: 36px;
 $base-line-height: 1.4286;
-$base-line-height-computed: math.floor($base-font-size * $base-line-height);
 
 /* COLOR SCHEME
 ================================================== */
@@ -33,11 +31,6 @@ $color-dark: #fff;
 $color-theme: #c34528; // #DA0000;
 
 $color-theme-dark: color.adjust($color-theme, $lightness: -15%);
-$color-theme-complement: color.adjust($color-theme, $hue: 180);
-$color-theme-triad1: color.adjust($color-theme, $hue: -135);
-$color-theme-triad2: color.adjust($color-theme, $hue: 135);
-$color-theme-split1: color.adjust($color-theme, $hue: -158);
-$color-theme-split2: color.adjust($color-theme, $hue: 158);
 $color-text: color.adjust($color-dark, $lightness: -50%);
 $color-header-text: $color-dark;
 $color-text-inverted: color.adjust($color-dark, $lightness: -25%);
@@ -61,10 +54,3 @@ $time-marker-border-radius: 10px;
 ================================================== */
 $animation-ease: cubic-bezier(0.77, 0, 0.175, 1);
 $animation-duration: 1000ms;
-$animation-duration-fast: 500ms;
-
-/* GFX
-================================================== */
-@mixin base-sprite {
-    background-image: url("storymap.png?v1.0");
-}

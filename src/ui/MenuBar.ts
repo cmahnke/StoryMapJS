@@ -8,7 +8,7 @@ import { Browser } from "../core/Browser";
 import { Language } from "../language/Language";
 
 /*	MenuBar
-	Draggable component to control size
+	Buttons, progress and distance display for the storymap
 ================================================== */
 
 interface MenuBarOptions {
@@ -26,8 +26,6 @@ class MenuBarBase {
     declare "options": MenuBarOptions;
     declare "animator": Record<string, unknown>;
     declare "fire": EventedInstance["fire"];
-
-    //_el: {},
 
     /*	Constructor
 	================================================== */
@@ -77,33 +75,16 @@ class MenuBarBase {
         mergeData(this.options, options);
 
         this._initLayout();
-        this._initEvents();
     }
 
     /*	Public
 	================================================== */
     show(d?: number): void {
-        let _duration = this.options.duration;
-        if (d) {
-            _duration = d;
-        }
-        /*
-		this.animator = Animate(this._el.container, {
-			top: 		this.options.menubar_default_y + "px",
-			duration: 	duration,
-			easing: 	easeOutStrong
-		});
-		*/
+        // the menubar renders statically; no entrance animation
     }
 
     hide(top: number): void {
-        /*
-		this.animator = Animate(this._el.container, {
-			top: 		top,
-			duration: 	this.options.duration,
-			easing: 	easeOutStrong
-		});
-		*/
+        // the menubar renders statically; no exit animation
     }
 
     setSticky(y: number): void {
@@ -296,8 +277,6 @@ class MenuBarBase {
             this._el.button_collapse_toggle.style.display = "none";
         }
     }
-
-    _initEvents() {}
 
     // Update Display
     _updateDisplay(width?: number, height?: number, animate?: boolean): void {

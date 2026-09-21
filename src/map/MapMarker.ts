@@ -101,10 +101,6 @@ class MapMarkerBase {
         this._createMarker(d, o);
     }
 
-    createPopup(d?: MapMarkerData, o?: StorymapOptions): void {
-        this._createPopup(d, o);
-    }
-
     active(a: boolean): void {
         this._active(a);
     }
@@ -121,8 +117,6 @@ class MapMarkerBase {
     _addTo(m: unknown): void {}
 
     _removeFrom(m: unknown): void {}
-
-    _createPopup(d?: MapMarkerData, o?: StorymapOptions): void {}
 
     _active(a: boolean): void {}
 

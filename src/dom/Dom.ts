@@ -16,14 +16,6 @@ export default class Dom {
         return el;
     }
 
-    static createText(content: string, container?: HTMLElement): Text {
-        const el = document.createTextNode(content);
-        if (container) {
-            container.appendChild(el);
-        }
-        return el;
-    }
-
     static getPosition(el: HTMLElement | null): { x: number; y: number } {
         const pos = {
             x: 0,

@@ -10,7 +10,6 @@ import DailyMotion from "./types/DailyMotion";
 import Twitter from "./types/Twitter";
 import Flickr from "./types/Flickr";
 import GoogleDoc from "./types/GoogleDoc";
-import Slider from "./types/Slider";
 import IFrame from "./types/IFrame";
 import Website from "./types/Website";
 import Facebook from "./types/Facebook";
@@ -22,12 +21,9 @@ import { MediaTypeMatch, StorymapSlideMedia } from "../types";
 /*	MediaType
 	Determines the type of media the url string is.
 	returns an object with .type and .id
-	You can add new media types by adding a regex 
-	to match and the media class name to use to 
-	render the media 
-
-	TODO
-	Allow array so a slideshow can be a mediatype
+	You can add new media types by adding a regex
+	to match and the media class name to use to
+	render the media
 ================================================== */
 
 /* A media type table entry: like MediaTypeMatch, but match_str may be
@@ -45,7 +41,6 @@ type MediaTypeEntry = Omit<MediaTypeMatch, "match_str"> & {
  * @returns The matching media type entry, or `false` for unknown media.
  */
 export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false {
-    let media: MediaTypeEntry | undefined;
     const media_types: MediaTypeEntry[] = [
         {
             type: "youtube",
@@ -74,15 +69,9 @@ export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false
         {
             type: "twitter",
             name: "Twitter",
-            match_str: "(www.)?twitter.com",
+            match_str: "^(https?:)?/+(www.)?(twitter|x).com",
             cls: Twitter,
         },
-        //{
-        //		type: 		"googlemaps",
-        //		name: 		"Google Map",
-        //		match_str: 	"maps.google",
-        //	cls: 		VCO.Media.Map
-        //},
         {
             type: "flickr",
             name: "Flickr",
@@ -164,16 +153,9 @@ export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false
         },
     ];
 
-    for (let i = 0; i < media_types.length; i++) {
-        if (m instanceof Array) {
-            return {
-                type: "slider",
-                cls: Slider,
-            } as MediaTypeMatch;
-        } else if (m.url.match(media_types[i].match_str)) {
-            media = media_types[i];
-            media.url = m.url;
-            return media as MediaTypeMatch;
+    for (const media_type of media_types) {
+        if (typeof m.url === "string" && m.url.match(media_type.match_str)) {
+            return media_type as MediaTypeMatch;
         }
     }
 

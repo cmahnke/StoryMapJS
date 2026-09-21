@@ -3,8 +3,8 @@ import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
 import { Language } from "../language/Language";
-/*	VCO.SizeBar
-	Draggable component to control size
+/*	Message
+	Loading / info message component
 ================================================== */
 
 interface MessageOptions {
@@ -18,11 +18,9 @@ interface MessageOptions {
 class MessageBase {
     declare "_el": Record<string, HTMLElement>;
     declare "options": MessageOptions;
-    declare "data": Record<string, unknown>;
+    "data": Record<string, unknown>;
     declare "animator": Record<string, unknown>;
     declare "fire": EventedInstance["fire"];
-
-    //_el: {},
 
     /*	Constructor
 	================================================== */
@@ -48,6 +46,8 @@ class MessageBase {
             message_icon_class: "vco-loading-icon",
         };
 
+        this.data = {};
+
         // Merge Data and Options
         mergeData(this.data, data);
         mergeData(this.options, options);
@@ -70,12 +70,6 @@ class MessageBase {
 	================================================== */
     updateMessage(t: string): void {
         this._updateMessage(t);
-    }
-
-    /*	Update Display
-	================================================== */
-    updateDisplay(w?: number, h?: number): void {
-        this._updateDisplay(w, h);
     }
 
     _updateMessage(t?: string): void {
@@ -115,9 +109,6 @@ class MessageBase {
     _initEvents() {
         DomEvent.addListener(this._el.container, "click", this._onMouseClick, this);
     }
-
-    // Update Display
-    _updateDisplay(width?: number, height?: number, animate?: boolean): void {}
 }
 
 export default class Message extends DomMixed(Evented(MessageBase)) {

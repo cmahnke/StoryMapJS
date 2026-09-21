@@ -14,8 +14,6 @@
             p {
                 font-size: $base-font-size-xlarge;
                 line-height: math.floor($base-font-size-xlarge * 1.1);
-
-                // color:			$color-dark;
             }
 
             cite {
@@ -29,20 +27,11 @@
         blockquote p::before {
             content: open-quote;
             display: inline-block;
-
-            // font-size: ($base-font-size-xlarge * 3);
-            // font-style: normal;
-            // position: relative;
-            // top: ($base-font-size-xlarge);
             margin-right: 5px;
         }
 
         blockquote p::after {
             content: close-quote;
-
-            // font-size: ($base-font-size-xlarge * 2);
-            // position: relative;
-            // top: ($base-font-size-xlarge/2);
             margin-left: 3px;
         }
     }

@@ -53,8 +53,7 @@ export default class Video extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        // left over from Vimeo...
-        // this._el.content_item.style.height = ratio.r16_9({w:this._el.content_item.offsetWidth}) + "px";
+        // video height is CSS-driven; nothing to compute here
     }
 
     _stopMedia() {

@@ -1,7 +1,0 @@
-@use "Mixins" as *;
-
-/* Disable Text selection when dragging
-================================================== */
-.vco-dragging {
-    @include user-select(none);
-}

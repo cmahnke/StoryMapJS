@@ -207,8 +207,7 @@ function readBackground(value: unknown): StorymapSlideBackground | string | null
         const color = asString(record.color);
         if (url !== null) background.url = url;
         if (color !== null) background.color = color;
-        const opacity = asNumber(record.opacity);
-        if (opacity !== null) background.opacity = opacity;
+        // slide background opacity is accepted but never read by the viewer
         return Object.keys(background).length > 0 ? background : null;
     }
     if (typeof value === "string" && value !== "") {
@@ -252,8 +251,6 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     // StoryMap extension terms
     const slideType = asString(record[STORYMAP_PREFIX + "type"]);
     if (slideType !== null) slide.type = slideType;
-    const group = asString(readTerm(record, "group"));
-    if (group !== null) slide.group = group;
     const date = readTerm(record, "date");
     const dateString = asString(date);
     const dateRecord = asRecord(date);
@@ -335,11 +332,6 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
 
     const iiifUrl = asString(readTerm(config, "iiifUrl"));
     if (iiifUrl !== null) data.iiif = { url: iiifUrl, attribution: "" };
-
-    const originalZoomify = readTerm(config, "originalZoomify");
-    if (originalZoomify !== undefined && originalZoomify !== null) {
-        data.zoomify = originalZoomify;
-    }
 
     const fontCss = asString(readTerm(config, "fontCss"));
     if (fontCss !== null) data.font_css = fontCss;

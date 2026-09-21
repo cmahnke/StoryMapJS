@@ -90,6 +90,9 @@ export default class YouTube extends Media {
     }
 
     _stopMedia() {
+        // cancel a pending API retry so a poll cannot outlive the slide
+        clearTimeout(this.timer);
+        this.timer = null;
         if (this.youtube_loaded) {
             try {
                 const yt = YT as YTGlobal;
@@ -106,13 +109,18 @@ export default class YouTube extends Media {
         // Determine Start of Media
         if (typeof this.media_id.start != "undefined") {
             const vidstart = this.media_id.start.toString();
-            let vid_start_minutes, vid_start_seconds;
-            if (vidstart.match("m")) {
-                vid_start_minutes = parseInt(vidstart.split("m")[0], 10);
-                vid_start_seconds = parseInt(vidstart.split("m")[1].split("s")[0], 10);
-                this.media_id.start = vid_start_minutes * 60 + vid_start_seconds;
+            // supports the "90" (seconds), "1m30s" and "1h2m30s" formats
+            const hours = /(\d+)h/.exec(vidstart);
+            const minutes = /(\d+)m/.exec(vidstart);
+            const seconds = /(\d+)s/.exec(vidstart);
+            if (hours || minutes || seconds) {
+                this.media_id.start =
+                    (hours ? parseInt(hours[1], 10) * 3600 : 0) +
+                    (minutes ? parseInt(minutes[1], 10) * 60 : 0) +
+                    (seconds ? parseInt(seconds[1], 10) : 0);
             } else {
-                this.media_id.start = 0;
+                const parsed = parseInt(vidstart, 10);
+                this.media_id.start = Number.isNaN(parsed) ? 0 : parsed;
             }
         } else {
             this.media_id.start = 0;
@@ -164,7 +172,12 @@ export default class YouTube extends Media {
 	================================================== */
     onPlayerReady(e?: unknown) {
         this.youtube_loaded = true;
-        this._el.content_item = document.getElementById(this._el.content_item.id);
+        // the iframe replaces the placeholder div — re-resolve it, but a
+        // slide removed in the meantime must not crash the display update
+        const el = document.getElementById(this._el.content_item.id);
+        if (el) {
+            this._el.content_item = el;
+        }
         this.onMediaLoaded();
         this.onLoaded();
     }

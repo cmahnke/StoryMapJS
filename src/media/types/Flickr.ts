@@ -67,11 +67,16 @@ export default class Flickr extends Media {
     createMedia(d: unknown) {
         const data = d as { sizes: { size: { label: string; source: string }[] } };
         const best_size = this.sizes(this.options.height);
-        let size = data.sizes.size[data.sizes.size.length - 2].source;
+        const sizes = data?.sizes?.size;
+        if (!sizes || !sizes.length) {
+            this.loadErrorDisplay("Photo not found or private.");
+            return;
+        }
+        let size = sizes[Math.max(0, sizes.length - 2)].source;
 
-        for (let i = 0; i < data.sizes.size.length; i++) {
-            if (data.sizes.size[i].label === best_size) {
-                size = data.sizes.size[i].source;
+        for (let i = 0; i < sizes.length; i++) {
+            if (sizes[i].label === best_size) {
+                size = sizes[i].source;
             }
         }
 

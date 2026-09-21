@@ -201,25 +201,10 @@ class StorySliderBase {
         this._slides.push(slide);
     }
 
-    _destroySlide(slide: Slide) {
-        this._removeSlide(slide);
-        for (let i = 0; i < this._slides.length; i++) {
-            if (this._slides[i] === slide) {
-                this._slides.splice(i, 1);
-            }
-        }
-    }
-
     _addSlide(slide: Slide) {
         slide.addTo(this._el.slider_item_container);
         slide.on("added", this._onSlideAdded, this);
         slide.on("background_change", this._onBackgroundChange, this);
-    }
-
-    _removeSlide(slide: Slide) {
-        slide.removeFrom(this._el.slider_item_container);
-        slide.off("added", this._onSlideAdded, this);
-        slide.off("background_change", this._onBackgroundChange);
     }
 
     /*	Message
@@ -362,14 +347,6 @@ class StorySliderBase {
             if (slide.data.text.headline) {
                 n.title = slide.data.text.headline;
             }
-            /*
-			// Disabling location in description for now.
-			if (slide.data.location) {
-				if (slide.data.location.name) {
-					n.description = slide.data.location.name;
-				}
-			}
-			*/
         }
 
         return n;
@@ -538,8 +515,6 @@ class StorySliderBase {
             this.options.height = this._el.container.offsetHeight;
         }
 
-        //this._el.container.style.height = this.options.height;
-
         // position navigation
         const nav_pos = this.options.height / 2;
         this._nav.next.setPosition({ top: nav_pos });
@@ -631,7 +606,6 @@ class StorySliderBase {
         this._el.slider_container.style.left = "0px";
 
         if (Browser.touch) {
-            //this._el.slider_touch_mask = VCO.Dom.create('div', 'vco-slider-touch-mask', this._el.slider_container_mask);
             this._swipable = new Swipable(
                 this._el.slider_container_mask,
                 this._el.slider_container,
@@ -730,10 +704,6 @@ class StorySliderBase {
         this.fire("slideAdded", this.data);
     }
 
-    _onSlideRemoved(e?: unknown) {
-        this.fire("slideAdded", this.data);
-    }
-
     _onSlideChange(displayupdate?: boolean) {
         if (!displayupdate) {
             this.fire("change", {
@@ -741,30 +711,6 @@ class StorySliderBase {
                 uniqueid: this._slides[this.current_slide].data.uniqueid,
             });
         }
-    }
-
-    _onMouseClick(e?: Event) {}
-
-    _fireMouseEvent(e: Event) {
-        if (!this._loaded) {
-            return;
-        }
-
-        let type = e.type;
-        type = type === "mouseenter" ? "mouseover" : type === "mouseleave" ? "mouseout" : type;
-
-        if (!this.hasEventListeners(type)) {
-            return;
-        }
-
-        if (type === "contextmenu") {
-            DomEvent.preventDefault(e);
-        }
-
-        this.fire(type, {
-            latlng: "something", //this.mouseEventToLatLng(e),
-            layerPoint: "something else", //this.mouseEventToLayerPoint(e)
-        });
     }
 
     _onLoaded() {

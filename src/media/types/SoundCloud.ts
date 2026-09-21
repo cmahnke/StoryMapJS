@@ -13,6 +13,7 @@ interface SoundCloudWidget {
 export default class SoundCloud extends Media {
     declare "media_id": string;
     declare "soundCloudCreated": boolean;
+    declare "widget": SoundCloudWidget;
 
     /*	Load the media
 	================================================== */
@@ -40,21 +41,29 @@ export default class SoundCloud extends Media {
             await this.loadScript("https://w.soundcloud.com/player/api.js");
             //load soundcloud api for pausing.
             this.createMedia(d);
-        } catch {
-            // aborted or failed to load; nothing to show
+        } catch (err) {
+            // aborted loads stay silent (the visitor navigated away);
+            // real failures show the media error display
+            if ((err as DOMException)?.name !== "AbortError") {
+                this.loadErrorDisplay("Unable to load this track.");
+            }
         }
     }
 
     createMedia(d: unknown) {
         const data = d as { html: string };
+        if (!data?.html) {
+            this.loadErrorDisplay("Unable to load this track.");
+            return;
+        }
         this._el.content_item.innerHTML = data.html;
 
         this.soundCloudCreated = true;
 
         const sc = SC as { Widget: (iframe: Element | null) => SoundCloudWidget };
-        (self as unknown as { widget: SoundCloudWidget }).widget = sc.Widget(
-            this._el.content_item.querySelector("iframe"),
-        ); //create widget for api use
+        // per-instance widget: a global would be overwritten by every
+        // SoundCloud slide and _stopMedia would pause the wrong one
+        this.widget = sc.Widget(this._el.content_item.querySelector("iframe"));
 
         // After Loaded
         this.onLoaded();
@@ -62,7 +71,7 @@ export default class SoundCloud extends Media {
 
     _stopMedia() {
         if (this.soundCloudCreated) {
-            (self as unknown as { widget: SoundCloudWidget }).widget.pause();
+            this.widget?.pause();
         }
     }
 }

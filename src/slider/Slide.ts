@@ -138,7 +138,6 @@ class SlideBase {
         mergeData(this.data, data);
 
         this._initLayout();
-        this._initEvents();
     }
 
     /*	Adding, Hiding, Showing etc
@@ -250,7 +249,6 @@ class SlideBase {
             if (background.url) {
                 this.has.background.image = true;
                 this._el.container.className += " vco-full-image-background";
-                //this._el.container.style.backgroundImage="url('" + this.data.background.url + "')";
                 this.has.background.color_value = "#000";
                 this._el.background.style.backgroundImage = "url('" + background.url + "')";
                 this._el.background.style.display = "block";
@@ -259,9 +257,6 @@ class SlideBase {
                 this.has.background.color = true;
                 this._el.container.className += " vco-full-color-background";
                 this.has.background.color_value = background.color;
-                //this._el.container.style.backgroundColor = this.data.background.color;
-                //this._el.background.style.backgroundColor 	= this.data.background.color;
-                //this._el.background.style.display 			= "block";
             }
             if (background.text_background) {
                 this._el.container.className += " vco-text-background";
@@ -321,8 +316,6 @@ class SlideBase {
         // Fire event that the slide is loaded
         this.onLoaded();
     }
-
-    _initEvents() {}
 
     // Update Display
     _updateDisplay(width?: number, height?: number, layout?: string) {

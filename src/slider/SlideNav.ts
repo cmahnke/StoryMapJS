@@ -8,7 +8,6 @@ import { AnimateOptions, AnimationHandle } from "../types";
 /*	SlideNav
 	Navigation for Slideshows
 ================================================== */
-// TODO null out data
 
 interface SlideNavData {
     title: string;

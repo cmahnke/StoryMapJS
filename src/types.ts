@@ -26,7 +26,6 @@ export type MediaTypeMatch = {
     match_str: string;
     // media type class constructor
     cls: new (data: StorymapSlideMedia, options: Record<string, unknown>) => unknown;
-    url?: string;
 };
 
 export interface StorymapSlideMedia {
@@ -134,7 +133,7 @@ export interface StorymapOptions {
     /**
      * Ask for permission before loading anything from external services
      * (media embeds, map tiles, external font CSS) — GDPR consent mode.
-     * Grants are remembered per service for the page lifetime.
+     * Grants are remembered per service in a cookie for 90 days.
      */
     consent_required: boolean;
     /** Slide text color override, sets --vco-color-text (issue #177) */
@@ -185,7 +184,6 @@ export interface AnimateOptions extends Record<string, unknown> {
     complete?: unknown;
     left?: string | number;
     top?: string | number;
-    bezier?: number[][];
 }
 
 export interface AnimationHandle {
@@ -233,7 +231,6 @@ export type IconSpec = {
 
 export interface MediaState {
     loaded: boolean;
-    playing?: boolean;
     [key: string]: unknown;
 }
 
