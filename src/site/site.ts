@@ -1,7 +1,7 @@
 /* Example cards for the landing page. Curated, non-`issue-*` fixtures from
  * public/examples plus remote showcase examples; each card opens the storymap
  * in the built embed player. The page chrome is site.css (compiled from
- * src/scss/site/site.scss by tasks/build-docs.mjs) — this script only adds
+ * src/scss/site/site.scss by the sitegen vite plugin) — this script only adds
  * the cards and the demo height adjustment. */
 
 interface ExampleEntry {

@@ -82,8 +82,8 @@
     },
     "scripts": {
         "dev": "vite",
-        "build": "node tasks/build-fonts.mjs && node tasks/build-docs.mjs && npm run docs:api && vite build && vite build --config vite.demo.config.ts",
-        "docs": "node tasks/build-docs.mjs",
+        "build": "vite build && vite build --config vite.demo.config.ts",
+        "docs": "vite build --config vite.sitegen.config.ts",
         "docs:api": "typedoc",
         "thumbs": "node tasks/build-thumbnails.mjs",
         "preview": "vite preview",

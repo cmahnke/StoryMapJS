@@ -1,10 +1,12 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
+import { sitegen } from "./tasks/vite-plugin-sitegen";
 
 // Demo/test page build. Runs after the library build (emptyOutDir: false) so
 // that `vite preview` serves the built library together with the demo pages.
 // Relative base so the pages work on GitHub Pages project URLs (a subpath).
 export default defineConfig({
+    plugins: [sitegen()],
     base: "./",
     build: {
         outDir: "dist",

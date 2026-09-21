@@ -1,7 +1,9 @@
 import { defineConfig } from "vite";
+import { sitegen } from "./tasks/vite-plugin-sitegen";
 
 // Library build: emits dist/js/storymap.js (ESM only) and dist/css/storymap.css.
 export default defineConfig({
+    plugins: [sitegen()],
     server: {
         port: 8000,
     },

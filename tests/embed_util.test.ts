@@ -12,8 +12,10 @@ test("validateWebURL accepts http and https", () => {
 });
 
 test("validateWebURL resolves relative and protocol-relative URLs", () => {
-    expect(validateWebURL("/foo")).toBe("https://storymap.knightlab.com/foo");
-    expect(validateWebURL("//example.com/x")).toBe("https://example.com/x");
+    // relative URLs resolve against the document origin (stock jsdom
+    // default: http://localhost:3000/)
+    expect(validateWebURL("/foo")).toBe("http://localhost:3000/foo");
+    expect(validateWebURL("//example.com/x")).toBe("http://example.com/x");
 });
 
 test("validateWebURL rejects non-web protocols and empty values", () => {

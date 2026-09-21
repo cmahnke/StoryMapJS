@@ -3,16 +3,16 @@
  * rendered in the built viewer (dist/harness.html) with headless Chromium
  * and screenshotted to public/thumbs/<id>.jpg.
  *
- * Requires a prior `npm run build` (serves dist via vite preview on the
- * configured port).
+ * Requires a prior `npm run build` (serves dist in-process via Vite's
+ * preview API, or set THUMBS_SERVER to point at an existing server).
  *
  * Usage: node tasks/build-thumbnails.mjs
  */
 import { chromium } from "playwright";
-import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { preview } from "vite";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = resolve(root, "public/thumbs");
@@ -45,16 +45,16 @@ const REMOTE_EXAMPLES = [
 mkdirSync(outDir, { recursive: true });
 
 const server = process.env.THUMBS_SERVER;
-let child = null;
+let previewServer = null;
 if (!server) {
-    // start vite preview of dist/ ourselves
-    child = spawn("npx", ["vite", "preview", "--port", String(port), "--strictPort"], {
-        cwd: root,
-        stdio: "ignore",
-        detached: false,
+    // serve dist/ in-process via Vite's preview API (no child process)
+    previewServer = await preview({
+        root,
+        logLevel: "silent",
+        preview: { port, strictPort: true },
     });
 }
-const base = server ?? `http://localhost:${port}`;
+const base = server ?? previewServer.resolvedUrls.local[0].replace(/\/$/, "");
 
 // wait for the preview server to answer
 for (let i = 0; i < 60; i++) {
@@ -106,6 +106,6 @@ for (const { id, url } of REMOTE_EXAMPLES) {
 }
 
 await browser.close();
-if (child) {
-    child.kill();
+if (previewServer) {
+    await previewServer.close();
 }
