@@ -1,10 +1,8 @@
 @use "../Variables" as *;
 @use "../core/Mixins" as *;
-@use "sass:math";
 
 /* Requires Variables.less
 ================================================== */
-$leaflet-offset: 6px;
 $map-icon-size: 44px; // 52
 $map-icon-width: 32px; // 38
 $map-icon-size: 52px;
@@ -18,7 +16,6 @@ $map-icon-width: 38px;
         font-style: normal;
         font-weight: normal;
         font-variant: normal;
-        text-transform: none;
         line-height: 1;
 
         /* Better Font Rendering =========== */
@@ -27,9 +24,9 @@ $map-icon-width: 38px;
         width: $map-icon-width !important;
         height: $map-icon-size !important;
 
-        // overflow:hidden;
-        top: -($map-icon-size - $leaflet-offset);
-        left: -(math.div($map-icon-width, 2) - $leaflet-offset);
+        // NB: the pin alignment is handled by the overlay positioning
+        // (bottom-center + offset, see MapMarker.OpenLayers._addTo) —
+        // OL's inline styles would override any CSS top/left here anyway.
     }
 
     // Map Pin

@@ -16,7 +16,7 @@ test("landing page renders the product chrome", async ({ page }) => {
     await expect(page.locator("#navbar-secondary")).toBeVisible();
     await expect(page.locator("#overview")).toBeVisible();
     await expect(page.locator("#help")).toBeVisible();
-    await expect(page.locator("ul.accordion li")).toHaveCount(7);
+    await expect(page.locator("ul.accordion li")).toHaveCount(10);
     await expect(page.locator(".footer-knightlab")).toBeVisible();
 
     // example cards are populated by src/site/site.ts

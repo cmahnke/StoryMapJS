@@ -5,7 +5,14 @@
         "error": "Error loading",
         "loading": "Loading",
         "wikipedia": "From Wikipedia, the free encyclopedia",
-        "start": "Start Exploring"
+        "start": "Start Exploring",
+        "consent_title": "External content",
+        "consent_message": "Load content from {service}?",
+        "consent_allow": "Allow",
+        "consent_deny": "Deny",
+        "consent_blocked": "Content from {service} is blocked.",
+        "consent_service_tiles": "map tiles",
+        "consent_service_fonts": "web fonts"
     },
     "buttons": {
         "map_overview": "Map Overview",

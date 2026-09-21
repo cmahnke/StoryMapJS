@@ -304,6 +304,47 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                     </p>
                                 </div>
                             </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Can I use custom HTML in a slide?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Yes — the slide <code>text</code> renders as HTML: links,
+                                        images, lists and <code>vco-note</code> spans all work. Text
+                                        without a <code>&lt;p&gt;</code>
+                                        tag is wrapped in one automatically. The markup is rendered
+                                        raw, so only load storymaps from sources you trust.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Can I limit the map to an area?</h3>
+                                <div class="accordion-content">
+                                    Set
+                                    <code>map_bbox: [west, south, east, north]</code>
+                                    (lon/lat) in the options — nothing outside of the box can be
+                                    visible. For gigapixel stories the coordinates are raw image
+                                    pixels.
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Does the viewer load external services by default?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Yes, but set
+                                        <code>consent_required: true</code> to ask for permission
+                                        before anything is loaded from external services (media
+                                        embeds, map tiles, external fonts). Each service asks once
+                                        per page load with an Allow/Deny panel; denied services show
+                                        a placeholder instead. Nothing is persisted.
+                                    </p>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>

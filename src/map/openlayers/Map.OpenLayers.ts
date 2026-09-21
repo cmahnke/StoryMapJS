@@ -23,6 +23,7 @@ import Map from "../Map";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
 import type { LinePoint, ViewToOptions } from "../types";
 import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../types";
+import { consentManagerOf, consentMessage } from "../../storymap/Consent";
 
 /*	Map.OpenLayers
 	Creates a Map using OpenLayers
@@ -60,6 +61,10 @@ export default class OpenLayers extends Map {
         const { element: _element, view: user_view, ...passthrough } = user_map_options;
         const user_view_options = (user_view ?? {}) as Record<string, unknown>;
 
+        // bbox limitation (map_bbox): nothing outside of the box can be
+        // visible — image-space maps use raw pixel coordinates
+        const bbox_extent = this._bboxExtent();
+
         this._map = new OlMap({
             ...passthrough,
             target: this._el.map,
@@ -77,6 +82,7 @@ export default class OpenLayers extends Map {
                 // the image zoom ladder instead of the default one
                 // (issue #465)
                 ...(is_image_map ? { multiWorld: true, resolutions: IMAGE_RESOLUTIONS } : {}),
+                ...(bbox_extent ? { extent: bbox_extent } : {}),
                 ...user_view_options,
             }),
         });
@@ -86,16 +92,24 @@ export default class OpenLayers extends Map {
         });
 
         // Create Tile Layer
-        this._tile_layer = this._createTileLayer(this.options.map_type);
-        // The IIIF layer sets its source asynchronously (after the info.json fetch)
-        if (this._tile_layer.getSource()) {
-            this._tile_layer.getSource().on("tileloadend", () => {
-                this._onTilesLoaded(undefined);
-            });
+        // Tile Layer — GDPR consent mode defers it until the visitor allows
+        // map tiles (the consent bar renders over the map)
+        const consent = consentManagerOf(this.options);
+        const tile_service = consentMessage("consent_service_tiles", "map tiles");
+        if (this.options.consent_required && consent) {
+            if (consent.isGranted(tile_service)) {
+                this._addTileLayer();
+            } else if (!consent.isDenied(tile_service)) {
+                consent.request(tile_service, "", this._el.map).then((allowed) => {
+                    if (allowed) {
+                        this._onTilesAllowed();
+                    }
+                });
+            }
+            // denied → the map renders with background color and markers only
+        } else {
+            this._addTileLayer();
         }
-
-        // Add Tile Layer
-        this._map.addLayer(this._tile_layer);
 
         // Create Overall Connection Line
         this._line = this._createLine();
@@ -142,6 +156,43 @@ export default class OpenLayers extends Map {
 
     /*	Create Tile Layer
 	================================================== */
+    /**
+     * Create the tile layer and register its load handler. Deferred until
+     * the visitor allows map tiles in consent mode.
+     */
+    _addTileLayer(): void {
+        this._tile_layer = this._createTileLayer(this.options.map_type);
+        // The IIIF layer sets its source asynchronously (after the info.json fetch)
+        if (this._tile_layer.getSource()) {
+            this._tile_layer.getSource().on("tileloadend", () => {
+                this._onTilesLoaded(undefined);
+            });
+        }
+        this._map.addLayer(this._tile_layer);
+    }
+
+    /**
+     * Map tiles were allowed: attach the main tile layer and the minimap's
+     * deferred layer, then re-fit.
+     */
+    _onTilesAllowed(): void {
+        this._addTileLayer();
+        if (this._mini_map && this._tile_layer_mini) {
+            const overview = this._mini_map.getOverviewMap();
+            if (!overview.getLayers().getLength()) {
+                overview.addLayer(this._tile_layer_mini);
+            }
+        }
+        if (this._markers.length > 0 && this.current_marker < this._markers.length) {
+            const marker = this._markers[this.current_marker];
+            if (marker.data.type === "overview") {
+                this._markerOverview();
+            } else if (marker.location()) {
+                this._fitView(this._map, [[marker.data.location.lon, marker.data.location.lat]], 0);
+            }
+        }
+    }
+
     _createTileLayer(map_type: string): TileLayer {
         const _map_type_arr = map_type.split(":");
 
@@ -302,6 +353,15 @@ export default class OpenLayers extends Map {
         }
 
         this._tile_layer_mini = this._createTileLayer(this.options.map_type);
+        // consent mode: the minimap layer is only attached once map tiles
+        // are allowed (creating the layer object loads nothing)
+        const consent = consentManagerOf(this.options);
+        const tile_service = consentMessage("consent_service_tiles", "map tiles");
+        const tiles_allowed = !(
+            this.options.consent_required &&
+            consent &&
+            !consent.isGranted(tile_service)
+        );
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
         this._mini_map = new OverviewMap({
             view: new View({
@@ -318,7 +378,7 @@ export default class OpenLayers extends Map {
                       }
                     : {}),
             }),
-            layers: [this._tile_layer_mini],
+            layers: tiles_allowed ? [this._tile_layer_mini] : [],
             collapseLabel: "\u00bb",
             label: "\u00ab",
             collapsed: true,
@@ -472,13 +532,59 @@ export default class OpenLayers extends Map {
         return coords.map((c) => fromLonLat(c));
     }
 
+    /**
+     * The View extent for the `map_bbox` option, or `null` when unset.
+     */
+    _bboxExtent(): number[] | null {
+        const bbox = this.options.map_bbox as number[] | null | undefined;
+        if (!bbox || bbox.length !== 4) return null;
+        const is_image_space = this.options.map_type === "iiif" && this.options.map_as_image;
+        if (is_image_space) return bbox;
+        // NB: fromLonLat transforms a single [lon, lat] pair — transform the
+        // two corners separately
+        const min = fromLonLat([bbox[0], bbox[1]]);
+        const max = fromLonLat([bbox[2], bbox[3]]);
+        return [min[0], min[1], max[0], max[1]];
+    }
+    /**
+     * The slide content panel can be opaque — it then covers part of the map
+     * and the effective visible area shrinks. Returns the pixel padding for
+     * the covered side (right in landscape, bottom in portrait) so fits keep
+     * the story inside the visible region; transparent panels add nothing.
+     */
+    _opaquePanelPadding(): [number, number, number, number] {
+        const padding: [number, number, number, number] = [15, 15, 15, 15];
+        if (typeof document === "undefined") return padding;
+        const panel = document.querySelector(".vco-storyslider .vco-slide.vco-active .vco-text");
+        if (!panel) return padding;
+        const bg = getComputedStyle(panel).backgroundColor;
+        const match = /rgba?\(([^)]+)\)/.exec(bg);
+        if (!match) return padding;
+        const parts = match[1]
+            .split(/[,\s/]+/)
+            .filter((v) => v !== "")
+            .map(Number);
+        const alpha = parts.length >= 4 ? parts[3] : 1;
+        if (alpha < 0.9) return padding;
+        const map_rect = this._el.map.getBoundingClientRect();
+        const panel_rect = panel.getBoundingClientRect();
+        if (!map_rect.width || !panel_rect.width) return padding;
+        const layout = this.options.layout;
+        if (layout === "portrait") {
+            padding[2] += Math.max(0, map_rect.bottom - panel_rect.top);
+        } else {
+            padding[1] += Math.max(0, panel_rect.right - map_rect.left);
+        }
+        return padding;
+    }
+
     _fitView(ol_map: OlMap, coords: number[][], duration = 0): void {
         if (!coords || !coords.length) return;
         const view_coords = this._markerCoordsToViewCoords(coords);
         const extent = boundingExtent(view_coords);
         ol_map.getView().fit(extent, {
             size: ol_map.getSize(),
-            padding: [15, 15, 15, 15],
+            padding: this._opaquePanelPadding(),
             maxZoom: 12,
             duration: duration,
             easing: this.options.ease as ((t: number) => number) | undefined,
@@ -849,7 +955,7 @@ export default class OpenLayers extends Map {
         this._line_active.setVisible(false);
 
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
-            const source = this._tile_layer.getSource();
+            const source = this._tile_layer?.getSource();
             if (!source) {
                 return;
             }
@@ -990,8 +1096,16 @@ export default class OpenLayers extends Map {
                     if (this._tile_layer) {
                         this._map.removeLayer(this._tile_layer);
                     }
-                    this._tile_layer = this._createTileLayer(this.options.map_type);
-                    this._map.addLayer(this._tile_layer);
+                    const consent = consentManagerOf(this.options);
+                    const tile_service = consentMessage("consent_service_tiles", "map tiles");
+                    if (!(
+                        this.options.consent_required &&
+                        consent &&
+                        !consent.isGranted(tile_service)
+                    )) {
+                        this._tile_layer = this._createTileLayer(this.options.map_type);
+                        this._map.addLayer(this._tile_layer);
+                    }
                     this._el.map.style.backgroundColor = this.options.map_background_color;
                     break;
                 }
@@ -1013,6 +1127,25 @@ export default class OpenLayers extends Map {
                 case "map_background_color":
                     this._el.map.style.backgroundColor = this.options.map_background_color;
                     break;
+                case "map_bbox": {
+                    // recreate the view so the new extent constraint applies,
+                    // preserving center and zoom
+                    const view = this._map.getView();
+                    const center = view.getCenter();
+                    const zoom = view.getZoom();
+                    const extent = this._bboxExtent();
+                    this._map.setView(
+                        new View({
+                            projection: view.getProjection(),
+                            center: center,
+                            zoom: zoom,
+                            minZoom: view.getMinZoom(),
+                            maxZoom: view.getMaxZoom(),
+                            ...(extent ? { extent: extent } : {}),
+                        }),
+                    );
+                    break;
+                }
                 default:
                     // map_center_offset, duration, ease, calculate_zoom etc.
                     // take effect on the next navigation

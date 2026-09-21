@@ -4,6 +4,7 @@ import Dom from "../dom/Dom";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { MediaState, StorymapSlideMedia } from "../types";
+import { consentManagerOf, consentMessage } from "../storymap/Consent";
 /*	VCO.Media
 	Main media template for media assets.
 	Takes a data object and populates a dom object
@@ -126,19 +127,58 @@ export class MediaBase {
 
     loadMedia() {
         if (!this._state.loaded) {
-            try {
-                this.load_timer = setTimeout(() => {
-                    this._loadMedia();
-                    this._state.loaded = true;
-                    this._updateDisplay();
-                }, 1200);
-            } catch (e) {
-                console.log("Error loading media for ", this._media);
-                console.log(e);
+            const manager = consentManagerOf(this.options);
+            if (this.options.consent_required && manager && this.options.media_type) {
+                // GDPR consent mode: ask before loading anything from this
+                // external service
+                const service = this.options.media_type as string;
+                let host = "";
+                try {
+                    host = new URL((this._media as { url?: string })?.url ?? "").host;
+                } catch {
+                    // keep the empty host
+                }
+                // content_item is only created by the (deferred) media load —
+                // render the ask into the existing content container
+                const target = (this._el.content_container ?? this._el.container) as HTMLElement;
+                manager.request(service, host, target).then((allowed) => {
+                    if (allowed) {
+                        this._beginLoad();
+                    } else {
+                        this._showBlocked();
+                    }
+                });
+                return;
             }
-
-            //this._state.loaded = true;
+            this._beginLoad();
         }
+    }
+
+    _beginLoad() {
+        try {
+            this.load_timer = setTimeout(() => {
+                this._loadMedia();
+                this._state.loaded = true;
+                this._updateDisplay();
+            }, 1200);
+        } catch (e) {
+            console.log("Error loading media for ", this._media);
+            console.log(e);
+        }
+
+        //this._state.loaded = true;
+    }
+
+    _showBlocked() {
+        // denied: show a placeholder instead of the media
+        const target = (this._el.content_container ?? this._el.container) as HTMLElement;
+        const blocked = document.createElement("div");
+        blocked.className = "vco-consent-blocked";
+        blocked.textContent = (
+            consentMessage("consent_blocked", "Content from {service} is blocked.") as string
+        ).replace("{service}", (this.options.media_type as string) ?? "");
+        target.append(blocked);
+        this.onLoaded(true);
     }
 
     loadingMessage() {

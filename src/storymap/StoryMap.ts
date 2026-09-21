@@ -2,6 +2,7 @@ import { mergeData, updateData, urljoin } from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
+import { ConsentManager, consentManagerOf, consentMessage } from "./Consent";
 import Dom from "../dom/Dom";
 import Ease from "../animation/Ease";
 import { setLanguage, Language } from "../language/Language";
@@ -181,6 +182,8 @@ class StoryMapBase {
             map_access_token:
                 "pk.eyJ1IjoibnVrbmlnaHRsYWIiLCJhIjoiczFmd0hPZyJ9.Y_afrZdAjo3u8sz_r8m2Yw", // default
             map_background_color: "#d9d9d9",
+            map_bbox: null,
+            consent_required: false,
             text_color: "",
             text_background_color: "",
             show_distance: false,
@@ -339,6 +342,23 @@ class StoryMapBase {
             font = new URL("../css/fonts/font." + font_name + ".css", import.meta.url).href;
         } else if (!/^(http|https|\/\/)/.test(font)) {
             font = urljoin(this.options.script_path, font);
+        }
+        const manager = consentManagerOf(this.options);
+        const external = /^(http|https|\/\/)/.test(font);
+        if (external && this.options.consent_required && manager) {
+            // external font CSS is an external service — ask first
+            const host = new URL(font.startsWith("//") ? "https:" + font : font).host;
+            const container = this._el.map ?? (this._el.container as HTMLElement);
+            manager
+                .request(consentMessage("consent_service_fonts", "web fonts"), host, container)
+                .then((allowed) => {
+                    if (allowed) {
+                        loadCSS(font, () => {
+                            this._onFontLoaded(font);
+                        });
+                    }
+                });
+            return;
         }
         if (font) {
             loadCSS(font, () => {
@@ -655,6 +675,9 @@ class StoryMapBase {
 	================================================== */
 
     _onDataLoaded(e?: unknown) {
+        // attach the consent manager BEFORE the layout is created, so the
+        // slider/map/media options copies all share it
+        (this.options as Record<string, unknown>).consent_manager = new ConsentManager();
         this.fire("dataloaded");
         this._initLayout();
         this._initEvents();

@@ -107,6 +107,18 @@ export interface StorymapOptions {
     map_as_image: boolean;
     map_access_token: string;
     map_background_color: string;
+    /**
+     * Limit the map to a bounding box `[west, south, east, north]` (lon/lat;
+     * raw image pixel coordinates for image-space maps). Nothing outside of
+     * the box can be visible. `null` (default) leaves the map unconstrained.
+     */
+    map_bbox: number[] | null;
+    /**
+     * Ask for permission before loading anything from external services
+     * (media embeds, map tiles, external font CSS) — GDPR consent mode.
+     * Grants are remembered per service for the page lifetime.
+     */
+    consent_required: boolean;
     /** Slide text color override, sets --vco-color-text (issue #177) */
     text_color: string;
     /** Slide panel background color override (issue #177) */

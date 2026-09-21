@@ -44,6 +44,51 @@ To disable zoom calculation/edit zoom level set calculate_zoom to false in the c
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use. `use_custom_markers` also has to be set to `true` in the story map options. Same goes for custom icons except you need `icon` inside the location object and include a url to use.
 
+### Limit the map to a bounding box
+
+Set `map_bbox` to `[west, south, east, north]` (lon/lat) to constrain the map —
+nothing outside of the box can be visible:
+
+    map_bbox: [-11, 34, 32, 71],   // or null (the default) to leave the map unconstrained
+
+For image-space (gigapixel) maps the coordinates are raw image pixels. When the
+slide content panel is opaque (a solid background that hides the map behind it),
+the initial fit accounts for the covered area so the story stays inside the
+visible region.
+
+## Custom HTML in slide content
+
+Slide text is rendered as HTML: the `text` (and `headline`) fields accept
+arbitrary markup. If the text contains no `<p>` tag, it is wrapped in one
+automatically; otherwise it is used as-is. This means you can use links,
+images, lists, emphasis and spans in your slides, e.g.:
+
+    {
+        "headline": "1920: An American in the Making",
+        "text": "Immigrants arriving at <a href=\"https://example.org\">Ellis Island</a>.<br><span class='vco-note'>Photograph: Library of Congress.</span>"
+    }
+
+The `vco-note` span renders as a small grey note, like the built-in credits.
+
+**Caution:** the text is rendered raw — it is not sanitized. Only load
+storymaps from sources you trust.
+
+## GDPR consent for external services
+
+Set the `consent_required` option to `true` to ask for permission before
+anything is loaded from external services (media embeds such as YouTube,
+Twitter or SoundCloud, map tiles, and external font CSS):
+
+    {
+        "consent_required": true,
+        ...
+    }
+
+Each service asks once per page load with an Allow/Deny panel; answering one
+panel resolves every pending panel of the same service. Denied services show a
+placeholder instead of the media, and the map renders without tiles until they
+are allowed. Nothing is persisted — every page load asks again.
+
 ## Troubleshooting
 
 Users may be directed to our userinfo page to help with troubleshooting. This page provides information about the user's account and saved storymaps. The endpoint is `https://storymap.knightlab.com/userinfo/`

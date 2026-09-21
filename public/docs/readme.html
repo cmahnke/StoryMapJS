@@ -71,6 +71,41 @@ show_history_line:      true,
 <p>To disable zoom calculation/edit zoom level set calculate_zoom to false in the config options.</p>
 <p>Images can now be used in place of map pins.
 Use <code>image</code> inside the location object and include a url to use. <code>use_custom_markers</code> also has to be set to <code>true</code> in the story map options. Same goes for custom icons except you need <code>icon</code> inside the location object and include a url to use.</p>
+<h3>Limit the map to a bounding box</h3>
+<p>Set <code>map_bbox</code> to <code>[west, south, east, north]</code> (lon/lat) to constrain the map —
+nothing outside of the box can be visible:</p>
+<pre><code>map_bbox: [-11, 34, 32, 71],   // or null (the default) to leave the map unconstrained
+</code></pre>
+<p>For image-space (gigapixel) maps the coordinates are raw image pixels. When the
+slide content panel is opaque (a solid background that hides the map behind it),
+the initial fit accounts for the covered area so the story stays inside the
+visible region.</p>
+<h2>Custom HTML in slide content</h2>
+<p>Slide text is rendered as HTML: the <code>text</code> (and <code>headline</code>) fields accept
+arbitrary markup. If the text contains no <code>&lt;p&gt;</code> tag, it is wrapped in one
+automatically; otherwise it is used as-is. This means you can use links,
+images, lists, emphasis and spans in your slides, e.g.:</p>
+<pre><code>{
+    &quot;headline&quot;: &quot;1920: An American in the Making&quot;,
+    &quot;text&quot;: &quot;Immigrants arriving at &lt;a href=\&quot;https://example.org\&quot;&gt;Ellis Island&lt;/a&gt;.&lt;br&gt;&lt;span class=&#39;vco-note&#39;&gt;Photograph: Library of Congress.&lt;/span&gt;&quot;
+}
+</code></pre>
+<p>The <code>vco-note</code> span renders as a small grey note, like the built-in credits.</p>
+<p><strong>Caution:</strong> the text is rendered raw — it is not sanitized. Only load
+storymaps from sources you trust.</p>
+<h2>GDPR consent for external services</h2>
+<p>Set the <code>consent_required</code> option to <code>true</code> to ask for permission before
+anything is loaded from external services (media embeds such as YouTube,
+Twitter or SoundCloud, map tiles, and external font CSS):</p>
+<pre><code>{
+    &quot;consent_required&quot;: true,
+    ...
+}
+</code></pre>
+<p>Each service asks once per page load with an Allow/Deny panel; answering one
+panel resolves every pending panel of the same service. Denied services show a
+placeholder instead of the media, and the map renders without tiles until they
+are allowed. Nothing is persisted — every page load asks again.</p>
 <h2>Troubleshooting</h2>
 <p>Users may be directed to our userinfo page to help with troubleshooting. This page provides information about the user&#39;s account and saved storymaps. The endpoint is <code>https://storymap.knightlab.com/userinfo/</code></p>
 

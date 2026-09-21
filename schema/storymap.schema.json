@@ -20,6 +20,18 @@
                 "map_subdomains": { "type": "string" },
                 "map_access_token": { "type": "string" },
                 "map_background_color": { "type": "string" },
+                "map_bbox": {
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 4,
+                            "maxItems": 4
+                        },
+                        { "type": "null" }
+                    ]
+                },
+                "consent_required": { "type": "boolean" },
                 "map_center_offset": {
                     "type": "object",
                     "properties": {

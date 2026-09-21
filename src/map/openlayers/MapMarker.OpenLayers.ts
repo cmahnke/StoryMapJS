@@ -72,10 +72,18 @@ export default class OpenLayersMapMarker extends MapMarker {
                 ? [d.location.lon, d.location.lat]
                 : fromLonLat([d.location.lon, d.location.lat]);
 
+            // Default pins anchor on their tip: OL's inline styles override
+            // any CSS top/left, so the alignment is done here — bottom-center
+            // positioning plus a 1px offset lands the pin tip (the bottommost
+            // glyph pixel, measured against the coordinate via
+            // getPixelFromCoordinate) exactly on the coordinate, so the route
+            // lines meet the markers' tips.
+            const is_default_pin = !this._custom_icon && !this._custom_image_icon;
             this._overlay = new Overlay({
                 element: this._marker,
                 position: position,
                 stopEvent: false,
+                ...(is_default_pin ? { positioning: "bottom-center", offset: [0, 1] } : {}),
             });
             m.addOverlay(this._overlay);
         }
