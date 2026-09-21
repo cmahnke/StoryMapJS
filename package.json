@@ -1,7 +1,7 @@
 {
     "name": "@projektemacher/storymapjs",
     "version": "0.10.0",
-    "description": "StoryMapJS is a tool for telling stories through the context of places on a map. For more information, see storymap.knightlab.com",
+    "description": "StoryMapJS viewer library — unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
     "license": "MPL-2.0",
     "type": "module",
     "author": "Christian Mahnke <194820+cmahnke@users.noreply.github.com>",

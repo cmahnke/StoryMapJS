@@ -1,14 +1,14 @@
 # Migrating from the Knight Lab StoryMapJS
 
 This guide helps you move from the original Knight Lab StoryMapJS viewer
-(the `master` branch of this repository, distributed as a webpack UMD bundle
-with a `KLStoryMap` global) to the rewritten TypeScript/OpenLayers version
-(`refactor/vite-typescript` branch, ESM only).
+(distributed as a webpack UMD bundle with a `KLStoryMap` global) to this
+rewritten TypeScript/OpenLayers viewer (ESM only).
 
-The rendering behavior, markup (`vco-*` classes), storymap JSON format and the
+The markup (`vco-*` classes), storymap JSON format and the
 `new StoryMap(elem, data, options, listeners)` constructor signature are
-unchanged, so most stories render identically. What changed is the delivery,
-the map engine and a few removed legacy paths.
+preserved, so most stories render the same. What changed is the delivery
+(ESM instead of UMD), the map engine (Leaflet → OpenLayers, so some
+rendering details differ) and a few removed legacy paths.
 
 ## Bundle and loading
 
@@ -58,16 +58,15 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 
 ## Changed options and map types
 
-| Old                                         | New                                                                                                               |
-| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `map_type: "zoomify"` (+ `options.zoomify`) | `map_type: "iiif"` with `options.iiif = { url, attribution }` (IIIF Image API 2/3)                                |
-| `map_type: "stamen:toner"` etc.             | `"stamen:*"` types are deprecated and remapped: `stamen:watercolor` → `ch-watercolor`, others → `osm:standard`    |
-| Stadia/M paid tiles via `map_access_token`  | Recommended: free OpenStreetMap vector styles, e.g. `map_type: "osm:bright"` (OpenFreeMap), or any style JSON URL |
-| Bundled `map_access_token`                  | removed — pass `map_access_token` in the options if you use Mapbox/Stadia tiles                                   |
-| Bundled Flickr API key                      | removed — pass `api_key_flickr` in the options if you use `flickr.com/photos` API URLs                            |
-| `relative_date: true` (moment.js)           | removed — format dates in the story text                                                                          |
-| `zoomify` block in storymap data            | removed — see `iiif` above                                                                                        |
-| `font_css: "stock:<name>"` (or a path)      | unchanged, plus the font files ship via `@fontsource-utils/scss`; no separate font CSS link needed                |
+| Old                                           | New                                                                                                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `map_type: "zoomify"` (+ `options.zoomify`)   | preferred: `map_type: "iiif"` with `options.iiif = { url, attribution }` (IIIF Image API 2/3); zoomify still works as a legacy image-pyramid basemap (see below) |
+| `map_type: "stamen:toner"` etc.               | `"stamen:*"` types are deprecated and remapped: `stamen:watercolor` → `ch-watercolor`, others → `osm:standard`                                                   |
+| Stadia Maps paid tiles via `map_access_token` | Recommended: free OpenStreetMap vector styles, e.g. `map_type: "osm:bright"` (OpenFreeMap), or any style JSON URL                                                |
+| Bundled `map_access_token`                    | removed — pass `map_access_token` in the options if you use Mapbox/Stadia tiles                                                                                  |
+| Bundled Flickr API key                        | removed — pass `api_key_flickr` in the options if you use `flickr.com/photos` API URLs                                                                           |
+| `relative_date: true` (moment.js)             | removed — format dates in the story text                                                                                                                         |
+| `font_css: "stock:<name>"` (or a path)        | unchanged, plus the font files ship via `@fontsource-utils/scss`; no separate font CSS link needed                                                               |
 
 ## Removed globals and exports
 
@@ -82,11 +81,11 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 
 ## Removed media types and services
 
-| Removed                               | Replacement                                                                                                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — use another media source for those slides                                                                      |
-| Juxtapose `frame/?uid=` embed URLs    | the `juxtapose.knightlab.com/frame/?uid=` host is dead — use the published format `https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...` |
-| Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                              |
+| Removed                               | Replacement                                                                                                                                                                                                                  |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — use another media source for those slides                                                                                                                                      |
+| Juxtapose `frame/?uid=` embed URLs    | the `juxtapose.knightlab.com/frame/?uid=` host is dead — use the published format `https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...` (note: this keeps a Knight Lab CDN dependency for those slides) |
+| Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                                                                                              |
 
 `map_type: "zoomify"` is supported again (legacy): the image pyramid renders
 via the storymap data's `zoomify` options (`path`, `width`, `height`), using a
@@ -108,8 +107,9 @@ storymap JSON sources.
 
 ## Data and tooling
 
-- Storymap JSON is now validated against a JSON Schema (`schema/storymap.json`);
-  invalid documents are reported to the console at load time.
+- Storymap JSON is now validated against a JSON Schema
+  (`schema/storymap.schema.json`); invalid documents are reported to the
+  console at load time.
 - IIIF Presentation 3 manifests are accepted directly as storymap sources.
 - The StoryMap IIIF extension context changed to
   `https://christianmahnke.de/iiif/storymap` — manifests produced with the old
@@ -120,5 +120,5 @@ storymap JSON sources.
 
 ## Events (unchanged)
 
-`change`, `change:map`-style events, `loaded`, `title`, `dataloaded`,
+`change` (with `current_slide`), `loaded`, `title`, `dataloaded`,
 `fontLoaded`, plus the listener map in the constructor — all work as before.

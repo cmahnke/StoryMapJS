@@ -51,9 +51,8 @@ Served at `http://iiif.io/api/extension/navplace/context.json`. It binds the
 StoryMap-specific terms use the `storymap:` prefix. The fixtures reference the
 context document at `https://christianmahnke.de/iiif/storymap`; when this proposal is
 adopted the document should be hosted at a stable project URL (e.g.
-`https://storymap.knightlab.com/ns/storymap/v1/context.json` or a tagged file in
-this repository) and the fixtures' context URL updated accordingly. Proposed
-content:
+a tagged context file in this repository) and the fixtures' context URL
+updated accordingly. Proposed content:
 
 ```json
 {

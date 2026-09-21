@@ -193,7 +193,7 @@
                                 >
                             </li>
                             <li>
-                                <a href="./docs/migration.html#options">Storymap options</a>
+                                <a href="./docs/migration.html">Storymap options</a>
                             </li>
                             <li>
                                 <a href="./docs/iiif.html">StoryMap data as IIIF manifests</a>
@@ -275,11 +275,9 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                 <div class="accordion-content">
                                     <p>
                                         Set <code>map_type</code> to a tile URL template (e.g.
-                                        <code>"https://{s}.tile.example.org/{z}/{x}/{y}.png"</code>
-                                        with
-                                        <code>map_subdomains: "abc"</code>) or pass raw OpenLayers
-                                        options via <code>map_options</code> — view, controls and
-                                        interactions are all configurable.
+                                        <code>"https://tile.example.org/{z}/{x}/{y}.png"</code>) or
+                                        pass raw OpenLayers options via <code>map_options</code> —
+                                        view, controls and interactions are all configurable.
                                     </p>
                                 </div>
                             </li>
@@ -291,10 +289,12 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                     <p>
                                         The viewer fits the map to all markers and zooms between
                                         places as the reader navigates
-                                        (<code>calculate_zoom</code>). For full control, give each
-                                        slide a
-                                        <code>location.zoom</code> or set
-                                        <code>calculate_zoom: false</code>.
+                                        (<code>calculate_zoom</code>). With
+                                        <code>calculate_zoom: true</code> (the default) the
+                                        calculated zoom overrides per-slide
+                                        <code>location.zoom</code> values; set
+                                        <code>calculate_zoom: false</code> to use your own
+                                        <code>location.zoom</code> per slide.
                                         <code>map_options.view</code> accepts raw OpenLayers view
                                         options.
                                     </p>
@@ -309,9 +309,10 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                         Yes — ship a font theme with your storymap (<code
                                             >font_css</code
                                         >
-                                        in the data) or reference a stock theme with
-                                        <code>font_css: "stock:knightlab"</code>. The compiled
-                                        themes are under <code>css/fonts/</code>.
+                                        in the data, relative to the script) or reference a stock
+                                        theme with <code>font_css: "stock:knightlab"</code>. The
+                                        compiled stock themes are resolved from the library's
+                                        <code>css/fonts/</code> directory (next to the bundled JS).
                                     </p>
                                 </div>
                             </li>
@@ -392,8 +393,9 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                         >, the original tool by
                         <a href="https://knightlab.northwestern.edu/"
                             >Northwestern University Knight Lab</a
-                        >. Rendering behavior and the storymap JSON format are unchanged; the
-                        delivery is a single ES module built on OpenLayers.
+                        >. The storymap JSON format is preserved; the rendering engine moved from
+                        Leaflet to OpenLayers, so some rendering details differ (see the
+                        <a href="./docs/migration.html">migration notes</a>).
                     </p>
                     <span class="copyright">
                         Released under the
