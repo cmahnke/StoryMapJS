@@ -240,9 +240,13 @@ class StorySliderBase {
     goTo(n: number, fast?: boolean, displayupdate?: boolean) {
         this.changeBackground({ color_value: "", image: false });
 
-        // Clear Preloader Timer
+        // Clear Preloader Timer (covers both the setTimeout fallback and
+        // the requestIdleCallback handle below — both are numbers)
         if (this.preloadTimer) {
             clearTimeout(this.preloadTimer);
+            (
+                window as unknown as { cancelIdleCallback?: (handle: number) => void }
+            ).cancelIdleCallback?.(this.preloadTimer as unknown as number);
         }
 
         // Set Slide Active State
@@ -286,6 +290,14 @@ class StorySliderBase {
                 this._slides[this.current_slide].setActive(true);
             }
 
+            // Preload the next slide's media right away so its load clock,
+            // network and iframe build elapse during this transition (and the
+            // dwell time) instead of starting after arrival
+            if (this._slides[this.current_slide + 1]) {
+                this._slides[this.current_slide + 1].loadMedia();
+                this._slides[this.current_slide + 1].scrollToTop();
+            }
+
             // Update Navigation and Info
             if (this._slides[this.current_slide + 1]) {
                 this.showNav(this._nav.next, true);
@@ -300,14 +312,28 @@ class StorySliderBase {
                 this.showNav(this._nav.previous, false);
             }
 
-            // Preload Slides
-            this.preloadTimer = setTimeout(() => {
-                this.preloadSlides();
-            }, this.options.duration);
+            // Preload the surrounding slides once this transition settles,
+            // preferably while the browser is idle so the burst of iframe
+            // builds and script injections doesn't compete with animations;
+            // the timeout caps the wait at the base transition duration
+            const w = window as unknown as {
+                requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+            };
+            if (w.requestIdleCallback) {
+                this.preloadTimer = w.requestIdleCallback(() => this.preloadSlides(), {
+                    timeout: this.options.duration,
+                }) as unknown as ReturnType<typeof setTimeout>;
+            } else {
+                this.preloadTimer = setTimeout(() => {
+                    this.preloadSlides();
+                }, this.options.duration);
+            }
         }
     }
 
     preloadSlides() {
+        // NOTE: current_slide + 1 is preloaded eagerly in goTo(); the guard
+        // in Slide.loadMedia() makes a repeated call here harmless
         if (this._slides[this.current_slide + 1]) {
             this._slides[this.current_slide + 1].loadMedia();
             this._slides[this.current_slide + 1].scrollToTop();

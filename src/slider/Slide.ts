@@ -19,6 +19,7 @@ interface MediaInstance {
     loadMedia: () => void;
     stopMedia: () => void;
     updateDisplay: (w?: number, h?: number, l?: string) => void;
+    _state?: { loaded?: boolean };
 }
 
 interface SlideHas {
@@ -187,6 +188,11 @@ class SlideBase {
                 } else {
                     throw e;
                 }
+            }
+            // If the media load never started (its pending timer was
+            // cancelled on a quick pass-through), allow a revisit to retry
+            if (!this._media._state?.loaded) {
+                this._state.loaded = false;
             }
         }
     }

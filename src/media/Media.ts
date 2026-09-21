@@ -246,6 +246,13 @@ export class MediaBase {
     }
 
     stopMedia() {
+        // Cancel a load that hasn't started yet (navigated away within the
+        // load delay): avoids building iframes and injecting scripts for a
+        // slide the visitor already skipped past
+        if (!this._state.loaded && this.load_timer) {
+            clearTimeout(this.load_timer);
+            this.load_timer = null;
+        }
         this._stopMedia();
     }
 
