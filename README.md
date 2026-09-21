@@ -23,9 +23,9 @@ StoryMap's older sibling, [TimelineJS](http://timeline.knightlab.com) has proven
 
 For each language, we need a simple file with a name like `xx.json`, where `xx` is the two letter code for the language. (Technically, it's the ISO 639-1 code—you can find a [list of them on Wikipedia](http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).) The file defines a JSON object with language specific translations. To make one for your language, copy one of the existing files (like [this one for Spanish](https://github.com/NUKnightLab/StoryMapJS/blob/master/src/language/locale/es.json)) and edit the quoted strings. Please _don't_ change the "keys"—the unquoted strings. If you know how to use GitHub to make a pull request, that's the best way to submit it to us. If that's not your thing, you can [add a comment to this support thread](https://knightlab.zendesk.com/entries/33066836-Help-us-translate-StoryMapJS-into-other-languages) and upload your translation as an attachment.
 
-## GigaPixel
+## IIIF images
 
-Images are rendered so when set to be map_as_image the entire image is shown. When set as cartography the zoom will set so that all the markers fit.
+Large images served over the IIIF Image API are rendered so when set to be map_as_image the entire image is shown. When set as cartography the zoom will set so that all the markers fit.
 
 Points are set to only display on mouseover in image mode, but you can set map_as_image to false in the config options to always show the points. The points are hidden when the intent is an image so that nothing obstructs the image the viewer is looking at. Looking at a painting is hard with a bunch of points on it.
 
@@ -63,7 +63,7 @@ nothing outside of the box can be visible:
 
     map_bbox: [-11, 34, 32, 71],   // or null (the default) to leave the map unconstrained
 
-For image-space (gigapixel) maps the coordinates are raw image pixels. When the
+For image-space (IIIF) maps the coordinates are raw image pixels. When the
 slide content panel is opaque (a solid background that hides the map behind it),
 the initial fit accounts for the covered area so the story stays inside the
 visible region.

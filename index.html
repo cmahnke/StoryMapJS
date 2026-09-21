@@ -108,13 +108,12 @@
                                 <p>
                                     You can tell stories with large photographs, works of art,
                                     historic maps and other image files. Because it works best with
-                                    pixel-dense files, we call these
-                                    <strong><q>gigapixel</q></strong
-                                    >. They are served over the IIIF Image API.
+                                    pixel-dense files served over the
+                                    <strong>IIIF Image API</strong>.
                                 </p>
                                 <p class="text-align-center">
                                     <a class="button button-small" href="./docs/iiif.html"
-                                        >Learn more about gigapixel</a
+                                        >Learn more about IIIF</a
                                     >
                                 </p>
                             </li>
@@ -140,8 +139,9 @@
                         <h3>Media sources</h3>
                         <p>
                             The viewer can pull in media from a variety of sources: Twitter/X,
-                            Flickr, YouTube, Vimeo, Dailymotion, Wikipedia, SoundCloud, Document
-                            Cloud, blockquote and more.
+                            Flickr, YouTube, Vimeo, Dailymotion, Wikipedia, SoundCloud, Facebook,
+                            DocumentCloud, Juxtapose, Google Docs, images, audio, video, quotes and
+                            more.
                         </p>
                     </div>
                 </div>
@@ -264,8 +264,8 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                 <h3>How can I have a map without lines between points?</h3>
                                 <div class="accordion-content">
                                     Set <code>show_lines: false</code> in the storymap options (or
-                                    use <code>map_as_image</code> for gigapixel stories, where lines
-                                    are off by default).
+                                    use <code>map_as_image</code> for IIIF image stories, where
+                                    lines are off by default).
                                 </div>
                             </li>
                             <li>
@@ -337,7 +337,7 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                     Set
                                     <code>map_bbox: [west, south, east, north]</code>
                                     (lon/lat) in the options — nothing outside of the box can be
-                                    visible. For gigapixel stories the coordinates are raw image
+                                    visible. For IIIF image stories the coordinates are raw image
                                     pixels.
                                 </div>
                             </li>
