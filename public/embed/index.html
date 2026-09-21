@@ -59,11 +59,37 @@
     // ("examples/katrina.json"), root-relative ("/examples/…") and full
     // URLs, in dev, preview and GitHub Pages project subpaths
     const siteRoot = new URL("..", window.location.href);
-    const storymapUrl = new URL(urlParams.get("url"), siteRoot).href;
+    const urlParam = urlParams.get("url");
 
-    fetch(storymapUrl)
-        .then((response) => response.json())
-        .then((data) => buildStoryMap(data));
+    const showEmbedError = (message) => {
+        const el = document.createElement("div");
+        el.className = "vco-consent-blocked";
+        // inline fallback styles in case the widget CSS did not load
+        el.style.cssText =
+            "display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:20px;background-color:#fff;color:#333;font-family:sans-serif;text-align:center;";
+        el.textContent = message;
+        document.getElementById("storymap-embed").append(el);
+    };
+
+    if (!urlParam) {
+        showEmbedError(
+            "No storymap url given. Append ?url=<storymap.json> to the embed url.",
+        );
+    } else {
+        fetch(new URL(urlParam, siteRoot).href)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+                return response.json();
+            })
+            .then((data) => buildStoryMap(data))
+            .catch(() => {
+                showEmbedError(
+                    "Could not load the storymap. Check that the url parameter points at a valid storymap JSON.",
+                );
+            });
+    }
   </script>
 </body>
 </html>

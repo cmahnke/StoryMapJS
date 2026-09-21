@@ -1,0 +1,202 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://christianmahnke.de/iiif/storymap"
+    ],
+    "id": "https://example.org/storymap/issue-368-null-fields",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-368-null-fields"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-368-null-fields/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-368-null-fields/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-368-null-fields/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-368-null-fields/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Null fields"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-368-null-fields/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-368-null-fields/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-368-null-fields/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "This slide has no location at all."
+                            },
+                            "target": "https://example.org/storymap/issue-368-null-fields/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "No location"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "This slide has no location at all."
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-368-null-fields/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-368-null-fields/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-368-null-fields/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "This slide has a null location."
+                            },
+                            "target": "https://example.org/storymap/issue-368-null-fields/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Null location"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "This slide has a null location."
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-368-null-fields/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-368-null-fields/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-368-null-fields/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "A normal slide."
+                            },
+                            "target": "https://example.org/storymap/issue-368-null-fields/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Normal"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "A normal slide."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-368-null-fields/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-368-null-fields/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                2.35,
+                                48.85
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-368-null-fields/map-config",
+            "type": "Service",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

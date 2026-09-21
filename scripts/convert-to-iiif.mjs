@@ -17,7 +17,7 @@ const LAOCOON_IMAGE = `${LAOCOON_ID}/full/max/0/default.jpg`;
 const LAOCOON_WIDTH = 2315;
 const LAOCOON_HEIGHT = 3000;
 
-const STORYMAP_CONTEXT = "https://example.org/ns/storymap/v1";
+const STORYMAP_CONTEXT = "https://christianmahnke.de/iiif/storymap";
 const CONTEXTS = [
     "http://iiif.io/api/presentation/3/context.json",
     "http://iiif.io/api/extension/navplace/context.json",

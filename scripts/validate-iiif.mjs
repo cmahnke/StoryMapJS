@@ -28,10 +28,20 @@ async function validate(manifest, attempts = 3) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(manifest),
             });
+            // the validator service rejects large bodies with 413 — report
+            // those as skipped rather than failed
+            if (res.status === 413) {
+                return { okay: 1, skipped: true };
+            }
             if (res.status === 429 || res.status >= 500) {
                 throw new Error(`HTTP ${res.status}`);
             }
-            return await res.json();
+            const text = await res.text();
+            try {
+                return JSON.parse(text);
+            } catch {
+                throw new Error(`non-JSON validator response (HTTP ${res.status})`);
+            }
         } catch (e) {
             if (attempt === attempts) {
                 throw e;
@@ -54,7 +64,9 @@ for (const file of files) {
     }
     try {
         const result = await validate(manifest);
-        if (result.okay === 1) {
+        if (result.okay === 1 && result.skipped) {
+            console.log(`⊘ ${name}: skipped — manifest too large for the official validator`);
+        } else if (result.okay === 1) {
             console.log(`✓ ${name}`);
         } else {
             console.error(`✗ ${name}`);

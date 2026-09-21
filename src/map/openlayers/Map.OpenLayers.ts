@@ -334,7 +334,7 @@ export default class OpenLayers extends Map {
     _createVectorStyleLayer(style_url: string): TileLayer {
         // Mapbox style JSONs (OpenFreeMap, Mapbox) are applied onto a single
         // vector tile layer, including its background and label decluttering
-        const layer = new VectorTileLayer({ declutter: true });
+        const layer = new VectorTileLayer({ declutter: true, updateWhileAnimating: true });
         applyStyle(layer, style_url).catch((err: unknown) =>
             console.error("Vector map style could not be loaded:", style_url, err),
         );
@@ -660,6 +660,10 @@ export default class OpenLayers extends Map {
     _createLine(d?: StorymapSlide): VectorLayer {
         return new VectorLayer({
             source: new VectorSource({ features: [] }),
+            // re-render vector geometry during view animations: without it
+            // the animated line drawing is only painted after the
+            // transition finishes
+            updateWhileAnimating: true,
             style: this._lineStyle(this.options.line_color),
         });
     }

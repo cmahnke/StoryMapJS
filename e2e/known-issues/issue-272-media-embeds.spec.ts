@@ -48,7 +48,7 @@ test("issue #437: a DocumentCloud url renders the viewer", async ({ page }) => {
         });
     await expect.poll(readSrc, { timeout: 15000 }).toContain("documentcloud.org");
 
-    expect(await readSrc()).toContain("documentcloud.org/documents/1234567-sample-document.html");
+    expect(await readSrc()).toContain("documentcloud.org/documents/3914627-APS-report.html");
 });
 
 /**
@@ -67,5 +67,7 @@ test("issue #360: a Juxtapose url renders the frame", async ({ page }) => {
             ) as HTMLIFrameElement | null;
             return iframe?.src ?? "";
         });
-    await expect.poll(readSrc, { timeout: 15000 }).toContain("juxtapose.knightlab.com/frame/");
+    await expect
+        .poll(readSrc, { timeout: 15000 })
+        .toContain("cdn.knightlab.com/libs/juxtapose/latest/embed/index.html");
 });

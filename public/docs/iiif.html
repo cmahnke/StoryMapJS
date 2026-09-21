@@ -60,7 +60,7 @@ and the StoryMap extension context:</p>
     &quot;@context&quot;: [
         &quot;http://iiif.io/api/presentation/3/context.json&quot;,
         &quot;http://iiif.io/api/extension/navplace/context.json&quot;,
-        &quot;https://example.org/ns/storymap/v1&quot;
+        &quot;https://christianmahnke.de/iiif/storymap&quot;
     ]
 }
 </code></pre>
@@ -80,7 +80,7 @@ and the StoryMap extension context:</p>
 </code></pre>
 <h3>StoryMap context (proposed)</h3>
 <p>StoryMap-specific terms use the <code>storymap:</code> prefix. The fixtures reference the
-context document at <code>https://example.org/ns/storymap/v1</code>; when this proposal is
+context document at <code>https://christianmahnke.de/iiif/storymap</code>; when this proposal is
 adopted the document should be hosted at a stable project URL (e.g.
 <code>https://storymap.knightlab.com/ns/storymap/v1/context.json</code> or a tagged file in
 this repository) and the fixtures&#39; context URL updated accordingly. Proposed
@@ -88,7 +88,7 @@ content:</p>
 <pre><code class="language-json">{
     &quot;@context&quot;: {
         &quot;@version&quot;: 1.1,
-        &quot;storymap&quot;: &quot;https://example.org/ns/storymap/v1#&quot;,
+        &quot;storymap&quot;: &quot;https://christianmahnke.de/iiif/storymap#&quot;,
         &quot;mapType&quot;: &quot;storymap:mapType&quot;,
         &quot;mapAsImage&quot;: &quot;storymap:mapAsImage&quot;,
         &quot;mapAccessToken&quot;: &quot;storymap:mapAccessToken&quot;,
@@ -333,7 +333,7 @@ properties):</p>
         {
             &quot;id&quot;: &quot;https://example.org/storymap/&lt;name&gt;/map-config&quot;,
             &quot;type&quot;: &quot;Service&quot;,
-            &quot;profile&quot;: &quot;https://example.org/ns/storymap/v1/mapconfig&quot;,
+            &quot;profile&quot;: &quot;https://christianmahnke.de/iiif/storymap/mapconfig&quot;,
             &quot;storymap:mapType&quot;: &quot;osm:standard&quot;
         }
     ]
@@ -503,7 +503,7 @@ photo, and a slide with a YouTube video — full manifest:</p>
     &quot;@context&quot;: [
         &quot;http://iiif.io/api/presentation/3/context.json&quot;,
         &quot;http://iiif.io/api/extension/navplace/context.json&quot;,
-        &quot;https://example.org/ns/storymap/v1&quot;
+        &quot;https://christianmahnke.de/iiif/storymap&quot;
     ],
     &quot;id&quot;: &quot;https://example.org/storymap/storm&quot;,
     &quot;type&quot;: &quot;Manifest&quot;,
@@ -520,7 +520,7 @@ photo, and a slide with a YouTube video — full manifest:</p>
         {
             &quot;id&quot;: &quot;https://example.org/storymap/storm/map-config&quot;,
             &quot;type&quot;: &quot;Service&quot;,
-            &quot;profile&quot;: &quot;https://example.org/ns/storymap/v1/mapconfig&quot;,
+            &quot;profile&quot;: &quot;https://christianmahnke.de/iiif/storymap/mapconfig&quot;,
             &quot;storymap:mapType&quot;: &quot;osm:standard&quot;,
             &quot;storymap:language&quot;: &quot;en&quot;,
             &quot;storymap:showLines&quot;: true,

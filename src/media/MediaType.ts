@@ -7,7 +7,6 @@ import Vimeo from "./types/Vimeo";
 import Video from "./types/Video";
 import Audio from "./types/Audio";
 import DailyMotion from "./types/DailyMotion";
-import Vine from "./types/Vine";
 import Twitter from "./types/Twitter";
 import Flickr from "./types/Flickr";
 import GoogleDoc from "./types/GoogleDoc";
@@ -65,12 +64,6 @@ export default function MediaType(m: StorymapSlideMedia): MediaTypeMatch | false
             name: "DailyMotion",
             match_str: "(www.)?dailymotion.com",
             cls: DailyMotion,
-        },
-        {
-            type: "vine",
-            name: "Vine",
-            match_str: "(www.)?vine.co",
-            cls: Vine,
         },
         {
             type: "soundcloud",

@@ -1,0 +1,111 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://christianmahnke.de/iiif/storymap"
+    ],
+    "id": "https://example.org/storymap/issue-375-code-lists",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-375-code-lists"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-375-code-lists/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-375-code-lists/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-375-code-lists/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-375-code-lists/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Code in lists"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-375-code-lists/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-375-code-lists/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-375-code-lists/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "<ul><li>First item with <code>inline code</code></li><li>Second item</li><li>Third item with <code>more code</code></li></ul>"
+                            },
+                            "target": "https://example.org/storymap/issue-375-code-lists/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "List with code"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>First item with <code>inline code</code></li><li>Second item</li><li>Third item with <code>more code</code></li></ul>"
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-375-code-lists/map-config",
+            "type": "Service",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

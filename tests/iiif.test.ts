@@ -5,7 +5,7 @@ import type { StorymapData } from "../src/types";
 const CONTEXTS = [
     "http://iiif.io/api/presentation/3/context.json",
     "http://iiif.io/api/extension/navplace/context.json",
-    "https://example.org/ns/storymap/v1",
+    "https://christianmahnke.de/iiif/storymap",
 ];
 
 const manifest = {
@@ -17,7 +17,7 @@ const manifest = {
         {
             id: "https://example.org/storymap/storm/map-config",
             type: "Service",
-            profile: "https://example.org/ns/storymap/v1/mapconfig",
+            profile: "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapType": "osm:standard",
             "storymap:language": "en",
             "storymap:showLines": true,
@@ -249,7 +249,7 @@ test("maps the mapconfig service to storymap options fields", () => {
         service: [
             {
                 type: "Service",
-                profile: "https://example.org/ns/storymap/v1/mapconfig",
+                profile: "https://christianmahnke.de/iiif/storymap/mapconfig",
                 mapType: "https://tiles.example.org/{z}/{x}/{y}.png",
                 mapAsImage: false,
                 mapAccessToken: "token",

@@ -63,6 +63,8 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 | `map_type: "zoomify"` (+ `options.zoomify`) | `map_type: "iiif"` with `options.iiif = { url, attribution }` (IIIF Image API 2/3)                                |
 | `map_type: "stamen:toner"` etc.             | `"stamen:*"` types are deprecated and remapped: `stamen:watercolor` → `ch-watercolor`, others → `osm:standard`    |
 | Stadia/M paid tiles via `map_access_token`  | Recommended: free OpenStreetMap vector styles, e.g. `map_type: "osm:bright"` (OpenFreeMap), or any style JSON URL |
+| Bundled `map_access_token`                  | removed — pass `map_access_token` in the options if you use Mapbox/Stadia tiles                                   |
+| Bundled Flickr API key                      | removed — pass `api_key_flickr` in the options if you use `flickr.com/photos` API URLs                            |
 | `relative_date: true` (moment.js)           | removed — format dates in the story text                                                                          |
 | `zoomify` block in storymap data            | removed — see `iiif` above                                                                                        |
 | `font_css: "stock:<name>"` (or a path)      | unchanged, plus the font files ship via `@fontsource-utils/scss`; no separate font CSS link needed                |
@@ -77,6 +79,14 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 | `StamenTileLayer` export          | `map_type: "osm:bright"` or another OpenFreeMap style |
 | `ZoomifyTileLayer` export         | `map_type: "iiif"`                                    |
 | Knight Lab usage tracking (gtag)  | none — nothing is sent                                |
+
+## Removed media types and services
+
+| Removed                               | Replacement                                                                                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — use another media source for those slides                                                                      |
+| Juxtapose `frame/?uid=` embed URLs    | the `juxtapose.knightlab.com/frame/?uid=` host is dead — use the published format `https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...` |
+| Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                              |
 
 ## Map engine: Leaflet → OpenLayers
 
@@ -93,6 +103,10 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 - Storymap JSON is now validated against a JSON Schema (`schema/storymap.json`);
   invalid documents are reported to the console at load time.
 - IIIF Presentation 3 manifests are accepted directly as storymap sources.
+- The StoryMap IIIF extension context changed to
+  `https://christianmahnke.de/iiif/storymap` — manifests produced with the old
+  `https://example.org/ns/storymap/v1` context need re-converting
+  (`scripts/convert-to-iiif.mjs`).
 - The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
   Python authoring server are gone — this is a viewer-only library.
 

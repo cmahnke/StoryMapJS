@@ -1,0 +1,191 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://christianmahnke.de/iiif/storymap"
+    ],
+    "id": "https://example.org/storymap/issue-428-background",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-428-background"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-428-background/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-428-background/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-428-background/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview slide"
+                            },
+                            "target": "https://example.org/storymap/issue-428-background/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Background issue 428"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview slide"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-428-background/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-428-background/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-428-background/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "This slide has a background image."
+                            },
+                            "target": "https://example.org/storymap/issue-428-background/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "With background"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "This slide has a background image."
+                ]
+            },
+            "storymap:background": {
+                "url": "/css/icons/emoji.png"
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-428-background/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-428-background/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                2.35,
+                                48.85
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-428-background/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-428-background/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-428-background/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "This slide must not inherit the darkened background."
+                            },
+                            "target": "https://example.org/storymap/issue-428-background/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Without background"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "This slide must not inherit the darkened background."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-428-background/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-428-background/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                13.4,
+                                52.52
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-428-background/map-config",
+            "type": "Service",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

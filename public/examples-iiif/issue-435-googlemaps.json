@@ -1,0 +1,111 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://christianmahnke.de/iiif/storymap"
+    ],
+    "id": "https://example.org/storymap/issue-435-googlemaps",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-435-googlemaps"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-435-googlemaps/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-435-googlemaps/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-435-googlemaps/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-435-googlemaps/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Google Maps"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-435-googlemaps/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-435-googlemaps/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-435-googlemaps/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://maps.google.com/maps?q=paris&output=embed",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/issue-435-googlemaps/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Google Maps slide"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Should embed the map."
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-435-googlemaps/map-config",
+            "type": "Service",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

@@ -9,9 +9,9 @@
                 },
                 "type": "overview",
                 "media": {
-                    "url": "http://images.ak.instagram.com/profiles/profile_171460_75sq_1287373067.jpg?instagramprofile",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://images.ak.instagram.com/profiles/profile_171460_75sq_1287373067.jpg?instagramprofile"
                 }
             },
             {
@@ -24,13 +24,13 @@
                 },
                 "location": {
                     "lat": 41.883472822,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1170271_354991251313291_29073852_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.624717233
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1170271_354991251313291_29073852_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1170271_354991251313291_29073852_n.jpg"
                 }
             },
             {
@@ -43,13 +43,13 @@
                 },
                 "location": {
                     "lat": 41.883472822,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1208274_251696704980746_1901311485_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.624717233
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1208274_251696704980746_1901311485_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1208274_251696704980746_1901311485_n.jpg"
                 }
             },
             {
@@ -62,13 +62,13 @@
                 },
                 "location": {
                     "lat": 42.022046931,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/1389299_228747127301176_466858739_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -87.665106459
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/1389299_228747127301176_466858739_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/1389299_228747127301176_466858739_n.jpg"
                 }
             },
             {
@@ -81,13 +81,13 @@
                 },
                 "location": {
                     "lat": 29.987103333,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1171086_648655238520265_2120392757_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -90.099097167
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1171086_648655238520265_2120392757_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1171086_648655238520265_2120392757_n.jpg"
                 }
             },
             {
@@ -100,13 +100,13 @@
                 },
                 "location": {
                     "lat": 29.987061939,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1170246_1440854236133591_446887962_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -90.097995067
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1170246_1440854236133591_446887962_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1170246_1440854236133591_446887962_n.jpg"
                 }
             },
             {
@@ -119,13 +119,13 @@
                 },
                 "location": {
                     "lat": 29.987061939,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/917270_446618888773680_1111622767_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -90.097995067
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/917270_446618888773680_1111622767_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/917270_446618888773680_1111622767_n.jpg"
                 }
             },
             {
@@ -138,13 +138,13 @@
                 },
                 "location": {
                     "lat": 41.997167179,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/1389900_532243866871426_2121320819_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.65942202
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/1389900_532243866871426_2121320819_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/1389900_532243866871426_2121320819_n.jpg"
                 }
             },
             {
@@ -157,13 +157,13 @@
                 },
                 "location": {
                     "lat": 41.889259423,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage6/t0.0-17/OBPTH/a49dda4c65c911e3ac8b12812f0cc8a2_5.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.664088479
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage6/t0.0-17/OBPTH/a49dda4c65c911e3ac8b12812f0cc8a2_8.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage6/t0.0-17/OBPTH/a49dda4c65c911e3ac8b12812f0cc8a2_8.jpg"
                 }
             },
             {
@@ -176,13 +176,13 @@
                 },
                 "location": {
                     "lat": 41.967497376,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xfa1/outbound-distilleryimage4/t0.0-17/OBPTH/2aeb85506a5b11e39ef30ecb098d5c88_5.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -87.698209637
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xfa1/outbound-distilleryimage4/t0.0-17/OBPTH/2aeb85506a5b11e39ef30ecb098d5c88_8.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/outbound-distilleryimage4/t0.0-17/OBPTH/2aeb85506a5b11e39ef30ecb098d5c88_8.jpg"
                 }
             },
             {
@@ -195,13 +195,13 @@
                 },
                 "location": {
                     "lat": 41.954436777,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/outbound-distilleryimage8/t0.0-17/OBPTH/6d46059c6b2811e3bb80129c7073a39c_5.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.678924304
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/outbound-distilleryimage8/t0.0-17/OBPTH/6d46059c6b2811e3bb80129c7073a39c_8.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/outbound-distilleryimage8/t0.0-17/OBPTH/6d46059c6b2811e3bb80129c7073a39c_8.jpg"
                 }
             },
             {
@@ -214,13 +214,13 @@
                 },
                 "location": {
                     "lat": 41.417588565,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage2/t0.0-17/OBPTH/50455e826d7d11e393a6121f8691a216_5.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -82.007653778
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage2/t0.0-17/OBPTH/50455e826d7d11e393a6121f8691a216_8.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage2/t0.0-17/OBPTH/50455e826d7d11e393a6121f8691a216_8.jpg"
                 }
             },
             {
@@ -233,13 +233,13 @@
                 },
                 "location": {
                     "lat": 41.511017777,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/927522_552904614787231_1689051353_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -81.609813771
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/927522_552904614787231_1689051353_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/927522_552904614787231_1689051353_n.jpg"
                 }
             },
             {
@@ -252,13 +252,13 @@
                 },
                 "location": {
                     "lat": 41.511017777,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1172193_238718666289298_395456179_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -81.609813771
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1172193_238718666289298_395456179_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1172193_238718666289298_395456179_n.jpg"
                 }
             },
             {
@@ -271,13 +271,13 @@
                 },
                 "location": {
                     "lat": 42.007976856,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928109_652778594761308_1360268739_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.665294447
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928109_652778594761308_1360268739_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928109_652778594761308_1360268739_n.jpg"
                 }
             },
             {
@@ -290,13 +290,13 @@
                 },
                 "location": {
                     "lat": 42.012790202,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516470_777199408969678_56999863_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -87.663322632
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516470_777199408969678_56999863_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516470_777199408969678_56999863_n.jpg"
                 }
             },
             {
@@ -309,13 +309,13 @@
                 },
                 "location": {
                     "lat": 42.021950246,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516005_603769086361544_1302911410_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.665085839
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516005_603769086361544_1302911410_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516005_603769086361544_1302911410_n.jpg"
                 }
             },
             {
@@ -328,13 +328,13 @@
                 },
                 "location": {
                     "lat": 42.007415104,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1530730_659231024120794_338653257_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.679008348
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1530730_659231024120794_338653257_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1530730_659231024120794_338653257_n.jpg"
                 }
             },
             {
@@ -347,13 +347,13 @@
                 },
                 "location": {
                     "lat": 42.022038046,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1741736_1441413522758395_882443631_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -87.665019287
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1741736_1441413522758395_882443631_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1741736_1441413522758395_882443631_n.jpg"
                 }
             },
             {
@@ -366,13 +366,13 @@
                 },
                 "location": {
                     "lat": 42.019413833,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924986_232599750269407_1325883759_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.672653333
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924986_232599750269407_1325883759_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924986_232599750269407_1325883759_n.jpg"
                 }
             },
             {
@@ -385,13 +385,13 @@
                 },
                 "location": {
                     "lat": 42.0194805,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10362112_1421331924797857_2028847886_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.6689
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10362112_1421331924797857_2028847886_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10362112_1421331924797857_2028847886_n.jpg"
                 }
             },
             {
@@ -404,13 +404,13 @@
                 },
                 "location": {
                     "lat": 40.711746103,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10362267_266624956849910_1821925645_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -74.013021159
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10362267_266624956849910_1821925645_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10362267_266624956849910_1821925645_n.jpg"
                 }
             },
             {
@@ -423,13 +423,13 @@
                 },
                 "location": {
                     "lat": 40.711746103,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10326567_1377511912538640_84453724_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -74.013021159
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10326567_1377511912538640_84453724_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10326567_1377511912538640_84453724_n.jpg"
                 }
             },
             {
@@ -442,13 +442,13 @@
                 },
                 "location": {
                     "lat": 40.7179,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xaf1/l/t51.2885-15/10387848_251304458409279_188302275_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -74.015236117
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xaf1/l/t51.2885-15/10387848_251304458409279_188302275_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/l/t51.2885-15/10387848_251304458409279_188302275_n.jpg"
                 }
             },
             {
@@ -461,13 +461,13 @@
                 },
                 "location": {
                     "lat": 40.717921667,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10358346_1420868631518942_383541786_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -74.015716667
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10358346_1420868631518942_383541786_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10358346_1420868631518942_383541786_n.jpg"
                 }
             },
             {
@@ -480,13 +480,13 @@
                 },
                 "location": {
                     "lat": 40.704645,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10268787_472550682890557_2036156195_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -74.002091667
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10268787_472550682890557_2036156195_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10268787_472550682890557_2036156195_n.jpg"
                 }
             },
             {
@@ -499,13 +499,13 @@
                 },
                 "location": {
                     "lat": 40.706078333,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/914712_652792584800829_1820055162_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -74.009766667
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/914712_652792584800829_1820055162_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/914712_652792584800829_1820055162_n.jpg"
                 }
             },
             {
@@ -518,13 +518,13 @@
                 },
                 "location": {
                     "lat": 40.677357982,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10354286_673833412682480_1158284059_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -73.963677511
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10354286_673833412682480_1158284059_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10354286_673833412682480_1158284059_n.jpg"
                 }
             },
             {
@@ -537,13 +537,13 @@
                 },
                 "location": {
                     "lat": 40.710411667,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10349753_1437874399802558_1860148587_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -74.011636117
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10349753_1437874399802558_1860148587_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10349753_1437874399802558_1860148587_n.jpg"
                 }
             },
             {
@@ -556,13 +556,13 @@
                 },
                 "location": {
                     "lat": 42.006131089,
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10424534_709184212481432_1712785835_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.657709346
                 },
                 "media": {
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10424534_709184212481432_1712785835_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10424534_709184212481432_1712785835_n.jpg"
                 }
             },
             {
@@ -575,13 +575,13 @@
                 },
                 "location": {
                     "lat": 42.006131089,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472039_276886439151064_1267032171_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -87.657709346
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472039_276886439151064_1267032171_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472039_276886439151064_1267032171_n.jpg"
                 }
             },
             {
@@ -594,13 +594,13 @@
                 },
                 "location": {
                     "lat": 42.007222217,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10483349_752566224784556_1218745002_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.65783
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10483349_752566224784556_1218745002_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10483349_752566224784556_1218745002_n.jpg"
                 }
             },
             {
@@ -613,13 +613,13 @@
                 },
                 "location": {
                     "lat": 42.007222217,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10424551_669895366438819_445779210_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -87.65783
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10424551_669895366438819_445779210_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10424551_669895366438819_445779210_n.jpg"
                 }
             },
             {
@@ -632,13 +632,13 @@
                 },
                 "location": {
                     "lat": 42.007222217,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/l/t51.2885-15/10453999_1462108990695571_286781087_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lon": -87.65783
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpf1/l/t51.2885-15/10453999_1462108990695571_286781087_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/l/t51.2885-15/10453999_1462108990695571_286781087_n.jpg"
                 }
             },
             {
@@ -651,13 +651,13 @@
                 },
                 "location": {
                     "lat": 42.007222217,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10401829_662178973869881_988355314_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lon": -87.65783
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10401829_662178973869881_988355314_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10401829_662178973869881_988355314_n.jpg"
                 }
             },
             {
@@ -670,13 +670,13 @@
                 },
                 "location": {
                     "lat": 37.7909,
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928600_1437212396555105_577217547_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lon": -122.420875
                 },
                 "media": {
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928600_1437212396555105_577217547_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928600_1437212396555105_577217547_n.jpg"
                 }
             }
         ],

@@ -87,7 +87,14 @@ Twitter or SoundCloud, map tiles, and external font CSS):
 Each service asks once per page load with an Allow/Deny panel; answering one
 panel resolves every pending panel of the same service. Denied services show a
 placeholder instead of the media, and the map renders without tiles until they
-are allowed. Nothing is persisted — every page load asks again.
+are allowed. Decisions are stored in a cookie (`storymapjs-consent`) for 90
+days — clearing cookies asks again.
+
+## Bundled credentials
+
+The viewer ships no credentials. Mapbox/Stadia tiles need a token passed via
+`map_access_token`, and `flickr.com/photos` API URLs need `api_key_flickr`
+(both settable in the storymap options).
 
 ## Troubleshooting
 

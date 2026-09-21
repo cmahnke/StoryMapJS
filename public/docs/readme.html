@@ -105,7 +105,12 @@ Twitter or SoundCloud, map tiles, and external font CSS):</p>
 <p>Each service asks once per page load with an Allow/Deny panel; answering one
 panel resolves every pending panel of the same service. Denied services show a
 placeholder instead of the media, and the map renders without tiles until they
-are allowed. Nothing is persisted — every page load asks again.</p>
+are allowed. Decisions are stored in a cookie (<code>storymapjs-consent</code>) for 90
+days — clearing cookies asks again.</p>
+<h2>Bundled credentials</h2>
+<p>The viewer ships no credentials. Mapbox/Stadia tiles need a token passed via
+<code>map_access_token</code>, and <code>flickr.com/photos</code> API URLs need <code>api_key_flickr</code>
+(both settable in the storymap options).</p>
 <h2>Troubleshooting</h2>
 <p>Users may be directed to our userinfo page to help with troubleshooting. This page provides information about the user&#39;s account and saved storymaps. The endpoint is <code>https://storymap.knightlab.com/userinfo/</code></p>
 

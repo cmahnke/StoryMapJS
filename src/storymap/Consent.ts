@@ -1,17 +1,61 @@
+import Cookies from "js-cookie";
 import { Language } from "../language/Language";
+
+/** Cookie holding the per-service consent state (JSON). */
+const CONSENT_COOKIE = "storymapjs-consent";
+/** Consent retention period in days. */
+const CONSENT_COOKIE_DAYS = 90;
 
 /**
  * Per-StoryMap GDPR consent manager. When the `consent_required` option is
  * set, every external service (media embeds, map tiles, external font CSS)
- * asks for permission before anything is loaded. Grants and denials are
- * remembered per service for the lifetime of the page — nothing is
- * persisted, so each page load asks again.
+ * asks for permission before anything is loaded. Decisions are remembered
+ * per service in a cookie for 90 days — clearing cookies asks again.
  */
 export class ConsentManager {
     private granted = new Set<string>();
     private denied = new Set<string>();
     /** unanswered asks per service (preloaded slides stack several) */
     private pending = new Map<string, Array<{ el: HTMLElement; resolve: (v: boolean) => void }>>();
+
+    constructor() {
+        this.restore();
+    }
+
+    /** Seed the per-service state from the consent cookie, if present. */
+    private restore(): void {
+        try {
+            const raw = Cookies.get(CONSENT_COOKIE);
+            if (!raw) return;
+            const state = JSON.parse(raw) as Record<string, boolean>;
+            for (const service in state) {
+                if (Object.hasOwn(state, service)) {
+                    if (state[service]) {
+                        this.granted.add(service);
+                    } else {
+                        this.denied.add(service);
+                    }
+                }
+            }
+        } catch {
+            // ignore malformed cookies
+        }
+    }
+
+    /** Persist the per-service state to the consent cookie. */
+    private persist(): void {
+        const state: Record<string, boolean> = {};
+        for (const service of this.granted) state[service] = true;
+        for (const service of this.denied) state[service] = false;
+        try {
+            Cookies.set(CONSENT_COOKIE, JSON.stringify(state), {
+                expires: CONSENT_COOKIE_DAYS,
+                sameSite: "Lax",
+            });
+        } catch {
+            // storage unavailable (e.g. sandboxed contexts)
+        }
+    }
 
     isGranted(service: string): boolean {
         return this.granted.has(service);
@@ -74,6 +118,7 @@ export class ConsentManager {
                     p.resolve(allowed);
                 }
                 this.pending.delete(service);
+                this.persist();
             };
             allow.addEventListener("click", () => decide(true));
             deny.addEventListener("click", () => decide(false));

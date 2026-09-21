@@ -23,7 +23,7 @@ and the StoryMap extension context:
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ]
 }
 ```
@@ -49,7 +49,7 @@ Served at `http://iiif.io/api/extension/navplace/context.json`. It binds the
 ### StoryMap context (proposed)
 
 StoryMap-specific terms use the `storymap:` prefix. The fixtures reference the
-context document at `https://example.org/ns/storymap/v1`; when this proposal is
+context document at `https://christianmahnke.de/iiif/storymap`; when this proposal is
 adopted the document should be hosted at a stable project URL (e.g.
 `https://storymap.knightlab.com/ns/storymap/v1/context.json` or a tagged file in
 this repository) and the fixtures' context URL updated accordingly. Proposed
@@ -59,7 +59,7 @@ content:
 {
     "@context": {
         "@version": 1.1,
-        "storymap": "https://example.org/ns/storymap/v1#",
+        "storymap": "https://christianmahnke.de/iiif/storymap#",
         "mapType": "storymap:mapType",
         "mapAsImage": "storymap:mapAsImage",
         "mapAccessToken": "storymap:mapAccessToken",
@@ -226,7 +226,7 @@ properties):
         {
             "id": "https://example.org/storymap/<name>/map-config",
             "type": "Service",
-            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapType": "osm:standard"
         }
     ]
@@ -299,7 +299,7 @@ photo, and a slide with a YouTube video — full manifest:
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/storm",
     "type": "Manifest",
@@ -316,7 +316,7 @@ photo, and a slide with a YouTube video — full manifest:
         {
             "id": "https://example.org/storymap/storm/map-config",
             "type": "Service",
-            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapType": "osm:standard",
             "storymap:language": "en",
             "storymap:showLines": true,

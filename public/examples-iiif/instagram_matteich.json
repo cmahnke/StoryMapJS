@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/instagram_matteich",
     "type": "Manifest",
@@ -41,9 +41,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://images.ak.instagram.com/profiles/profile_24893391_75sq_1396658171.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/1"
                         }
@@ -55,7 +55,8 @@
                     "<span class=\"vco-snapmap-instagram\">Matt Eich<small><a href=\"http://instagram.com/matteich\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> matteich</a></small></span>"
                 ]
             },
-            "storymap:type": "overview"
+            "storymap:type": "overview",
+            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_24893391_75sq_1396658171.jpg"
         },
         {
             "id": "https://example.org/storymap/instagram_matteich/canvas/2",
@@ -72,9 +73,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/925302_482924938507591_979005882_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/2"
                         }
@@ -91,6 +92,7 @@
                     "Good morning, Ocracoke Island, North Carolina, June 22, 2014. #ocracoke #ocracokeisland #northcarolina #nc #daughter #family #light #morning #crib #sleepyhead #love #loveinthefirstperson #vacation #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/925302_482924938507591_979005882_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -106,7 +108,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/925302_482924938507591_979005882_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -127,9 +129,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926495_1454806324767955_1523298352_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/3"
                         }
@@ -146,6 +148,7 @@
                     "Hannah pouring a glass of wine, Ocracoke Island, North Carolina, June 24, 2014. #ocracoke #ocracokeisland #northcarolina #nc #obx #outerbanks #zilliespantry #wine #sister #family #vacation #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926495_1454806324767955_1523298352_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -161,7 +164,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926495_1454806324767955_1523298352_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -182,9 +185,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10472073_239376236271642_333453604_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/4"
                         }
@@ -201,6 +204,7 @@
                     "Lazy beach days, Ocracoke Island, North Carolina, June 24, 2014. #ocracoke #ocracokeisland #northcarolina #nc #siblings #family #travels #america #usa #vacation #lazydays #family"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10472073_239376236271642_333453604_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -216,7 +220,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10472073_239376236271642_333453604_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -237,9 +241,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924386_491110267702436_1891452952_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/5"
                         }
@@ -256,6 +260,7 @@
                     "Stayed at a hotel last night for a belated 7-year anniversary getaway. Our room contained several kitschy signs about the beach that all seemed more depressing than I believe their creator intended. Ocracoke Island, North Carolina, June 27, 2014. #ocracoke #ocracokeisland #northcarolina #nc #beachlife #vacation #hotel #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924386_491110267702436_1891452952_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -271,7 +276,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924386_491110267702436_1891452952_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -292,9 +297,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10471818_294354367412266_59111021_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/6"
                         }
@@ -311,6 +316,7 @@
                     "Lace, Ocracoke Island, North Carolina, June 27, 2014. #ocracoke #ocracokeisland #outerbanks #obx #lace #wife #hotel #vacation #family #love #loveinthefirstperson #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10471818_294354367412266_59111021_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -326,7 +332,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10471818_294354367412266_59111021_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -347,9 +353,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10508046_501645346635025_1470529706_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/7"
                         }
@@ -366,6 +372,7 @@
                     "One shoe on, one shoe off, Ocracoke Island, North Carolina, June 27, 2014. #ocracoke #ocracokeisland #northcarolina #nc #outerbanks #obx #daughter #shoes #xoxo #vacation #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10508046_501645346635025_1470529706_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -381,7 +388,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10508046_501645346635025_1470529706_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -402,9 +409,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10454204_678831585517435_113191176_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/8"
                         }
@@ -421,6 +428,7 @@
                     "Family vacation, Ocracoke Island, North Carolina, June 27, 2014. #ocracoke #ocracokeisland #obx #outerbanks #family #vacation #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10454204_678831585517435_113191176_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -436,7 +444,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10454204_678831585517435_113191176_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -457,9 +465,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/923678_731064950284813_171945475_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/9"
                         }
@@ -476,6 +484,7 @@
                     "Brother sleeping, Ocracoke Island, North Carolina, June 29, 2014. #ocracoke #ocracokeisland #outerbanks #obx #sleep #nap #biglittlebro #family #vacation #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/923678_731064950284813_171945475_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -491,7 +500,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/923678_731064950284813_171945475_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -512,9 +521,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926792_268053690048756_1647838051_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/10"
                         }
@@ -531,6 +540,7 @@
                     "Sleeping daughter, Ocracoke Island, June 28, 2014. #ocracoke #ocracokeisland #baby #daughter #sleep #love #loveinthefirstperson #vacation #family #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926792_268053690048756_1647838051_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -546,7 +556,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926792_268053690048756_1647838051_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -567,9 +577,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/926818_1501246886775608_1820130036_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/11"
                         }
@@ -586,6 +596,7 @@
                     "Photo by @MattEich for @aarpphoto. My father, Dr. David Eich, puts burgers on a plate held by my sister, Hannah Gerry during a family gathering for the Fourth of July in Smithfield, Virginia on July 4, 2014. Check out the @aarpphoto feed for amazing images of the Fourth of July by a rad group of photographers from around the country. #family #love #loveinthefirstperson #aarp #onassignment #commission #holiday #julyfourth2014 #4thofjuly #independenceday #cooking #food #burgers #smithfield #virginia #va #dad #father #sister"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/926818_1501246886775608_1820130036_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -601,7 +612,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/926818_1501246886775608_1820130036_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -622,9 +633,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10518032_753391371348241_1453229336_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/12"
                         }
@@ -641,6 +652,7 @@
                     "Jacki and Josh, musicians from Fawn Street Studios taking a smoke break on the roof as a storm looms. Norfolk, Virginia, July 9, 2014. #norfolk #virginia #va #studio #fawnstreetstudios #musicians #storm #thesevencities"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10518032_753391371348241_1453229336_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -656,7 +668,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10518032_753391371348241_1453229336_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -677,9 +689,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513792_659323940820793_1676762149_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/13"
                         }
@@ -696,6 +708,7 @@
                     "Now it is summer and the kids want to live in the back yard, Norfolk, Virginia, July 8, 2014. #norfolk #virginia #va #daughter #family #love #backyard #everydayUSA #fisherprice #thesevencities"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513792_659323940820793_1676762149_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -711,7 +724,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513792_659323940820793_1676762149_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -732,9 +745,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915605_699602800087239_571354574_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/14"
                         }
@@ -751,6 +764,7 @@
                     "Flower drying on a table outside of the Five Points Community Farm Market in Norfolk, Virginia on July 11, 2014. #norfolk #virginia #va #flower #drying #studio #farmersmarket #fawnstreetstudios #thesevencities"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915605_699602800087239_571354574_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -766,7 +780,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915605_699602800087239_571354574_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -787,9 +801,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xfa1/l/t51.2885-15/914420_784080844955921_426180868_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/15"
                         }
@@ -806,6 +820,7 @@
                     "Madelyn and Meira snuggle on the sofa shortly after waking up this morning on July 12, 2014 in Norfolk, Virginia. After a quick breakfast and some last-minute packing, I was dropped off at the train station. I am currently en route to NYC and will be missing these two for the next few days. #norfolk #virginia #va #family #daughters #sisters #snuggle #love #loveinthefirstperson #leavingsucks #thesevencities #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/l/t51.2885-15/914420_784080844955921_426180868_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -821,7 +836,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xfa1/l/t51.2885-15/914420_784080844955921_426180868_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -842,9 +857,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10517995_1469225323324791_51267694_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/16"
                         }
@@ -861,6 +876,7 @@
                     "Spent this morning installing \"The Invisible Yoke\" exhibition at The Half King in NYC with @jamesbprice and @annavanlenten. The show opens with an artist talk @ 7:30PM on Tuesday, July 15. Come out, have some dinner/drinks and toss good questions or rotten vegetables at me. #newyork #nyc #exhibition #installation #theinvisibleyoke #thehalfking #theamericancondition"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10517995_1469225323324791_51267694_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -876,7 +892,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10517995_1469225323324791_51267694_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -897,9 +913,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10547011_907127162634899_23930731_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/17"
                         }
@@ -916,6 +932,7 @@
                     "Dave's cereal, Bushwick, New York, July 15, 2014. \nCome on out to The Half King for an opening of \"The Invisible Yoke\" and artist talk at 7:30PM tonight! I won't show any photos of cereal, I promise. \n#bushwick #newyork #nyc #cereal #travels #america #usa @davidkasnic"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10547011_907127162634899_23930731_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -931,7 +948,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10547011_907127162634899_23930731_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -952,9 +969,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10535000_1432033810413563_1715152603_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/18"
                         }
@@ -971,6 +988,7 @@
                     "Come on out to The Half King (505 W23rd) in NYC for an opening of \"The Invisible Yoke\" and artist talk starting at 7:30PM tonight! #newyork #nyc #thehalfking #theinvisibleyoke #exhibition #opening #artisttalk"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10535000_1432033810413563_1715152603_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -986,7 +1004,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10535000_1432033810413563_1715152603_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -1007,9 +1025,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499254_686745511380699_26408997_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/19"
                         }
@@ -1026,6 +1044,7 @@
                     "A sleeping couple is shrouded by a cloth on the subway at the Myrtle Ave stop in Bushwick, New York in the early morning hours of July 16, 2014. #newyork #nyc #subway #metro #sleeping #homeless #shroud #couple #night #bushwick #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499254_686745511380699_26408997_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1041,7 +1060,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499254_686745511380699_26408997_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -1062,9 +1081,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10251278_515948841870878_1651260677_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/20"
                         }
@@ -1081,6 +1100,7 @@
                     "This little dude is pumped to be on a train, though admittedly I am less enthusiastic for overnight train rides at this point, on the @Amtrak somewhere near Alexandria, Virginia on July 17, 2014. #nyptonpn #amtrak #train #traintravel #headinghome #alexandria #virginia #va #travels #america #usa"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10251278_515948841870878_1651260677_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1096,7 +1116,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10251278_515948841870878_1651260677_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -1117,9 +1137,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570037_272172219655777_948256396_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_matteich/canvas/21"
                         }
@@ -1136,6 +1156,7 @@
                     "Home again and back to playing peek-a-boo with you-know-who, Norfolk, Virginia, July 18, 2014. #norfolk #virginia #va #family #love #loveinthefirstperson #curtains #daughter #peekaboo #thesevencities"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570037_272172219655777_948256396_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_matteich/canvas/21/navplace",
                 "type": "FeatureCollection",
@@ -1151,7 +1172,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570037_272172219655777_948256396_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -1162,7 +1183,7 @@
         {
             "id": "https://example.org/storymap/instagram_matteich/map-config",
             "type": "Service",
-            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapAsImage": false
         }
     ]

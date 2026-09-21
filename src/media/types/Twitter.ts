@@ -21,7 +21,7 @@ export default class Twitter extends Media {
 
         // Get Media ID
 
-        const r = /twitter.com\/(.+?)\/status\/(\d+)/;
+        const r = /(?:twitter\.com|x\.com)\/(.+?)\/status\/(\d+)/;
         const match = r.exec(this.data.url);
         if (match) {
             this.user_id = match[1];
@@ -44,7 +44,8 @@ export default class Twitter extends Media {
 
         //	TWEET CONTENT
         tweet_text = data.html.split("</p>&mdash;")[0] + "</p></blockquote>";
-        const tweetuser = data.author_url.split("twitter.com/")[1];
+        // the oembed endpoint returns x.com URLs since the rebrand — parse both
+        const tweetuser = data.author_url.split(/twitter\.com|x\.com\//)[1];
         const tweet_status_temp = data.html.split("</p>&mdash;")[1].split('<a href="')[1];
         const tweet_status_url = tweet_status_temp.split('">')[0];
         const tweet_status_date = tweet_status_temp.split('">')[1].split("</a>")[0];

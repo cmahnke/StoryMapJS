@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/empty",
     "type": "Manifest",

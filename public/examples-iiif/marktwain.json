@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/marktwain",
     "type": "Manifest",
@@ -103,9 +103,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://twitter.com/MarkTwainQuote/status/441928360583643136",
-                                "type": "Text",
-                                "format": "text/html"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/marktwain/canvas/2"
                         }
@@ -123,6 +123,7 @@
                 ]
             },
             "storymap:mediaCaption": "Mark Twain's birthplace, Florida, Missouri",
+            "storymap:mediaCredit": "Original: https://twitter.com/MarkTwainQuote/status/441928360583643136",
             "storymap:date": "1835",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/2/navplace",
@@ -271,8 +272,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://vine.co/v/bjHh0zHdgZT",
-                                "type": "Video"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/marktwain/canvas/5"
                         }
@@ -289,6 +291,7 @@
                     "Visits St. Louis, New York, and Philadelphia as an itinerant printer."
                 ]
             },
+            "storymap:mediaCredit": "Original: https://vine.co/v/bjHh0zHdgZT",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/5/navplace",
                 "type": "FeatureCollection",

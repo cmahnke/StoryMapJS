@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/instagram_raymondmccrea",
     "type": "Manifest",
@@ -41,9 +41,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://images.ak.instagram.com/profiles/profile_5782778_75sq_1309296349.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/1"
                         }
@@ -55,7 +55,8 @@
                     "<span class=\"vco-snapmap-instagram\">Raymond McCrea<small><a href=\"http://instagram.com/raymondmccrea\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> raymondmccrea</a></small></span>"
                 ]
             },
-            "storymap:type": "overview"
+            "storymap:type": "overview",
+            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_5782778_75sq_1309296349.jpg"
         },
         {
             "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2",
@@ -72,9 +73,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520313_1470161229888880_2083271051_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/2"
                         }
@@ -91,6 +92,7 @@
                     "Storms leave the best sunsets in their wake."
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520313_1470161229888880_2083271051_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -106,7 +108,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520313_1470161229888880_2083271051_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -127,9 +129,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915596_481209185346949_1041922227_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/3"
                         }
@@ -146,6 +148,7 @@
                     "Incline Railway to the top of Lookout Mountain. 72% grade!"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915596_481209185346949_1041922227_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -161,7 +164,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915596_481209185346949_1041922227_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -182,9 +185,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499157_653039784780889_1265234880_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/4"
                         }
@@ -201,6 +204,7 @@
                     "Tenn/Georgia line."
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499157_653039784780889_1265234880_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -216,7 +220,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499157_653039784780889_1265234880_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -237,9 +241,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10474971_593901507375923_1356620213_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/5"
                         }
@@ -256,6 +260,7 @@
                     "Amazing architecture and design around this space."
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10474971_593901507375923_1356620213_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -271,7 +276,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10474971_593901507375923_1356620213_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -292,9 +297,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522319_1407013566190130_1386823463_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/6"
                         }
@@ -306,6 +311,7 @@
                     "Kudzu FTW"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522319_1407013566190130_1386823463_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -321,7 +327,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522319_1407013566190130_1386823463_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -342,9 +348,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/925306_672343749514116_264377219_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/7"
                         }
@@ -361,6 +367,7 @@
                     "Sad vulture"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/925306_672343749514116_264377219_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -376,7 +383,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/925306_672343749514116_264377219_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -397,9 +404,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10554227_696870267051853_1448242429_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/8"
                         }
@@ -416,6 +423,7 @@
                     "Found in Inman Park #jones"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10554227_696870267051853_1448242429_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -431,7 +439,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10554227_696870267051853_1448242429_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -452,9 +460,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467893_844818885569662_373644111_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/9"
                         }
@@ -471,6 +479,7 @@
                     "Let the spectacle begin. #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467893_844818885569662_373644111_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -486,7 +495,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467893_844818885569662_373644111_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -507,9 +516,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10561065_486814728129494_2113163521_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/10"
                         }
@@ -526,6 +535,7 @@
                     "What a racket. #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10561065_486814728129494_2113163521_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -541,7 +551,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10561065_486814728129494_2113163521_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -562,9 +572,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925327_811492352194469_399590127_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/11"
                         }
@@ -581,6 +591,7 @@
                     "The Venetian, whatever that means. #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925327_811492352194469_399590127_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -596,7 +607,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925327_811492352194469_399590127_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -617,9 +628,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10554274_1513021125580691_1059664607_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/12"
                         }
@@ -636,6 +647,7 @@
                     "DaVinci, it's all original. #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10554274_1513021125580691_1059664607_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -651,7 +663,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10554274_1513021125580691_1059664607_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -672,9 +684,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915614_734476036590541_1596699216_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/13"
                         }
@@ -691,6 +703,7 @@
                     "Balcony is on point, if you like parking garages. I do. #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915614_734476036590541_1596699216_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -706,7 +719,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915614_734476036590541_1596699216_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -727,9 +740,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499063_264954443707818_1234044803_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/14"
                         }
@@ -746,6 +759,7 @@
                     "#empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499063_264954443707818_1234044803_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -761,7 +775,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499063_264954443707818_1234044803_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -782,9 +796,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549890_330375857118555_1513907118_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/15"
                         }
@@ -801,6 +815,7 @@
                     "You can't escape doom in Las Vegas. #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549890_330375857118555_1513907118_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -816,7 +831,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549890_330375857118555_1513907118_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -837,9 +852,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499190_342995539186956_1156978052_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/16"
                         }
@@ -856,6 +871,7 @@
                     "Managed to get all 8 together long enough for a photo before the end of #empirevegasvacation2014"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499190_342995539186956_1156978052_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -871,7 +887,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499190_342995539186956_1156978052_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -892,9 +908,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570241_1517153348498124_1734532319_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/17"
                         }
@@ -906,6 +922,7 @@
                     "First post is up. Follow @echosight l week.  Hello world! This week #EchoSight is being taken over by Raymond McCrea Jones and Laura Wilson. Join as we explore the notion of Near/Far through this awesome creative experiment. Ray @RaymondMcCrea is a photographer/filmmaker based in Atlanta. Laura @loreleiwlsn is a portrait/lifestyle photographer based in Brooklyn. The two have been good friends since meeting in NYC in 2008. #echosight #photography #mashup"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570241_1517153348498124_1734532319_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -921,7 +938,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570241_1517153348498124_1734532319_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -942,9 +959,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488805_713383958723868_48054213_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/18"
                         }
@@ -956,6 +973,7 @@
                     "Follow @echosight and @loreleiwlsn"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488805_713383958723868_48054213_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -971,7 +989,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488805_713383958723868_48054213_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -992,9 +1010,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554223_301292116715950_1231761983_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/19"
                         }
@@ -1006,6 +1024,7 @@
                     "A typewriter from Goshen and tattooer from Charlotte. #echosight #portrait #photography Follow @RaymondMcCrea and @loreleiwlsn July 20-27 on @echosight"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554223_301292116715950_1231761983_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1021,7 +1040,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554223_301292116715950_1231761983_s.jpg"
+                            "image": "/examples/assets/placeholder-portrait.jpg"
                         }
                     }
                 ]
@@ -1042,9 +1061,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_672236002853318_698424189_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/20"
                         }
@@ -1061,6 +1080,7 @@
                     "God bless America. Did I already say that?"
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_672236002853318_698424189_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1076,7 +1096,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_672236002853318_698424189_s.jpg"
+                            "image": "/examples/assets/placeholder-city.jpg"
                         }
                     }
                 ]
@@ -1097,9 +1117,9 @@
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_819891748023778_518282451_n.jpg",
-                                "type": "Image",
-                                "format": "image/jpeg"
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
                             },
                             "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/21"
                         }
@@ -1111,6 +1131,7 @@
                     "Hey y'all. Laura here! Ray and I would like to officially introduce ourselves! We'll be taking over the @echosight account all this week exploring the concept of Near/Far. Coming at you from Atlanta and Brooklyn- hang and follow along with us! #makeportraits #mashup #doubleexposure #echosight \nRaymond McCrea Jones @RaymondMcCrea is a photographer/filmmaker based in Atlanta. Laura Wilson @loreleiwlsn is a portrait/lifestyle photographer based in Brooklyn."
                 ]
             },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_819891748023778_518282451_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/21/navplace",
                 "type": "FeatureCollection",
@@ -1126,7 +1147,7 @@
                             ]
                         },
                         "properties": {
-                            "image": "http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_819891748023778_518282451_s.jpg"
+                            "image": "/examples/assets/placeholder-landscape.jpg"
                         }
                     }
                 ]
@@ -1137,7 +1158,7 @@
         {
             "id": "https://example.org/storymap/instagram_raymondmccrea/map-config",
             "type": "Service",
-            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapAsImage": false
         }
     ]

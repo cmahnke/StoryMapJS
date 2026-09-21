@@ -100,7 +100,7 @@ export class MediaBase {
 
         //Options
         this.options = {
-            api_key_flickr: "8f2d5becf7b6ba46570741620054b507",
+            api_key_flickr: "", // no bundled key: pass api_key_flickr in the options
             credit_height: 0,
             caption_height: 0,
         };

@@ -1,0 +1,111 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://christianmahnke.de/iiif/storymap"
+    ],
+    "id": "https://example.org/storymap/issue-451-webp",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-451-webp"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-451-webp/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-451-webp/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-451-webp/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-451-webp/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "WebP"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-451-webp/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-451-webp/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-451-webp/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://www.gstatic.com/webp/gallery3/1.webp",
+                                "type": "Image",
+                                "format": "image/webp"
+                            },
+                            "target": "https://example.org/storymap/issue-451-webp/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "WebP slide"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Should render as an image."
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-451-webp/map-config",
+            "type": "Service",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

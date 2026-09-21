@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/courbet",
     "type": "Manifest",
@@ -71,7 +71,7 @@
         {
             "id": "https://example.org/storymap/courbet/map-config",
             "type": "Service",
-            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapAsImage": true,
             "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
             "storymap:originalZoomify": {

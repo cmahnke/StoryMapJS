@@ -25,9 +25,9 @@
                     "text": "A before/after slider."
                 },
                 "media": {
-                    "url": "https://juxtapose.knightlab.com/frame/?uid=abc123",
+                    "url": "https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=abc123",
                     "caption": "",
-                    "credit": ""
+                    "credit": "Original: https://juxtapose.knightlab.com/frame/?uid=abc123"
                 }
             }
         ]

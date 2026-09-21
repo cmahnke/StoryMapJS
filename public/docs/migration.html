@@ -123,6 +123,14 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 <td>Recommended: free OpenStreetMap vector styles, e.g. <code>map_type: &quot;osm:bright&quot;</code> (OpenFreeMap), or any style JSON URL</td>
 </tr>
 <tr>
+<td>Bundled <code>map_access_token</code></td>
+<td>removed — pass <code>map_access_token</code> in the options if you use Mapbox/Stadia tiles</td>
+</tr>
+<tr>
+<td>Bundled Flickr API key</td>
+<td>removed — pass <code>api_key_flickr</code> in the options if you use <code>flickr.com/photos</code> API URLs</td>
+</tr>
+<tr>
 <td><code>relative_date: true</code> (moment.js)</td>
 <td>removed — format dates in the story text</td>
 </tr>
@@ -168,6 +176,27 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 <td>none — nothing is sent</td>
 </tr>
 </tbody></table>
+<h2>Removed media types and services</h2>
+<table>
+<thead>
+<tr>
+<th>Removed</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>vine</code> media type (service shut down)</td>
+<td>vine URLs fall back to the <code>website</code> iframe — use another media source for those slides</td>
+</tr>
+<tr>
+<td>Juxtapose <code>frame/?uid=</code> embed URLs</td>
+<td>the <code>juxtapose.knightlab.com/frame/?uid=</code> host is dead — use the published format <code>https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...</code></td>
+</tr>
+<tr>
+<td>Twitter <code>@nickname</code> rendering</td>
+<td>tweets from <code>x.com</code> URLs are now parsed too (fixes <code>@undefined</code> nicknames); no migration needed</td>
+</tr>
+</tbody></table>
 <h2>Map engine: Leaflet → OpenLayers</h2>
 <ul>
 <li><code>storymap.map</code> now exposes the <strong>OpenLayers <code>Map</code></strong> instance instead of a
@@ -183,6 +212,10 @@ or a Mapbox style JSON URL.</li>
 <li>Storymap JSON is now validated against a JSON Schema (<code>schema/storymap.json</code>);
 invalid documents are reported to the console at load time.</li>
 <li>IIIF Presentation 3 manifests are accepted directly as storymap sources.</li>
+<li>The StoryMap IIIF extension context changed to
+<code>https://christianmahnke.de/iiif/storymap</code> — manifests produced with the old
+<code>https://example.org/ns/storymap/v1</code> context need re-converting
+(<code>scripts/convert-to-iiif.mjs</code>).</li>
 <li>The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
 Python authoring server are gone — this is a viewer-only library.</li>
 </ul>

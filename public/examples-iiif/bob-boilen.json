@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://example.org/ns/storymap/v1"
+        "https://christianmahnke.de/iiif/storymap"
     ],
     "id": "https://example.org/storymap/bob-boilen",
     "type": "Manifest",
@@ -332,7 +332,7 @@
         {
             "id": "https://example.org/storymap/bob-boilen/map-config",
             "type": "Service",
-            "profile": "https://example.org/ns/storymap/v1/mapconfig",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
             "storymap:mapType": "http://apps.npr.org/bob-boilens-wristbands-2012/img/tiles/{z}/{x}/{y}.jpg",
             "storymap:fontCss": "stock:dancing-ledger",
             "storymap:language": "en"

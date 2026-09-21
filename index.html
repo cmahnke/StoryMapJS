@@ -130,7 +130,7 @@
                         <p>
                             The viewer can pull in media from a variety of sources: Twitter/X,
                             Flickr, YouTube, Vimeo, Dailymotion, Wikipedia, SoundCloud, Document
-                            Cloud, Instagram, blockquote and more.
+                            Cloud, blockquote and more.
                         </p>
                     </div>
                 </div>
@@ -341,7 +341,8 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                         before anything is loaded from external services (media
                                         embeds, map tiles, external fonts). Each service asks once
                                         per page load with an Allow/Deny panel; denied services show
-                                        a placeholder instead. Nothing is persisted.
+                                        a placeholder instead. Decisions are stored in a cookie for
+                                        90 days — clearing cookies asks again.
                                     </p>
                                 </div>
                             </li>

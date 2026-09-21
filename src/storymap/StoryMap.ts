@@ -179,8 +179,10 @@ class StoryMapBase {
             map_mini: true,
             map_subdomains: "",
             map_as_image: false,
-            map_access_token:
-                "pk.eyJ1IjoibnVrbmlnaHRsYWIiLCJhIjoiczFmd0hPZyJ9.Y_afrZdAjo3u8sz_r8m2Yw", // default
+            // no bundled credentials: pass map_access_token in the options
+            // if you use Mapbox/Stadia tiles, api_key_flickr for flickr API
+            // URLs
+            map_access_token: "",
             map_background_color: "#d9d9d9",
             map_bbox: null,
             consent_required: false,
@@ -210,7 +212,7 @@ class StoryMapBase {
             line_dash: "5,5",
             show_lines: true,
             show_history_line: true,
-            api_key_flickr: "8f2d5becf7b6ba46570741620054b507",
+            api_key_flickr: "", // no bundled key: pass api_key_flickr in the options
             font_css: "stock:default",
             language: "en",
         } as StorymapOptions;

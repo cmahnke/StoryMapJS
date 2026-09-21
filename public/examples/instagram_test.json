@@ -6,8 +6,8 @@
             {
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://images.ak.instagram.com/profiles/profile_566781_75sq_1349661215.jpg"
+                    "credit": "Original: http://images.ak.instagram.com/profiles/profile_566781_75sq_1349661215.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "<span class=\"vco-snapmap-instagram\">kristen joy watts<small><a href=\"http://instagram.com/kjwww\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> kjwww</a></small></span>",
@@ -17,14 +17,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/891437_1426889687599049_1534411085_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 48.869392405,
                     "lon": 2.373524299
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/891437_1426889687599049_1534411085_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/891437_1426889687599049_1534411085_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Maison Martin Margiela Paris Grenelle",
@@ -33,14 +33,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10533592_583939295055955_537799888_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 48.874269081,
                     "lon": 2.323821042
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10533592_583939295055955_537799888_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10533592_583939295055955_537799888_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
                     "headline": "La Chapelle expiatoire",
@@ -49,14 +49,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10523582_1446073535652652_1972696004_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lat": 48.874269081,
                     "lon": 2.323821042
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10523582_1446073535652652_1972696004_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10523582_1446073535652652_1972696004_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "La Chapelle expiatoire",
@@ -65,14 +65,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554277_768190486536323_1548300790_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 48.8597299,
                     "lon": 2.4028899
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554277_768190486536323_1548300790_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554277_768190486536323_1548300790_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Mama Shelter",
@@ -81,30 +81,30 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10549750_697514880320433_939082141_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 48.856772683,
                     "lon": 2.377864132
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10549750_697514880320433_939082141_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10549750_697514880320433_939082141_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
-                    "headline": "La F\u00e9e Verte",
-                    "text": "f\u00e9e"
+                    "headline": "La Fée Verte",
+                    "text": "fée"
                 }
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/914416_805647066135597_2143364955_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lat": 48.8597299,
                     "lon": 2.4028899
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/914416_805647066135597_2143364955_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/914416_805647066135597_2143364955_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "Mama Shelter",
@@ -113,14 +113,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10546627_692684480779490_1057091115_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 48.865673946,
                     "lon": 2.301422025
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10546627_692684480779490_1057091115_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10546627_692684480779490_1057091115_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Yves Saint Laurent",
@@ -129,30 +129,30 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10499113_781447105240312_1873521341_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 48.855758637,
                     "lon": 2.315918518
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10499113_781447105240312_1873521341_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10499113_781447105240312_1873521341_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
-                    "headline": "Mus\u00e9e Rodin",
+                    "headline": "Musée Rodin",
                     "text": "Paris parting shot"
                 }
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513714_733676590027122_1610874769_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lat": 51.5367,
                     "lon": -0.0618
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513714_733676590027122_1610874769_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513714_733676590027122_1610874769_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "Broadway Market",
@@ -161,14 +161,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520337_1474529226126730_1287109742_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 51.537603508,
                     "lon": -0.061155905
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520337_1474529226126730_1287109742_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520337_1474529226126730_1287109742_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Donlon Books",
@@ -177,14 +177,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10518237_775627895792350_1569859720_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 51.510173,
                     "lon": -0.098438
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10518237_775627895792350_1569859720_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10518237_775627895792350_1569859720_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
                     "headline": "Millennium Bridge, London",
@@ -193,14 +193,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10546594_1447510642169144_639257620_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lat": 51.50692763,
                     "lon": -0.171477858
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10546594_1447510642169144_639257620_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10546594_1447510642169144_639257620_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "Serpentine Galleries",
@@ -209,14 +209,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10534816_590978977688145_473599969_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 51.52394313,
                     "lon": -0.076005332
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10534816_590978977688145_473599969_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10534816_590978977688145_473599969_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Shoreditch House",
@@ -225,30 +225,30 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1941116_770718122979196_2134123139_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 40.714500078,
                     "lon": -73.991420271
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1941116_770718122979196_2134123139_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1941116_770718122979196_2134123139_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
                     "headline": "Forgetmenot",
-                    "text": "\u2764\ufe0f\ud83c\udf38\u2764\ufe0f"
+                    "text": "❤️🌸❤️"
                 }
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475023_1511088002440493_553502399_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lat": 40.743687968,
                     "lon": -74.006950933
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475023_1511088002440493_553502399_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475023_1511088002440493_553502399_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "The High Line",
@@ -257,14 +257,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472078_737215726321509_2072486444_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 40.726924507,
                     "lon": -74.002016232
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472078_737215726321509_2072486444_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472078_737215726321509_2072486444_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Navy New York",
@@ -273,14 +273,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10499308_674397492653450_965588066_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 40.746845553,
                     "lon": -74.006423956
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10499308_674397492653450_965588066_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10499308_674397492653450_965588066_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
                     "headline": "Gagosian West 21",
@@ -289,14 +289,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924808_1441151989492391_83424458_s.jpg",
+                    "image": "/examples/assets/placeholder-portrait.jpg",
                     "lat": 40.749191313,
                     "lon": -74.003854957
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924808_1441151989492391_83424458_n.jpg"
+                    "credit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924808_1441151989492391_83424458_n.jpg",
+                    "url": "/examples/assets/placeholder-landscape.jpg"
                 },
                 "text": {
                     "headline": "Pace Gallery",
@@ -305,14 +305,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10467879_259688257571341_1703146352_s.jpg",
+                    "image": "/examples/assets/placeholder-city.jpg",
                     "lat": 42.321777138,
                     "lon": -73.43585286
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10467879_259688257571341_1703146352_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10467879_259688257571341_1703146352_n.jpg",
+                    "url": "/examples/assets/placeholder-portrait.jpg"
                 },
                 "text": {
                     "headline": "Harvey Mountain",
@@ -321,14 +321,14 @@
             },
             {
                 "location": {
-                    "image": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549627_1511889872380635_794098574_s.jpg",
+                    "image": "/examples/assets/placeholder-landscape.jpg",
                     "lat": 42.272438333,
                     "lon": -73.621238333
                 },
                 "media": {
                     "caption": "",
-                    "credit": "",
-                    "url": "http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549627_1511889872380635_794098574_n.jpg"
+                    "credit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549627_1511889872380635_794098574_n.jpg",
+                    "url": "/examples/assets/placeholder-city.jpg"
                 },
                 "text": {
                     "headline": "",
