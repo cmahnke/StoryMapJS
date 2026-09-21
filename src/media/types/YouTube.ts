@@ -1,7 +1,6 @@
 import { unique_ID, getUrlVars, ratio } from "../../core/Util";
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { loadJS } from "../../core/Load";
 import { Language } from "../../language/Language";
 
 /*	Media.YouTube
@@ -39,7 +38,7 @@ export default class YouTube extends Media {
 
     /*	Load the media
 	================================================== */
-    _loadMedia() {
+    async _loadMedia() {
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -75,9 +74,13 @@ export default class YouTube extends Media {
         this.media_id.hd = url_vars["hd"];
 
         // API Call
-        loadJS("https://www.youtube.com/iframe_api", () => {
-            this.createMedia();
-        });
+        try {
+            await this.loadScript("https://www.youtube.com/iframe_api");
+        } catch {
+            // aborted or failed to load; nothing to show
+            return;
+        }
+        this.createMedia();
     }
 
     // Update Media Display

@@ -5,6 +5,7 @@ import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { MediaState, StorymapSlideMedia } from "../types";
 import { consentManagerOf, consentMessage } from "../storymap/Consent";
+import { loadJS } from "../core/Load";
 /*	VCO.Media
 	Main media template for media assets.
 	Takes a data object and populates a dom object
@@ -40,6 +41,7 @@ export class MediaBase {
     declare "player": unknown;
     declare "timer": ReturnType<typeof setTimeout>;
     declare "load_timer": ReturnType<typeof setTimeout>;
+    declare "load_controller": AbortController | null;
     declare "message": Message;
     declare "media_id": unknown;
     declare "_state": MediaState;
@@ -74,6 +76,7 @@ export class MediaBase {
         // Timer (If Needed)
         this.timer = null;
         this.load_timer = null;
+        this.load_controller = null;
 
         // Message
         this.message = null;
@@ -253,7 +256,29 @@ export class MediaBase {
             clearTimeout(this.load_timer);
             this.load_timer = null;
         }
+        // Abort an in-flight external script load, if any
+        if (this.load_controller) {
+            this.load_controller.abort();
+            this.load_controller = null;
+        }
         this._stopMedia();
+    }
+
+    /**
+     * Load an external script for this media, abortable via stopMedia().
+     * Rejects with AbortError when the load is cancelled.
+     */
+    async loadScript(url: string): Promise<void> {
+        this.load_controller?.abort();
+        const controller = new AbortController();
+        this.load_controller = controller;
+        try {
+            await loadJS(url, { signal: controller.signal });
+        } finally {
+            if (this.load_controller === controller) {
+                this.load_controller = null;
+            }
+        }
     }
 
     loadErrorDisplay(message: string) {

@@ -1,5 +1,5 @@
 import Animate from "morpheus";
-import Ease from "../animation/Ease";
+import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import { Browser } from "../core/Browser";
 import { Evented, type EventedInstance } from "../core/mixins";
 import { mergeData } from "../core/Util";
@@ -96,7 +96,7 @@ class SwipableBase {
             },
             momentum_multiplier: 2000,
             duration: 1000,
-            ease: Ease.easeInOutQuint,
+            ease: easeInOutQuint,
         };
         // Animation Object
         this.animator = null;
@@ -342,7 +342,7 @@ class SwipableBase {
                 top: this.data.pos.start.y,
                 left: this.data.pos.start.x,
                 duration: this.options.duration,
-                easing: Ease.easeOutStrong,
+                easing: easeOutStrong,
             });
         }
     }
@@ -354,7 +354,7 @@ class SwipableBase {
             },
             animate: AnimateOptions = {
                 duration: this.options.duration,
-                easing: Ease.easeOutStrong,
+                easing: easeOutStrong,
             };
         if (this.options.enable.y) {
             if (this.options.constraint.top || this.options.constraint.bottom) {

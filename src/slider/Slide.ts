@@ -2,7 +2,7 @@ import { mergeData } from "../core/Util";
 import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import { DomEvent } from "../dom/DomEvent";
 import Dom from "../dom/Dom";
-import Ease from "../animation/Ease";
+import { easeInSpline } from "../animation/easings";
 import MediaType from "../media/MediaType";
 import Text from "../media/types/Text";
 import { Browser } from "../core/Browser";
@@ -120,7 +120,7 @@ class SlideBase {
             // animation
             duration: 1000,
             slide_padding_lr: 40,
-            ease: Ease.easeInSpline,
+            ease: easeInSpline,
             width: 600,
             height: 600,
             skinny_size: 650,

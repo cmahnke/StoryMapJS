@@ -4,7 +4,7 @@ import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
 import { ConsentManager, consentManagerOf, consentMessage } from "./Consent";
 import Dom from "../dom/Dom";
-import Ease from "../animation/Ease";
+import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import { setLanguage, Language } from "../language/Language";
 import { Evented, type EventedInstance } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
@@ -168,7 +168,7 @@ class StoryMapBase {
             skinny_size: 650,
             // animation
             duration: 1000,
-            ease: Ease.easeInOutQuint,
+            ease: easeInOutQuint,
             // interaction
             dragging: true,
             trackResize: true,
@@ -363,7 +363,7 @@ class StoryMapBase {
 
     /*  Load the font theme stylesheet
     ================================================== */
-    _loadFontCss() {
+    async _loadFontCss() {
         let font = this.options.font_css || "stock:default";
         if (font.startsWith("stock:")) {
             const font_name = font.split(":")[1] || "default";
@@ -379,21 +379,24 @@ class StoryMapBase {
             // external font CSS is an external service — ask first
             const host = new URL(font.startsWith("//") ? "https:" + font : font).host;
             const container = this._el.map ?? (this._el.container as HTMLElement);
-            manager
-                .request(consentMessage("consent_service_fonts", "web fonts"), host, container)
-                .then((allowed) => {
-                    if (allowed) {
-                        loadCSS(font, () => {
-                            this._onFontLoaded(font);
-                        });
-                    }
-                });
-            return;
+            const allowed = await manager.request(
+                consentMessage("consent_service_fonts", "web fonts"),
+                host,
+                container,
+            );
+            if (!allowed) {
+                return;
+            }
         }
         if (font) {
-            loadCSS(font, () => {
+            try {
+                await loadCSS(font);
+            } catch {
+                // a missing font theme must not block the storymap; the
+                // font-loaded event fires either way, as before
+            } finally {
                 this._onFontLoaded(font);
-            });
+            }
         }
     }
 
@@ -622,7 +625,7 @@ class StoryMapBase {
                 this.animator_map = Animate(this._el.map, {
                     height: this.options.map_height + "px",
                     duration: duration,
-                    easing: Ease.easeOutStrong,
+                    easing: easeOutStrong,
                     complete: () => {
                         this._map.updateDisplay(
                             this.options.width,
@@ -641,7 +644,7 @@ class StoryMapBase {
                 this.animator_storyslider = Animate(this._el.storyslider, {
                     height: this.options.storyslider_height + "px",
                     duration: duration,
-                    easing: Ease.easeOutStrong,
+                    easing: easeOutStrong,
                 });
             } else {
                 // Map

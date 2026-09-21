@@ -1,7 +1,6 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
-import { loadJS } from "../../core/Load";
 
 /*	Media.SoundCloud
 ================================================== */
@@ -17,7 +16,7 @@ export default class SoundCloud extends Media {
 
     /*	Load the media
 	================================================== */
-    _loadMedia() {
+    async _loadMedia() {
         // Loading Message
         this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
 
@@ -35,14 +34,15 @@ export default class SoundCloud extends Media {
         const api_url = "https://soundcloud.com/oembed?url=" + this.media_id + "&format=json";
 
         // API Call
-        fetch(api_url).then((r) =>
-            r.json().then((d) => {
-                loadJS("https://w.soundcloud.com/player/api.js", () => {
-                    //load soundcloud api for pausing.
-                    this.createMedia(d);
-                });
-            }),
-        );
+        try {
+            const r = await fetch(api_url);
+            const d = await r.json();
+            await this.loadScript("https://w.soundcloud.com/player/api.js");
+            //load soundcloud api for pausing.
+            this.createMedia(d);
+        } catch {
+            // aborted or failed to load; nothing to show
+        }
     }
 
     createMedia(d: unknown) {

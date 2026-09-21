@@ -16,7 +16,8 @@ export { StoryMap } from "./storymap/StoryMap";
  * Append a stylesheet `<link>` to the document head.
  *
  * @param href - The stylesheet URL.
- * @param callback - Invoked once the stylesheet has loaded (or failed).
+ * @param options - Optional AbortSignal to cancel an in-flight load.
+ * @returns Resolves once the stylesheet has loaded, rejects on error or abort.
  */
 export { loadCSS } from "./core/Load";
 

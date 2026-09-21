@@ -1,6 +1,6 @@
 import { mergeData } from "../core/Util";
 import { Evented, type EventedInstance } from "../core/mixins";
-import Ease from "../animation/Ease";
+import { easeInSpline } from "../animation/easings";
 import type {
     AnimationHandle,
     IconSpec,
@@ -63,7 +63,7 @@ class MapMarkerBase {
         this.options = {
             // animation
             duration: 1000,
-            ease: Ease.easeInSpline,
+            ease: easeInSpline,
             width: 600,
             height: 600,
             map_popup: false,

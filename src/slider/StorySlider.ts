@@ -2,7 +2,7 @@ import { mergeData, unique_ID, findArrayNumberByUniqueID, hexToRgb } from "../co
 import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
-import Ease from "../animation/Ease";
+import { easeInOutQuint } from "../animation/easings";
 import SlideNav from "./SlideNav";
 import Slide from "./Slide";
 import Animate from "morpheus";
@@ -119,7 +119,7 @@ class StorySliderBase {
             slide_default_fade: "0%", // landscape fade
             // animation
             duration: 1000,
-            ease: Ease.easeInOutQuint,
+            ease: easeInOutQuint,
             // interaction
             dragging: true,
             trackResize: true,

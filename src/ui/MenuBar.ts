@@ -1,7 +1,7 @@
 import { mergeData } from "../core/Util";
 import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
-import Ease from "../animation/Ease";
+import { easeInOutQuint } from "../animation/easings";
 
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
@@ -66,7 +66,7 @@ class MenuBarBase {
             width: 600,
             height: 600,
             duration: 1000,
-            ease: Ease.easeInOutQuint,
+            ease: easeInOutQuint,
             menubar_default_y: 0,
         };
 
@@ -91,7 +91,7 @@ class MenuBarBase {
 		this.animator = Animate(this._el.container, {
 			top: 		this.options.menubar_default_y + "px",
 			duration: 	duration,
-			easing: 	Ease.easeOutStrong
+			easing: 	easeOutStrong
 		});
 		*/
     }
@@ -101,7 +101,7 @@ class MenuBarBase {
 		this.animator = Animate(this._el.container, {
 			top: 		top,
 			duration: 	this.options.duration,
-			easing: 	Ease.easeOutStrong
+			easing: 	easeOutStrong
 		});
 		*/
     }

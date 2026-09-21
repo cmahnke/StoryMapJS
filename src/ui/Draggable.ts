@@ -3,7 +3,7 @@ import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent, type LegacyEvent } from "../dom/DomEvent";
 import { touch } from "../core/Browser";
-import Ease from "../animation/Ease";
+import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import Animate from "morpheus";
 import type { AnimateOptions, AnimationHandle } from "../types";
 
@@ -91,7 +91,7 @@ export class DraggableBase {
             },
             momentum_multiplier: 2000,
             duration: 1000,
-            ease: Ease.easeInOutQuint,
+            ease: easeInOutQuint,
         };
 
         // Animation Object
@@ -336,7 +336,7 @@ export class DraggableBase {
             },
             animate: AnimateOptions = {
                 duration: this.options.duration,
-                easing: Ease.easeOutStrong,
+                easing: easeOutStrong,
             };
 
         if (this.options.enable.y) {
