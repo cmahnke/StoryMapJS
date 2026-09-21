@@ -12,6 +12,7 @@ import { Style, Stroke } from "ol/style";
 import { fromLonLat, toLonLat } from "ol/proj";
 import type Projection from "ol/proj/Projection";
 import { boundingExtent } from "ol/extent";
+import TileGrid from "ol/tilegrid/TileGrid";
 import OverviewMap from "ol/control/OverviewMap";
 import { defaults as interactionDefaults } from "ol/interaction";
 import { applyStyle } from "ol-mapbox-style";
@@ -90,6 +91,15 @@ export default class OpenLayers extends Map {
         this._map.on("loadend", () => {
             this._onMapLoaded(undefined);
         });
+
+        // keep the marker overlays above the layer canvases: OL pins the
+        // overlay container at z-index 0 (inline), and during pan/zoom
+        // animations the composited canvases can transiently paint over it —
+        // the marker icons flicker
+        const overlay_container = this._el.map.querySelector(".ol-overlaycontainer");
+        if (overlay_container) {
+            (overlay_container as HTMLElement).style.zIndex = "1";
+        }
 
         // Create Tile Layer
         // Tile Layer — GDPR consent mode defers it until the visitor allows
@@ -191,6 +201,56 @@ export default class OpenLayers extends Map {
                 this._fitView(this._map, [[marker.data.location.lon, marker.data.location.lat]], 0);
             }
         }
+    }
+
+    /**
+     * Legacy zoomify image pyramid: the levels (image size per level), the
+     * max zoom and the mercator bounds the image occupies (stretched from
+     * the world's top-left corner, the original renderer's mapping).
+     */
+    _zoomifyPyramid(): {
+        sizes: Array<[number, number]>;
+        maxZoom: number;
+        extent: number[];
+        tileGrid: TileGrid;
+    } | null {
+        const zoomify = this.options.zoomify;
+        if (!zoomify || typeof zoomify !== "object" || !zoomify.path) return null;
+        const width = zoomify.width ?? 600;
+        const height = zoomify.height ?? 600;
+
+        // pyramid levels: halve the image size until ≤ 256
+        const sizes: Array<[number, number]> = [];
+        let w = width;
+        let h = height;
+        while (w > 256 || h > 256) {
+            sizes.push([w, h]);
+            w = Math.floor(w / 2);
+            h = Math.floor(h / 2);
+        }
+        sizes.push([w, h]);
+        sizes.reverse(); // [0] = smallest level
+
+        const maxZoom = sizes.length - 1;
+        const worldPx = 256 * 2 ** maxZoom;
+        const extent = [
+            -20037508.342789244,
+            20037508.342789244 - (height / worldPx) * 40075016.68557849,
+            -20037508.342789244 + (width / worldPx) * 40075016.68557849,
+            20037508.342789244,
+        ];
+        // tile grid over the image's mercator bounds: the tiles keep their
+        // natural size (the legacy renderer clamped edge tiles the same way)
+        const tileGrid = new TileGrid({
+            extent,
+            origin: [extent[0], extent[3]],
+            resolutions: Array.from(
+                { length: maxZoom + 1 },
+                (_, i) => 40075016.68557849 / (256 * 2 ** i),
+            ),
+            tileSize: 256,
+        });
+        return { sizes, maxZoom, extent, tileGrid };
     }
 
     _createTileLayer(map_type: string): TileLayer {
@@ -314,6 +374,45 @@ export default class OpenLayers extends Map {
                     }),
                 });
 
+            case "zoomify": {
+                // Legacy zoomify support: the image pyramid tiles are placed
+                // over the image's mercator bounds (the original renderer's
+                // mapping). Locations use native lat/lon.
+                const pyramid = this._zoomifyPyramid();
+                if (!pyramid) {
+                    console.error(
+                        "StoryMapJS: map_type 'zoomify' needs a zoomify image pyramid (path, width, height) in the storymap data.",
+                    );
+                    return new TileLayer({ source: new OSM({ attributions: [] }) });
+                }
+                const path = (this.options.zoomify as { path?: string }).path ?? "";
+                const { sizes, maxZoom: pyramidMaxZoom } = pyramid;
+                const gridX = (z: number) => Math.ceil(sizes[z][0] / 256);
+                const gridY = (z: number) => Math.ceil(sizes[z][1] / 256);
+
+                return new TileLayer({
+                    source: new XYZ({
+                        tileGrid: pyramid.tileGrid,
+                        crossOrigin: "anonymous",
+                        attributions: [],
+                        tileUrlFunction: (tile: number[]) => {
+                            const [z, x, y] = tile;
+                            if (z < 0 || z > pyramidMaxZoom) return undefined;
+                            if (x < 0 || x >= gridX(z) || y < 0 || y >= gridY(z)) {
+                                return undefined;
+                            }
+                            // TileGroup index: the running tile number ÷ 256
+                            let num = 0;
+                            for (let zz = 0; zz < z; zz++) {
+                                num += gridX(zz) * gridY(zz);
+                            }
+                            num += y * gridX(z) + x;
+                            return `${path}TileGroup${Math.floor(num / 256)}/${z}-${x}-${y}.jpg`;
+                        },
+                    }),
+                });
+            }
+
             case "osm": {
                 // "osm:<style>" uses an OpenFreeMap vector style (osm:bright ->
                 // https://tiles.openfreemap.org/styles/bright), plain "osm" stays
@@ -363,21 +462,51 @@ export default class OpenLayers extends Map {
             !consent.isGranted(tile_service)
         );
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
+        // Legacy zoomify maps are mercator-based: give the minimap a view
+        // constrained to the pyramid's upper levels and fit the image's
+        // mercator bounds — a fixed zoom pins it to the smallest, blurry
+        // pyramid level
+        const is_zoomify = this.options.map_type === "zoomify";
+        const zoomify_pyramid = is_zoomify ? this._zoomifyPyramid() : null;
         this._mini_map = new OverviewMap({
-            view: new View({
-                projection: this._map.getView().getProjection(),
-                center: this._map.getView().getCenter(),
-                zoom: this.zoom_min_max.min || 0,
-                // same reasoning as the main image view: no world constraints
-                ...(is_image_map
-                    ? {
-                          multiWorld: true,
-                          resolutions: IMAGE_RESOLUTIONS,
-                          minZoom: 0,
-                          maxZoom: IMAGE_RESOLUTIONS.length - 1,
-                      }
-                    : {}),
-            }),
+            ...(is_image_map || zoomify_pyramid
+                ? {
+                      view: (() => {
+                          const view = new View({
+                              projection: this._map.getView().getProjection(),
+                              center: this._map.getView().getCenter(),
+                              zoom: this.zoom_min_max.min || 0,
+                              // same reasoning as the main image view: no world
+                              // constraints
+                              ...(is_image_map
+                                  ? {
+                                        multiWorld: true,
+                                        resolutions: IMAGE_RESOLUTIONS,
+                                        minZoom: 0,
+                                        maxZoom: IMAGE_RESOLUTIONS.length - 1,
+                                    }
+                                  : {}),
+                              ...(zoomify_pyramid
+                                  ? {
+                                        // keep the minimap within the
+                                        // pyramid's crisp levels
+                                        minZoom: Math.max(0, zoomify_pyramid.maxZoom - 2),
+                                        maxZoom: zoomify_pyramid.maxZoom,
+                                        center: [
+                                            (zoomify_pyramid.extent[0] +
+                                                zoomify_pyramid.extent[2]) /
+                                                2,
+                                            (zoomify_pyramid.extent[1] +
+                                                zoomify_pyramid.extent[3]) /
+                                                2,
+                                        ],
+                                    }
+                                  : {}),
+                          });
+                          return view;
+                      })(),
+                  }
+                : {}),
             layers: tiles_allowed ? [this._tile_layer_mini] : [],
             collapseLabel: "\u00bb",
             label: "\u00ab",
@@ -385,7 +514,12 @@ export default class OpenLayers extends Map {
         });
         this._map.addControl(this._mini_map);
 
-        if (this.bounds_array && this.bounds_array.length) {
+        if (zoomify_pyramid) {
+            // show the image pyramid's extent in the minimap
+            this._mini_map.getOverviewMap().getView().fit(zoomify_pyramid.extent, {
+                size: this._mini_map.getOverviewMap().getSize(),
+            });
+        } else if (!is_zoomify && this.bounds_array && this.bounds_array.length) {
             this._fitView(this._mini_map.getOverviewMap(), this.bounds_array);
         }
 

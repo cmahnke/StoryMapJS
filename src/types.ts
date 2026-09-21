@@ -118,6 +118,20 @@ export interface StorymapOptions {
      */
     map_bbox: number[] | null;
     /**
+     * Legacy zoomify image pyramid (map_type: "zoomify"): the tiles are
+     * placed at the standard mercator tile positions, stretched from the
+     * world's top-left corner.
+     */
+    zoomify?:
+        | {
+              path?: string;
+              width?: number;
+              height?: number;
+              tolerance?: number;
+              attribution?: string;
+          }
+        | boolean;
+    /**
      * Ask for permission before loading anything from external services
      * (media embeds, map tiles, external font CSS) — GDPR consent mode.
      * Grants are remembered per service for the page lifetime.

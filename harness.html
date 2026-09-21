@@ -33,6 +33,7 @@
 
             const params = new URLSearchParams(window.location.search);
             const manifest = params.get("manifest");
+            const remoteUrl = params.get("url");
             const name = manifest !== null ? manifest : params.get("example");
             const base = manifest !== null ? "/examples-iiif/" : "/examples/";
             // optional inline options overrides for issue-reproduction tests
@@ -45,7 +46,9 @@
                 }
             }
 
-            fetch(base + name + ".json")
+            const dataUrl = remoteUrl ?? base + name + ".json";
+
+            fetch(dataUrl)
                 .then((r) => {
                     return r.json();
                 })

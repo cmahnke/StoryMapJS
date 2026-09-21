@@ -30,6 +30,18 @@ const EXAMPLES = [
     "president",
 ];
 
+// remote showcase examples: rendered through the embed player (needs network)
+const REMOTE_EXAMPLES = [
+    {
+        id: "bosch-garden",
+        url: "https://s3.amazonaws.com/uploads.knightlab.com/storymapjs/a1a349b51799ee49e96bed10cc235e7f/garden-of-earthly-delights/published.json",
+    },
+    {
+        id: "southern-literary-trail",
+        url: "https://uploads.knightlab.com/storymapjs/3df56e350378e51781746bfb2a2ea428/test/published.json",
+    },
+];
+
 mkdirSync(outDir, { recursive: true });
 
 const server = process.env.THUMBS_SERVER;
@@ -69,6 +81,23 @@ for (const id of EXAMPLES) {
         );
         // give the map/media a moment to settle
         await page.waitForTimeout(3500);
+        await page.screenshot({ path: resolve(outDir, `${id}.jpg`), type: "jpeg", quality: 80 });
+        console.log(`thumbs: ${id}.jpg`);
+    } catch (err) {
+        console.error(`thumbs: FAILED for ${id}: ${err}`);
+    }
+}
+
+for (const { id, url } of REMOTE_EXAMPLES) {
+    try {
+        await page.goto(`${base}/embed/index.html?url=${encodeURIComponent(url)}`);
+        await page.waitForFunction(
+            () => !!globalThis.document?.querySelector("#storymap-embed.vco-storymap"),
+            {
+                timeout: 45_000,
+            },
+        );
+        await page.waitForTimeout(5000);
         await page.screenshot({ path: resolve(outDir, `${id}.jpg`), type: "jpeg", quality: 80 });
         console.log(`thumbs: ${id}.jpg`);
     } catch (err) {

@@ -88,6 +88,14 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 | Juxtapose `frame/?uid=` embed URLs    | the `juxtapose.knightlab.com/frame/?uid=` host is dead — use the published format `https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...` |
 | Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                              |
 
+`map_type: "zoomify"` is supported again (legacy): the image pyramid renders
+via the storymap data's `zoomify` options (`path`, `width`, `height`), using a
+JS warning instead of the previous removal error. Caveat: the pyramid's
+edge/remainder tiles render slightly stretched (the canvas renderer cannot
+per-tile clamp like the original Leaflet renderer). Using zoomify in a IIIF
+Presentation manifest is ignored — legacy zoomify options only work with
+storymap JSON sources.
+
 ## Map engine: Leaflet → OpenLayers
 
 - `storymap.map` now exposes the **OpenLayers `Map`** instance instead of a

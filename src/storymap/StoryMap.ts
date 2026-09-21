@@ -58,6 +58,8 @@ class StoryMapBase {
     declare "_autoplay_timer": ReturnType<typeof setTimeout> | null;
     declare "_autoplay_stopped": boolean;
     declare "_hash_initialized": boolean;
+    /** the data source was a IIIF Presentation manifest (legacy zoomify options are ignored) */
+    declare "_data_from_manifest": boolean;
     declare "_resize_observer": ResizeObserver | null;
     declare "_resize_timer": ReturnType<typeof setTimeout> | null;
     declare "fire": EventedInstance["fire"];
@@ -188,6 +190,7 @@ class StoryMapBase {
             map_background_color: "#d9d9d9",
             map_bbox: null,
             consent_required: false,
+            zoomify: undefined,
             text_color: "",
             text_background_color: "",
             show_distance: false,
@@ -242,6 +245,9 @@ class StoryMapBase {
     /* Initialize the data
 	================================================== */
     _initData(data: string | StorymapDataWrapper | Record<string, unknown>) {
+        // legacy zoomify options are only honored for storymap JSON sources —
+        // a IIIF Presentation manifest cannot carry them
+        this._data_from_manifest = false;
         if (typeof data === "string") {
             // issue #417: optional cache-busting re-fetch of the source file
             const url =
@@ -257,6 +263,7 @@ class StoryMapBase {
                 })
                 .then((result: unknown) => {
                     if (isPresentation3Manifest(result)) {
+                        this._data_from_manifest = true;
                         this.data = manifestToStorymapData(result);
                     } else {
                         validateStorymapAndReport(result, data);
@@ -270,6 +277,7 @@ class StoryMapBase {
                 });
         } else if (typeof data === "object") {
             if (isPresentation3Manifest(data)) {
+                this._data_from_manifest = true;
                 this.data = manifestToStorymapData(data);
             } else {
                 const wrapper = data as StorymapDataWrapper;
@@ -293,6 +301,12 @@ class StoryMapBase {
         // Grab options from storymap data
         updateData(this.options, this.data);
 
+        // legacy zoomify options only work with storymap JSON sources — a
+        // IIIF Presentation manifest cannot carry them
+        if (this._data_from_manifest) {
+            delete this.options.zoomify;
+        }
+
         if (this.options.layout === "landscape") {
             this.options.map_center_offset = { left: -200, top: 0 };
         }
@@ -303,11 +317,18 @@ class StoryMapBase {
             this.options.calculate_zoom = false;
         }
 
-        // handle removed zoomify type
+        // legacy zoomify support: rendered by the map via the image pyramid
+        // (options.zoomify) — deprecated, a JS warning points at iiif
         if (this.options.map_type === "zoomify") {
-            console.error(
-                "StoryMapJS: map_type 'zoomify' has been removed; use map_type 'iiif' with options.iiif.url instead.",
+            console.warn(
+                "StoryMapJS: map_type 'zoomify' is a legacy image-pyramid basemap; consider map_type 'iiif' with options.iiif.url instead.",
             );
+            const zoomify_opts = this.options.zoomify;
+            if (typeof zoomify_opts !== "object" || !zoomify_opts.path) {
+                console.error(
+                    "StoryMapJS: map_type 'zoomify' needs a zoomify image pyramid (path, width, height) in the storymap data.",
+                );
+            }
         }
 
         // handle Stamen change

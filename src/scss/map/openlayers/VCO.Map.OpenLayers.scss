@@ -8,6 +8,14 @@
         /* markers live in overlays */
     }
 
+    // keep the marker overlays above the layer canvases: during pan/zoom
+    // animations the canvas containers get promoted to compositor layers,
+    // which can transiently paint over the (non-promoted) overlay DOM —
+    // the icons flicker
+    .ol-overlaycontainer {
+        z-index: 1;
+    }
+
     .vco-mapmarker,
     .vco-mapmarker-active {
         cursor: pointer;
