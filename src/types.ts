@@ -83,6 +83,10 @@ export interface StorymapOptions {
     menubar_height: number;
     /** Show a fullscreen toggle button in the menubar (default: true) */
     fullscreen: boolean;
+    /** Show the map overview button in the menubar (default: true) */
+    show_overview: boolean;
+    /** Show the back-to-the-beginning button in the menubar (default: true) */
+    show_back_to_start: boolean;
     skinny_size: number;
     duration: number;
     ease: unknown;

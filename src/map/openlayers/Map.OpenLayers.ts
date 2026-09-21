@@ -702,7 +702,11 @@ export default class OpenLayers extends Map {
      * path is truncated by cumulative length at the eased progress, so half
      * way through the pan only half the route is red.
      */
-    _replaceLines(line: VectorLayer, array: LinePoint[], animate?: { duration: number }): void {
+    _replaceLines(
+        line: VectorLayer,
+        array: LinePoint[],
+        animate?: { duration: number; retractFrom?: LinePoint[] },
+    ): void {
         const pts = array.map((d) => {
             const lat = d.location ? d.location.lat : d.lat;
             const lon = d.location ? d.location.lon : d.lon;
@@ -726,13 +730,42 @@ export default class OpenLayers extends Map {
             return;
         }
 
+        // Retraction (backward navigation): the animation path is the route
+        // up to the previous marker (retractFrom); the drawn length shrinks
+        // from its full extent down to the new path's length — the far end
+        // pulls back from the old marker to the new one.
+        const retract_coords = animate?.retractFrom
+            ? this._markerCoordsToViewCoords(
+                  (() => {
+                      const r = (animate.retractFrom ?? []).map((d) => {
+                          const lat = d.location ? d.location.lat : d.lat;
+                          const lon = d.location ? d.location.lon : d.lon;
+                          return [lon, lat];
+                      });
+                      const rl = this._unwrapLongitudes(r.map((p) => p[0] as number));
+                      return r.map((p, i) => [rl[i], p[1]]);
+                  })(),
+              )
+            : null;
+        const retract_total = retract_coords ? this._pathLength(retract_coords) : 0;
+        const target_total = this._pathLength(view_coords);
+
         const easing = this.options.ease as ((t: number) => number) | undefined;
-        const total_length = this._pathLength(view_coords);
         const start_time = performance.now();
         const step = (now: number) => {
             const t = Math.min(1, Math.max(0, (now - start_time) / duration));
             const eased = easing ? easing(t) : t;
-            setGeometry(this._truncatePath(view_coords, eased * total_length));
+            if (retract_coords && retract_total > target_total) {
+                // pull the far end back along the retraction path
+                const drawn = retract_total - eased * (retract_total - target_total);
+                setGeometry(this._truncatePath(retract_coords, drawn));
+                if (t >= 1) {
+                    setGeometry(view_coords);
+                }
+            } else {
+                const total_length = this._pathLength(view_coords);
+                setGeometry(this._truncatePath(view_coords, eased * total_length));
+            }
             this._line_animation = t < 1 ? requestAnimationFrame(step) : null;
         };
         this._line_animation = requestAnimationFrame(step);

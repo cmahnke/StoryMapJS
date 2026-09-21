@@ -42,6 +42,13 @@
     </header>
         <main class="sm-docs">
             <h1>StoryMapJS: Maps that tell stories.</h1>
+<blockquote>
+<p><strong>Important:</strong> this is an <strong>unofficial, unapproved fork</strong> of the original
+<a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>
+repository. It is a proof of concept for an AI-based renovation of the
+codebase, built using the model <strong>GLM 5.3 Flash</strong>. It is not endorsed by,
+affiliated with, or supported by Northwestern University Knight Lab.</p>
+</blockquote>
 <p><a href="http://storymap.knightlab.com">StoryMapJS</a> is a simple tool to help you tell stories with maps. If you&#39;re not a programmer, you don&#39;t need to spend much time on the GitHub page—instead, go <a href="http://storymap.knightlab.com">StoryMapJS</a></p>
 <p>If you want information on creating JSON with your own code and embedding it, see the <a href="http://storymap.knightlab.com/advanced.html">&quot;Advanced&quot;</a> documentation on the StoryMap website.</p>
 <h2>Development</h2>
@@ -57,6 +64,11 @@ StoryMap JSON is validated against the schema in <code>schema/</code> on load an
 <p>Points are set to only display on mouseover in image mode, but you can set map_as_image to false in the config options to always show the points. The points are hidden when the intent is an image so that nothing obstructs the image the viewer is looking at. Looking at a painting is hard with a bunch of points on it.</p>
 <h2>Map Options</h2>
 <p>To disable connecting lines on maps use the StoryMap options: &quot;Treat as Image&quot; (as opposed to the default, &quot;Treat as Cartography&quot;)</p>
+<p>The menubar buttons can be disabled individually:</p>
+<pre><code>show_overview:       true,   // map overview button
+show_back_to_start:  true,   // back to the beginning button
+fullscreen:          true,   // fullscreen toggle
+</code></pre>
 <p>More config options available to do what you want with the line:</p>
 <pre><code>line_follows_path:      true,		// Map history path follows default line, if false it will connect previous and current only
 line_color:             &quot;#c34528&quot;,

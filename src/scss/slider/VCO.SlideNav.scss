@@ -311,6 +311,11 @@
             .vco-slidenav-icon {
                 &::before {
                     @include border-right-radius(7px);
+
+                    // the tap-target padding (10px) pushes the black box
+                    // right — pull it flush against the left edge like the
+                    // original design (square left corners)
+                    margin-left: -10px;
                 }
             }
 

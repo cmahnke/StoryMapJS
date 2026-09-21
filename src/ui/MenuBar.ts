@@ -228,9 +228,15 @@ class MenuBarBase {
         // Buttons
         this._el.button_overview = Dom.create("span", "vco-menubar-button", this._el.container);
         DomEvent.addListener(this._el.button_overview, "click", this._onButtonOverview, this);
+        if (this.options.show_overview === false) {
+            this._el.button_overview.style.display = "none";
+        }
 
         this._el.button_backtostart = Dom.create("span", "vco-menubar-button", this._el.container);
         DomEvent.addListener(this._el.button_backtostart, "click", this._onButtonBackToStart, this);
+        if (this.options.show_back_to_start === false) {
+            this._el.button_backtostart.style.display = "none";
+        }
 
         // Fullscreen toggle (hidden via CSS/display when disabled by options)
         this._el.button_fullscreen = Dom.create("span", "vco-menubar-button", this._el.container);

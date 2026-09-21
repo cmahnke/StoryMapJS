@@ -241,10 +241,10 @@ class MapBase {
                                 marker.data.real_marker &&
                                 this._markers[previous_marker].data.real_marker
                             ) {
-                                const lines_array = [];
+                                let lines_array: LinePoint[] = [];
                                 let line_num = previous_marker,
                                     point;
-
+                                let retract_path_source: LinePoint[] | null = null;
                                 if (line_num < this.current_marker) {
                                     while (line_num < this.current_marker) {
                                         if (
@@ -261,29 +261,50 @@ class MapBase {
                                         line_num++;
                                     }
                                 } else if (line_num > this.current_marker) {
-                                    while (line_num > this.current_marker) {
+                                    // Backward navigation: the line retracts —
+                                    // the end state is the traveled path from
+                                    // the first marker to the current one, and
+                                    // the far end pulls back from the old
+                                    // marker to the new one (handled by the
+                                    // map's retract animation).
+                                    const traveled = [];
+                                    for (let idx = 0; idx <= this.current_marker; idx++) {
                                         if (
-                                            this._markers[line_num].data.location &&
-                                            this._markers[line_num].data.location.lat
+                                            this._markers[idx].data.location &&
+                                            this._markers[idx].data.location.lat
                                         ) {
-                                            point = {
-                                                lat: this._markers[line_num].data.location.lat,
-                                                lon: this._markers[line_num].data.location.lon,
-                                            };
-                                            lines_array.push(point);
+                                            traveled.push({
+                                                lat: this._markers[idx].data.location.lat,
+                                                lon: this._markers[idx].data.location.lon,
+                                            });
                                         }
-
-                                        line_num--;
                                     }
+                                    const retract_path = [];
+                                    for (let idx = 0; idx <= previous_marker; idx++) {
+                                        if (
+                                            this._markers[idx].data.location &&
+                                            this._markers[idx].data.location.lat
+                                        ) {
+                                            retract_path.push({
+                                                lat: this._markers[idx].data.location.lat,
+                                                lon: this._markers[idx].data.location.lon,
+                                            });
+                                        }
+                                    }
+                                    lines_array = traveled;
+                                    retract_path_source = retract_path;
                                 }
 
-                                lines_array.push({
-                                    lat: marker.data.location.lat,
-                                    lon: marker.data.location.lon,
-                                });
+                                if (!retract_path_source) {
+                                    lines_array.push({
+                                        lat: marker.data.location.lat,
+                                        lon: marker.data.location.lon,
+                                    });
+                                }
 
                                 this._replaceLines(this._line_active, lines_array, {
                                     duration: this._transition_duration,
+                                    retractFrom: retract_path_source,
                                 });
                             }
                         } else {
@@ -481,7 +502,11 @@ class MapBase {
 
     _addToLine(line: VectorLayer | null, d: LinePoint): void {}
 
-    _replaceLines(line: VectorLayer | null, d: LinePoint[], animate?: { duration: number }): void {}
+    _replaceLines(
+        line: VectorLayer | null,
+        d: LinePoint[],
+        animate?: { duration: number; retractFrom?: LinePoint[] },
+    ): void {}
 
     _addLineToMap(line: VectorLayer): void {}
 

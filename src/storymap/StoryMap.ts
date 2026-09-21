@@ -161,6 +161,8 @@ class StoryMapBase {
             call_to_action_text: "",
             menubar_height: 0,
             fullscreen: true,
+            show_overview: true,
+            show_back_to_start: true,
             skinny_size: 650,
             // animation
             duration: 1000,

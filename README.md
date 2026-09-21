@@ -1,5 +1,11 @@
 # StoryMapJS: Maps that tell stories.
 
+> **Important:** this is an **unofficial, unapproved fork** of the original
+> [NUKnightLab/StoryMapJS](https://github.com/NUKnightLab/StoryMapJS)
+> repository. It is a proof of concept for an AI-based renovation of the
+> codebase, built using the model **GLM 5.3 Flash**. It is not endorsed by,
+> affiliated with, or supported by Northwestern University Knight Lab.
+
 [StoryMapJS](http://storymap.knightlab.com) is a simple tool to help you tell stories with maps. If you're not a programmer, you don't need to spend much time on the GitHub page—instead, go [StoryMapJS](http://storymap.knightlab.com)
 
 If you want information on creating JSON with your own code and embedding it, see the ["Advanced"](http://storymap.knightlab.com/advanced.html) documentation on the StoryMap website.
@@ -26,6 +32,12 @@ Points are set to only display on mouseover in image mode, but you can set map_a
 ## Map Options
 
 To disable connecting lines on maps use the StoryMap options: "Treat as Image" (as opposed to the default, "Treat as Cartography")
+
+The menubar buttons can be disabled individually:
+
+    show_overview:       true,   // map overview button
+    show_back_to_start:  true,   // back to the beginning button
+    fullscreen:          true,   // fullscreen toggle
 
 More config options available to do what you want with the line:
 
