@@ -240,13 +240,15 @@ export default class OpenLayers extends Map {
             20037508.342789244,
         ];
         // tile grid over the image's mercator bounds: the tiles keep their
-        // natural size (the legacy renderer clamped edge tiles the same way)
+        // natural size (the legacy renderer clamped edge tiles the same way).
+        // One extra level below zoom 0 lets the overview show the complete
+        // image (the smallest pyramid tile downscaled)
         const tileGrid = new TileGrid({
             extent,
             origin: [extent[0], extent[3]],
             resolutions: Array.from(
-                { length: maxZoom + 1 },
-                (_, i) => 40075016.68557849 / (256 * 2 ** i),
+                { length: maxZoom + 2 },
+                (_, i) => 40075016.68557849 / (256 * 2 ** (i - 1)),
             ),
             tileSize: 256,
         });
@@ -377,7 +379,9 @@ export default class OpenLayers extends Map {
             case "zoomify": {
                 // Legacy zoomify support: the image pyramid tiles are placed
                 // over the image's mercator bounds (the original renderer's
-                // mapping). Locations use native lat/lon.
+                // mapping). Locations use native lat/lon. The tile grid's
+                // ladder is shifted one level down so the overview can show
+                // the complete image.
                 const pyramid = this._zoomifyPyramid();
                 if (!pyramid) {
                     console.error(
@@ -396,8 +400,11 @@ export default class OpenLayers extends Map {
                         crossOrigin: "anonymous",
                         attributions: [],
                         tileUrlFunction: (tile: number[]) => {
-                            const [z, x, y] = tile;
-                            if (z < 0 || z > pyramidMaxZoom) return undefined;
+                            const [tileZ, x, y] = tile;
+                            // the ladder is shifted one level down: mercator
+                            // zoom z serves the pyramid level max(0, z - 1)
+                            const z = Math.max(0, tileZ - 1);
+                            if (z > pyramidMaxZoom) return undefined;
                             if (x < 0 || x >= gridX(z) || y < 0 || y >= gridY(z)) {
                                 return undefined;
                             }
@@ -488,10 +495,16 @@ export default class OpenLayers extends Map {
                                   : {}),
                               ...(zoomify_pyramid
                                   ? {
-                                        // keep the minimap within the
-                                        // pyramid's crisp levels
-                                        minZoom: Math.max(0, zoomify_pyramid.maxZoom - 2),
-                                        maxZoom: zoomify_pyramid.maxZoom,
+                                        // pinned to the complete image: the
+                                        // shifted ladder's floor shows the
+                                        // whole image in the minimap; the
+                                        // center stays within the image
+                                        // bounds
+                                        constrainOnlyCenter: true,
+                                        extent: zoomify_pyramid.extent,
+                                        minZoom: 0,
+                                        maxZoom: 0,
+                                        zoom: 0,
                                         center: [
                                             (zoomify_pyramid.extent[0] +
                                                 zoomify_pyramid.extent[2]) /
