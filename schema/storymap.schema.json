@@ -13,7 +13,7 @@
                 "language": { "type": "string" },
                 "map_type": {
                     "type": "string",
-                    "description": "Basemap type: osm:<style>, mapbox:..., stadia:<style>, https://... (tile url), iiif, ch-watercolor, zoomify (legacy image pyramid, needs the zoomify options)."
+                    "description": "Basemap type: osm:<style>, osm (classic raster), mapbox://styles/<user>/<style>, stadia:<style>, stamen:<style> (deprecated, remapped), https://... (tile url template or style JSON), iiif, ch-watercolor, zoomify (legacy image pyramid, needs the zoomify options)."
                 },
                 "zoomify": {
                     "anyOf": [
@@ -35,6 +35,10 @@
                 "map_subdomains": { "type": "string" },
                 "map_access_token": { "type": "string" },
                 "map_background_color": { "type": "string" },
+                "map_options": {
+                    "type": "object",
+                    "description": "OpenLayers passthrough options (view, controls, interactions); element replaces the map container"
+                },
                 "map_bbox": {
                     "anyOf": [
                         {
@@ -82,7 +86,37 @@
                 "font_css": { "type": "string" },
                 "call_to_action": { "type": "boolean" },
                 "call_to_action_text": { "type": "string" },
-                "relative_date": { "type": "boolean" },
+                "fullscreen": { "type": "boolean" },
+                "show_overview": { "type": "boolean" },
+                "show_back_to_start": { "type": "boolean" },
+                "show_progress": { "type": "boolean" },
+                "show_distance": { "type": "boolean" },
+                "marker_labels": { "type": "boolean" },
+                "text_align": { "type": "string" },
+                "text_color": { "type": "string" },
+                "text_background_color": { "type": "string" },
+                "nocache": { "type": "boolean" },
+                "autoplay": {
+                    "type": "number",
+                    "description": "Seconds per slide; 0 disables autoplay"
+                },
+                "trackResize": { "type": "boolean" },
+                "dragging": { "type": "boolean" },
+                "duration": { "type": "number" },
+                "map_overview_center": {
+                    "anyOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "lat": { "type": "number" },
+                                "lon": { "type": "number" }
+                            }
+                        },
+                        { "type": "null" }
+                    ]
+                },
+                "api_key_flickr": { "type": "string" },
+                "attribution": { "type": "string" },
                 "start_at_slide": { "type": "integer", "minimum": 0 },
                 "slides": {
                     "type": "array",
@@ -114,6 +148,7 @@
                         },
                         "zoom": { "type": "number" },
                         "line": { "type": "boolean" },
+                        "name": { "type": "string" },
                         "icon": { "type": "string", "format": "uri" },
                         "iconSize": {
                             "type": "array",
@@ -139,7 +174,8 @@
                     "type": "object",
                     "properties": {
                         "headline": { "type": "string" },
-                        "text": { "type": "string" }
+                        "text": { "type": "string" },
+                        "date": { "type": "string" }
                     }
                 },
                 "background": {

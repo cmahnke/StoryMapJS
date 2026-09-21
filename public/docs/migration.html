@@ -44,13 +44,13 @@
         <main class="sm-docs">
             <h1>Migrating from the Knight Lab StoryMapJS</h1>
 <p>This guide helps you move from the original Knight Lab StoryMapJS viewer
-(the <code>master</code> branch of this repository, distributed as a webpack UMD bundle
-with a <code>KLStoryMap</code> global) to the rewritten TypeScript/OpenLayers version
-(<code>refactor/vite-typescript</code> branch, ESM only).</p>
-<p>The rendering behavior, markup (<code>vco-*</code> classes), storymap JSON format and the
+(distributed as a webpack UMD bundle with a <code>KLStoryMap</code> global) to this
+rewritten TypeScript/OpenLayers viewer (ESM only).</p>
+<p>The markup (<code>vco-*</code> classes), storymap JSON format and the
 <code>new StoryMap(elem, data, options, listeners)</code> constructor signature are
-unchanged, so most stories render identically. What changed is the delivery,
-the map engine and a few removed legacy paths.</p>
+preserved, so most stories render the same. What changed is the delivery
+(ESM instead of UMD), the map engine (Leaflet → OpenLayers, so some
+rendering details differ) and a few removed legacy paths.</p>
 <h2>Bundle and loading</h2>
 <table>
 <thead>
@@ -113,14 +113,14 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 </thead>
 <tbody><tr>
 <td><code>map_type: &quot;zoomify&quot;</code> (+ <code>options.zoomify</code>)</td>
-<td><code>map_type: &quot;iiif&quot;</code> with <code>options.iiif = { url, attribution }</code> (IIIF Image API 2/3)</td>
+<td>preferred: <code>map_type: &quot;iiif&quot;</code> with <code>options.iiif = { url, attribution }</code> (IIIF Image API 2/3); zoomify still works as a legacy image-pyramid basemap (see below)</td>
 </tr>
 <tr>
 <td><code>map_type: &quot;stamen:toner&quot;</code> etc.</td>
 <td><code>&quot;stamen:*&quot;</code> types are deprecated and remapped: <code>stamen:watercolor</code> → <code>ch-watercolor</code>, others → <code>osm:standard</code></td>
 </tr>
 <tr>
-<td>Stadia/M paid tiles via <code>map_access_token</code></td>
+<td>Stadia Maps paid tiles via <code>map_access_token</code></td>
 <td>Recommended: free OpenStreetMap vector styles, e.g. <code>map_type: &quot;osm:bright&quot;</code> (OpenFreeMap), or any style JSON URL</td>
 </tr>
 <tr>
@@ -134,10 +134,6 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 <tr>
 <td><code>relative_date: true</code> (moment.js)</td>
 <td>removed — format dates in the story text</td>
-</tr>
-<tr>
-<td><code>zoomify</code> block in storymap data</td>
-<td>removed — see <code>iiif</code> above</td>
 </tr>
 <tr>
 <td><code>font_css: &quot;stock:&lt;name&gt;&quot;</code> (or a path)</td>
@@ -191,7 +187,7 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 </tr>
 <tr>
 <td>Juxtapose <code>frame/?uid=</code> embed URLs</td>
-<td>the <code>juxtapose.knightlab.com/frame/?uid=</code> host is dead — use the published format <code>https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...</code></td>
+<td>the <code>juxtapose.knightlab.com/frame/?uid=</code> host is dead — use the published format <code>https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...</code> (note: this keeps a Knight Lab CDN dependency for those slides)</td>
 </tr>
 <tr>
 <td>Twitter <code>@nickname</code> rendering</td>
@@ -217,8 +213,9 @@ or a Mapbox style JSON URL.</li>
 </ul>
 <h2>Data and tooling</h2>
 <ul>
-<li>Storymap JSON is now validated against a JSON Schema (<code>schema/storymap.json</code>);
-invalid documents are reported to the console at load time.</li>
+<li>Storymap JSON is now validated against a JSON Schema
+(<code>schema/storymap.schema.json</code>); invalid documents are reported to the
+console at load time.</li>
 <li>IIIF Presentation 3 manifests are accepted directly as storymap sources.</li>
 <li>The StoryMap IIIF extension context changed to
 <code>https://christianmahnke.de/iiif/storymap</code> — manifests produced with the old
@@ -228,7 +225,7 @@ invalid documents are reported to the console at load time.</li>
 Python authoring server are gone — this is a viewer-only library.</li>
 </ul>
 <h2>Events (unchanged)</h2>
-<p><code>change</code>, <code>change:map</code>-style events, <code>loaded</code>, <code>title</code>, <code>dataloaded</code>,
+<p><code>change</code> (with <code>current_slide</code>), <code>loaded</code>, <code>title</code>, <code>dataloaded</code>,
 <code>fontLoaded</code>, plus the listener map in the constructor — all work as before.</p>
 
         </main>

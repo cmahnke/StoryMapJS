@@ -50,26 +50,36 @@ repository. It is a proof of concept for an AI-based renovation of the
 codebase, built using the model <strong>GLM 5.3 Flash</strong>. It is not endorsed by,
 affiliated with, or supported by Northwestern University Knight Lab.</p>
 </blockquote>
-<p><a href="http://storymap.knightlab.com">StoryMapJS</a> is a simple tool to help you tell stories with maps. If you&#39;re not a programmer, you don&#39;t need to spend much time on the GitHub page—instead, go <a href="http://storymap.knightlab.com">StoryMapJS</a></p>
-<p>If you want information on creating JSON with your own code and embedding it, see the <a href="http://storymap.knightlab.com/advanced.html">&quot;Advanced&quot;</a> documentation on the StoryMap website.</p>
+<p>This fork is a <strong>viewer-only library</strong>: it renders existing StoryMap JSON
+files (or IIIF Presentation manifests) with TypeScript + Vite + OpenLayers.
+There is no authoring tool — create your storymap JSON by hand or with your
+own code, and see <code>docs/</code> for the migration notes from the original
+Knight Lab release.</p>
 <h2>Development</h2>
 <p>See DEVELOPMENT.md to get setup for local development of StoryMapJS. This
 repository is the viewer library only (TypeScript + Vite + OpenLayers);
 StoryMap JSON is validated against the schema in <code>schema/</code> on load and via
 <code>npm run validate</code>.</p>
 <h2>Contributing language translations</h2>
-<p>StoryMap&#39;s older sibling, <a href="http://timeline.knightlab.com">TimelineJS</a> has proven internationally popular, in part because users have contributed translation support for dozens of languages. StoryMap is also ready to be used in languages other than English, but once again, we&#39;ll need your help.</p>
-<p>For each language, we need a simple file with a name like <code>xx.json</code>, where <code>xx</code> is the two letter code for the language. (Technically, it&#39;s the ISO 639-1 code—you can find a <a href="http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">list of them on Wikipedia</a>.) The file defines a JSON object with language specific translations. To make one for your language, copy one of the existing files (like <a href="https://github.com/NUKnightLab/StoryMapJS/blob/master/src/language/locale/es.json">this one for Spanish</a>) and edit the quoted strings. Please <em>don&#39;t</em> change the &quot;keys&quot;—the unquoted strings. If you know how to use GitHub to make a pull request, that&#39;s the best way to submit it to us. If that&#39;s not your thing, you can <a href="https://knightlab.zendesk.com/entries/33066836-Help-us-translate-StoryMapJS-into-other-languages">add a comment to this support thread</a> and upload your translation as an attachment.</p>
+<p>StoryMap ships locale files for dozens of languages under
+<code>src/language/locale/</code> (for example
+<a href="src/language/locale/es.json"><code>es.json</code></a>). To add or improve a translation,
+copy an existing file and edit the quoted strings — please <em>don&#39;t</em> change the
+&quot;keys&quot; (the unquoted strings). The file name is the language code, e.g.
+<code>es.json</code> (codes like <code>zh-cn.json</code> and <code>zh-tw.json</code> are also supported — the
+value of the storymap&#39;s <code>language</code> option must match the file name).</p>
 <h2>IIIF images</h2>
 <p>Large images served over the IIIF Image API are rendered so when set to be map_as_image the entire image is shown. When set as cartography the zoom will set so that all the markers fit.</p>
 <p>Points are set to only display on mouseover in image mode, but you can set map_as_image to false in the config options to always show the points. The points are hidden when the intent is an image so that nothing obstructs the image the viewer is looking at. Looking at a painting is hard with a bunch of points on it.</p>
 <h2>Map Options</h2>
-<p>To disable connecting lines on maps use the StoryMap options: &quot;Treat as Image&quot; (as opposed to the default, &quot;Treat as Cartography&quot;)</p>
+<p>To disable connecting lines on maps set <code>map_as_image: true</code> in the storymap
+options (the default <code>false</code> renders cartography).</p>
 <p>The menubar buttons can be disabled individually:</p>
-<pre><code>show_overview:       true,   // map overview button
-show_back_to_start:  true,   // back to the beginning button
-fullscreen:          true,   // fullscreen toggle
+<pre><code>show_overview:       false,   // map overview button
+show_back_to_start:  false,   // back to the beginning button
+fullscreen:          false,   // fullscreen toggle
 </code></pre>
+<p>(true is the default; setting the option to false hides the button.)</p>
 <p>More config options available to do what you want with the line:</p>
 <pre><code>line_follows_path:      true,		// Map history path follows default line, if false it will connect previous and current only
 line_color:             &quot;#c34528&quot;,
@@ -83,7 +93,9 @@ show_history_line:      true,
 </code></pre>
 <p>To disable zoom calculation/edit zoom level set calculate_zoom to false in the config options.</p>
 <p>Images can now be used in place of map pins.
-Use <code>image</code> inside the location object and include a url to use. <code>use_custom_markers</code> also has to be set to <code>true</code> in the story map options. Same goes for custom icons except you need <code>icon</code> inside the location object and include a url to use.</p>
+Use <code>image</code> inside the location object and include a url to use, together with
+<code>use_custom_marker: true</code> in the location object (or set <code>use_custom_markers: true</code> globally in the storymap options). Same goes for custom icons except you
+need <code>icon</code> inside the location object.</p>
 <h3>Limit the map to a bounding box</h3>
 <p>Set <code>map_bbox</code> to <code>[west, south, east, north]</code> (lon/lat) to constrain the map —
 nothing outside of the box can be visible:</p>
@@ -115,17 +127,20 @@ Twitter or SoundCloud, map tiles, and external font CSS):</p>
     ...
 }
 </code></pre>
-<p>Each service asks once per page load with an Allow/Deny panel; answering one
-panel resolves every pending panel of the same service. Denied services show a
-placeholder instead of the media, and the map renders without tiles until they
-are allowed. Decisions are stored in a cookie (<code>storymapjs-consent</code>) for 90
+<p>Each service asks with an Allow/Deny panel; answering one panel resolves every
+pending panel of the same service. If a decision was already stored in the
+cookie, the panel is skipped entirely. Denied services show a placeholder
+instead of the media, and the map renders without tiles until they are
+allowed. Decisions are stored in a cookie (<code>storymapjs-consent</code>) for 90
 days — clearing cookies asks again.</p>
+<h2>Troubleshooting</h2>
+<p>If a storymap fails to render, open the browser console: the viewer logs
+fetch and validation errors (e.g. &quot;could not load storymap data from ...&quot;).
+The <code>error</code> event also fires for programmatic consumers.</p>
 <h2>Bundled credentials</h2>
 <p>The viewer ships no credentials. Mapbox/Stadia tiles need a token passed via
 <code>map_access_token</code>, and <code>flickr.com/photos</code> API URLs need <code>api_key_flickr</code>
 (both settable in the storymap options).</p>
-<h2>Troubleshooting</h2>
-<p>Users may be directed to our userinfo page to help with troubleshooting. This page provides information about the user&#39;s account and saved storymaps. The endpoint is <code>https://storymap.knightlab.com/userinfo/</code></p>
 
         </main>
         

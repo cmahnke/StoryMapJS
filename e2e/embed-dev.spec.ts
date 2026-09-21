@@ -10,7 +10,7 @@ test("embed page renders on the dev server via the source fallback", async ({ pa
     const pageErrors: string[] = [];
     page.on("pageerror", (err) => pageErrors.push(String(err)));
 
-    await page.goto("http://localhost:8500/embed/index.html?url=examples%2Fnightwatch.json");
+    await page.goto("http://localhost:8500/embed/index.html?url=examples%2Fmarktwain.json");
 
     await expect
         .poll(

@@ -18,17 +18,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outDir = resolve(root, "public/thumbs");
 const port = Number(process.env.THUMBS_PORT ?? 8400);
 
-const EXAMPLES = [
-    "katrina",
-    "population",
-    "marktwain",
-    "nightwatch",
-    "seurat",
-    "courbet",
-    "jansteen",
-    "iiif-wellcome",
-    "president",
-];
+const EXAMPLES = ["katrina", "population", "marktwain", "seurat", "iiif-wellcome", "president"];
 
 // remote showcase examples: rendered through the embed player (needs network)
 const REMOTE_EXAMPLES = [
