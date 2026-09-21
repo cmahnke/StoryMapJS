@@ -254,27 +254,7 @@ class StoryMapBase {
                 this.options.nocache === true
                     ? data + (data.includes("?") ? "&" : "?") + "_=" + Date.now()
                     : data;
-            fetch(url)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("HTTP " + response.status + " " + response.statusText);
-                    }
-                    return response.json();
-                })
-                .then((result: unknown) => {
-                    if (isPresentation3Manifest(result)) {
-                        this._data_from_manifest = true;
-                        this.data = manifestToStorymapData(result);
-                    } else {
-                        validateStorymapAndReport(result, data);
-                        this.data = (result as StorymapDataWrapper).storymap;
-                    }
-                    this._initOptions();
-                })
-                .catch((err: unknown) => {
-                    console.error("StoryMapJS: could not load storymap data from " + data, err);
-                    this.fire("error", { message: String(err), source: data });
-                });
+            void this._loadDataFromUrl(url, data);
         } else if (typeof data === "object") {
             if (isPresentation3Manifest(data)) {
                 this._data_from_manifest = true;
@@ -292,6 +272,29 @@ class StoryMapBase {
         } else {
             console.error("StoryMapJS: data has unknown type");
             this._initOptions();
+        }
+    }
+
+    /* Load storymap data from a URL
+	================================================== */
+    async _loadDataFromUrl(url: string, source: string) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status + " " + response.statusText);
+            }
+            const result: unknown = await response.json();
+            if (isPresentation3Manifest(result)) {
+                this._data_from_manifest = true;
+                this.data = manifestToStorymapData(result);
+            } else {
+                validateStorymapAndReport(result, source);
+                this.data = (result as StorymapDataWrapper).storymap;
+            }
+            this._initOptions();
+        } catch (err: unknown) {
+            console.error("StoryMapJS: could not load storymap data from " + source, err);
+            this.fire("error", { message: String(err), source });
         }
     }
 

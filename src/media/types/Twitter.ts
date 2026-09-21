@@ -1,6 +1,7 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
+import { loadJSONP } from "../../core/Load";
 
 /*	Media.Twitter
 	Produces Twitter Display
@@ -29,12 +30,15 @@ export default class Twitter extends Media {
         }
         const callbackName = `twitterCallback_${this.media_id}`;
         const api_url = `https://api.twitter.com/1/statuses/oembed.json?id=${this.media_id}&include_entities=true&callback=${callbackName}`;
-        const callbackScript = document.createElement("script");
-        (window as unknown as Record<string, unknown>)[callbackName] = (data: unknown) => {
-            this.createMedia(data);
-        };
-        callbackScript.src = api_url;
-        document.body.appendChild(callbackScript);
+        void this._fetchEmbed(api_url, callbackName);
+    }
+
+    async _fetchEmbed(api_url: string, callbackName: string) {
+        try {
+            this.createMedia(await loadJSONP<unknown>(api_url, callbackName));
+        } catch {
+            this.loadErrorDisplay("Unable to load this tweet.");
+        }
     }
 
     createMedia(d: unknown) {

@@ -24,7 +24,7 @@ import Map from "../Map";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
 import type { LinePoint, ViewToOptions } from "../types";
 import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../types";
-import { consentManagerOf, consentMessage } from "../../storymap/Consent";
+import { consentManagerOf, consentMessage, type ConsentManager } from "../../storymap/Consent";
 
 /*	Map.OpenLayers
 	Creates a Map using OpenLayers
@@ -114,11 +114,7 @@ export default class OpenLayers extends Map {
             if (consent.isGranted(tile_service)) {
                 this._addTileLayer();
             } else if (!consent.isDenied(tile_service)) {
-                consent.request(tile_service, "", this._el.map).then((allowed) => {
-                    if (allowed) {
-                        this._onTilesAllowed();
-                    }
-                });
+                void this._requestTileConsent(consent, tile_service);
             }
             // denied → the map renders with background color and markers only
         } else {
@@ -183,6 +179,15 @@ export default class OpenLayers extends Map {
             });
         }
         this._map.addLayer(this._tile_layer);
+    }
+
+    /**
+     * Ask for tile consent, then attach the layers if allowed.
+     */
+    async _requestTileConsent(consent: ConsentManager, tile_service: string) {
+        if (await consent.request(tile_service, "", this._el.map)) {
+            this._onTilesAllowed();
+        }
     }
 
     /**

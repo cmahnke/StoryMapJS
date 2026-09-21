@@ -73,4 +73,68 @@ function loadCSS(url: string, options?: LoadOptions): Promise<void> {
     return loadElement("link", { href: url, rel: "stylesheet" }, options);
 }
 
-export { loadJS, loadCSS };
+export interface JSONPOptions extends LoadOptions {
+    /** Milliseconds to wait for the callback before rejecting (default 15000). */
+    timeout?: number;
+}
+
+/**
+ * Load a JSONP endpoint: injects a script that calls a global function with
+ * its payload, and resolves with that payload. The global is removed and the
+ * script element detached once settled.
+ *
+ * @param url - The full JSONP URL (must include the callback parameter).
+ * @param callbackName - The global function name the endpoint will invoke.
+ * @param options - Optional AbortSignal and timeout.
+ * @returns Resolves with the JSONP payload, rejects on error, abort or timeout.
+ */
+function loadJSONP<T>(url: string, callbackName: string, options?: JSONPOptions): Promise<T> {
+    return new Promise((resolve, reject) => {
+        if (options?.signal?.aborted) {
+            reject(new DOMException("Load aborted", "AbortError"));
+            return;
+        }
+        const globals = window as unknown as Record<string, unknown>;
+        const script = document.createElement("script");
+        let settled = false;
+        const cleanup = () => {
+            settled = true;
+            clearTimeout(timer);
+            script.remove();
+            if (globals[callbackName] === onCallback) {
+                delete globals[callbackName];
+            }
+            options?.signal?.removeEventListener("abort", onAbort);
+        };
+        const onAbort = () => {
+            if (!settled) {
+                cleanup();
+                reject(new DOMException("Load aborted", "AbortError"));
+            }
+        };
+        const onCallback = (data: T) => {
+            if (!settled) {
+                cleanup();
+                resolve(data);
+            }
+        };
+        const timer = setTimeout(() => {
+            if (!settled) {
+                cleanup();
+                reject(new Error(`JSONP request timed out: ${url}`));
+            }
+        }, options?.timeout ?? 15000);
+        globals[callbackName] = onCallback;
+        script.onerror = () => {
+            if (!settled) {
+                cleanup();
+                reject(new Error(`Failed to load ${url}`));
+            }
+        };
+        options?.signal?.addEventListener("abort", onAbort, { once: true });
+        script.src = url;
+        document.body.appendChild(script);
+    });
+}
+
+export { loadJS, loadCSS, loadJSONP };

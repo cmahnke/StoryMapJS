@@ -128,7 +128,7 @@ export class MediaBase {
         }
     }
 
-    loadMedia() {
+    async loadMedia() {
         if (!this._state.loaded) {
             const manager = consentManagerOf(this.options);
             if (this.options.consent_required && manager && this.options.media_type) {
@@ -144,13 +144,11 @@ export class MediaBase {
                 // content_item is only created by the (deferred) media load —
                 // render the ask into the existing content container
                 const target = (this._el.content_container ?? this._el.container) as HTMLElement;
-                manager.request(service, host, target).then((allowed) => {
-                    if (allowed) {
-                        this._beginLoad();
-                    } else {
-                        this._showBlocked();
-                    }
-                });
+                if (await manager.request(service, host, target)) {
+                    this._beginLoad();
+                } else {
+                    this._showBlocked();
+                }
                 return;
             }
             this._beginLoad();

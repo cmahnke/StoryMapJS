@@ -2,6 +2,7 @@ import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
 import { getObjectAttributeByIndex } from "../../core/Util";
+import { loadJSONP } from "../../core/Load";
 
 /*	Media.Wikipedia
 ================================================== */
@@ -32,12 +33,15 @@ export default class Wikipedia extends Media {
         const callbackName =
             callbackPrefix + this.media_id.replace(/[^0-9a-z]/gi, "").slice(0, maxIDLength);
         const api_url = `https://${api_language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${this.media_id}&exintro=1&format=json&callback=${callbackName}`;
-        const callbackScript = document.createElement("script");
-        (window as unknown as Record<string, unknown>)[callbackName] = (data: unknown) => {
-            this.createMedia(data);
-        };
-        callbackScript.src = api_url;
-        document.body.appendChild(callbackScript);
+        void this._fetchExtract(api_url, callbackName);
+    }
+
+    async _fetchExtract(api_url: string, callbackName: string) {
+        try {
+            this.createMedia(await loadJSONP<unknown>(api_url, callbackName));
+        } catch {
+            this.loadErrorDisplay("Unable to load this article.");
+        }
     }
 
     createMedia(d: unknown) {

@@ -37,15 +37,21 @@ export default class Flickr extends Media {
             this.media_id +
             "&format=json&nojsoncallback=1";
 
-        fetch(api_url).then((r) =>
-            r.json().then((d) => {
-                if (d.stat === "ok") {
-                    this.createMedia(d);
-                } else {
-                    this.loadErrorDisplay("Photo not found or private.");
-                }
-            }),
-        );
+        void this._fetchSizes(api_url);
+    }
+
+    async _fetchSizes(api_url: string) {
+        try {
+            const response = await fetch(api_url);
+            const d = (await response.json()) as { stat: string };
+            if (d.stat === "ok") {
+                this.createMedia(d);
+            } else {
+                this.loadErrorDisplay("Photo not found or private.");
+            }
+        } catch {
+            this.loadErrorDisplay("Photo not found or private.");
+        }
     }
 
     establishMediaID() {
