@@ -313,6 +313,11 @@ class StoryMapBase {
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
             this.options.map_size_sticky = 2;
         }
+        // legacy zoomify stories are image maps too — the map window is half
+        // the height (the original renderer's layout)
+        if (this.options.map_type === "zoomify") {
+            this.options.map_size_sticky = 2;
+        }
         if (this.options.map_as_image) {
             this.options.calculate_zoom = false;
         }

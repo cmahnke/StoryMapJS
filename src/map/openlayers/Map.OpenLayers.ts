@@ -83,6 +83,10 @@ export default class OpenLayers extends Map {
                 // the image zoom ladder instead of the default one
                 // (issue #465)
                 ...(is_image_map ? { multiWorld: true, resolutions: IMAGE_RESOLUTIONS } : {}),
+                // legacy zoomify: the image pyramid needs zooms where the
+                // world is smaller than the viewport (the original renderer
+                // showed the painting at ~487px in a 1280px window)
+                ...(this.options.map_type === "zoomify" ? { multiWorld: true } : {}),
                 ...(bbox_extent ? { extent: bbox_extent } : {}),
                 ...user_view_options,
             }),
@@ -253,6 +257,33 @@ export default class OpenLayers extends Map {
             tileSize: 256,
         });
         return { sizes, maxZoom, extent, tileGrid };
+    }
+
+    /**
+     * The zoomify overview state: the best-fit pyramid level for a map
+     * window (the level whose image, times the tolerance, fits the window —
+     * the legacy `_getBestFitZoom`) and the image's mercator center.
+     */
+    _zoomifyOverview(mapSize: [number, number]): { zoom: number; center: number[] } | null {
+        const pyramid = this._zoomifyPyramid();
+        if (!pyramid) return null;
+        const tolerance = (this.options.zoomify as { tolerance?: number })?.tolerance ?? 0.9;
+        let zoom = pyramid.maxZoom;
+        while (zoom > 0) {
+            const size = pyramid.sizes[zoom];
+            if (
+                size[0] * tolerance < (mapSize[0] || 1) &&
+                size[1] * tolerance < (mapSize[1] || 1)
+            ) {
+                break;
+            }
+            zoom--;
+        }
+        const center = [
+            (pyramid.extent[0] + pyramid.extent[2]) / 2,
+            (pyramid.extent[1] + pyramid.extent[3]) / 2,
+        ];
+        return { zoom, center };
     }
 
     _createTileLayer(map_type: string): TileLayer {
@@ -521,8 +552,11 @@ export default class OpenLayers extends Map {
                   }
                 : {}),
             layers: tiles_allowed ? [this._tile_layer_mini] : [],
-            collapseLabel: "\u00bb",
-            label: "\u00ab",
+            // NB: label = the button shown when COLLAPSED (expands the
+            // minimap), collapseLabel = shown when EXPANDED (collapses it) —
+            // the chevrons point outward when collapsed and inward when open
+            collapseLabel: "\u00ab",
+            label: "\u00bb",
             collapsed: true,
         });
         this._map.addControl(this._mini_map);
@@ -1138,7 +1172,41 @@ export default class OpenLayers extends Map {
         this._cancelLineAnimation();
         this._line_active.setVisible(false);
 
-        if (this.options.map_type === "iiif" && this.options.map_as_image) {
+        // repeated presses while an overview animation is running snap
+        // instantly instead of restarting the ~1s animation
+        if (duration && this._map.getView().getAnimating()) {
+            duration = 0;
+        }
+
+        if (this.options.map_type === "zoomify") {
+            // legacy zoomify: show the whole image centered at the best-fit
+            // pyramid level (the original renderer's overview); with the
+            // panel offset the legacy renderer drops one zoom level
+            const size = this._map.getSize();
+            const overview = this._zoomifyOverview([size[0] || 1280, size[1] || 450]);
+            if (overview) {
+                const offset =
+                    this.options.map_center_offset &&
+                    (this.options.map_center_offset.left !== 0 ||
+                        this.options.map_center_offset.top !== 0);
+                // with the panel offset the legacy renderer drops one zoom
+                // level (the mercator zoom = the pyramid level)
+                const view_zoom = offset ? overview.zoom - 1 : overview.zoom;
+                // offset the center directly in view coords (a lat/lon
+                // round-trip would corrupt the zoomify target)
+                const resolution = this._map.getView().getResolutionForZoom(view_zoom);
+                const center_view = [
+                    overview.center[0] - (this.options.map_center_offset?.left ?? 0) * resolution,
+                    overview.center[1] + (this.options.map_center_offset?.top ?? 0) * resolution,
+                ];
+                this._map.getView().animate({
+                    center: center_view,
+                    zoom: view_zoom,
+                    duration: duration ?? this._transition_duration,
+                    easing: this.options.ease as ((t: number) => number) | undefined,
+                });
+            }
+        } else if (this.options.map_type === "iiif" && this.options.map_as_image) {
             const source = this._tile_layer?.getSource();
             if (!source) {
                 return;

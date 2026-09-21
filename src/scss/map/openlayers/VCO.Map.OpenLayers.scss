@@ -71,6 +71,10 @@
 
         .ol-overviewmap-map {
             border: none;
+
+            // the original mini map dimensions
+            width: 150px;
+            height: 100px;
         }
 
         button {
