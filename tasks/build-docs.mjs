@@ -53,6 +53,7 @@ const NAV = /* html */ `
                 <li><a class="button" href="./readme.html">README</a></li>
                 <li><a class="button" href="./migration.html">Migration guide</a></li>
                 <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="./api/index.html">API docs</a></li>
                 <li><a class="button" href="../index.html#help">Help</a></li>
             </ul>
         </nav>

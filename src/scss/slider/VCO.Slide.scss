@@ -15,6 +15,24 @@
     // table-layout: fixed;
     overflow: hidden auto;
 
+    // Visible, app-styled vertical scrollbar whenever the slide content
+    // overflows (desktop); touch devices get a wider one
+    scrollbar-width: thin;
+    scrollbar-color: $color-theme transparent;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $color-theme;
+        border-radius: 4px;
+    }
+
     //	overflow-y:auto;
     // z-index:26;
 
@@ -122,6 +140,25 @@
                 }
             }
         }
+    }
+}
+
+// touch devices (the container carries .vco-mobile on Browser.touch):
+// a wider scrollbar for finger input, in the same accent styling
+.vco-mobile .vco-slide {
+    scrollbar-width: auto;
+
+    &::-webkit-scrollbar {
+        width: 14px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: $color-theme;
+        border-radius: 7px;
     }
 }
 

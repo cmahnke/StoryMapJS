@@ -10,6 +10,7 @@ export default tseslint.config(
             "compiled/**",
             "test-results/**",
             "playwright-report/**",
+            "public/**",
         ],
     },
     js.configs.recommended,

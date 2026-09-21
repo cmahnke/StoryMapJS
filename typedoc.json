@@ -1,0 +1,14 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": ["src/main.ts"],
+    "out": "public/docs/api",
+    "name": "StoryMapJS API",
+    "excludePrivate": true,
+    "excludeProtected": false,
+    "hideGenerator": true,
+    "customCss": "./typedoc-site.css",
+    "navigation": {
+        "includeCategories": true,
+        "includeGroups": true
+    }
+}
