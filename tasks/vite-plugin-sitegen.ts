@@ -187,11 +187,11 @@ function rewriteLinks(html: string): string {
     return html
         .replace(
             /href="[^"]*?DEVELOPMENT\.md"/g,
-            'href="https://github.com/cmahnke/StoryMapJS/blob/main/DEVELOPMENT.md"',
+            'href="https://github.com/cmahnke/StoryMapJS/blob/main/docs/DEVELOPMENT.md"',
         )
         .replace(
             /href="[^"]*?KNOWN_ISSUES\.md"/g,
-            'href="https://github.com/cmahnke/StoryMapJS/blob/main/KNOWN_ISSUES.md"',
+            'href="https://github.com/cmahnke/StoryMapJS/blob/main/docs/KNOWN_ISSUES.md"',
         )
         .replace(
             /href="[^"]*?CHANGELOG"/g,

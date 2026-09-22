@@ -83,7 +83,7 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
 - **Legacy JSON** — `{ "storymap": { "slides": [...] } }` (schema in
   `schema/storymap.schema.json`)
 - **IIIF Presentation 3.0 manifests** — see
-  [docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md);
+  [storymap-as-iiif-manifest.md](storymap-as-iiif-manifest.md);
   detection is automatic (`@context`/`type: "Manifest"`). Converted fixtures
   live in `public/examples-iiif/` (validated against the official IIIF
   validator via `npm run validate:iiif`; legacy fixtures via

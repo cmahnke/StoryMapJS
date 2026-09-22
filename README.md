@@ -14,7 +14,7 @@ Knight Lab release.
 
 ## Development
 
-See DEVELOPMENT.md to get setup for local development of StoryMapJS. This
+See docs/DEVELOPMENT.md to get setup for local development of StoryMapJS. This
 repository is the viewer library only (TypeScript + Vite + OpenLayers);
 StoryMap JSON is validated against the schema in `schema/` on load and via
 `npm run validate`.

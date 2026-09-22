@@ -61,7 +61,7 @@ and the StoryMap extension context:</p>
     &quot;@context&quot;: [
         &quot;http://iiif.io/api/presentation/3/context.json&quot;,
         &quot;http://iiif.io/api/extension/navplace/context.json&quot;,
-        &quot;https://christianmahnke.de/iiif/storymap&quot;
+        &quot;https://cmahnke.github.io/StoryMapJS/context.json&quot;
     ]
 }
 </code></pre>
@@ -79,12 +79,12 @@ and the StoryMap extension context:</p>
     }
 }
 </code></pre>
-<h3>StoryMap context (proposed)</h3>
-<p>StoryMap-specific terms use the <code>storymap:</code> prefix. The fixtures reference the
-context document at <code>https://christianmahnke.de/iiif/storymap</code>; when this proposal is
-adopted the document should be hosted at a stable project URL (e.g.
-a tagged context file in this repository) and the fixtures&#39; context URL
-updated accordingly. Proposed content:</p>
+<h3>StoryMap context</h3>
+<p>StoryMap-specific terms use the <code>storymap:</code> prefix (the term IRIs live under
+<code>https://christianmahnke.de/iiif/storymap#</code>). The context document is
+<a href="../context.json"><code>public/context.json</code></a> — it ships with the demo build
+and is served at <code>https://cmahnke.github.io/StoryMapJS/context.json</code>, which is
+what the fixtures reference. Content:</p>
 <pre><code class="language-json">{
     &quot;@context&quot;: {
         &quot;@version&quot;: 1.1,
@@ -96,7 +96,6 @@ updated accordingly. Proposed content:</p>
         &quot;mapCenterOffset&quot;: &quot;storymap:mapCenterOffset&quot;,
         &quot;mapSubdomains&quot;: &quot;storymap:mapSubdomains&quot;,
         &quot;iiifUrl&quot;: { &quot;@id&quot;: &quot;storymap:iiifUrl&quot;, &quot;@type&quot;: &quot;@id&quot; },
-        &quot;originalZoomify&quot;: &quot;storymap:originalZoomify&quot;,
         &quot;fontCss&quot;: &quot;storymap:fontCss&quot;,
         &quot;callToAction&quot;: &quot;storymap:callToAction&quot;,
         &quot;callToActionText&quot;: &quot;storymap:callToActionText&quot;,
@@ -115,7 +114,6 @@ updated accordingly. Proposed content:</p>
         &quot;lineJoin&quot;: &quot;storymap:lineJoin&quot;,
         &quot;useCustomMarkers&quot;: &quot;storymap:useCustomMarkers&quot;,
         &quot;type&quot;: { &quot;@id&quot;: &quot;storymap:type&quot;, &quot;@type&quot;: &quot;@id&quot; },
-        &quot;group&quot;: &quot;storymap:group&quot;,
         &quot;background&quot;: &quot;storymap:background&quot;,
         &quot;mediaCaption&quot;: &quot;storymap:mediaCaption&quot;,
         &quot;mediaCredit&quot;: &quot;storymap:mediaCredit&quot;,
@@ -227,14 +225,9 @@ updated accordingly. Proposed content:</p>
 <td><code>&quot;overview&quot;</code> marks the map overview slide</td>
 </tr>
 <tr>
-<td><code>storymap:group</code></td>
-<td><code>slide.group</code></td>
-<td></td>
-</tr>
-<tr>
 <td><code>storymap:background</code></td>
 <td><code>slide.background</code></td>
-<td><code>{url, color, opacity}</code> — only present keys</td>
+<td><code>{url, color}</code> — only present keys</td>
 </tr>
 <tr>
 <td><code>storymap:mediaCaption</code></td>
@@ -318,8 +311,8 @@ actual image dimensions. Two body variants are valid:</p>
 </code></pre>
 <p>The converter emits variant (b). Legacy <code>zoomify</code> storymaps are converted to
 <code>storymap:mapType: &quot;iiif&quot;</code>; since the original zoomify tile paths are dead, the
-converter substitutes the IIIF reference image above and keeps the original
-definition in <code>storymap:originalZoomify</code>.</p>
+converter substitutes the IIIF reference image above (the legacy pyramid
+definition is not carried — nothing reads it).</p>
 <h2>StoryMap-specific terms</h2>
 <h3>Manifest level — via a map configuration service</h3>
 <p>The official validator validates manifests against a JSON Schema whose Manifest
@@ -381,11 +374,6 @@ properties):</p>
 <td><code>iiifUrl</code></td>
 <td><code>iiif.url</code></td>
 <td>IIIF Image API <code>info.json</code> URL for image-map storymaps</td>
-</tr>
-<tr>
-<td><code>originalZoomify</code></td>
-<td><code>zoomify</code></td>
-<td>Original zoomify definition, kept as a note for converted storymaps</td>
 </tr>
 <tr>
 <td><code>fontCss</code></td>
@@ -475,9 +463,9 @@ properties):</p>
 </tbody></table>
 <h3>Canvas level — direct properties</h3>
 <p>Canvas objects are open for extension terms, so slide-specific StoryMap data is
-carried directly on the Canvas: <code>storymap:type</code>, <code>storymap:group</code>,
-<code>storymap:background</code>, <code>storymap:mediaCaption</code>, <code>storymap:mediaCredit</code>,
-<code>storymap:date</code> (see the Canvas table above).</p>
+carried directly on the Canvas: <code>storymap:type</code>, <code>storymap:background</code>,
+<code>storymap:mediaCaption</code>, <code>storymap:mediaCredit</code>, <code>storymap:date</code> (see the
+Canvas table above).</p>
 <p>Readers must use the prefixed term for the slide type (<code>storymap:type</code>): the
 bare <code>type</code> key of a Canvas is the IIIF class type (<code>&quot;Canvas&quot;</code>) and can never
 carry the StoryMap slide type.</p>
@@ -503,7 +491,7 @@ photo, and a slide with a YouTube video — full manifest:</p>
     &quot;@context&quot;: [
         &quot;http://iiif.io/api/presentation/3/context.json&quot;,
         &quot;http://iiif.io/api/extension/navplace/context.json&quot;,
-        &quot;https://christianmahnke.de/iiif/storymap&quot;
+        &quot;https://cmahnke.github.io/StoryMapJS/context.json&quot;
     ],
     &quot;id&quot;: &quot;https://example.org/storymap/storm&quot;,
     &quot;type&quot;: &quot;Manifest&quot;,
@@ -754,7 +742,7 @@ photo, and a slide with a YouTube video — full manifest:</p>
 </tr>
 <tr>
 <td><code>zoomify</code></td>
-<td><code>service[0].storymap:originalZoomify</code> (replaced by IIIF)</td>
+<td><em>dropped</em> (zoomify is replaced by the IIIF reference image)</td>
 </tr>
 <tr>
 <td><code>font_css</code></td>
@@ -795,10 +783,6 @@ photo, and a slide with a YouTube video — full manifest:</p>
 <tr>
 <td><code>date</code></td>
 <td>Canvas <code>storymap:date</code></td>
-</tr>
-<tr>
-<td><code>group</code></td>
-<td>Canvas <code>storymap:group</code></td>
 </tr>
 <tr>
 <td><code>text.headline</code></td>
@@ -874,7 +858,7 @@ photo, and a slide with a YouTube video — full manifest:</p>
 </tr>
 <tr>
 <td><code>background</code></td>
-<td>Canvas <code>storymap:background</code> <code>{url, color, opacity}</code></td>
+<td>Canvas <code>storymap:background</code> <code>{url, color}</code></td>
 </tr>
 <tr>
 <td><code>uniqueid</code></td>
