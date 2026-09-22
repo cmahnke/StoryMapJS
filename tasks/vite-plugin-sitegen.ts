@@ -81,7 +81,7 @@ export function buildFonts(root: string = process.cwd()): void {
 
         // Rewrite font binary urls and copy the files
         css = css.replace(
-            /url\((?:['"])?(\.\.?\/)?[^)"']*?([\w@.-]+\.woff2?|[\w@.-]+\.ttf|[\w@.-]+\.eot|[\w@.-]+\.svg)(?:['"])?\)/g,
+            /url\((?:['"])?(\.\.?\/)?[^)"']*?([\w@.-]+\.woff2?|[\w@.-]+\.ttf)(?:['"])?\)/g,
             (m: string, _rel: string, baseName: string) => {
                 // skip data urls handled by regex shape already
                 const found = findFontFile(root, baseName);
