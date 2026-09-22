@@ -175,7 +175,7 @@
                     "properties": {
                         "headline": { "type": "string" },
                         "text": { "type": "string" },
-                        "date": { "type": "string" }
+                        "date": { "type": ["string", "object", "null"] }
                     }
                 },
                 "background": {
