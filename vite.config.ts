@@ -1,32 +1,11 @@
 import { defineConfig } from "vite";
 import { sitegen } from "./tasks/vite-plugin-sitegen";
 
-// Library build: emits dist/js/storymap.js (ESM only) and dist/css/storymap.css.
+// Dev/preview servers only (`vite`, `vite preview`, e2e). All builds run
+// through rollup (see rollup.config.mjs).
 export default defineConfig({
     plugins: [sitegen()],
     server: {
         port: 8000,
-    },
-    build: {
-        outDir: "dist",
-        assetsInlineLimit: 0,
-        sourcemap: true,
-        lib: {
-            entry: "src/main.ts",
-            formats: ["es"],
-            fileName: () => "js/storymap.js",
-            cssFileName: "css/storymap",
-        },
-        rollupOptions: {
-            output: {
-                assetFileNames: (asset) => {
-                    const names = asset.names ?? (asset.name ? [asset.name] : []);
-                    if (names.some((n) => n.endsWith(".css"))) {
-                        return "css/storymap.css";
-                    }
-                    return "css/icons/[name][extname]";
-                },
-            },
-        },
     },
 });

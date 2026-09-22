@@ -242,7 +242,11 @@ class MapBase {
                                 this._markers[previous_marker].data.real_marker
                             ) {
                                 let lines_array: LinePoint[] = [];
-                                let line_num = previous_marker,
+                                // Accumulate from the first marker so the
+                                // connections between previous slides stay
+                                // marked (mirrors the backward branch, which
+                                // settles at the traveled path 0..current).
+                                let line_num = 0,
                                     point;
                                 let retract_path_source: LinePoint[] | null = null;
                                 if (line_num < this.current_marker) {

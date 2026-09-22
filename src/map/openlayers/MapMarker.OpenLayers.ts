@@ -40,10 +40,13 @@ export default class OpenLayersMapMarker extends MapMarker {
 
     _createMarkerElement(d: MapMarkerData, o?: StorymapOptions): HTMLDivElement {
         const el = document.createElement("div");
-        el.className = "vco-mapmarker " + this.media_icon_class;
         el.title = d.text && d.text.headline ? d.text.headline : "";
 
         if (this._custom_icon) {
+            // custom icon markers render only their image (like the
+            // original Leaflet L.icon): no vco-mapmarker class, otherwise
+            // the default pin glyph (::before) would show next to the image
+            el.className = "vco-mapmarker-custom";
             const img = document.createElement("img");
             img.src = this._custom_icon.url;
             img.style.width = this._custom_icon.size[0] + "px";
@@ -52,6 +55,7 @@ export default class OpenLayersMapMarker extends MapMarker {
             el.style.marginLeft = -this._custom_icon.anchor[0] + "px";
             el.style.marginTop = -this._custom_icon.anchor[1] + "px";
         } else if (this._custom_image_icon) {
+            el.className = "vco-mapmarker-image-icon";
             const img = document.createElement("img");
             img.src = this._custom_image_icon;
             img.style.width = "48px";
@@ -59,6 +63,8 @@ export default class OpenLayersMapMarker extends MapMarker {
             el.appendChild(img);
             el.style.marginLeft = "-24px";
             el.style.marginTop = "-48px";
+        } else {
+            el.className = "vco-mapmarker " + this.media_icon_class;
         }
         return el;
     }
@@ -102,7 +108,25 @@ export default class OpenLayersMapMarker extends MapMarker {
             this.media_icon_class = "vco-mapmarker-icon vco-icon-plaintext";
         }
         if (this.data.real_marker) {
-            if (a) {
+            if (this._custom_icon) {
+                // custom icons look the same active or not (as in the
+                // original Leaflet version): only the stacking changes
+                if (!a) {
+                    clearTimeout(this.timer);
+                }
+                this._marker.style.zIndex = a ? "1000" : "";
+            } else if (this._custom_image_icon) {
+                if (a) {
+                    this._marker.classList.remove("vco-mapmarker-image-icon");
+                    this._marker.classList.add("vco-mapmarker-image-icon-active");
+                    this._marker.style.zIndex = "1000";
+                } else {
+                    clearTimeout(this.timer);
+                    this._marker.classList.remove("vco-mapmarker-image-icon-active");
+                    this._marker.classList.add("vco-mapmarker-image-icon");
+                    this._marker.style.zIndex = "";
+                }
+            } else if (a) {
                 this._marker.classList.remove("vco-mapmarker");
                 this._marker.classList.add("vco-mapmarker-active");
                 this._marker.style.zIndex = "1000";

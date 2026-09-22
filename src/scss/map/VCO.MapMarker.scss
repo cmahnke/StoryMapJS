@@ -53,6 +53,17 @@ $map-icon-width: 38px;
         color: $color-theme;
     }
 
+    // Custom icon markers render only their image (no vco-mapmarker class,
+    // so none of the pin rules above apply): belt and braces against the
+    // default pin glyph, and the pointer cursor that pins get elsewhere.
+    .vco-mapmarker-custom {
+        cursor: pointer;
+    }
+
+    .vco-mapmarker-custom::before {
+        content: none;
+    }
+
     .vco-mapmarker-image-icon,
     .vco-mapmarker-image-icon-active {
         border: 2px solid #a5a5a5;

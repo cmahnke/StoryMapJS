@@ -7,7 +7,8 @@ a script tag exposing the global `KLStoryMap`.
 ## Stack
 
 - **TypeScript** (strict mode, target ES2022)
-- **Vite** — dev server, library build (ESM + UMD) and preview
+- **Rollup** — all builds (library ESM + `.d.ts`, demo pages, site assets)
+- **Vite** — dev server and preview only
 - **OpenLayers** (`ol`) — maps, markers, and IIIF Image API imagery
 - **SASS** (`sass`) with themes in `src/scss/fonts/*`
 - **Fonts** — bundled from npm (`@fontsource/*`), no runtime CDN font requests
@@ -40,7 +41,7 @@ scripts/
 e2e/                  Playwright specs
 tests/                Vitest unit specs
 tasks/
-  build-fonts.mjs     compiles font themes to dist/css/fonts
+  sitegen.mjs         compiles font themes/docs/site chrome to public/ (shared by vite dev and rollup build)
 ```
 
 ## Commands
@@ -48,7 +49,7 @@ tasks/
 ```
 npm install                # hydrate dependencies (node >= 22)
 npm run dev                # vite dev server with HMR at :8000
-npm run build              # lib (js/storymap.js + storymap.es.js + css), demo pages, fonts
+npm run build              # rollup: lib (js/storymap.js + storymap.d.ts + css), demo pages, fonts/docs
 npm run preview            # serve the built dist/ (what e2e tests run against)
 npm test                   # vitest unit tests
 npm run test:e2e           # playwright over all examples + embed page (builds first)
@@ -95,7 +96,7 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
   warnings; stylelint runs with zero disabled rules.
 - Font themes (`src/scss/fonts/font.*.scss`) declare `@font-face` rules via
   the `@fontsource-utils/scss` `faces()` mixin with `pkg:` imports; binaries
-  are emitted to `dist/css/fonts/files/` by `tasks/build-fonts.mjs`.
+  are emitted to `dist/css/fonts/files/` by `tasks/sitegen.mjs` (via `public/`).
 - Vendored libraries replaced by npm packages: `morpheus` (animation).
   `src/core/Load.ts` remains a typed vendored copy of rgrove/lazyload (not
   published on npm).

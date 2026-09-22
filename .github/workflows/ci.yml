@@ -36,6 +36,17 @@ jobs:
             - name: Build
               run: npm run build
 
+            - name: Verify build outputs
+              run: |
+                  test -f dist/js/storymap.js
+                  test -f dist/js/storymap.js.map
+                  test -f dist/js/storymap.d.ts
+                  test -f dist/css/storymap.css
+                  test -f dist/index.html
+                  test -f dist/demo.html
+                  test -f dist/harness.html
+                  test -f dist/embed/index.html
+
             - name: Install Playwright browsers
               run: npx playwright install --with-deps chromium
 

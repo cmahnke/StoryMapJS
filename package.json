@@ -4,6 +4,7 @@
     "description": "StoryMapJS viewer library — unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
     "license": "MPL-2.0",
     "type": "module",
+    "types": "./dist/js/storymap.d.ts",
     "author": "Christian Mahnke <194820+cmahnke@users.noreply.github.com>",
     "files": [
         "dist",
@@ -23,7 +24,11 @@
         "node": ">=22"
     },
     "exports": {
-        ".": "./dist/js/storymap.js",
+        ".": {
+            "types": "./dist/js/storymap.d.ts",
+            "import": "./dist/js/storymap.js",
+            "default": "./dist/js/storymap.js"
+        },
         "./css/storymap.css": "./dist/css/storymap.css",
         "./css/fonts/*": "./dist/css/fonts/*",
         "./schema/*": "./schema/*"
@@ -65,14 +70,21 @@
         "@fontsource/ubuntu": "^5.3.0",
         "@fontsource/unica-one": "^5.3.0",
         "@playwright/test": "^1.63.0",
+        "@rollup/plugin-commonjs": "^29.0.3",
+        "@rollup/plugin-json": "^6.1.0",
+        "@rollup/plugin-node-resolve": "^16.0.3",
+        "@rollup/plugin-typescript": "^12.3.0",
         "@types/d3-ease": "^3.0.2",
         "@types/js-cookie": "^3.0.6",
         "@types/node": "^26.6.2",
+        "@web/rollup-plugin-html": "^4.0.0",
         "eslint": "^10.11.0",
         "globals": "^17.12.0",
         "jsdom": "^30.1.0",
         "marked": "^18.0.13",
         "prettier": "^3.9.8",
+        "rollup": "^4.63.4",
+        "rollup-plugin-dts": "^6.5.1",
         "sass": "^1.104.1",
         "stylelint": "^17.15.0",
         "stylelint-config-standard": "^40.0.0",
@@ -85,8 +97,9 @@
     },
     "scripts": {
         "dev": "vite",
-        "build": "vite build && vite build --config vite.demo.config.ts",
-        "docs": "vite build --config vite.sitegen.config.ts",
+        "build": "npm run clean && npm run build:declarations && rollup -c && node -e \"fs.rmSync('dist/.dts-tmp', { recursive: true, force: true })\"",
+        "build:declarations": "tsc -p tsconfig.json --noEmit false --emitDeclarationOnly --declaration --declarationMap false --outDir dist/.dts-tmp",
+        "docs": "node tasks/sitegen.mjs",
         "docs:api": "typedoc",
         "thumbs": "node tasks/build-thumbnails.mjs",
         "preview": "vite preview",
