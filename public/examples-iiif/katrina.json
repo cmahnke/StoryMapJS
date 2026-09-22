@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/katrina",
     "type": "Manifest",
@@ -100,8 +100,7 @@
                 ]
             },
             "storymap:background": {
-                "url": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg",
-                "opacity": 25
+                "url": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg"
             },
             "storymap:mediaCaption": "Twitter status update",
             "storymap:mediaCredit": "Twitter",
@@ -163,8 +162,7 @@
                 ]
             },
             "storymap:background": {
-                "url": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg",
-                "opacity": 25
+                "url": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg"
             },
             "storymap:mediaCaption": "Hurricane Katrina First Landfall In S FL (Aug 25, 2005) ",
             "storymap:mediaCredit": "cdcollura",
@@ -227,8 +225,7 @@
                 ]
             },
             "storymap:background": {
-                "url": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg",
-                "opacity": 25
+                "url": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg"
             },
             "storymap:mediaCaption": "Hurricane Evacuation",
             "storymap:mediaCredit": "recmod.com",
@@ -290,8 +287,7 @@
                 ]
             },
             "storymap:background": {
-                "url": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg",
-                "opacity": 25
+                "url": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg"
             },
             "storymap:mediaCaption": "Hurricane Katrina Historic Storm Surge Video - Gulfport, Mississippi ",
             "storymap:mediaCredit": "Mike Theiss",

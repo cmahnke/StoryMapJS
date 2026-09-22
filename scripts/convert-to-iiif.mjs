@@ -17,7 +17,7 @@ const LAOCOON_IMAGE = `${LAOCOON_ID}/full/max/0/default.jpg`;
 const LAOCOON_WIDTH = 2315;
 const LAOCOON_HEIGHT = 3000;
 
-const STORYMAP_CONTEXT = "https://christianmahnke.de/iiif/storymap";
+const STORYMAP_CONTEXT = "https://cmahnke.github.io/StoryMapJS/context.json";
 const CONTEXTS = [
     "http://iiif.io/api/presentation/3/context.json",
     "http://iiif.io/api/extension/navplace/context.json",
@@ -122,11 +122,11 @@ function buildMapConfig(storymap, legacy, isZoomify) {
     const config = {};
     let mapType = storymap.map_type;
     if (isZoomify) {
-        // zoomify support was replaced by the IIIF Image API.
+        // zoomify support was replaced by the IIIF Image API; the legacy
+        // pyramid definition is not carried (nothing reads it)
         mapType = "iiif";
         config["storymap:mapAsImage"] = true;
         config["storymap:iiifUrl"] = LAOCOON_INFO;
-        config["storymap:originalZoomify"] = storymap.zoomify;
     }
     if (present(mapType)) {
         config["storymap:mapType"] = mapType;
@@ -285,9 +285,6 @@ function buildCanvasTerms(slide) {
     if (slide.type === "overview") {
         terms["storymap:type"] = "overview";
     }
-    if (present(slide.group)) {
-        terms["storymap:group"] = slide.group;
-    }
     if (slide.background && typeof slide.background === "object") {
         const background = {};
         if (present(slide.background.url)) {
@@ -295,9 +292,6 @@ function buildCanvasTerms(slide) {
         }
         if (present(slide.background.color)) {
             background.color = slide.background.color;
-        }
-        if (slide.background.opacity !== undefined) {
-            background.opacity = slide.background.opacity;
         }
         if (Object.keys(background).length > 0) {
             terms["storymap:background"] = background;

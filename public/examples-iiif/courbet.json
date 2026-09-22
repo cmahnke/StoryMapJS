@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/courbet",
     "type": "Manifest",
@@ -71,16 +71,9 @@
         {
             "id": "https://example.org/storymap/courbet/map-config",
             "type": "Service",
-            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:mapAsImage": true,
             "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
-            "storymap:originalZoomify": {
-                "attribution": "",
-                "height": 2777,
-                "path": "https://googledrive.com/host/0B5JZVWrKDoqjeGxyU2dGOGdGZHM/Courbet_Burial__Ornan_img/",
-                "tolerance": 0.9,
-                "width": 6042
-            },
             "storymap:mapType": "iiif"
         }
     ]

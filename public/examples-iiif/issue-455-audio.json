@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/issue-455-audio",
     "type": "Manifest",
@@ -102,7 +102,7 @@
         {
             "id": "https://example.org/storymap/issue-455-audio/map-config",
             "type": "Service",
-            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:mapType": "osm",
             "storymap:mapAsImage": false,
             "storymap:callToAction": false

@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/jansteen",
     "type": "Manifest",
@@ -498,16 +498,9 @@
         {
             "id": "https://example.org/storymap/jansteen/map-config",
             "type": "Service",
-            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:mapAsImage": true,
             "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
-            "storymap:originalZoomify": {
-                "path": "http://cdn.verite.co/maps/zoomify/jansteen/",
-                "width": 17574,
-                "height": 13008,
-                "tolerance": 0.9,
-                "attribution": ""
-            },
             "storymap:mapType": "iiif",
             "storymap:fontCss": "stock:lustria-lato",
             "storymap:showLines": false

@@ -23,7 +23,7 @@ and the StoryMap extension context:
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ]
 }
 ```
@@ -46,13 +46,13 @@ Served at `http://iiif.io/api/extension/navplace/context.json`. It binds the
 }
 ```
 
-### StoryMap context (proposed)
+### StoryMap context
 
-StoryMap-specific terms use the `storymap:` prefix. The fixtures reference the
-context document at `https://christianmahnke.de/iiif/storymap`; when this proposal is
-adopted the document should be hosted at a stable project URL (e.g.
-a tagged context file in this repository) and the fixtures' context URL
-updated accordingly. Proposed content:
+StoryMap-specific terms use the `storymap:` prefix (the term IRIs live under
+`https://christianmahnke.de/iiif/storymap#`). The context document is
+[`public/context.json`](../public/context.json) — it ships with the demo build
+and is served at `https://cmahnke.github.io/StoryMapJS/context.json`, which is
+what the fixtures reference. Content:
 
 ```json
 {
@@ -66,7 +66,6 @@ updated accordingly. Proposed content:
         "mapCenterOffset": "storymap:mapCenterOffset",
         "mapSubdomains": "storymap:mapSubdomains",
         "iiifUrl": { "@id": "storymap:iiifUrl", "@type": "@id" },
-        "originalZoomify": "storymap:originalZoomify",
         "fontCss": "storymap:fontCss",
         "callToAction": "storymap:callToAction",
         "callToActionText": "storymap:callToActionText",
@@ -85,7 +84,6 @@ updated accordingly. Proposed content:
         "lineJoin": "storymap:lineJoin",
         "useCustomMarkers": "storymap:useCustomMarkers",
         "type": { "@id": "storymap:type", "@type": "@id" },
-        "group": "storymap:group",
         "background": "storymap:background",
         "mediaCaption": "storymap:mediaCaption",
         "mediaCredit": "storymap:mediaCredit",
@@ -124,8 +122,7 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 | `height`, `width`       | —                     | Nominal `1080 × 1080` for non-image slides; actual image dimensions for image-map slides |
 | `items`                 | `slide.media`         | AnnotationPage with the painting annotation, see below                                   |
 | `storymap:type`         | `slide.type`          | `"overview"` marks the map overview slide                                                |
-| `storymap:group`        | `slide.group`         |                                                                                          |
-| `storymap:background`   | `slide.background`    | `{url, color, opacity}` — only present keys                                              |
+| `storymap:background`   | `slide.background`    | `{url, color}` — only present keys                                                       |
 | `storymap:mediaCaption` | `slide.media.caption` |                                                                                          |
 | `storymap:mediaCredit`  | `slide.media.credit`  |                                                                                          |
 | `storymap:date`         | `slide.date`          | String or object, verbatim                                                               |
@@ -205,8 +202,8 @@ actual image dimensions. Two body variants are valid:
 
 The converter emits variant (b). Legacy `zoomify` storymaps are converted to
 `storymap:mapType: "iiif"`; since the original zoomify tile paths are dead, the
-converter substitutes the IIIF reference image above and keeps the original
-definition in `storymap:originalZoomify`.
+converter substitutes the IIIF reference image above (the legacy pyramid
+definition is not carried — nothing reads it).
 
 ## StoryMap-specific terms
 
@@ -241,7 +238,6 @@ properties):
 | `mapCenterOffset`            | `map_center_offset`    | `{left, top}`                                                                                                     |
 | `mapSubdomains`              | `map_subdomains`       | Tile URL subdomains                                                                                               |
 | `iiifUrl`                    | `iiif.url`             | IIIF Image API `info.json` URL for image-map storymaps                                                            |
-| `originalZoomify`            | `zoomify`              | Original zoomify definition, kept as a note for converted storymaps                                               |
 | `fontCss`                    | `font_css`             | e.g. `stock:dancing-ledger`                                                                                       |
 | `callToAction`               | `call_to_action`       | boolean                                                                                                           |
 | `callToActionText`           | `call_to_action_text`  | string                                                                                                            |
@@ -263,9 +259,9 @@ properties):
 ### Canvas level — direct properties
 
 Canvas objects are open for extension terms, so slide-specific StoryMap data is
-carried directly on the Canvas: `storymap:type`, `storymap:group`,
-`storymap:background`, `storymap:mediaCaption`, `storymap:mediaCredit`,
-`storymap:date` (see the Canvas table above).
+carried directly on the Canvas: `storymap:type`, `storymap:background`,
+`storymap:mediaCaption`, `storymap:mediaCredit`, `storymap:date` (see the
+Canvas table above).
 
 Readers must use the prefixed term for the slide type (`storymap:type`): the
 bare `type` key of a Canvas is the IIIF class type (`"Canvas"`) and can never
@@ -298,7 +294,7 @@ photo, and a slide with a YouTube video — full manifest:
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/storm",
     "type": "Manifest",
@@ -469,7 +465,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `line_join`                  | `service[0].storymap:lineJoin`                                      |
 | `iiif.url`                   | `service[0].storymap:iiifUrl` + canvas Image annotation `service[]` |
 | `iiif.attribution`           | `requiredStatement`                                                 |
-| `zoomify`                    | `service[0].storymap:originalZoomify` (replaced by IIIF)            |
+| `zoomify`                    | _dropped_ (zoomify is replaced by the IIIF reference image)         |
 | `font_css`                   | `service[0].storymap:fontCss`                                       |
 | `call_to_action`             | `service[0].storymap:callToAction`                                  |
 | `call_to_action_text`        | `service[0].storymap:callToActionText`                              |
@@ -481,7 +477,6 @@ photo, and a slide with a YouTube video — full manifest:
 | ------------------------------ | ---------------------------------------------------------- |
 | `type: "overview"`             | Canvas `storymap:type: "overview"`                         |
 | `date`                         | Canvas `storymap:date`                                     |
-| `group`                        | Canvas `storymap:group`                                    |
 | `text.headline`                | Canvas `label` (language map)                              |
 | `text.text`                    | Canvas `summary` (language map)                            |
 | `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`           |
@@ -500,7 +495,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `media.caption`                | Canvas `storymap:mediaCaption`                             |
 | `media.credit`                 | Canvas `storymap:mediaCredit`                              |
 | `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`) |
-| `background`                   | Canvas `storymap:background` `{url, color, opacity}`       |
+| `background`                   | Canvas `storymap:background` `{url, color}`                |
 | `uniqueid`                     | _dropped_ (canvas `id`s are the canonical identifiers)     |
 
 ## Conversion

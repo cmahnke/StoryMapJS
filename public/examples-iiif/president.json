@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/president",
     "type": "Manifest",
@@ -161,8 +161,7 @@
             },
             "storymap:background": {
                 "url": "http://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg",
-                "color": "#cdbfe3",
-                "opacity": 25
+                "color": "#cdbfe3"
             },
             "storymap:mediaCaption": "President Obama and Prime Minister Reinfeldt of Sweden hold a joint press conference. September 4, 2013.",
             "storymap:mediaCredit": "The White House YouTube",
@@ -347,8 +346,7 @@
             },
             "storymap:background": {
                 "url": "http://gorod94.com/images/st-petersburg-sightseeing-08.jpg",
-                "color": "#cdbfe3",
-                "opacity": 25
+                "color": "#cdbfe3"
             },
             "storymap:mediaCaption": "President Obama holds a press conference at the G20 Summit in St. Petersburg, Russia. September 6, 2013.",
             "storymap:mediaCredit": "The White House YouTube",
@@ -958,8 +956,7 @@
             },
             "storymap:background": {
                 "url": "http://s.wsj.net/public/resources/images/OB-YZ561_Obama2_E_20130920154351.jpg",
-                "color": "#cdbfe3",
-                "opacity": 25
+                "color": "#cdbfe3"
             },
             "storymap:mediaCaption": "White House Twitter",
             "storymap:mediaCredit": "Twitter",

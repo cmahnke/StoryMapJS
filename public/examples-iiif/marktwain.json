@@ -2,7 +2,7 @@
     "@context": [
         "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
-        "https://christianmahnke.de/iiif/storymap"
+        "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/marktwain",
     "type": "Manifest",
@@ -409,8 +409,7 @@
                 ]
             },
             "storymap:background": {
-                "color": "#000000",
-                "opacity": 50
+                "color": "#000000"
             },
             "storymap:mediaCaption": "something",
             "storymap:mediaCredit": "ETC",
@@ -590,8 +589,7 @@
                 ]
             },
             "storymap:background": {
-                "color": "#000000",
-                "opacity": 50
+                "color": "#000000"
             },
             "storymap:mediaCaption": "something",
             "storymap:mediaCredit": "ETC",
@@ -654,8 +652,7 @@
                 ]
             },
             "storymap:background": {
-                "color": "#000000",
-                "opacity": 50
+                "color": "#000000"
             },
             "storymap:mediaCaption": "something",
             "storymap:mediaCredit": "ETC",
@@ -717,8 +714,7 @@
                 ]
             },
             "storymap:background": {
-                "color": "#000000",
-                "opacity": 50
+                "color": "#000000"
             },
             "storymap:mediaCaption": "something",
             "storymap:mediaCredit": "ETC",
@@ -781,8 +777,7 @@
                 ]
             },
             "storymap:background": {
-                "color": "#000000",
-                "opacity": 50
+                "color": "#000000"
             },
             "storymap:mediaCaption": "something",
             "storymap:mediaCredit": "ETC",
@@ -844,8 +839,7 @@
                 ]
             },
             "storymap:background": {
-                "color": "#000000",
-                "opacity": 50
+                "color": "#000000"
             },
             "storymap:mediaCaption": "something",
             "storymap:mediaCredit": "ETC",
@@ -905,9 +899,6 @@
                 "none": [
                     "Moves into Stormfield in Redding, CT. Forms the Angelfish Club for young girls."
                 ]
-            },
-            "storymap:background": {
-                "opacity": 50
             },
             "storymap:mediaCaption": "Twains house, \"Stormfield\", in Redding, Connecticut (front view)",
             "storymap:date": "1891",

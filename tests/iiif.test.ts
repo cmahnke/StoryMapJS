@@ -5,7 +5,7 @@ import type { StorymapData } from "../src/types";
 const CONTEXTS = [
     "http://iiif.io/api/presentation/3/context.json",
     "http://iiif.io/api/extension/navplace/context.json",
-    "https://christianmahnke.de/iiif/storymap",
+    "https://cmahnke.github.io/StoryMapJS/context.json",
 ];
 
 const manifest = {
