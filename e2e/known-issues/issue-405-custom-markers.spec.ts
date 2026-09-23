@@ -87,3 +87,43 @@ test("issue #405: per-slide icon markers hide the default pin", async ({ page })
     expect(markers.customWithoutImg).toBe(0);
     expect(markers.leftoverPins).toBe(0);
 });
+
+test("issue #405: self-contained SVG icon shows no double marker", async ({ page }) => {
+    const errors = collectPageErrors(page);
+    // issue-405-custom-icon uses a local SVG asset (custom-flag.svg, 40x48)
+    // via the location.icon path: each marker must render exactly one <img>
+    // and no default pin glyph (::before), i.e. never show two markers.
+    await page.goto(harnessUrl("issue-405-custom-icon"));
+    await waitForStoryMap(page);
+    await page.waitForTimeout(1500);
+
+    const markers = await page.evaluate(() => {
+        const beforeContent = (el: Element): string =>
+            window.getComputedStyle(el, "::before").content;
+        const customs = Array.from(
+            document.querySelectorAll("#storymap-embed .vco-mapmarker-custom"),
+        );
+        return {
+            customIcon: customs.length,
+            customWithPinGlyph: customs.filter((el) => beforeContent(el) !== "none").length,
+            customWithoutSingleImg: customs.filter(
+                (el) => el.querySelectorAll(":scope > img[src*='custom-flag']").length !== 1,
+            ).length,
+            unloadedImg: customs.filter((el) => {
+                const img = el.querySelector("img");
+                return !img || (img as HTMLImageElement).naturalWidth === 0;
+            }).length,
+            leftoverPins: document.querySelectorAll(
+                "#storymap-embed .vco-mapmarker, #storymap-embed .vco-mapmarker-active",
+            ).length,
+        };
+    });
+
+    expect(errors).toEqual([]);
+    // two slides carry locations, so two custom markers
+    expect(markers.customIcon).toBe(2);
+    expect(markers.customWithPinGlyph).toBe(0);
+    expect(markers.customWithoutSingleImg).toBe(0);
+    expect(markers.unloadedImg).toBe(0);
+    expect(markers.leftoverPins).toBe(0);
+});

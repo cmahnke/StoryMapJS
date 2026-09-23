@@ -1,0 +1,63 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "use_custom_markers": true,
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Custom flag markers",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Paris",
+                    "text": "First point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6,
+                    "line": true,
+                    "icon": "/examples/assets/custom-flag.svg",
+                    "iconSize": [40, 48]
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Rome",
+                    "text": "Second point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 41.9,
+                    "lon": 12.49,
+                    "zoom": 6,
+                    "line": true,
+                    "icon": "/examples/assets/custom-flag.svg",
+                    "iconSize": [40, 48]
+                }
+            }
+        ]
+    }
+}
