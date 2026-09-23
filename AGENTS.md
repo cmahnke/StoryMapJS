@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-StoryMapJS is a viewer-only TypeScript library. Library modules live under `src/` in domain folders (`core`, `map`, `media`, `slider`, `storymap`, `ui`, `dom`, `animation`, `language`, `library`); styles are SASS in `src/scss`; the embed page and demo fixtures are in `public/`. Rollup (`rollup.config.mjs`) bundles the library (ESM `dist/js/storymap.js` plus bundled `dist/js/storymap.d.ts` via rollup-plugin-dts), the widget CSS in `dist/css`, and the demo pages; site assets (font themes, docs, site chrome) generate into `public/` via `tasks/sitegen.mjs`, shared with the Vite dev server. The JSON Schema for storymap data lives in `schema/` and the CLI validator in `scripts/`.
+StoryMapJS is a viewer-only TypeScript library. Library modules live under `src/` in domain folders (`core`, `map`, `media`, `slider`, `storymap`, `ui`, `dom`, `animation`, `language`, `library`); styles are SASS in `src/scss`; the embed page and demo fixtures are in `public/`. Vite (`vite.config.ts`, `--mode lib` then `--mode pages`) bundles the library (ESM `dist/js/storymap.js` plus bundled `dist/js/storymap.d.ts` via unplugin-dts), the widget CSS in `dist/css`, and the demo pages; site assets (font themes, docs, site chrome) generate into `public/` via the `plugins/sitegen.ts` Vite plugin, shared with the Vite dev server. The JSON Schema for storymap data lives in `schema/` and the CLI validator in `scripts/`.
 
 ## Build, Test, and Development Commands
 

@@ -16,7 +16,7 @@ export default tseslint.config(
     js.configs.recommended,
     ...tseslint.configs.recommended,
     {
-        files: ["src/**/*.ts", "tests/**/*.ts", "e2e/**/*.ts"],
+        files: ["src/**/*.ts", "tests/**/*.ts", "e2e/**/*.ts", "plugins/**/*.ts"],
         languageOptions: {
             globals: {
                 ...globals.browser,

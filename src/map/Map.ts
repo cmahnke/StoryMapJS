@@ -246,10 +246,16 @@ class MapBase {
                                 // connections between previous slides stay
                                 // marked (mirrors the backward branch, which
                                 // settles at the traveled path 0..current).
+                                // The end state is the full traveled path, but
+                                // only the latest hop animates: grow_from is
+                                // the already-traveled prefix 0..previous,
+                                // which stays drawn while [prev..current]
+                                // traces progressively (see _replaceLines).
                                 let line_num = 0,
                                     point;
                                 let retract_path_source: LinePoint[] | null = null;
-                                if (line_num < this.current_marker) {
+                                let grow_path_source: LinePoint[] | null = null;
+                                if (previous_marker < this.current_marker) {
                                     while (line_num < this.current_marker) {
                                         if (this._hasLocation(this._markers[line_num].data)) {
                                             point = {
@@ -261,7 +267,17 @@ class MapBase {
 
                                         line_num++;
                                     }
-                                } else if (line_num > this.current_marker) {
+                                    const grow_path: LinePoint[] = [];
+                                    for (let idx = 0; idx <= previous_marker; idx++) {
+                                        if (this._hasLocation(this._markers[idx].data)) {
+                                            grow_path.push({
+                                                lat: this._markers[idx].data.location.lat,
+                                                lon: this._markers[idx].data.location.lon,
+                                            });
+                                        }
+                                    }
+                                    grow_path_source = grow_path;
+                                } else if (previous_marker > this.current_marker) {
                                     // Backward navigation: the line retracts —
                                     // the end state is the traveled path from
                                     // the first marker to the current one, and
@@ -300,6 +316,7 @@ class MapBase {
                                 this._replaceLines(this._line_active, lines_array, {
                                     duration: this._transition_duration,
                                     retractFrom: retract_path_source,
+                                    growFrom: grow_path_source,
                                 });
                             }
                         } else {
@@ -507,7 +524,11 @@ class MapBase {
     _replaceLines(
         line: VectorLayer | null,
         d: LinePoint[],
-        animate?: { duration: number; retractFrom?: LinePoint[] },
+        animate?: {
+            duration: number;
+            retractFrom?: LinePoint[] | null;
+            growFrom?: LinePoint[] | null;
+        },
     ): void {}
 
     _addLineToMap(line: VectorLayer): void {}

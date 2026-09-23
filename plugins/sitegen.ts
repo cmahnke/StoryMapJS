@@ -1,14 +1,14 @@
 /**
- * Site asset generation, shared by the vite dev plugin
- * (tasks/vite-plugin-sitegen.ts) and the rollup build (rollup.config.mjs).
+ * Vite-only site asset generation (replaces tasks/sitegen.mjs).
  *
  * - each src/scss/fonts/font.*.scss theme -> public/css/fonts/font.*.css,
  *   with @fontsource font binaries copied to public/css/fonts/files/
  * - src/scss/site/site.scss -> public/site.css
  * - README.md + docs/*.md -> public/docs/*.html (via marked)
  *
- * Run directly (`node tasks/sitegen.mjs`, the `docs` npm script) to
- * regenerate without a bundler. All steps are idempotent.
+ * Runs on every dev server start and every build via `buildStart`, plus
+ * incrementally via `watchChange`. All steps are idempotent: text outputs
+ * are only rewritten when content changed so the watcher does not loop.
  */
 import {
     readFileSync,
@@ -19,17 +19,17 @@ import {
     existsSync,
 } from "node:fs";
 import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
 import { join, basename } from "node:path";
 import { marked } from "marked";
 import * as sass from "sass";
+import type { Plugin } from "vite";
 
 const req = createRequire(import.meta.url);
 
 // Resolve bare "@fontsource/..." imports through node_modules,
 // and "pkg:..." URLs via dart-sass's NodePackageImporter.
-const nodeImporter = {
-    findFileUrl(url) {
+const nodeImporter: sass.FileImporter<"sync"> = {
+    findFileUrl(url: string) {
         if (!url.startsWith("@")) return null;
         try {
             return new URL("file://" + req.resolve(url));
@@ -40,7 +40,7 @@ const nodeImporter = {
 };
 const pkgImporter = new sass.NodePackageImporter();
 
-function findFontFile(root, baseName) {
+function findFontFile(root: string, baseName: string): string | null {
     for (const scope of ["@fontsource", "@fontsource-variable"]) {
         const dir = join(root, "node_modules", scope);
         if (!existsSync(dir)) continue;
@@ -57,7 +57,15 @@ function findFontFile(root, baseName) {
     return null;
 }
 
-export function buildFonts(root = process.cwd()) {
+function writeTextIfChanged(file: string, content: string): boolean {
+    if (existsSync(file) && readFileSync(file, "utf8") === content) {
+        return false;
+    }
+    writeFileSync(file, content);
+    return true;
+}
+
+export function buildFonts(root: string = process.cwd()): void {
     // Output to public/ so `vite dev` serves the font CSS directly; the build
     // copies it verbatim into dist/css/fonts.
     const outDir = join(root, "public/css/fonts");
@@ -83,9 +91,9 @@ export function buildFonts(root = process.cwd()) {
             /url\((?:['"])?(\.\.?\/)?[^)"']*?([\w@.-]+\.woff2?|[\w@.-]+\.ttf)(?:['"])?\)/g,
             (m, _rel, baseName) => {
                 // skip data urls handled by regex shape already
-                const found = findFontFile(root, baseName);
+                const found = findFontFile(root, baseName as string);
                 if (!found) {
-                    console.warn(`  ! font binary not found: ${baseName}`);
+                    console.warn(`  ! font binary not found: ${baseName as string}`);
                     return m;
                 }
                 copyFileSync(found, join(filesDir, basename(found)));
@@ -93,12 +101,19 @@ export function buildFonts(root = process.cwd()) {
             },
         );
 
-        writeFileSync(join(outDir, theme.replace(/\.scss$/, ".css")), css);
-        console.log(`FONT CSS compiled ${theme}`);
+        if (writeTextIfChanged(join(outDir, theme.replace(/\.scss$/, ".css")), css)) {
+            console.log(`FONT CSS compiled ${theme}`);
+        }
     }
 }
 
-const DOCS = [
+interface DocEntry {
+    md: string;
+    out: string;
+    title: string;
+}
+
+const DOCS: DocEntry[] = [
     { md: "README.md", out: "readme.html", title: "README" },
     { md: "docs/migration-from-knightlab.md", out: "migration.html", title: "Migration guide" },
     {
@@ -176,7 +191,7 @@ const FOOTER = /* html */ `
 
 // relative markdown links (docs/*.md, schema/, public/) resolve against the
 // generated page's location; map the common cases to sensible targets
-function rewriteLinks(html) {
+function rewriteLinks(html: string): string {
     return html
         .replace(
             /href="[^"]*?DEVELOPMENT\.md"/g,
@@ -198,19 +213,20 @@ function rewriteLinks(html) {
         .replace(/href="\.\/docs\//g, 'href="./');
 }
 
-export function buildDocs(root = process.cwd()) {
+export function buildDocs(root: string = process.cwd()): void {
     const outDir = join(root, "public", "docs");
     mkdirSync(outDir, { recursive: true });
 
     // Compile the site chrome stylesheet to a static asset shared by every page
     // (the widget styles are NOT part of it; they stay behind the iframe).
     const siteCss = sass.compile(join(root, "src/scss/site/site.scss")).css;
-    writeFileSync(join(root, "public", "site.css"), siteCss);
-    console.log("docs: src/scss/site/site.scss -> public/site.css");
+    if (writeTextIfChanged(join(root, "public", "site.css"), siteCss)) {
+        console.log("docs: src/scss/site/site.scss -> public/site.css");
+    }
 
     for (const doc of DOCS) {
         const md = readFileSync(join(root, doc.md), "utf-8");
-        const body = rewriteLinks(marked.parse(md, { async: false }));
+        const body = rewriteLinks(marked.parse(md, { async: false }) as string);
         const html = /* html */ `<!doctype html>
 <html lang="en">
     <head>
@@ -229,12 +245,38 @@ export function buildDocs(root = process.cwd()) {
     </body>
 </html>
 `;
-        writeFileSync(join(outDir, doc.out), html);
-        console.log(`docs: ${doc.md} -> public/docs/${doc.out}`);
+        if (writeTextIfChanged(join(outDir, doc.out), html)) {
+            console.log(`docs: ${doc.md} -> public/docs/${doc.out}`);
+        }
     }
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    buildFonts(process.cwd());
-    buildDocs(process.cwd());
+/**
+ * Regenerate site assets on dev/build start so `vite dev` serves them from
+ * public/ without a separate step, and incrementally when sources change.
+ */
+export function sitegen(): Plugin {
+    let root = process.cwd();
+    return {
+        name: "storymap-sitegen",
+        configResolved(config) {
+            root = config.root;
+        },
+        buildStart() {
+            buildFonts(root);
+            buildDocs(root);
+        },
+        watchChange(id) {
+            const normalized = id.split("\\").join("/");
+            if (normalized.includes("src/scss/fonts/")) {
+                buildFonts(root);
+            } else if (
+                normalized.includes("src/scss/site/") ||
+                normalized.endsWith("README.md") ||
+                normalized.includes("/docs/")
+            ) {
+                buildDocs(root);
+            }
+        },
+    };
 }

@@ -878,21 +878,28 @@ export default class OpenLayers extends Map {
     }
 
     /**
-     * Replace a line's geometry. With `animate.duration > 0` the active line
-     * is drawn progressively, in sync with the view animation: the target
-     * path is truncated by cumulative length at the eased progress, so half
-     * way through the pan only half the route is red.
+     * Replace a line's geometry. With `animate.duration > 0` only the latest
+     * hop animates, in sync with the view animation: the already-traveled
+     * prefix stays drawn while the new segment traces progressively, so half
+     * way through the pan the old connections are fully red and only half
+     * the new hop is. Backward navigation mirrors this: the traveled prefix
+     * stays drawn while the far end pulls back along the abandoned hop.
      */
     _replaceLines(
         line: VectorLayer,
         array: LinePoint[],
-        animate?: { duration: number; retractFrom?: LinePoint[] },
+        animate?: {
+            duration: number;
+            retractFrom?: LinePoint[] | null;
+            growFrom?: LinePoint[] | null;
+        },
     ): void {
-        const pts = array.map((d) => {
+        const toLonLat = (d: LinePoint): number[] => {
             const lat = d.location ? d.location.lat : d.lat;
             const lon = d.location ? d.location.lon : d.lon;
-            return [lon, lat];
-        });
+            return [lon as number, lat as number];
+        };
+        const pts = array.map(toLonLat);
         const lons = this._unwrapLongitudes(pts.map((p) => p[0] as number));
         const unwrapped = pts.map((p, i) => [lons[i], p[1]]);
         const view_coords = this._markerCoordsToViewCoords(unwrapped);
@@ -911,35 +918,83 @@ export default class OpenLayers extends Map {
             return;
         }
 
+        // The already-traveled prefix, as a leading subsequence of the
+        // target path: verified point-by-point so the shared joint cannot
+        // drift (both go through the same unwrap + view projection).
+        // Falls back to 0 (whole-path animation) on any mismatch.
+        const leadingLength = (candidate: LinePoint[]): number => {
+            const raw = candidate.map(toLonLat);
+            if (raw.length < 1 || raw.length >= unwrapped.length) {
+                return 0;
+            }
+            const cl = this._unwrapLongitudes(raw.map((p) => p[0] as number));
+            for (let i = 0; i < raw.length; i++) {
+                if (cl[i] !== unwrapped[i][0] || raw[i][1] !== unwrapped[i][1]) {
+                    return 0;
+                }
+            }
+            return raw.length;
+        };
+
         // Retraction (backward navigation): the animation path is the route
-        // up to the previous marker (retractFrom); the drawn length shrinks
-        // from its full extent down to the new path's length — the far end
-        // pulls back from the old marker to the new one.
-        const retract_coords = animate?.retractFrom
-            ? this._markerCoordsToViewCoords(
-                  (() => {
-                      const r = (animate.retractFrom ?? []).map((d) => {
-                          const lat = d.location ? d.location.lat : d.lat;
-                          const lon = d.location ? d.location.lon : d.lon;
-                          return [lon, lat];
-                      });
-                      const rl = this._unwrapLongitudes(r.map((p) => p[0] as number));
-                      return r.map((p, i) => [rl[i], p[1]]);
-                  })(),
-              )
-            : null;
-        const retract_total = retract_coords ? this._pathLength(retract_coords) : 0;
-        const target_total = this._pathLength(view_coords);
+        // up to the previous marker (retractFrom); the traveled prefix
+        // [0..current] stays drawn while the abandoned tail shrinks back to
+        // the joint — the far end pulls back from the old marker to the new
+        // one.
+        const retract_raw = (animate?.retractFrom ?? []).map(toLonLat);
+        let tail: number[][] | null = null;
+        if (retract_raw.length > 0) {
+            const rl = this._unwrapLongitudes(retract_raw.map((p) => p[0] as number));
+            const retract_unwrapped = retract_raw.map((p, i) => [rl[i], p[1]]);
+            // The target must be the leading subsequence of the retraction
+            // path; otherwise fall back to whole-path truncation below.
+            let match = unwrapped.length >= 2 && unwrapped.length < retract_unwrapped.length;
+            for (let i = 0; match && i < unwrapped.length; i++) {
+                if (
+                    retract_unwrapped[i][0] !== unwrapped[i][0] ||
+                    retract_unwrapped[i][1] !== unwrapped[i][1]
+                ) {
+                    match = false;
+                }
+            }
+            if (match) {
+                tail = this._markerCoordsToViewCoords(retract_unwrapped).slice(
+                    unwrapped.length - 1,
+                );
+            }
+        }
+        const tail_total = tail ? this._pathLength(tail) : 0;
+
+        // Growth (forward navigation): the already-traveled prefix
+        // [0..previous] (growFrom) stays drawn while only the new hop
+        // [prev..current] traces progressively.
+        const grow_len = leadingLength(animate?.growFrom ?? []);
+        const prefix = grow_len >= 1 ? view_coords.slice(0, grow_len) : null;
+        const suffix = grow_len >= 1 ? view_coords.slice(grow_len - 1) : null;
+        const suffix_total = suffix ? this._pathLength(suffix) : 0;
 
         const easing = this.options.ease as ((t: number) => number) | undefined;
         const start_time = performance.now();
+        if (prefix) {
+            // Seed the already-traveled prefix so it stays red from frame 0
+            // (also heals a partially-drawn line when a running animation
+            // is cancelled by rapid stepping).
+            setGeometry(prefix);
+        }
         const step = (now: number) => {
             const t = Math.min(1, Math.max(0, (now - start_time) / duration));
             const eased = easing ? easing(t) : t;
-            if (retract_coords && retract_total > target_total) {
-                // pull the far end back along the retraction path
-                const drawn = retract_total - eased * (retract_total - target_total);
-                setGeometry(this._truncatePath(retract_coords, drawn));
+            if (tail && tail_total > 0) {
+                // pull the far end back along the abandoned hop
+                const drawn = tail_total - eased * tail_total;
+                const drawn_tail = this._truncatePath(tail, drawn);
+                setGeometry([...view_coords, ...drawn_tail.slice(1)]);
+                if (t >= 1) {
+                    setGeometry(view_coords);
+                }
+            } else if (prefix && suffix && suffix_total > 0) {
+                const drawn_suffix = this._truncatePath(suffix, eased * suffix_total);
+                setGeometry([...prefix, ...drawn_suffix.slice(1)]);
                 if (t >= 1) {
                     setGeometry(view_coords);
                 }
