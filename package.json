@@ -1,6 +1,6 @@
 {
     "name": "@projektemacher/storymapjs",
-    "version": "0.10.2",
+    "version": "0.10.3",
     "description": "StoryMapJS viewer library — unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
     "license": "MPL-2.0",
     "type": "module",
