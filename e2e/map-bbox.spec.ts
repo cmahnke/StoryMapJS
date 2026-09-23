@@ -2,8 +2,9 @@ import { test, expect } from "@playwright/test";
 import { harnessUrl, waitForStoryMap } from "./known-issues/helpers";
 
 /**
- * The `map_bbox` option limits the map: nothing outside of the box
- * ([west, south, east, north] lon/lat) can be visible.
+ * The `map_bbox` option limits the map: the view center is constrained to
+ * the box ([west, south, east, north] lon/lat), so the map cannot pan away
+ * from it.
  */
 test("map_bbox constrains the view", async ({ page }) => {
     // a bbox tightly around Florida

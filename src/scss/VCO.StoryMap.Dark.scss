@@ -81,8 +81,8 @@
             overflow: hidden;
 
             @include gradient-horizontal(
-                rgba(256, 256, 256, 0.0001),
-                rgba(256, 256, 256, 0.85),
+                rgba(255, 255, 255, 0.0001),
+                rgba(255, 255, 255, 0.85),
                 0%,
                 15%
             );

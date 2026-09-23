@@ -337,9 +337,11 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                 <div class="accordion-content">
                                     Set
                                     <code>map_bbox: [west, south, east, north]</code>
-                                    (lon/lat) in the options — nothing outside of the box can be
-                                    visible. For IIIF image stories the coordinates are raw image
-                                    pixels.
+                                    (lon/lat) in the options — the view center is constrained to the
+                                    box, so the map cannot pan away from it. For IIIF image stories
+                                    the coordinates are raw image pixels. To also limit the map to the
+                                    left, visible area (opaque slide panel, no gradient over the map),
+                                    set <code>map_area: "left"</code>.
                                 </div>
                             </li>
                             <li>

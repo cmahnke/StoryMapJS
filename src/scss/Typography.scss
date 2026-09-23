@@ -62,14 +62,9 @@
             color: var(--vco-color-text-muted);
             text-decoration: none;
             background-image: linear-gradient(
-                to top,
-                fade(color.adjust($color-dark, $lightness: 40%), 0%) 50%,
-                fade(color.adjust($color-dark, $lightness: 40%), 60%) 50%
-            );
-            background-image: linear-gradient(
                 to bottom,
-                fade(color.adjust($color-dark, $lightness: 40%), 0%) 50%,
-                fade(color.adjust($color-dark, $lightness: 40%), 60%) 50%
+                rgba(color.adjust($color-dark, $lightness: 40%), 0%) 50%,
+                rgba(color.adjust($color-dark, $lightness: 40%), 60%) 50%
             );
             background-repeat: repeat-x;
             background-size: 2px 2px;

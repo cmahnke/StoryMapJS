@@ -111,9 +111,17 @@ export interface StorymapOptions {
     map_access_token: string;
     map_background_color: string;
     /**
+     * Landscape map layout: `"full"` (default) spans the whole width with the
+     * slide panel fading in over it (the map view is offset so markers clear
+     * the panel); `"left"` limits the map to the left, visible half with an
+     * opaque slide panel — no offset needed, fits and constraints align with
+     * the visible area directly. Portrait layouts are unaffected.
+     */
+    map_area: "full" | "left";
+    /**
      * Limit the map to a bounding box `[west, south, east, north]` (lon/lat;
-     * raw image pixel coordinates for image-space maps). Nothing outside of
-     * the box can be visible. `null` (default) leaves the map unconstrained.
+     * raw image pixel coordinates for image-space maps). The view center is
+     * constrained to the box; `null` (default) leaves the map unconstrained.
      */
     map_bbox: number[] | null;
     /**

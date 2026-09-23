@@ -11,8 +11,10 @@ import Feature from "ol/Feature";
 import { Style, Stroke } from "ol/style";
 import { fromLonLat, toLonLat } from "ol/proj";
 import type Projection from "ol/proj/Projection";
-import { boundingExtent } from "ol/extent";
+import { boundingExtent, getIntersection } from "ol/extent";
+import type { Extent } from "ol/extent";
 import TileGrid from "ol/tilegrid/TileGrid";
+import type ImageTile from "ol/ImageTile";
 import OverviewMap from "ol/control/OverviewMap";
 import { defaults as interactionDefaults } from "ol/interaction";
 import { applyStyle } from "ol-mapbox-style";
@@ -22,6 +24,7 @@ import "ol/ol.css";
 
 import Map from "../Map";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
+import { padCroppedZoomifyTile } from "./zoomifyTiles";
 import type { LinePoint, ViewToOptions } from "../types";
 import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../types";
 import { consentManagerOf, consentMessage, type ConsentManager } from "../../storymap/Consent";
@@ -62,8 +65,13 @@ export default class OpenLayers extends Map {
         const { element: _element, view: user_view, ...passthrough } = user_map_options;
         const user_view_options = (user_view ?? {}) as Record<string, unknown>;
 
-        // bbox limitation (map_bbox): nothing outside of the box can be
-        // visible — image-space maps use raw pixel coordinates
+        // bbox limitation (map_bbox): the view center is constrained to the
+        // box (constrainOnlyCenter) — a hard extent constraint would pin the
+        // center and resolution whenever the viewport fills or aspect-clips
+        // the box, undoing the panel offset and spreading the markers out
+        // (probed: a 640x800 viewport aspect-clips a wide bbox, so the
+        // strict constraint locks the zoom and the route overflows). Image-
+        // space maps use raw pixel coordinates.
         const bbox_extent = this._bboxExtent();
 
         this._map = new OlMap({
@@ -87,7 +95,7 @@ export default class OpenLayers extends Map {
                 // world is smaller than the viewport (the original renderer
                 // showed the painting at ~487px in a 1280px window)
                 ...(this.options.map_type === "zoomify" ? { multiWorld: true } : {}),
-                ...(bbox_extent ? { extent: bbox_extent } : {}),
+                ...(bbox_extent ? { extent: bbox_extent, constrainOnlyCenter: true } : {}),
                 ...user_view_options,
             }),
         });
@@ -451,6 +459,19 @@ export default class OpenLayers extends Map {
                             num += y * gridX(z) + x;
                             return `${path}TileGroup${Math.floor(num / 256)}/${z}-${x}-${y}.jpg`;
                         },
+                        // Zoomify edge tiles are cropped to the image bounds
+                        // (e.g. a 256x19 bottom strip); OpenLayers draws the
+                        // loaded image over the whole 256x256 tile box, which
+                        // stretched those strips across the cell (the smeared
+                        // bottom in the Bosch overview, stretched right/bottom
+                        // edges in the Literary Trail). Pad them onto a full
+                        // tile canvas instead.
+                        tileLoadFunction: (tile, src) => {
+                            const imageTile = tile as ImageTile;
+                            const image = imageTile.getImage() as HTMLImageElement;
+                            image.onload = () => padCroppedZoomifyTile(imageTile, image);
+                            image.src = src;
+                        },
                     }),
                 });
             }
@@ -525,12 +546,18 @@ export default class OpenLayers extends Map {
         );
         this._tile_layer_mini = tiles_allowed ? this._createTileLayer(this.options.map_type) : null;
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
-        // Legacy zoomify maps are mercator-based: give the minimap a view
-        // constrained to the pyramid's upper levels and fit the image's
-        // mercator bounds — a fixed zoom pins it to the smallest, blurry
-        // pyramid level
+        // Legacy zoomify maps are mercator-based: the minimap fits the image's
+        // mercator bounds with a free zoom so the whole image stays visible
+        // at a downscaled (sharp) pyramid level
         const is_zoomify = this.options.map_type === "zoomify";
         const zoomify_pyramid = is_zoomify ? this._zoomifyPyramid() : null;
+        // the overview needs the pyramid's full ladder (including the R0
+        // floor below default zoom 0): fit() settles on a fractional zoom
+        // containing the whole image, which minZoom: 0 on the default ladder
+        // would clip back to a cropped upscale
+        const zoomify_resolutions = zoomify_pyramid
+            ? zoomify_pyramid.tileGrid.getResolutions()
+            : null;
         this._mini_map = new OverviewMap({
             ...(is_image_map || zoomify_pyramid
                 ? {
@@ -549,18 +576,21 @@ export default class OpenLayers extends Map {
                                         maxZoom: IMAGE_RESOLUTIONS.length - 1,
                                     }
                                   : {}),
-                              ...(zoomify_pyramid
+                              ...(zoomify_pyramid && zoomify_resolutions
                                   ? {
-                                        // pinned to the complete image: the
-                                        // shifted ladder's floor shows the
-                                        // whole image in the minimap; the
-                                        // center stays within the image
+                                        // show the whole image: the zoom stays
+                                        // free on the pyramid ladder so fit()
+                                        // settles on the fractional resolution
+                                        // containing the image bounds (a pinned
+                                        // zoom stuck the smallest, blurry
+                                        // pyramid level on screen, cropped);
+                                        // the center stays within the image
                                         // bounds
                                         constrainOnlyCenter: true,
                                         extent: zoomify_pyramid.extent,
+                                        resolutions: zoomify_resolutions,
                                         minZoom: 0,
-                                        maxZoom: 0,
-                                        zoom: 0,
+                                        maxZoom: zoomify_resolutions.length - 1,
                                         center: [
                                             (zoomify_pyramid.extent[0] +
                                                 zoomify_pyramid.extent[2]) /
@@ -587,16 +617,31 @@ export default class OpenLayers extends Map {
         this._map.addControl(this._mini_map);
 
         if (zoomify_pyramid) {
-            // show the image pyramid's extent in the minimap
+            // show the image pyramid's extent in the minimap: with the zoom
+            // free, fit() picks the fractional resolution containing the
+            // whole image, so the overview serves the smallest pyramid level
+            // downscaled (sharp) instead of a cropped upscale
             const overview_map = this._mini_map.getOverviewMap();
-            const raw_size = overview_map.getSize();
-            // the minimap may still be collapsed (no layout size yet)
-            const size = raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 150];
-            overview_map.getView().fit(zoomify_pyramid.extent, {
-                size: size,
-            });
+            const fitZoomifyMini = () => {
+                const raw_size = overview_map.getSize();
+                // the minimap starts collapsed (no layout size yet) in its
+                // 150x100 box — fall back to that until it expands
+                const size =
+                    raw_size && raw_size[0] >= 50 && raw_size[1] >= 50
+                        ? raw_size
+                        : [150, 100];
+                overview_map.getView().fit(zoomify_pyramid.extent, {
+                    size: size,
+                });
+            };
+            fitZoomifyMini();
+            // re-fit once the minimap expands: the collapsed size is unknown
+            // at creation time
+            overview_map.on("change:size", fitZoomifyMini);
         } else if (!is_zoomify && this.bounds_array && this.bounds_array.length) {
-            this._fitView(this._mini_map.getOverviewMap(), this.bounds_array);
+            // the minimap shows the story's world: with a bbox set, markers
+            // outside of the box are unreachable and must not skew the fit
+            this._fitView(this._mini_map.getOverviewMap(), this.bounds_array, 0, this._bboxExtent() !== null);
         }
 
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
@@ -734,7 +779,8 @@ export default class OpenLayers extends Map {
     }
 
     /**
-     * The View extent for the `map_bbox` option, or `null` when unset.
+     * The View extent for the `map_bbox` option, or `null` when unset. The
+     * view uses it with `constrainOnlyCenter` (see _createMap).
      */
     _bboxExtent(): number[] | null {
         const bbox = this.options.map_bbox as number[] | null | undefined;
@@ -751,7 +797,8 @@ export default class OpenLayers extends Map {
      * The slide content panel can be opaque — it then covers part of the map
      * and the effective visible area shrinks. Returns the pixel padding for
      * the covered side (right in landscape, bottom in portrait) so fits keep
-     * the story inside the visible region; transparent panels add nothing.
+     * the story inside the visible region; transparent panels and panels
+     * that do not overlap the map (map_area "left") add nothing.
      */
     _opaquePanelPadding(): [number, number, number, number] {
         const padding: [number, number, number, number] = [15, 15, 15, 15];
@@ -770,6 +817,14 @@ export default class OpenLayers extends Map {
         const map_rect = this._el.map.getBoundingClientRect();
         const panel_rect = panel.getBoundingClientRect();
         if (!map_rect.width || !panel_rect.width) return padding;
+        // the panel must actually overlap the map (it does not in the
+        // map_area "left" layout, where map and panel sit side by side)
+        const overlaps =
+            panel_rect.left < map_rect.right &&
+            panel_rect.right > map_rect.left &&
+            panel_rect.top < map_rect.bottom &&
+            panel_rect.bottom > map_rect.top;
+        if (!overlaps) return padding;
         const layout = this.options.layout;
         if (layout === "portrait") {
             padding[2] += Math.max(0, map_rect.bottom - panel_rect.top);
@@ -779,10 +834,28 @@ export default class OpenLayers extends Map {
         return padding;
     }
 
-    _fitView(ol_map: OlMap, coords: number[][], duration = 0): void {
+    /**
+     * Fit the given coordinates. With `clamp_to_bbox` (the strict bbox
+     * layout, map_area "left"), markers outside of the box are unreachable
+     * by design — they must not skew the fit target, so the extent is
+     * intersected with the box and the in-box markers compose the view.
+     */
+    _fitView(ol_map: OlMap, coords: number[][], duration = 0, clamp_to_bbox = false): void {
         if (!coords || !coords.length) return;
         const view_coords = this._markerCoordsToViewCoords(coords);
-        const extent = boundingExtent(view_coords);
+        let extent = boundingExtent(view_coords);
+        if (clamp_to_bbox) {
+            const bbox = this._bboxExtent();
+            if (bbox) {
+                const clamped = getIntersection(extent, bbox as Extent);
+                // getIntersection returns an inverted (empty) extent when the
+                // boxes are disjoint — fit the box itself in that case
+                extent =
+                    clamped[0] <= clamped[2] && clamped[1] <= clamped[3]
+                        ? clamped
+                        : (bbox as Extent);
+            }
+        }
         ol_map.getView().fit(extent, {
             size: ol_map.getSize(),
             padding: this._opaquePanelPadding(),
@@ -1383,8 +1456,10 @@ export default class OpenLayers extends Map {
                 }
             } else {
                 // fit instantly, then shift the center by the panel offset
-                // and animate there so the markers clear the story panel
-                this._fitView(this._map, this.bounds_array, 0);
+                // and animate there so the markers clear the story panel;
+                // with the strict bbox layout markers outside of the box are
+                // unreachable — they must not skew the fit target
+                this._fitView(this._map, this.bounds_array, 0, this._bboxExtent() !== null);
                 const view = this._map.getView();
                 const zoom = view.getZoom();
                 if (zoom !== undefined) {
@@ -1431,10 +1506,11 @@ export default class OpenLayers extends Map {
         const zoomify_pyramid = is_zoomify ? this._zoomifyPyramid() : null;
         if (zoomify_pyramid) {
             const raw_size = overview.getSize();
-            const size = raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 150];
+            const size =
+                raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 100];
             overview.getView().fit(zoomify_pyramid.extent, { size: size });
         } else if (this.bounds_array && this.bounds_array.length) {
-            this._fitView(overview, this.bounds_array);
+            this._fitView(overview, this.bounds_array, 0, this._bboxExtent() !== null);
         }
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
             this._fitMiniMapToImage();

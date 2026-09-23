@@ -113,7 +113,7 @@ class StorySliderBase {
             layout: "portrait",
             width: 600,
             height: 600,
-            default_bg_color: { r: 256, g: 256, b: 256 },
+            default_bg_color: { r: 255, g: 255, b: 255 },
             slide_padding_lr: 40, // padding on slide of slide
             start_at_slide: 1,
             slide_default_fade: "0%", // landscape fade
@@ -436,12 +436,6 @@ class StorySliderBase {
                     bg_percent_end +
                     ");";
                 bg_css += "background-repeat: repeat-x;";
-                bg_css +=
-                    "filter: e(%('progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)',argb(" +
-                    bg_color_rgb +
-                    ", 0.0001),argb(" +
-                    bg_color_rgb +
-                    ",0.80)));";
             } else {
                 if (bg.color_value) {
                     bg_css += "background-color:" + bg.color_value + ";";

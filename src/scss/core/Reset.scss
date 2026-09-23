@@ -199,10 +199,6 @@
         appearance: textfield;
     }
 
-    input[type="search"]::-webkit-search-decoration {
-        appearance: none; // Inner-padding issues in Chrome OSX, Safari 5
-    }
-
     textarea {
         overflow: auto; // Remove vertical scrollbar in IE6-9
         vertical-align: top; // Readability and alignment cross-browser

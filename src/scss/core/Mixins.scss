@@ -22,10 +22,6 @@
 
 // Background Color Opacity
 @mixin background-color-opacity($cr: 0, $cg: 0, $cb: 0, $opacity: 100) {
-    /* Fallback for web browsers that doesn't support RGBa */
-    background: rgb($cr, $cg, $cb) transparent;
-
-    /* RGBa with 0.6 opacity */
     background: rgba($cr, $cg, $cb, math.div($opacity, 100));
 }
 

@@ -105,6 +105,13 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 layers are rebuilt together) or line styling live. Relative tile templates
 such as <code>./tiles/{z}/{x}/{y}.png</code> are accepted, not just absolute <code>https://</code>
 URLs.</li>
+<li><strong>Left-area map layout</strong>: <code>map_area: &quot;left&quot;</code> limits the map to the left,
+visible half in landscape with an opaque slide panel (no gradient over the
+map) — the view needs no offset, so fits, <code>map_bbox</code> constraints and the
+minimap align with the visible area directly. Default: <code>&quot;full&quot;</code> (the map
+spans the whole width with the slide panel fading in over it).</li>
+<li><strong>Map bounding box</strong>: <code>map_bbox: [west, south, east, north]</code> (lon/lat; raw
+image pixels for image-space maps) constrains the view center to the box.</li>
 </ul>
 <h2>Changed options and map types</h2>
 <table>
@@ -199,9 +206,10 @@ URLs.</li>
 </tbody></table>
 <p><code>map_type: &quot;zoomify&quot;</code> is supported again (legacy): the image pyramid renders
 via the storymap data&#39;s <code>zoomify</code> options (<code>path</code>, <code>width</code>, <code>height</code>), using a
-JS warning instead of the previous removal error. Caveat: the pyramid&#39;s
-edge/remainder tiles render slightly stretched (the canvas renderer cannot
-per-tile clamp like the original Leaflet renderer). Using zoomify in a IIIF
+JS warning instead of the previous removal error. Cropped edge/remainder tiles
+are padded onto a full tile canvas before rendering (the original renderer&#39;s
+per-tile clamp), and the minimap fits the whole image on the pyramid ladder.
+Using zoomify in a IIIF
 Presentation manifest is ignored — legacy zoomify options only work with
 storymap JSON sources.</p>
 <h2>Map engine: Leaflet → OpenLayers</h2>

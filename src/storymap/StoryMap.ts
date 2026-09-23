@@ -185,6 +185,7 @@ class StoryMapBase {
             // URLs
             map_access_token: "",
             map_background_color: "#d9d9d9",
+            map_area: "full", // "left" limits the map to the visible half (landscape)
             map_bbox: null,
             consent_required: false,
             zoomify: undefined,
@@ -312,7 +313,15 @@ class StoryMapBase {
         }
 
         if (this.options.layout === "landscape") {
-            this.options.map_center_offset = { left: -200, top: 0 };
+            // map_area "left": the map is limited to the visible half with an
+            // opaque slide panel — no offset needed (the view center is the
+            // visible center already); "full" (default) offsets the view so
+            // markers clear the panel that fades in over the map
+            if (this.options.map_area !== "left") {
+                this.options.map_center_offset = { left: -200, top: 0 };
+            } else {
+                this.options.map_center_offset = { left: 0, top: 0 };
+            }
         }
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
             this.options.map_size_sticky = 2;
@@ -621,8 +630,10 @@ class StoryMapBase {
             this.options.storyslider_height = this.options.height - this.options.map_height - 1;
             this._menubar.setSticky(0);
 
-            // Portrait
+            // Portrait: the map spans the full width again (a landscape
+            // map_area "left" pass narrowed it)
             display_class += " vco-layout-portrait";
+            this._el.map.style.width = "100%";
 
             if (animate) {
                 // Animate Map
@@ -687,8 +698,18 @@ class StoryMapBase {
 
             this._el.map.style.height = this.options.height + "px";
 
-            // Update Component Displays
-            this._map.setMapOffset(-(this.options.width / 4), 0);
+            // map_area "left": the map element is limited to the left, visible
+            // half (the slide panel is opaque) — no view offset needed;
+            // "full" (default): the map spans the whole width behind the
+            // fading slide panel and the view is offset by a quarter width
+            if (this.options.map_area === "left") {
+                display_class += " vco-map-area-left";
+                this._el.map.style.width = Math.floor(this.options.width / 2) + "px";
+                this._map.setMapOffset(0, 0);
+            } else {
+                this._el.map.style.width = "100%";
+                this._map.setMapOffset(-(this.options.width / 4), 0);
+            }
 
             // StorySlider
             this._el.storyslider.style.top = "0";

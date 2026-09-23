@@ -20,19 +20,6 @@
     scrollbar-width: thin;
     scrollbar-color: $color-theme transparent;
 
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: $color-theme;
-        border-radius: 4px;
-    }
-
     //	overflow-y:auto;
     // z-index:26;
 
@@ -147,19 +134,6 @@
 // a wider scrollbar for finger input, in the same accent styling
 .vco-mobile .vco-slide {
     scrollbar-width: auto;
-
-    &::-webkit-scrollbar {
-        width: 14px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: $color-theme;
-        border-radius: 7px;
-    }
 }
 
 /* Only Media (no text)
@@ -291,15 +265,8 @@
 .vco-slide.vco-full-image-background {
     background: no-repeat center center;
     background-size: cover;
-
-    // filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.myBackground.jpg', sizingMethod='scale');
-
     background-position: center 25%;
     text-shadow: 1px 1px 2px #000;
-
-    .vco-slide-content-container {
-        // .translucent-background(#000, 0.50);
-    }
 
     p,
     h1,
