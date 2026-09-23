@@ -467,8 +467,28 @@ export default class OpenLayers extends Map {
                 }
                 return new TileLayer({ source: new OSM({ attributions: [] }) });
             }
-            default: // osm is the default now
+            default: {
+                // Relative/custom templates (./tiles/{z}/{x}/{y}.png,
+                // /tiles/{z}/..., tiles/{z}/...): render as raster XYZ so
+                // consumers on subpaths (GitLab Pages), bundlers (Vite) and
+                // the Electron kiosk server don't have to expand to an
+                // absolute http(s):// URL first. Style JSON paths without
+                // {z} render as vector styles, anything else falls back to
+                // OSM.
+                if (map_type.includes("{z}")) {
+                    return new TileLayer({
+                        source: new XYZ({
+                            url: map_type,
+                            attributions: [],
+                            crossOrigin: "anonymous",
+                        }),
+                    });
+                }
+                if (map_type.includes("/") || map_type.endsWith(".json")) {
+                    return this._createVectorStyleLayer(map_type);
+                }
                 return new TileLayer({ source: new OSM({ attributions: [] }) });
+            }
         }
     }
 
@@ -1385,6 +1405,42 @@ export default class OpenLayers extends Map {
         }
     }
 
+    /**
+     * Swap the minimap's layer for the current `map_type` (mirrors the
+     * initial `_createMiniMap` fitting: zoomify extent, IIIF image extent,
+     * otherwise the marker bounds). No-op when no minimap exists yet.
+     */
+    _refreshMiniMapLayer(): void {
+        if (!this._mini_map) return;
+        const overview = this._mini_map.getOverviewMap();
+        overview.getLayers().clear();
+        const consent = consentManagerOf(this.options);
+        const tile_service = consentMessage("consent_service_tiles", "map tiles");
+        const tiles_allowed = !(
+            this.options.consent_required &&
+            consent &&
+            !consent.isGranted(tile_service)
+        );
+        if (!tiles_allowed) {
+            this._tile_layer_mini = null;
+            return;
+        }
+        this._tile_layer_mini = this._createTileLayer(this.options.map_type);
+        overview.addLayer(this._tile_layer_mini);
+        const is_zoomify = this.options.map_type === "zoomify";
+        const zoomify_pyramid = is_zoomify ? this._zoomifyPyramid() : null;
+        if (zoomify_pyramid) {
+            const raw_size = overview.getSize();
+            const size = raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 150];
+            overview.getView().fit(zoomify_pyramid.extent, { size: size });
+        } else if (this.bounds_array && this.bounds_array.length) {
+            this._fitView(overview, this.bounds_array);
+        }
+        if (this.options.map_type === "iiif" && this.options.map_as_image) {
+            this._fitMiniMapToImage();
+        }
+    }
+
     /*	Display
 	================================================== */
     /**
@@ -1396,7 +1452,7 @@ export default class OpenLayers extends Map {
         for (const key of keys) {
             switch (key) {
                 case "map_type": {
-                    // Rebuild the tile layer for the new map type
+                    // Rebuild the main + minimap tile layers for the new type
                     if (this._tile_layer) {
                         this._map.removeLayer(this._tile_layer);
                     }
@@ -1410,6 +1466,7 @@ export default class OpenLayers extends Map {
                         this._tile_layer = this._createTileLayer(this.options.map_type);
                         this._map.addLayer(this._tile_layer);
                     }
+                    this._refreshMiniMapLayer();
                     this._el.map.style.backgroundColor = this.options.map_background_color;
                     break;
                 }

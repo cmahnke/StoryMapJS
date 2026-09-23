@@ -13,7 +13,7 @@
                 "language": { "type": "string" },
                 "map_type": {
                     "type": "string",
-                    "description": "Basemap type: osm:<style>, osm (classic raster), mapbox://styles/<user>/<style>, stadia:<style>, stamen:<style> (deprecated, remapped), https://... (tile url template or style JSON), iiif, ch-watercolor, zoomify (legacy image pyramid, needs the zoomify options)."
+                    "description": "Basemap type: osm:<style>, osm (classic raster), mapbox://styles/<user>/<style>, stadia:<style>, stamen:<style> (deprecated, remapped), tile URL template or style JSON URL (absolute https://... or relative ./tiles/{z}/{x}/{y}.png, /tiles/{z}/...), iiif, ch-watercolor, zoomify (legacy image pyramid, needs the zoomify options)."
                 },
                 "zoomify": {
                     "anyOf": [

@@ -445,7 +445,8 @@ class StoryMapBase {
     /**
      * Change a single map option at runtime and apply its effect immediately.
      *
-     * Runtime-changeable options: `map_type` (rebuilds the tile layer),
+     * Runtime-changeable options: `map_type` (rebuilds the main + minimap tile
+     * layers, keeping the overview fitted to the marker bounds),
      * `show_lines`, `line_color`, `line_color_inactive`, `line_weight`,
      * `line_opacity`, `line_dash`, `line_join`, `line_follows_path`,
      * `show_history_line` (restyled instantly), `map_center_offset` (applied on

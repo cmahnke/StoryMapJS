@@ -54,7 +54,10 @@ New capabilities:
 element, ... }` to configure the underlying OpenLayers map; `element`
   (HTMLElement or DOM id) replaces the auto-created map container.
 - **Runtime options**: `storymap.setMapOption(name, value)` /
-  `storymap.setMapOptions({...})` — e.g. switch `map_type` or line styling live.
+  `storymap.setMapOptions({...})` — e.g. switch `map_type` (main + minimap tile
+  layers are rebuilt together) or line styling live. Relative tile templates
+  such as `./tiles/{z}/{x}/{y}.png` are accepted, not just absolute `https://`
+  URLs.
 
 ## Changed options and map types
 

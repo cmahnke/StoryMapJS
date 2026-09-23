@@ -108,9 +108,17 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
 - `src/map/openlayers/Map.OpenLayers.ts` implements the Map contract
   (tile layers by `map_type`, markers as HTML overlays, path lines,
   overview fitting, mini map via `ol/control/OverviewMap`).
+- `map_type` accepts keyword types (`osm`, `osm:<style>`, `stadia:*`,
+  `ch-watercolor`, `iiif`, `zoomify`), absolute `https://` tile templates /
+  style JSON URLs, and relative templates (`./tiles/{z}/{x}/{y}.png`) for
+  same-origin tiles on subpaths/Electron. `setMapOption("map_type", ...)`
+  rebuilds main + minimap layers together (see `_refreshMiniMapLayer`).
 - `map_type: "iiif"` with `options.iiif.url` (an `info.json` URL) renders
-  IIIF Image API imagery via `ol/source/IIIF`. `map_type: "zoomify"` has
-  been removed.
+  IIIF Image API imagery via `ol/source/IIIF`. `map_type: "zoomify"` remains
+  as a legacy image-pyramid basemap.
+- Markers use the `vco-icons` font (`src/scss/icons/Icons.scss`,
+  `dist/css/icons/`); keep the `@font-face` URLs relative (`./icons/...`)
+  so subpath/bundler/Electron consumers resolve them.
 - Image maps (`map_as_image: true` with `iiif`) use an `EPSG:4326` view
   with image-pixel coordinates.
 

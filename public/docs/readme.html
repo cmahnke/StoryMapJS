@@ -105,6 +105,26 @@ nothing outside of the box can be visible:</p>
 slide content panel is opaque (a solid background that hides the map behind it),
 the initial fit accounts for the covered area so the story stays inside the
 visible region.</p>
+<h3>Custom tile templates</h3>
+<p><code>map_type</code> accepts absolute or relative tile URL templates and style JSON URLs:</p>
+<pre><code>map_type: &quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
+map_type: &quot;./tiles/{z}/{x}/{y}.png&quot;,   // same-origin, works on subpaths + Electron
+map_type: &quot;https://tiles.openfreemap.org/styles/bright&quot;,  // vector style
+</code></pre>
+<p>Any value containing <code>{z}</code> renders as a raster XYZ layer; a path without <code>{z}</code>
+that looks like a URL/path renders as a vector style layer; anything else falls
+back to classic OSM raster.</p>
+<h3>Switching the basemap at runtime</h3>
+<p><code>storymap.setMapOption(&quot;map_type&quot;, next)</code> / <code>setMapOptions({...})</code> rebuilds the
+main tile layer <strong>and</strong> the minimap (<code>ol/control/OverviewMap</code>) layer, keeping
+the overview fitted to the marker bounds (zoomify/IIIF extents preserved). The
+current slide is re-fitted after the swap.</p>
+<h3>Icons</h3>
+<p>Default pins use the bundled <code>vco-icons</code> font (<code>dist/css/icons/</code>, referenced via
+relative <code>./icons/...</code> URLs from <code>dist/css/storymap.css</code>), so pins render on
+subpath deploys, bundler consumers (Vite leaves absolute <code>/css/...</code> untouched)
+and <code>file://</code>/Electron hosts without extra configuration. Import the stylesheet
+once (<code>import &quot;@projektemacher/storymapjs/css/storymap.css&quot;</code>).</p>
 <h2>Custom HTML in slide content</h2>
 <p>Slide text is rendered as HTML: the <code>text</code> (and <code>headline</code>) fields accept
 arbitrary markup. If the text contains no <code>&lt;p&gt;</code> tag, it is wrapped in one

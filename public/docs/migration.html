@@ -101,7 +101,10 @@ fullscreen API (<code>fullscreen: false</code> hides the button).</li>
 <li><strong>Raw OpenLayers options</strong>: pass <code>map_options: { controls, interactions, view, element, ... }</code> to configure the underlying OpenLayers map; <code>element</code>
 (HTMLElement or DOM id) replaces the auto-created map container.</li>
 <li><strong>Runtime options</strong>: <code>storymap.setMapOption(name, value)</code> /
-<code>storymap.setMapOptions({...})</code> — e.g. switch <code>map_type</code> or line styling live.</li>
+<code>storymap.setMapOptions({...})</code> — e.g. switch <code>map_type</code> (main + minimap tile
+layers are rebuilt together) or line styling live. Relative tile templates
+such as <code>./tiles/{z}/{x}/{y}.png</code> are accepted, not just absolute <code>https://</code>
+URLs.</li>
 </ul>
 <h2>Changed options and map types</h2>
 <table>
