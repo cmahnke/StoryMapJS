@@ -52,7 +52,13 @@ function buildLibraryCss() {
             style: "compressed",
             loadPaths: [join(ROOT, "src/scss")],
         })
-        .css.trimEnd();
+        .css.trimEnd()
+        // Icons.scss uses the absolute public path (/css/icons/...) so vite
+        // dev serves the fonts; rewrite to relative ./icons/... for the
+        // built file so dist/ works from any subpath (base "./") and for
+        // bundler/Electron consumers of dist/css/storymap.css.
+        .replaceAll('"/css/icons/', '"./icons/')
+        .replaceAll("'/css/icons/", "'./icons/");
     // ol ships ol.css expanded; re-compress so the bundle stays minified.
     const olCss = sass
         .compileString(readFileSync(req.resolve("ol/ol.css"), "utf8"), {

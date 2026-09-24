@@ -87,19 +87,37 @@ export function buildFonts(root: string = process.cwd()): void {
         let css = result.css;
 
         // Rewrite font binary urls and copy the files
+        const missing = new Set<string>();
         css = css.replace(
             /url\((?:['"])?(\.\.?\/)?[^)"']*?([\w@.-]+\.woff2?|[\w@.-]+\.ttf)(?:['"])?\)/g,
             (m, _rel, baseName) => {
                 // skip data urls handled by regex shape already
                 const found = findFontFile(root, baseName as string);
                 if (!found) {
-                    console.warn(`  ! font binary not found: ${baseName as string}`);
+                    missing.add(baseName as string);
                     return m;
                 }
                 copyFileSync(found, join(filesDir, basename(found)));
                 return `url(files/${basename(found)})`;
             },
         );
+
+        // Drop @font-face blocks whose binaries don't exist in the installed
+        // @fontsource packages (e.g. old-standard-tt ships no 700 italic):
+        // leaving the raw @fontsource/... URL would 404 at runtime.
+        if (missing.size > 0) {
+            css = css.replace(/@font-face\s*{[^{}]*}/g, (block) => {
+                for (const name of missing) {
+                    if (block.includes(name)) {
+                        console.warn(
+                            `  ! dropping @font-face with missing binary ${name} in ${theme}`,
+                        );
+                        return "";
+                    }
+                }
+                return block;
+            });
+        }
 
         if (writeTextIfChanged(join(outDir, theme.replace(/\.scss$/, ".css")), css)) {
             console.log(`FONT CSS compiled ${theme}`);

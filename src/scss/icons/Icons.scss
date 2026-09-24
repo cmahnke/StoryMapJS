@@ -1,15 +1,17 @@
 /* Icons
 ================================================== */
 
-/* Icon font binaries ship at dist/css/icons/ via public/; URLs stay relative
-to dist/css/storymap.css so subpath, bundler and Electron consumers resolve
-them (absolute /css/... breaks default map pins there). */
+/* Icon font binaries live in public/css/icons/ (copied to dist/css/icons/ at
+build time). The source uses the absolute public path so `vite dev` serves
+them directly; buildLibraryCss() in vite.config.ts rewrites these to relative
+./icons/... for dist/css/storymap.css so subpath, bundler and Electron
+consumers keep resolving them. */
 @font-face {
     font-family: vco-icons;
     src:
-        url("./icons/vco-icons.woff2") format("woff2"),
-        url("./icons/vco-icons.woff") format("woff"),
-        url("./icons/vco-icons.ttf") format("truetype");
+        url("/css/icons/vco-icons.woff2") format("woff2"),
+        url("/css/icons/vco-icons.woff") format("woff"),
+        url("/css/icons/vco-icons.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
 }
