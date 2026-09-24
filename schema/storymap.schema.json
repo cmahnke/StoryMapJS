@@ -50,6 +50,10 @@
                         { "type": "null" }
                     ]
                 },
+                "map_area": {
+                    "type": "string",
+                    "enum": ["full", "left"]
+                },
                 "consent_required": { "type": "boolean" },
                 "map_center_offset": {
                     "type": "object",

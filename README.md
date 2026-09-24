@@ -71,14 +71,16 @@ need `icon` inside the location object.
 ### Limit the map to a bounding box
 
 Set `map_bbox` to `[west, south, east, north]` (lon/lat) to constrain the map —
-nothing outside of the box can be visible:
+the view center stays inside the box, so the map cannot pan away from it:
 
     map_bbox: [-11, 34, 32, 71],   // or null (the default) to leave the map unconstrained
 
 For image-space (IIIF) maps the coordinates are raw image pixels. When the
 slide content panel is opaque (a solid background that hides the map behind it),
 the initial fit accounts for the covered area so the story stays inside the
-visible region.
+visible region. To limit the map to the left, visible half in landscape (with
+an opaque slide panel instead of the gradient over the map), set
+`map_area: "left"` (default `"full"`).
 
 ### Custom tile templates
 

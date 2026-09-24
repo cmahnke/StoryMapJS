@@ -98,13 +98,15 @@ Use <code>image</code> inside the location object and include a url to use, toge
 need <code>icon</code> inside the location object.</p>
 <h3>Limit the map to a bounding box</h3>
 <p>Set <code>map_bbox</code> to <code>[west, south, east, north]</code> (lon/lat) to constrain the map —
-nothing outside of the box can be visible:</p>
+the view center stays inside the box, so the map cannot pan away from it:</p>
 <pre><code>map_bbox: [-11, 34, 32, 71],   // or null (the default) to leave the map unconstrained
 </code></pre>
 <p>For image-space (IIIF) maps the coordinates are raw image pixels. When the
 slide content panel is opaque (a solid background that hides the map behind it),
 the initial fit accounts for the covered area so the story stays inside the
-visible region.</p>
+visible region. To limit the map to the left, visible half in landscape (with
+an opaque slide panel instead of the gradient over the map), set
+<code>map_area: &quot;left&quot;</code> (default <code>&quot;full&quot;</code>).</p>
 <h3>Custom tile templates</h3>
 <p><code>map_type</code> accepts absolute or relative tile URL templates and style JSON URLs:</p>
 <pre><code>map_type: &quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
