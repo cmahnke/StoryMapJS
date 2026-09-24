@@ -8,6 +8,7 @@
     "author": "Christian Mahnke <194820+cmahnke@users.noreply.github.com>",
     "files": [
         "dist",
+        "src",
         "schema",
         "README.md",
         "CHANGELOG"
