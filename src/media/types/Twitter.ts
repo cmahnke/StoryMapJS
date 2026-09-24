@@ -1,7 +1,7 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
-import { loadJSONP } from "../../core/Load";
+import { loadJSONP, uniqueGlobalName } from "../../core/Load";
 
 /*	Media.Twitter
 	Produces Twitter Display
@@ -28,7 +28,7 @@ export default class Twitter extends Media {
             this.user_id = match[1];
             this.media_id = match[2];
         }
-        const callbackName = `twitterCallback_${this.media_id}`;
+        const callbackName = uniqueGlobalName(`twitterCallback_${this.media_id}`);
         const api_url = `https://api.twitter.com/1/statuses/oembed.json?id=${this.media_id}&include_entities=true&callback=${callbackName}`;
         void this._fetchEmbed(api_url, callbackName);
     }

@@ -2,10 +2,41 @@ import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
 import { getObjectAttributeByIndex } from "../../core/Util";
-import { loadJSONP } from "../../core/Load";
+import { loadJSONP, uniqueGlobalName } from "../../core/Load";
 
 /*	Media.Wikipedia
 ================================================== */
+
+const CALLBACK_PREFIX = "wikipediaCallback_";
+const MAX_ID_LENGTH = 512 - CALLBACK_PREFIX.length;
+
+/**
+ * Split a Wikipedia article URL into its decoded title and language subdomain.
+ * Underscores and percent-encoding both decode to spaces; hash fragments are
+ * stripped. Falls back to the raw path segment when decoding fails.
+ */
+export function parseWikipediaUrl(pageUrl: string): { title: string; language: string } {
+    const raw = pageUrl.split("wiki/")[1].split("#")[0];
+    const underscored = raw.replace(/_/g, " ");
+    let title: string;
+    try {
+        title = decodeURIComponent(underscored);
+    } catch {
+        title = underscored;
+    }
+    const language = pageUrl.split("//")[1].split(".wikipedia")[0];
+    return { title, language };
+}
+
+/** The deterministic part of the JSONP callback name for an article title. */
+export function wikipediaCallbackBase(title: string): string {
+    return CALLBACK_PREFIX + title.replace(/[^0-9a-z]/gi, "").slice(0, MAX_ID_LENGTH);
+}
+
+/** The MediaWiki extracts API URL for a title, wrapping its answer in `callbackName`. */
+export function wikipediaApiUrl(language: string, title: string, callbackName: string): string {
+    return `https://${language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${encodeURIComponent(title)}&exintro=1&format=json&callback=${callbackName}`;
+}
 
 export default class Wikipedia extends Media {
     declare "media_id": string;
@@ -24,15 +55,12 @@ export default class Wikipedia extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url.split("wiki/")[1].split("#")[0].replace("_", " ");
-        this.media_id = this.media_id.replace(" ", "%20");
-        const api_language = this.data.url.split("//")[1].split(".wikipedia")[0];
-
-        const callbackPrefix = "wikipediaCallback_";
-        const maxIDLength = 512 - callbackPrefix.length;
-        const callbackName =
-            callbackPrefix + this.media_id.replace(/[^0-9a-z]/gi, "").slice(0, maxIDLength);
-        const api_url = `https://${api_language}.wikipedia.org/w/api.php?action=query&prop=extracts&redirects=&titles=${this.media_id}&exintro=1&format=json&callback=${callbackName}`;
+        const { title, language } = parseWikipediaUrl(this.data.url);
+        this.media_id = title;
+        // Claim a unique global slot: same-article concurrent loads must not
+        // share one (the loser's script would call a deleted global).
+        const callbackName = uniqueGlobalName(wikipediaCallbackBase(title));
+        const api_url = wikipediaApiUrl(language, title, callbackName);
         void this._fetchExtract(api_url, callbackName);
     }
 

@@ -78,6 +78,31 @@ export interface JSONPOptions extends LoadOptions {
     timeout?: number;
 }
 
+let globalNameCounter = 0;
+
+/**
+ * Claim a free global callback slot: names derived from content (e.g. a
+ * Wikipedia article title) are not unique per request, and concurrent loads
+ * sharing a name would clobber each other's handler — delivering payloads to
+ * the wrong promise and leaving the loser's script calling a deleted global
+ * (Uncaught ReferenceError).
+ *
+ * @param base - The preferred global function name.
+ * @returns `base` when free, otherwise `base` with a numeric suffix.
+ */
+function uniqueGlobalName(base: string): string {
+    const globals = window as unknown as Record<string, unknown>;
+    if (!Object.hasOwn(globals, base)) {
+        return base;
+    }
+    let candidate: string;
+    do {
+        globalNameCounter += 1;
+        candidate = `${base}_${globalNameCounter}`;
+    } while (Object.hasOwn(globals, candidate));
+    return candidate;
+}
+
 /**
  * Load a JSONP endpoint: injects a script that calls a global function with
  * its payload, and resolves with that payload. The global is removed and the
@@ -85,6 +110,7 @@ export interface JSONPOptions extends LoadOptions {
  *
  * @param url - The full JSONP URL (must include the callback parameter).
  * @param callbackName - The global function name the endpoint will invoke.
+ *   Must be claimed via uniqueGlobalName when concurrent loads may share it.
  * @param options - Optional AbortSignal and timeout.
  * @returns Resolves with the JSONP payload, rejects on error, abort or timeout.
  */
@@ -106,9 +132,23 @@ function loadJSONP<T>(url: string, callbackName: string, options?: JSONPOptions)
             }
             options?.signal?.removeEventListener("abort", onAbort);
         };
+        // Abandon without deleting: an already-fetched script may still
+        // execute afterwards, and calling a deleted global throws an
+        // Uncaught ReferenceError. The self-deleting stub swallows it.
+        const abandon = () => {
+            settled = true;
+            clearTimeout(timer);
+            script.remove();
+            if (globals[callbackName] === onCallback) {
+                globals[callbackName] = () => {
+                    delete globals[callbackName];
+                };
+            }
+            options?.signal?.removeEventListener("abort", onAbort);
+        };
         const onAbort = () => {
             if (!settled) {
-                cleanup();
+                abandon();
                 reject(new DOMException("Load aborted", "AbortError"));
             }
         };
@@ -120,14 +160,14 @@ function loadJSONP<T>(url: string, callbackName: string, options?: JSONPOptions)
         };
         const timer = setTimeout(() => {
             if (!settled) {
-                cleanup();
+                abandon();
                 reject(new Error(`JSONP request timed out: ${url}`));
             }
         }, options?.timeout ?? 15000);
         globals[callbackName] = onCallback;
         script.onerror = () => {
             if (!settled) {
-                cleanup();
+                abandon();
                 reject(new Error(`Failed to load ${url}`));
             }
         };
@@ -137,4 +177,4 @@ function loadJSONP<T>(url: string, callbackName: string, options?: JSONPOptions)
     });
 }
 
-export { loadJS, loadCSS, loadJSONP };
+export { loadJS, loadCSS, loadJSONP, uniqueGlobalName };
