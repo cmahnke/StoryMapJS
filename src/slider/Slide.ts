@@ -12,28 +12,6 @@ import { MediaTypeMatch, StorymapSlide, StorymapSlideBackground } from "../types
 	populates the slide with content.
 ================================================== */
 
-/*	Media instance surface as used by Slide; instances are created
-	dynamically via the matched MediaTypeMatch.cls constructor. */
-interface MediaInstance {
-    addTo: (container: HTMLElement) => void;
-    loadMedia: () => void;
-    stopMedia: () => void;
-    updateDisplay: (w?: number, h?: number, l?: string) => void;
-    _state?: { loaded?: boolean };
-}
-
-interface SlideHas {
-    headline: boolean;
-    text: boolean;
-    media: boolean;
-    title: boolean;
-    background: {
-        image: boolean;
-        color: boolean;
-        color_value: string;
-    };
-}
-
 /*	Slide options: the fields Slide itself sets or reads; everything
 	else merged in from the StorySlider options is absorbed by the
 	index signature. */
@@ -49,12 +27,38 @@ interface SlideOptions {
     [key: string]: unknown;
 }
 
+/*	Media instance surface as used by Slide; instances are created
+	dynamically via the matched MediaTypeMatch.cls constructor. Media is
+	Evented — "media_loaded" signals that content heights may have changed. */
+interface MediaInstance {
+    addTo: (container: HTMLElement) => void;
+    loadMedia: () => void;
+    stopMedia: () => void;
+    updateDisplay: (w?: number, h?: number, l?: string) => void;
+    on?: EventedInstance["on"];
+    _state?: { loaded?: boolean };
+}
+
+interface SlideHas {
+    headline: boolean;
+    text: boolean;
+    media: boolean;
+    title: boolean;
+    background: {
+        image: boolean;
+        color: boolean;
+        color_value: string;
+    };
+}
+
 class SlideBase {
     declare "_el": Record<string, HTMLElement>;
     declare "_media": MediaInstance | null;
     declare "_mediaclass": unknown;
     declare "_text": Text;
     declare "_state": { loaded: boolean };
+    declare "_scroll_hint": HTMLElement | null;
+    declare "_scroll_hint_dismissed": boolean;
     declare "has": SlideHas;
     declare "title": string;
     declare "data": StorymapSlide;
@@ -88,6 +92,8 @@ class SlideBase {
         this._state = {
             loaded: false,
         };
+        this._scroll_hint = null;
+        this._scroll_hint_dismissed = false;
 
         this.has = {
             headline: false,
@@ -155,9 +161,14 @@ class SlideBase {
             if (this.data.background) {
                 this.fire("background_change", this.has.background);
             }
+            // the hint may re-appear on a revisit if the content still
+            // overflows (the dismissed flag resets per activation)
+            this._scroll_hint_dismissed = false;
             this.loadMedia();
+            this._updateScrollHint();
         } else {
             this.stopMedia();
+            this._hideScrollHint();
         }
     }
 
@@ -204,6 +215,61 @@ class SlideBase {
         this._el.container.scrollTop = 0;
     }
 
+    /*	Scroll hint
+    ================================================== */
+    /**
+     * Show a bouncing downward arrow when the slide content overflows
+     * (scrollable) — the hint of "more below" for scrollbars that are not
+     * visible until touched. Hidden after the first scroll of any kind;
+     * tappable to scroll down one step.
+     */
+    _updateScrollHint() {
+        if (!this.active || this._scroll_hint_dismissed) {
+            this._hideScrollHint();
+            return;
+        }
+        const el = this._el.container;
+        const overflows = el.scrollHeight > el.clientHeight + 1;
+        if (!overflows) {
+            this._hideScrollHint();
+            return;
+        }
+        if (!this._scroll_hint) {
+            this._scroll_hint = Dom.create(
+                "div",
+                "vco-slide-scroll-hint",
+                el,
+            );
+            this._scroll_hint.innerHTML = "<span class='vco-icon-arrow-down'></span>";
+            DomEvent.addListener(this._scroll_hint, "click", this._onScrollHintClick, this);
+        }
+        this._scroll_hint.style.display = "flex";
+    }
+
+    _hideScrollHint() {
+        if (this._scroll_hint) {
+            this._scroll_hint.style.display = "none";
+        }
+    }
+
+    _onScrollHintClick() {
+        // scroll down one step, then hide (the scroll event dismisses too)
+        const el = this._el.container;
+        el.scrollBy({ top: el.clientHeight * 0.8, behavior: "smooth" });
+        this._scroll_hint_dismissed = true;
+        this._hideScrollHint();
+    }
+
+    _onSlideScroll() {
+        // programmatic scrollToTop on preloaded (inactive) slides must not
+        // dismiss the hint
+        if (!this.active || this._scroll_hint_dismissed) {
+            return;
+        }
+        this._scroll_hint_dismissed = true;
+        this._hideScrollHint();
+    }
+
     addCallToAction(str: string) {
         this._el.call_to_action = Dom.create(
             "div",
@@ -241,6 +307,11 @@ class SlideBase {
         );
         this._el.content = Dom.create("div", "vco-slide-content", this._el.content_container);
         this._el.background = Dom.create("div", "vco-slide-background", this._el.container);
+        // first scroll of any kind hides the scroll hint (passive: the
+        // listener never prevents default)
+        this._el.container.addEventListener("scroll", this._onSlideScroll.bind(this), {
+            passive: true,
+        });
         // Style Slide Background
         if (this.data.background) {
             const background = this.data.background as StorymapSlideBackground & {
@@ -287,6 +358,9 @@ class SlideBase {
                 this.data.media,
                 this.options,
             ) as MediaInstance;
+            // loaded media changes the content height — the scroll hint
+            // may appear or disappear
+            this._media.on?.("media_loaded", () => this._updateScrollHint());
         }
 
         // Create Text
@@ -373,6 +447,9 @@ class SlideBase {
                 this._media.updateDisplay(this.options.width, this.options.height, layout);
             }
         }
+
+        // layout/resize changes move the overflow boundary
+        this._updateScrollHint();
     }
 }
 

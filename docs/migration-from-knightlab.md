@@ -65,6 +65,10 @@ element, ... }` to configure the underlying OpenLayers map; `element`
   spans the whole width with the slide panel fading in over it).
 - **Map bounding box**: `map_bbox: [west, south, east, north]` (lon/lat; raw
   image pixels for image-space maps) constrains the view center to the box.
+- **Scroll hint**: when a slide's content overflows, a bouncing downward
+  arrow appears at the bottom center of the slide (all devices) — tapping it
+  scrolls one step down; it hides after the first scroll. Touch scrollbars
+  are rendered wider with a visible track for contrast.
 
 ## Changed options and map types
 
