@@ -171,6 +171,7 @@
                         "caption": { "type": ["string", "null"] },
                         "credit": { "type": ["string", "null"] },
                         "thumb": { "type": "string" },
+                        "alt": { "type": "string" },
                         "srcset": { "type": "string" },
                         "sizes": { "type": "string" },
                         "mediatype": { "type": ["object", "null"] }

@@ -1,4 +1,4 @@
-import { mergeData, slideTransitionDuration, updateData } from "../core/Util";
+import { mergeData, slideTransitionDuration, updateData, prefersReducedMotion } from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
@@ -669,7 +669,12 @@ class StoryMapBase {
         }
         const target = e.target as HTMLElement | null;
         const tag = target?.tagName?.toLowerCase();
-        if (tag === "input" || tag === "textarea" || tag === "select" || target?.isContentEditable) {
+        if (
+            tag === "input" ||
+            tag === "textarea" ||
+            tag === "select" ||
+            target?.isContentEditable
+        ) {
             return;
         }
         // let OpenLayers keep arrow-key map panning when the map has focus
@@ -687,6 +692,10 @@ class StoryMapBase {
 
     // Update View
     _updateDisplay(map_height?: number, animate?: boolean, d?: number) {
+        // prefers-reduced-motion: glides collapse to instant size changes
+        if (animate && prefersReducedMotion()) {
+            animate = false;
+        }
         let duration = this.options.duration,
             display_class = this.options.base_class;
 
@@ -854,7 +863,8 @@ class StoryMapBase {
     _startAutoplay() {
         this._stopAutoplay();
         this._autoplay_stopped = false;
-        if (this.options.autoplay > 0) {
+        // prefers-reduced-motion: no autoplay (WCAG 2.2.2)
+        if (this.options.autoplay > 0 && !prefersReducedMotion()) {
             // any user interaction stops autoplay permanently
             const stop = () => {
                 this._autoplay_stopped = true;

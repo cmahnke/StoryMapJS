@@ -75,12 +75,30 @@ export default class Image extends Media {
         const media_width = Number(this.options.width) || 0;
         const sized = iiifSizedUrl(this.data.url, media_width);
         img.src = sized ?? this.data.url;
+        // accessibility: explicit alt text, falling back to the caption as
+        // plain text; an empty string marks a decorative image
+        img.alt = this._altText();
         if (this.data.srcset) {
             img.srcset = this.data.srcset as string;
         }
         if (this.data.sizes) {
             img.sizes = this.data.sizes as string;
         }
+    }
+
+    _altText(): string {
+        const alt = this.data.alt as string | undefined;
+        if (alt !== undefined && alt !== "") {
+            return alt;
+        }
+        const caption = this.data.caption as string | null | undefined;
+        if (caption) {
+            return caption
+                .replace(/<[^>]*>/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+        return "";
 
         this.onLoaded();
     }

@@ -233,31 +233,40 @@ class MenuBarBase {
     _initLayout() {
         // Create Layout
 
-        // Buttons
-        this._el.button_overview = Dom.create("span", "vco-menubar-button", this._el.container);
+        // Buttons — real <button> elements for keyboard/AT operability
+        // (issue #385 wave); class styling carries the look
+        this._el.button_overview = Dom.create("button", "vco-menubar-button", this._el.container);
+        this._el.button_overview.setAttribute("type", "button");
         DomEvent.addListener(this._el.button_overview, "click", this._onButtonOverview, this);
         if (this.options.show_overview === false) {
             this._el.button_overview.style.display = "none";
         }
 
-        this._el.button_backtostart = Dom.create("span", "vco-menubar-button", this._el.container);
+        this._el.button_backtostart = Dom.create(
+            "button",
+            "vco-menubar-button",
+            this._el.container,
+        );
+        this._el.button_backtostart.setAttribute("type", "button");
         DomEvent.addListener(this._el.button_backtostart, "click", this._onButtonBackToStart, this);
         if (this.options.show_back_to_start === false) {
             this._el.button_backtostart.style.display = "none";
         }
 
         // Fullscreen toggle (hidden via CSS/display when disabled by options)
-        this._el.button_fullscreen = Dom.create("span", "vco-menubar-button", this._el.container);
+        this._el.button_fullscreen = Dom.create("button", "vco-menubar-button", this._el.container);
+        this._el.button_fullscreen.setAttribute("type", "button");
         DomEvent.addListener(this._el.button_fullscreen, "click", this._onButtonFullscreen, this);
         if (this.options.fullscreen === false) {
             this._el.button_fullscreen.style.display = "none";
         }
 
         this._el.button_collapse_toggle = Dom.create(
-            "span",
+            "button",
             "vco-menubar-button",
             this._el.container,
         );
+        this._el.button_collapse_toggle.setAttribute("type", "button");
         DomEvent.addListener(
             this._el.button_collapse_toggle,
             "click",

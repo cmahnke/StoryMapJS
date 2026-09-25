@@ -1,4 +1,11 @@
-import { mergeData, unique_ID, findArrayNumberByUniqueID, parseCssColor, slideTransitionDuration } from "../core/Util";
+import {
+    mergeData,
+    unique_ID,
+    findArrayNumberByUniqueID,
+    parseCssColor,
+    slideTransitionDuration,
+    prefersReducedMotion,
+} from "../core/Util";
 import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
@@ -82,10 +89,10 @@ class StorySliderBase {
         // DOM ELEMENTS
         this._el = {
             container: {} as HTMLElement,
-            background: {} as HTMLElement,
             slider_container_mask: {} as HTMLElement,
             slider_container: {} as HTMLElement,
             slider_item_container: {} as HTMLElement,
+            live_region: {} as HTMLElement,
         };
 
         this._nav = {
@@ -255,7 +262,7 @@ class StorySliderBase {
                 this._swipable.stopMomentum();
             }
 
-            if (fast) {
+            if (fast || prefersReducedMotion()) {
                 this._el.slider_container.style.left = -(this.slide_spacing * n) + "px";
                 this._onSlideChange(displayupdate);
             } else {
@@ -272,6 +279,14 @@ class StorySliderBase {
             // Set Slide Active State
             if (this._slides.length > 0) {
                 this._slides[this.current_slide].setActive(true);
+            }
+
+            // Announce the slide change to assistive tech (issue #385 wave):
+            // the headline or the slide number, replacing the previous text
+            if (this._el.live_region) {
+                const headline = this._slides[this.current_slide]?.title;
+                this._el.live_region.textContent =
+                    headline || `Slide ${this.current_slide + 1} of ${this._slides.length}`;
             }
 
             // Preload the next slide's media right away so its load clock,
@@ -578,6 +593,12 @@ class StorySliderBase {
             "vco-slider-item-container",
             this._el.slider_container,
         );
+
+        // Accessibility: a polite live region announcing slide changes to
+        // screen readers (visually hidden)
+        this._el.live_region = Dom.create("div", "vco-sr-only", this._el.container) as HTMLElement;
+        this._el.live_region.setAttribute("aria-live", "polite");
+        this._el.live_region.setAttribute("role", "status");
 
         // Update Size
         this.options.width = this._el.container.offsetWidth;

@@ -305,6 +305,9 @@ function buildCanvasTerms(slide) {
     if (present(slide.media?.credit)) {
         terms["storymap:mediaCredit"] = slide.media.credit;
     }
+    if (present(slide.media?.alt)) {
+        terms["storymap:mediaAlt"] = slide.media.alt;
+    }
     if (present(slide.date)) {
         terms["storymap:date"] = slide.date;
     }

@@ -30,6 +30,7 @@
         "background": "storymap:background",
         "mediaCaption": "storymap:mediaCaption",
         "mediaCredit": "storymap:mediaCredit",
+        "mediaAlt": "storymap:mediaAlt",
         "date": "storymap:date"
     }
 }

@@ -31,6 +31,14 @@
         background: $color-theme;
         color: $color-background;
     }
+
+    // keyboard focus parity with the hover state
+    &:focus-visible {
+        background: $color-theme;
+        color: $color-background;
+        outline: 2px solid $color-theme;
+        outline-offset: -2px;
+    }
 }
 
 .vco-mobile {

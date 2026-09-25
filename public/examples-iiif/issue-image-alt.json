@@ -1,0 +1,78 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/issue-image-alt",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-image-alt"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-image-alt/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-image-alt/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-image-alt/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/issue-image-alt/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Accessible images"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Explicit alt text on the overview image."
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCaption": "<p>The caption stays HTML.</p>",
+            "storymap:mediaAlt": "Portrait-oriented placeholder photograph"
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-image-alt/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

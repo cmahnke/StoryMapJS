@@ -231,15 +231,17 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
         if (text !== "") slide.text.text = text;
     }
 
-    // media: painting annotation body plus the caption/credit extension terms
+    // media: painting annotation body plus the caption/credit/alt extension terms
     const mediaUrl = readPaintingBodyUrl(record);
     const caption = asString(readTerm(record, "mediaCaption"));
     const credit = asString(readTerm(record, "mediaCredit"));
-    if (mediaUrl !== null || caption !== null || credit !== null) {
+    const alt = asString(readTerm(record, "mediaAlt"));
+    if (mediaUrl !== null || caption !== null || credit !== null || alt !== null) {
         const media: StorymapSlideMedia = {};
         if (mediaUrl !== null) media.url = mediaUrl;
         if (caption !== null) media.caption = caption;
         if (credit !== null) media.credit = credit;
+        if (alt !== null) media.alt = alt;
         slide.media = media;
     }
 

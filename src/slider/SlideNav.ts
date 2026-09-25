@@ -181,6 +181,13 @@ class SlideNavBase {
     }
 
     _initLayout() {
+        // Accessibility (issue #385 wave): the nav container is operable by
+        // keyboard — focusable, announced as a button, Enter/Space activate
+        this._el.container.setAttribute("role", "button");
+        this._el.container.setAttribute("tabindex", "0");
+        const label = this.options.direction === "next" ? "Next slide" : "Previous slide";
+        this._el.container.setAttribute("aria-label", label);
+
         // Create Layout
         this._el.content_container = Dom.create(
             "div",
@@ -188,6 +195,7 @@ class SlideNavBase {
             this._el.container,
         );
         this._el.icon = Dom.create("div", "vco-slidenav-icon", this._el.content_container);
+        this._el.icon.setAttribute("aria-hidden", "true");
         this._el.title = Dom.create("div", "vco-slidenav-title", this._el.content_container);
         this._el.description = Dom.create(
             "div",
@@ -202,6 +210,15 @@ class SlideNavBase {
 
     _initEvents() {
         DomEvent.addListener(this._el.container, "click", this._onMouseClick, this);
+        DomEvent.addListener(this._el.container, "keydown", this._onKeyDown, this);
+    }
+
+    _onKeyDown(e: Event) {
+        const key = (e as KeyboardEvent).key;
+        if (key === "Enter" || key === " " || key === "Spacebar") {
+            e.preventDefault();
+            this._onMouseClick();
+        }
     }
 }
 
