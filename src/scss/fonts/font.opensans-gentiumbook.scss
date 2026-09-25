@@ -9,6 +9,11 @@
     $subsets: (
         latin,
         latin-ext,
+        cyrillic,
+        cyrillic-ext,
+        greek,
+        greek-ext,
+        vietnamese,
     ),
     $formats: woff2
 );

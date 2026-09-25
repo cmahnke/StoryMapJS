@@ -10,6 +10,7 @@
     $subsets: (
         latin,
         latin-ext,
+        vietnamese,
     ),
     $formats: woff2
 );
@@ -21,6 +22,10 @@
     $subsets: (
         latin,
         latin-ext,
+        cyrillic,
+        cyrillic-ext,
+        greek,
+        vietnamese,
     ),
     $formats: woff2
 );
