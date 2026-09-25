@@ -373,6 +373,20 @@ class StoryMapBase {
         this._onDataLoaded();
     }
 
+    /*  Switch the UI language at runtime, without a page reload.
+    ================================================== */
+
+    refreshLanguage(code: string): void {
+        this.options.language = code;
+        setLanguage(code);
+        // the resolved locale decides the layout direction (issues #211, #245)
+        this.options.language = Language as unknown as string;
+        if (this._menubar && typeof this._menubar.refreshLabels === "function") {
+            this._menubar.refreshLabels();
+        }
+        this.updateDisplay();
+    }
+
     /*  Load the font theme stylesheet
     ================================================== */
     async _loadFontCss() {

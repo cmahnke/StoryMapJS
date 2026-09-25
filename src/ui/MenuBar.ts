@@ -26,6 +26,7 @@ class MenuBarBase {
     declare "options": MenuBarOptions;
     declare "animator": Record<string, unknown>;
     declare "fire": EventedInstance["fire"];
+    _fullscreenActive = false;
 
     /*	Constructor
 	================================================== */
@@ -105,12 +106,38 @@ class MenuBarBase {
      * Reflect the fullscreen state in the button label/icon.
      */
     setFullscreenState(active: boolean): void {
+        this._fullscreenActive = active;
         const icon = active ? "vco-icon-resize-small" : "vco-icon-resize-full";
         if (Browser.mobile) {
             this._el.button_fullscreen.innerHTML = `<span class='${icon}'></span>`;
         } else {
             const label = active ? Language.buttons.exit_fullscreen : Language.buttons.fullscreen;
             this._el.button_fullscreen.innerHTML = `${label} <span class='${icon}'></span>`;
+        }
+    }
+
+    /**
+     * Repaint every text label from the active language (see `setLanguage`).
+     * Icon-only mobile buttons carry no text and are left untouched.
+     */
+    refreshLabels(): void {
+        if (Browser.mobile) {
+            return;
+        }
+        if (this.options.map_as_image) {
+            this._el.button_overview.innerHTML = Language.buttons.overview;
+        } else {
+            this._el.button_overview.innerHTML = Language.buttons.map_overview;
+        }
+        this._el.button_backtostart.innerHTML =
+            Language.buttons.backtostart + " <span class='vco-icon-goback'></span>";
+        this.setFullscreenState(this._fullscreenActive);
+        if (this.collapsed) {
+            this._el.button_collapse_toggle.innerHTML =
+                Language.buttons.uncollapse_toggle + "<span class='vco-icon-arrow-down'></span>";
+        } else {
+            this._el.button_collapse_toggle.innerHTML =
+                Language.buttons.collapse_toggle + "<span class='vco-icon-arrow-up'></span>";
         }
     }
 

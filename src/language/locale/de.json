@@ -12,7 +12,9 @@
         "backtostart": "Zurück zum Anfang",
         "collapse_toggle": "Karte ausblenden",
         "uncollapse_toggle": "Karte anzeigen",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Vollbild",
+        "exit_fullscreen": "Vollbild beenden"
     },
     "direction": "ltr"
 }

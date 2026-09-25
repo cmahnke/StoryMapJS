@@ -80,11 +80,14 @@ function getLanguage(code: string): Record<string, unknown> {
     );
     for (const k in EN) {
         if (lang[k]) {
-            if (typeof EN[k] == "object") {
-                lang[k] = Object.assign(EN[k] as object, lang[k]);
+            if (typeof EN[k] == "object" && EN[k] !== null && typeof lang[k] == "object") {
+                // fresh object: never mutate the shared English default,
+                // otherwise one setLanguage() call would poison every later
+                // lookup (and every other language falling back to English)
+                lang[k] = Object.assign({}, EN[k] as object, lang[k]);
             }
         } else {
-            lang[k] = EN[k];
+            lang[k] = structuredClone(EN[k]);
         }
     }
     return lang;
