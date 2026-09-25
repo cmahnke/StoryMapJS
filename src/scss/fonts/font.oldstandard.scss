@@ -4,8 +4,25 @@
 @use "font.base" as base;
 @include fontsource.faces(
     $metadata: old_standard_tt.$metadata,
-    $weights: all,
-    $styles: all,
+    $weights: (
+        400,
+        700,
+    ),
+    $styles: normal,
+    $subsets: (
+        latin,
+        latin-ext,
+    ),
+    $formats: woff2
+);
+
+// Old Standard TT ships no 700 italic upstream: the faces mixin emits the
+// weights x styles product, so request 400 italic separately instead of
+// $styles: all (which would reference a nonexistent binary).
+@include fontsource.faces(
+    $metadata: old_standard_tt.$metadata,
+    $weights: 400,
+    $styles: italic,
     $subsets: (
         latin,
         latin-ext,
