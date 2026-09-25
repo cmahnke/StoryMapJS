@@ -1,0 +1,186 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/issue-358-iframe",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-358-iframe"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-358-iframe/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-358-iframe/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-358-iframe/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-358-iframe/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Extra iframe media in text"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-358-iframe/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-358-iframe/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-358-iframe/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "<p>An extra video below the primary media:</p><iframe src=\"https://example.com/embed/123\" width=\"560\" height=\"315\" frameborder=\"0\" allowfullscreen></iframe>"
+                            },
+                            "target": "https://example.org/storymap/issue-358-iframe/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Iframe in text"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<p>An extra video below the primary media:</p><iframe src=\"https://example.com/embed/123\" width=\"560\" height=\"315\" frameborder=\"0\" allowfullscreen></iframe>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-358-iframe/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-358-iframe/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                2.35,
+                                48.85
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-358-iframe/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-358-iframe/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-358-iframe/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "<p>Scripts and handlers never execute:</p><script>window.__smXss358 = true;</script><p><a href=\"javascript:alert(1)\">bad link</a></p><iframe src=\"javascript:alert(1)\"></iframe>"
+                            },
+                            "target": "https://example.org/storymap/issue-358-iframe/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Unsafe markup is neutralized"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<p>Scripts and handlers never execute:</p><script>window.__smXss358 = true;</script><p><a href=\"javascript:alert(1)\">bad link</a></p><iframe src=\"javascript:alert(1)\"></iframe>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-358-iframe/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-358-iframe/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -0.12,
+                                51.5
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-358-iframe/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

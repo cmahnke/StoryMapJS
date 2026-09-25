@@ -1,0 +1,150 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/zoomify-clamp",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "zoomify-clamp"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/zoomify-clamp/canvas/1",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/zoomify-clamp/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/zoomify-clamp/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/zoomify-clamp/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Zoomify clamp fixture"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Local 600x400 image pyramid with cropped edge tiles."
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/zoomify-clamp/canvas/2",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/zoomify-clamp/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/zoomify-clamp/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/zoomify-clamp/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Bottom-right detail"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Marker over the cropped right/bottom edge tiles."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/zoomify-clamp/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/zoomify-clamp/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -21.796875000000007,
+                                59.5343180010956
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 5,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/zoomify-clamp/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapAsImage": true,
+            "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+            "storymap:mapType": "iiif"
+        }
+    ]
+}
