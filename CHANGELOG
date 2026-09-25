@@ -16,6 +16,17 @@ Viewer-only restructure of the repository:
 - Dropped code for pre-2022 browsers: XHR -> fetch, removed vendor detection, engine workarounds, pollers,
   minEmoji sprite polyfill and Knight Lab tracking
 - Bug fixes: null-offset crashes, IIIF source races, unique-id generation, swipe direction check, empty-block cleanup
+- Stacked raster overlays with per-layer presentation (opacity, visibility,
+  attribution, className, blendMode, lon/lat extent), runtime setters and
+  setMapOption rebuild; minimap overview constraint via overview_extent
+- Slide transition events (transitionstart/transitionend), guaranteed goTo
+  change events, opt-in global keyboard navigation
+- Runtime language switching without reload (MenuBar.refreshLabels,
+  StoryMap.refreshLanguage); locale fallback no longer mutates English;
+  German fullscreen labels
+- Attribution refresh on basemap switch (+setExtraAttributions); route
+  lines pinned above rebuilt tile layers; font_css resolves page-relative;
+  slide colors accept any CSS color
 
 0.9.5 (2025-11-05)
 * Implement basic Audio and Video media types

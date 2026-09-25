@@ -80,7 +80,7 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 | Bundled `map_access_token`                    | removed — pass `map_access_token` in the options if you use Mapbox/Stadia tiles                                                                                  |
 | Bundled Flickr API key                        | removed — pass `api_key_flickr` in the options if you use `flickr.com/photos` API URLs                                                                           |
 | `relative_date: true` (moment.js)             | removed — format dates in the story text                                                                                                                         |
-| `font_css: "stock:<name>"` (or a path)        | unchanged, plus the font files ship via `@fontsource-utils/scss`; no separate font CSS link needed                                                               |
+| `font_css: "stock:<name>"` (or a path)        | paths now resolve against the page URL (not the library location), plus the font files ship via `@fontsource-utils/scss`; no separate font CSS link needed       |
 
 ## Removed globals and exports
 
