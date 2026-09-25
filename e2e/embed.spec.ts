@@ -52,6 +52,26 @@ test("embed page honors start_at_slide", async ({ page }) => {
         .toBe("#slide-2");
 });
 
+test("embed page honors autoplay", async ({ page }) => {
+    await page.goto("/embed/index.html?url=examples%2Fkatrina.json&autoplay=600");
+
+    // autoplay advances past the first slide without any interaction
+    await expect
+        .poll(() => page.evaluate(() => window.location.hash), { timeout: 20_000 })
+        .toBe("#slide-1");
+});
+
+test("embed page ignores an invalid autoplay parameter", async ({ page }) => {
+    await page.goto("/embed/index.html?url=examples%2Fkatrina.json&autoplay=banana");
+
+    // no autoplay timer is scheduled: the initial slide sticks
+    await expect
+        .poll(() => page.evaluate(() => window.location.hash), { timeout: 20_000 })
+        .toBe("#slide-0");
+    await page.waitForTimeout(3000);
+    await expect(await page.evaluate(() => window.location.hash)).toBe("#slide-0");
+});
+
 test("embed page without url shows an input to open a storymap", async ({ page }) => {
     const pageErrors: string[] = [];
     page.on("pageerror", (err) => pageErrors.push(String(err)));

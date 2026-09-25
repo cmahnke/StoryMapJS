@@ -261,6 +261,23 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                             <li>
                                 <input type="checkbox" checked />
                                 <i></i>
+                                <h3>Can the storymap play automatically?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Set the <code>autoplay</code> option to the number of
+                                        milliseconds each slide stays on screen (also available as
+                                        an embed URL parameter):
+                                    </p>
+                                    <pre><code>/embed/index.html?url=my-storymap.json&amp;autoplay=5000</code></pre>
+                                    <p>
+                                        Playback stops at the last slide, and any click, tap or
+                                        keypress hands control back to the viewer.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
                                 <h3>How can I have a map without lines between points?</h3>
                                 <div class="accordion-content">
                                     Set <code>show_lines: false</code> in the storymap options (or

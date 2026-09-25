@@ -97,6 +97,12 @@
     const getStartSlide = () =>
         urlParams.has("start_at_slide") ? parseInt(urlParams.get("start_at_slide"), 10) : 0;
 
+    // slide duration in milliseconds; missing or invalid values disable autoplay
+    const getAutoplay = () => {
+        const value = parseInt(urlParams.get("autoplay"), 10);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+    };
+
     const onStoryMapTitle = (e) => {
         document.title = "StoryMapJS: " + e.title;
     };
@@ -105,7 +111,7 @@
         if (!data || !data.storymap) {
             return;
         }
-        const options = { start_at_slide: getStartSlide() };
+        const options = { start_at_slide: getStartSlide(), autoplay: getAutoplay() };
         // font theme loading is handled by the library (data.font_css / stock:default)
         storymap = new StoryMap("storymap-embed", data, options, {
             title: onStoryMapTitle,
