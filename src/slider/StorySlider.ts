@@ -1,4 +1,4 @@
-import { mergeData, unique_ID, findArrayNumberByUniqueID, parseCssColor } from "../core/Util";
+import { mergeData, unique_ID, findArrayNumberByUniqueID, parseCssColor, slideTransitionDuration } from "../core/Util";
 import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
@@ -245,8 +245,7 @@ class StorySliderBase {
             // computes the very same value to keep both in sync
             const previous_slide = this.current_slide;
             this.current_slide = n;
-            const steps = Math.abs(n - previous_slide);
-            const transition_duration = Math.max(600, Math.min(1000 + steps * 120, 2000));
+            const transition_duration = slideTransitionDuration(previous_slide, n);
 
             // Stop animation
             if (this.animator) {

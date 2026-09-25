@@ -91,6 +91,12 @@ export interface StorymapOptions {
     ease: unknown;
     dragging: boolean;
     trackResize: boolean;
+    /**
+     * Navigate slides with arrow keys anywhere on the page (default false:
+     * arrows only work when the slide panel has focus). Form elements and
+     * the map itself (which pans) are always skipped. Read at construction.
+     */
+    keyboard: boolean;
     /** Re-fetch the source file on every load, bypassing caches (issue #417) */
     nocache: boolean;
     /** Advance slides automatically every N milliseconds; 0 disables (issue #380) */

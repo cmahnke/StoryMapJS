@@ -253,6 +253,16 @@ export function parseCssColor(value: string): { r: number; g: number; b: number 
     return named ? { r: named[0], g: named[1], b: named[2] } : null;
 }
 
+/**
+ * Glide duration for a slide jump, scaled with the distance so out-of-order
+ * navigation glides instead of flicking. Shared by the slider and the map
+ * so both animations stay in sync, and exposed for transition events.
+ */
+export function slideTransitionDuration(from: number, to: number): number {
+    const steps = Math.abs(to - from);
+    return Math.max(600, Math.min(1000 + steps * 120, 2000));
+}
+
 export function htmlify(str: string): string {
     //if (str.match(/<\s*p[^>]*>([^<]*)<\s*\/\s*p\s*>/)) {
     if (str.match(/<p>[\s\S]*?<\/p>/)) {

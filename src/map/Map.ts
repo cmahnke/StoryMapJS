@@ -1,4 +1,4 @@
-import { mergeData } from "../core/Util";
+import { mergeData, slideTransitionDuration } from "../core/Util";
 import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { Browser } from "../core/Browser";
@@ -189,8 +189,7 @@ class MapBase {
 
             // Scale the transition duration with the jump distance so that
             // out-of-order navigation glides instead of flicking
-            const steps = Math.abs(n - previous_marker);
-            this._transition_duration = Math.max(600, Math.min(1000 + steps * 120, 2000));
+            this._transition_duration = slideTransitionDuration(previous_marker, n);
 
             const marker = this._markers[this.current_marker];
 

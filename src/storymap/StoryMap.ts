@@ -1,4 +1,4 @@
-import { mergeData, updateData } from "../core/Util";
+import { mergeData, slideTransitionDuration, updateData } from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
@@ -74,6 +74,7 @@ class StoryMapBase {
     declare "animator_map": AnimationHandle | null;
     declare "animator_storyslider": AnimationHandle | null;
     declare "_autoplay_timer": ReturnType<typeof setTimeout> | null;
+    declare "_transition_timer": ReturnType<typeof setTimeout> | null;
     declare "_autoplay_stopped": boolean;
     declare "_hash_initialized": boolean;
     /** the data source was a IIIF Presentation manifest (legacy zoomify options are ignored) */
@@ -190,6 +191,7 @@ class StoryMapBase {
             // interaction
             dragging: true,
             trackResize: true,
+            keyboard: false,
             nocache: false,
             autoplay: 0,
             show_progress: false,
@@ -247,6 +249,7 @@ class StoryMapBase {
         this._resize_observer = null;
         this._resize_timer = null;
         this._autoplay_timer = null;
+        this._transition_timer = null;
         this._autoplay_stopped = false;
         this._hash_initialized = false;
 
@@ -458,14 +461,36 @@ class StoryMapBase {
         // out-of-range indices are ignored: they would desync the slider and
         // map (no active slide) and write a broken #slide-N bookmark
         if (n >= 0 && n < (this.data?.slides?.length ?? 0) && n !== this.current_slide) {
+            const duration = slideTransitionDuration(this.current_slide, n);
             this.current_slide = n;
             this._storyslider.goTo(this.current_slide);
             this._map.goTo(this.current_slide);
-            // programmatic navigation bypasses the change-event guards
+            this._beginTransition(duration);
+            // programmatic navigation reports outward like interaction does;
+            // the bubbled slider/map change events below are dropped by
+            // their equality guards, so this fires exactly once
+            this.fire("change", { current_slide: this.current_slide }, this);
             this._syncHash();
             this._scheduleAutoplay();
             this._updateProgress();
         }
+    }
+
+    /**
+     * Announce a slide transition: `transitionstart` now (with the glide
+     * duration both animations were started with) and `transitionend` once
+     * it elapses. Restarts on every navigation, so only the latest
+     * transition ever ends.
+     */
+    _beginTransition(duration: number): void {
+        if (this._transition_timer) {
+            clearTimeout(this._transition_timer);
+        }
+        this.fire("transitionstart", { current_slide: this.current_slide, duration }, this);
+        this._transition_timer = setTimeout(() => {
+            this._transition_timer = null;
+            this.fire("transitionend", { current_slide: this.current_slide }, this);
+        }, duration);
     }
 
     /**
@@ -627,8 +652,36 @@ class StoryMapBase {
         // Map Events
         this._map.on("change", this._onMapChange, this);
 
+        // Global slide navigation (opt-in): the slider only listens on its
+        // own panel, which needs focus
+        if (this.options.keyboard) {
+            window.addEventListener("keydown", this._onKeyDownGlobal.bind(this));
+        }
+
         // Fullscreen state
         document.addEventListener("fullscreenchange", this._onFullscreenChange.bind(this));
+    }
+
+    _onKeyDownGlobal(e: KeyboardEvent) {
+        if (e.defaultPrevented) {
+            return;
+        }
+        const target = e.target as HTMLElement | null;
+        const tag = target?.tagName?.toLowerCase();
+        if (tag === "input" || tag === "textarea" || tag === "select" || target?.isContentEditable) {
+            return;
+        }
+        // let OpenLayers keep arrow-key map panning when the map has focus
+        if (target instanceof Element && target.closest(".vco-map")) {
+            return;
+        }
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+            e.preventDefault();
+            this._storyslider.next();
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+            e.preventDefault();
+            this._storyslider.previous();
+        }
     }
 
     // Update View
@@ -923,8 +976,10 @@ class StoryMapBase {
 
     _onSlideChange(e: { current_slide: number }) {
         if (this.current_slide !== e.current_slide) {
+            const duration = slideTransitionDuration(this.current_slide, e.current_slide);
             this.current_slide = e.current_slide;
             this._map.goTo(this.current_slide);
+            this._beginTransition(duration);
             this.fire("change", { current_slide: this.current_slide }, this);
             this._syncHash();
             this._scheduleAutoplay();
@@ -934,8 +989,10 @@ class StoryMapBase {
 
     _onMapChange(e: { current_marker: number }) {
         if (this.current_slide !== e.current_marker) {
+            const duration = slideTransitionDuration(this.current_slide, e.current_marker);
             this.current_slide = e.current_marker;
             this._storyslider.goTo(this.current_slide);
+            this._beginTransition(duration);
             this.fire("change", { current_slide: this.current_slide }, this);
             this._syncHash();
             this._scheduleAutoplay();
