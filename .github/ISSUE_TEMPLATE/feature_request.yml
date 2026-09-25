@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest an idea for the viewer.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+    - type: textarea
+      id: problem
+      attributes:
+          label: Problem / motivation
+          description: What is missing, and who is it for?
+          placeholder: As a story author I want ... so that ...
+      validations:
+          required: true
+    - type: textarea
+      id: proposal
+      attributes:
+          label: Proposed solution
+          description: How should it work?
+          placeholder: Add a `map_as_image` style option that ...
+      validations:
+          required: true
+    - type: textarea
+      id: alternatives
+      attributes:
+          label: Alternatives considered
+          description: Other approaches you thought about.
+    - type: input
+      id: upstream
+      attributes:
+          label: Upstream reference (optional)
+          description: Does the original Knight Lab StoryMapJS have this? Link it if so.
+          placeholder: https://github.com/NUKnightLab/StoryMapJS/issues/...

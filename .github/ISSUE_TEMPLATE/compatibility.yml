@@ -1,0 +1,70 @@
+name: Compatibility report
+description: A storymap that works in the original Knight Lab viewer behaves differently here.
+title: "[Compat]: "
+labels: ["compatibility"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Use this template for backward-compatibility gaps with the original
+              [Knight Lab StoryMapJS](https://github.com/NUKnightLab/StoryMapJS).
+              Please verify both sides first: the upstream viewer
+              (`https://storymap.knightlab.com/`) and the deployed embed page:
+
+              `https://cmahnke.github.io/StoryMapJS/embed/index.html?url=<your-storymap.json>`
+    - type: textarea
+      id: upstream-behavior
+      attributes:
+          label: Upstream behavior
+          description: What does the original Knight Lab viewer do with this storymap?
+          placeholder: Knight Lab renders the palais slide with a tilted image; link to the published storymap if public.
+      validations:
+          required: true
+    - type: textarea
+      id: fork-behavior
+      attributes:
+          label: Behavior in this fork
+          description: What does this viewer do instead?
+          placeholder: The slide image is missing / the map centers elsewhere.
+      validations:
+          required: true
+    - type: input
+      id: storymap-url
+      attributes:
+          label: Storymap JSON URL
+          description: Link to the storymap.json file (or a gist) showing the difference.
+          placeholder: https://example.com/my-storymap.json
+    - type: textarea
+      id: storymap-json
+      attributes:
+          label: Storymap JSON
+          description:
+              Paste a minimal storymap.json that shows the difference (see schema/ for the format).
+              At least one of URL or pasted JSON is required.
+          placeholder: |
+              ```json
+              {
+                "storymap": {
+                  ...
+                }
+              }
+              ```
+    - type: input
+      id: embed-link
+      attributes:
+          label: Embed test link
+          description: Full link to the deployed embed page showing the difference, e.g.
+              https://cmahnke.github.io/StoryMapJS/embed/index.html?url=<your-storymap.json>.
+          placeholder: https://cmahnke.github.io/StoryMapJS/embed/index.html?url=...
+    - type: input
+      id: version
+      attributes:
+          label: Version / commit
+          description: Released version (npm) or commit hash you tested with.
+          placeholder: v0.10.6 / main @ <sha>
+    - type: input
+      id: browser
+      attributes:
+          label: Browser / environment
+          description: Browser, version and OS.
+          placeholder: Firefox 141 on macOS

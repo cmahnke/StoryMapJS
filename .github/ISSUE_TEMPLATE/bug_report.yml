@@ -1,0 +1,79 @@
+name: Bug report
+description: Something in the viewer does not work as expected.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for reporting! Please test your storymap in the deployed embed page first:
+
+              `https://cmahnke.github.io/StoryMapJS/embed/index.html?url=<your-storymap.json>`
+
+              and paste the full embed link you tested with below.
+    - type: textarea
+      id: description
+      attributes:
+          label: What went wrong?
+          description: A clear description of the bug.
+          placeholder: The third slide never loads its image; the map stays grey.
+      validations:
+          required: true
+    - type: textarea
+      id: reproduction
+      attributes:
+          label: Steps to reproduce
+          description: How can we see the bug?
+          placeholder: |
+              1. Open the embed link below
+              2. Click through to slide 3
+              3. See the missing image
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: Expected behavior
+          description: What did you expect to happen instead?
+      validations:
+          required: true
+    - type: input
+      id: storymap-url
+      attributes:
+          label: Storymap JSON URL
+          description: Link to the storymap.json file that shows the bug (or a gist).
+          placeholder: https://example.com/my-storymap.json
+    - type: textarea
+      id: storymap-json
+      attributes:
+          label: Storymap JSON
+          description:
+              Paste a minimal storymap.json that reproduces the bug (see schema/ for the format).
+              At least one of URL or pasted JSON is required.
+          placeholder: |
+              ```json
+              {
+                "storymap": {
+                  ...
+                }
+              }
+              ```
+    - type: input
+      id: embed-link
+      attributes:
+          label: Embed test link
+          description: Full link to the deployed embed page reproducing the bug, e.g.
+              https://cmahnke.github.io/StoryMapJS/embed/index.html?url=<your-storymap.json>.
+          placeholder: https://cmahnke.github.io/StoryMapJS/embed/index.html?url=...
+    - type: input
+      id: version
+      attributes:
+          label: Version / commit
+          description: Released version (npm) or commit hash you tested with.
+          placeholder: v0.10.6 / main @ <sha>
+    - type: input
+      id: browser
+      attributes:
+          label: Browser / environment
+          description: Browser, version and OS.
+          placeholder: Firefox 141 on macOS

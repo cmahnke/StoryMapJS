@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+    - name: Documentation (README, migration guide, IIIF docs)
+      url: https://github.com/cmahnke/StoryMapJS/tree/main/docs
+      about: Check the docs first — migration notes and the JSON schema answer most setup questions.
+    - name: Upstream Knight Lab repository
+      url: https://github.com/NUKnightLab/StoryMapJS/issues
+      about: Bugs in the original Knight Lab StoryMapJS (authoring tool, upstream viewer) belong upstream, not here.
