@@ -1,4 +1,4 @@
-import { mergeData, unique_ID, findArrayNumberByUniqueID, hexToRgb } from "../core/Util";
+import { mergeData, unique_ID, findArrayNumberByUniqueID, parseCssColor } from "../core/Util";
 import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import { DomEvent } from "../dom/DomEvent";
@@ -391,7 +391,8 @@ class StorySliderBase {
         const _bg_old = this._el.background.getAttribute("style");
 
         if (bg.color_value) {
-            bg_color = hexToRgb(bg.color_value);
+            // any CSS color; unparseable values fall back to the default
+            bg_color = parseCssColor(bg.color_value) || this.options.default_bg_color;
         } else {
             bg_color = this.options.default_bg_color;
         }

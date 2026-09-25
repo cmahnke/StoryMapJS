@@ -1,4 +1,4 @@
-import { mergeData, updateData, urljoin } from "../core/Util";
+import { mergeData, updateData } from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
@@ -16,6 +16,27 @@ import type { Map as OlMap } from "ol";
 import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
 
 type StoryMapListener = (e: unknown) => void;
+
+/**
+ * Resolve a `font_css` value to an absolute stylesheet URL.
+ *
+ * - `stock:<name>` resolves against the library location.
+ * - Absolute URLs pass through untouched.
+ * - Anything else resolves against the page URL, so hosts can reference
+ *   themes vendored into their own public dir (e.g. "fonts/font.css").
+ */
+export function resolveFontCssUrl(font: string): string {
+    if (font.startsWith("stock:")) {
+        const font_name = font.split(":")[1] || "default";
+        // resolved against the library location: one directory up from
+        // src/main.ts (dev) and js/storymap.js (build) in both cases
+        return new URL("../css/fonts/font." + font_name + ".css", import.meta.url).href;
+    }
+    if (!/^(http|https|\/\/)/.test(font)) {
+        return new URL(font, document.baseURI).href;
+    }
+    return font;
+}
 
 /**
  * Interactive StoryMap viewer.
@@ -393,15 +414,7 @@ class StoryMapBase {
         // only genuinely external URLs ask for consent: stock: themes and
         // relative paths resolve to same-origin / library assets
         const original = this.options.font_css || "stock:default";
-        let font = original;
-        if (font.startsWith("stock:")) {
-            const font_name = font.split(":")[1] || "default";
-            // resolved against the library location: one directory up from
-            // src/main.ts (dev) and js/storymap.js (build) in both cases
-            font = new URL("../css/fonts/font." + font_name + ".css", import.meta.url).href;
-        } else if (!/^(http|https|\/\/)/.test(font)) {
-            font = urljoin(this.options.script_path, font);
-        }
+        const font = resolveFontCssUrl(original);
         const manager = consentManagerOf(this.options);
         const external = /^(http|https|\/\/)/.test(original);
         if (external && this.options.consent_required && manager) {
