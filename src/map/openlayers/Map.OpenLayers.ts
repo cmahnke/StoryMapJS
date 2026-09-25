@@ -273,7 +273,7 @@ export default class OpenLayers extends Map {
                 layer.getClassName = () => className;
             }
             if (entry.extent) {
-                const extent = this._overlayExtent(entry.extent);
+                const extent = this._lonLatBboxToExtent(entry.extent);
                 if (extent) {
                     layer.setExtent(extent);
                 }
@@ -286,10 +286,18 @@ export default class OpenLayers extends Map {
     }
 
     /**
-     * Convert an overlay lon/lat clip box to view units. Only meaningful on
-     * mercator maps; image-space maps (iiif/zoomify) ignore the extent.
+     * Convert a lon/lat clip box to view units. Only meaningful on
+     * mercator maps; image-space maps (iiif/zoomify) and malformed
+     * boxes yield null (no constraint).
      */
-    _overlayExtent(bbox: [number, number, number, number]): Extent | null {
+    _lonLatBboxToExtent(bbox: [number, number, number, number]): Extent | null {
+        if (
+            !Array.isArray(bbox) ||
+            bbox.length !== 4 ||
+            bbox.some((n) => typeof n !== "number" || !isFinite(n))
+        ) {
+            return null;
+        }
         if (this._map.getView().getProjection().getCode() !== "EPSG:3857") {
             return null;
         }
@@ -731,6 +739,13 @@ export default class OpenLayers extends Map {
         const zoomify_resolutions = zoomify_pyramid
             ? zoomify_pyramid.tileGrid.getResolutions()
             : null;
+        // Constrain a standard mercator overview to an explicit lon/lat box
+        // (overview_extent); image maps keep their own views below. Without
+        // a constraint the default overview view roams the whole world.
+        const overview_extent =
+            !is_image_map && !zoomify_pyramid && this.options.overview_extent
+                ? this._lonLatBboxToExtent(this.options.overview_extent)
+                : null;
         this._mini_map = new OverviewMap({
             ...(is_image_map || zoomify_pyramid
                 ? {
@@ -777,6 +792,19 @@ export default class OpenLayers extends Map {
                           });
                           return view;
                       })(),
+                  }
+                : {}),
+            ...(overview_extent
+                ? {
+                      view: new View({
+                          projection: this._map.getView().getProjection(),
+                          center: [
+                              (overview_extent[0] + overview_extent[2]) / 2,
+                              (overview_extent[1] + overview_extent[3]) / 2,
+                          ],
+                          extent: overview_extent,
+                          constrainOnlyCenter: false,
+                      }),
                   }
                 : {}),
             layers: this._tile_layer_mini ? [this._tile_layer_mini] : [],

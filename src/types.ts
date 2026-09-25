@@ -132,6 +132,12 @@ export interface StorymapOptions {
      */
     map_bbox: number[] | null;
     /**
+     * Constrain the minimap overview to a bounding box `[west, south, east,
+     * north]` in lon/lat (mercator maps only); `null` (default) leaves the
+     * overview unconstrained.
+     */
+    overview_extent: [number, number, number, number] | null;
+    /**
      * Legacy zoomify image pyramid (map_type: "zoomify"): the tiles are
      * placed at the standard mercator tile positions, stretched from the
      * world's top-left corner.

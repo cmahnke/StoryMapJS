@@ -127,6 +127,7 @@ class MapBase {
             map_subdomains: "",
             map_access_token: "",
             overlays: [],
+            overview_extent: null,
             iiif: {
                 url: "",
                 attribution: "",
