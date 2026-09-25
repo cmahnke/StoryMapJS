@@ -133,12 +133,14 @@ export default class OpenLayers extends Map {
         this._line = this._createLine();
         this._line.setStyle(this._lineStyle(this.options.line_color_inactive));
         this._addLineToMap(this._line);
+        this._line.setZIndex(10);
         this._line.setOpacity(this.options.line_opacity);
 
         // Create Active Line
         this._line_active = this._createLine();
         this._line_active.setStyle(this._lineStyle(this.options.line_color));
         this._addLineToMap(this._line_active);
+        this._line_active.setZIndex(11);
         this._line_active.setOpacity(1);
 
         if (this.options.map_as_image) {
@@ -151,12 +153,38 @@ export default class OpenLayers extends Map {
         interactions.forEach((i) => this._map.addInteraction(i));
 
         // Attribution
-        const attribution = this._getAttribution(this.options.map_type);
-        if (attribution) {
-            this._el.map.insertAdjacentHTML(
-                "beforeend",
-                `<div class="vco-map-attribution">${attribution}</div>`,
-            );
+        this._updateAttribution();
+    }
+
+    /** Extra attribution fragments (e.g. overlay credits), always listed last. */
+    declare "_extra_attributions": string[];
+
+    /**
+     * Append extra attribution fragments and refresh the line. Hosts with
+     * custom layers use this instead of rewriting `.vco-map-attribution`.
+     */
+    setExtraAttributions(parts: string[]): void {
+        this._extra_attributions = [...parts];
+        this._updateAttribution();
+    }
+
+    /**
+     * (Re)render the attribution line for the current map type. Called at
+     * creation and on every `map_type` switch, which previously left the
+     * initial text stale.
+     */
+    _updateAttribution(): void {
+        const extras = this._extra_attributions ?? [];
+        const parts = [this._getAttribution(this.options.map_type), ...extras]
+            .filter(Boolean)
+            .join(" | ");
+        let el = this._el.map.querySelector(".vco-map-attribution") as HTMLElement | null;
+        if (!el) {
+            this._el.map.insertAdjacentHTML("beforeend", `<div class="vco-map-attribution"></div>`);
+            el = this._el.map.querySelector(".vco-map-attribution") as HTMLElement | null;
+        }
+        if (el) {
+            el.innerHTML = parts;
         }
     }
 
@@ -180,6 +208,10 @@ export default class OpenLayers extends Map {
      */
     _addTileLayer(): void {
         this._tile_layer = this._createTileLayer(this.options.map_type);
+        // explicit stack order (base tiles 0, overlays 1.., route lines
+        // 10/11): the switch path re-adds the tile layer last, which used
+        // to bury the route lines under fresh tiles
+        this._tile_layer.setZIndex(0);
         this._map.addLayer(this._tile_layer);
     }
 
@@ -1540,9 +1572,11 @@ export default class OpenLayers extends Map {
                         !consent.isGranted(tile_service)
                     )) {
                         this._tile_layer = this._createTileLayer(this.options.map_type);
+                        this._tile_layer.setZIndex(0);
                         this._map.addLayer(this._tile_layer);
                     }
                     this._refreshMiniMapLayer();
+                    this._updateAttribution();
                     this._el.map.style.backgroundColor = this.options.map_background_color;
                     break;
                 }
