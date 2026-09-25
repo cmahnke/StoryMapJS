@@ -482,16 +482,31 @@ class StoryMapBase {
      * Change a single map option at runtime and apply its effect immediately.
      *
      * Runtime-changeable options: `map_type` (rebuilds the main + minimap tile
-     * layers, keeping the overview fitted to the marker bounds),
-     * `show_lines`, `line_color`, `line_color_inactive`, `line_weight`,
-     * `line_opacity`, `line_dash`, `line_join`, `line_follows_path`,
-     * `show_history_line` (restyled instantly), `map_center_offset` (applied on
-     * the next navigation), `duration`, `ease`, `calculate_zoom`,
-     * `map_background_color`. All other options only take effect on the next
-     * navigation or require re-creating the StoryMap.
+     * layers, keeping the overview fitted to the marker bounds), `overlays`
+     * (rebuilds the stacked overlay layers), `show_lines`, `line_color`,
+     * `line_color_inactive`, `line_weight`, `line_opacity`, `line_dash`,
+     * `line_join`, `line_follows_path`, `show_history_line` (restyled
+     * instantly), `map_center_offset` (applied on the next navigation),
+     * `duration`, `ease`, `calculate_zoom`, `map_background_color`. All other
+     * options only take effect on the next navigation or require re-creating
+     * the StoryMap.
      */
     setMapOption(name: string, value: unknown) {
         this.setMapOptions({ [name]: value } as Partial<StorymapOptions>);
+    }
+
+    /**
+     * Show or hide a stacked overlay by index (see the `overlays` option).
+     */
+    setOverlayVisible(index: number, visible: boolean): void {
+        this._map.setOverlayVisible(index, visible);
+    }
+
+    /**
+     * Set a stacked overlay's opacity by index (see the `overlays` option).
+     */
+    setOverlayOpacity(index: number, opacity: number): void {
+        this._map.setOverlayOpacity(index, opacity);
     }
 
     /**

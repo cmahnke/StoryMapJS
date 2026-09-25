@@ -51,6 +51,8 @@ export default class OpenLayers extends Map {
     declare "_tile_layer_mini": TileLayer | null;
     declare "_mini_map": OverviewMap;
     declare "_markers": OpenLayersMapMarker[];
+    /** App-level stacked overlays (see the `overlays` option) */
+    declare "_overlay_layers": TileLayer[];
     /** rAF handle of the running active-line draw animation */
     declare "_line_animation": number | null;
 
@@ -148,6 +150,10 @@ export default class OpenLayers extends Map {
             this._line.setVisible(false);
         }
 
+        // Stacked raster overlays (base tiles 1.., below the route lines)
+        this._overlay_layers = [];
+        this._buildOverlays();
+
         // Native interactions (pan/zoom), no scroll zoom by default
         const interactions = interactionDefaults({ mouseWheelZoom: false });
         interactions.forEach((i) => this._map.addInteraction(i));
@@ -197,6 +203,9 @@ export default class OpenLayers extends Map {
                 "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
             );
         }
+        if (this.options.attribution) {
+            parts.push(this.options.attribution);
+        }
         return parts.join(" | ");
     }
 
@@ -224,12 +233,144 @@ export default class OpenLayers extends Map {
         }
     }
 
+    /*	Stacked overlays (the `overlays` option)
+    ================================================== */
+    /**
+     * (Re)build the stacked raster overlays from the `overlays` option.
+     * Overlays sit above the base tiles (z 1..n) and below the route lines
+     * (z 10/11); every entry accepts any `map_type` value plus declarative
+     * presentation, so hosts no longer capture and patch layer objects.
+     */
+    _buildOverlays(): void {
+        for (const layer of this._overlay_layers) {
+            this._map.removeLayer(layer);
+        }
+        this._overlay_layers = [];
+        const consent = consentManagerOf(this.options);
+        const tile_service = consentMessage("consent_service_tiles", "map tiles");
+        if (
+            this.options.consent_required &&
+            consent &&
+            !consent.isGranted(tile_service)
+        ) {
+            return;
+        }
+        const overlays = this.options.overlays ?? [];
+        overlays.forEach((entry, i) => {
+            const layer = this._createTileLayer(entry.map_type);
+            layer.setZIndex(1 + i);
+            if (entry.opacity !== undefined) {
+                layer.setOpacity(entry.opacity);
+            }
+            if (entry.visible !== undefined) {
+                layer.setVisible(entry.visible);
+            }
+            if (entry.className) {
+                // OpenLayers exposes no className setter; overriding the
+                // per-frame getClassName hook paints this layer into its own
+                // container div, which blend modes can then target
+                const className = entry.className;
+                layer.getClassName = () => className;
+            }
+            if (entry.extent) {
+                const extent = this._overlayExtent(entry.extent);
+                if (extent) {
+                    layer.setExtent(extent);
+                }
+            }
+            this._map.addLayer(layer);
+            this._overlay_layers.push(layer);
+            this._paintOverlayBlend(entry);
+        });
+        this._syncOverlayAttributions();
+    }
+
+    /**
+     * Convert an overlay lon/lat clip box to view units. Only meaningful on
+     * mercator maps; image-space maps (iiif/zoomify) ignore the extent.
+     */
+    _overlayExtent(bbox: [number, number, number, number]): Extent | null {
+        if (this._map.getView().getProjection().getCode() !== "EPSG:3857") {
+            return null;
+        }
+        return boundingExtent([fromLonLat([bbox[0], bbox[1]]), fromLonLat([bbox[2], bbox[3]])]);
+    }
+
+    /**
+     * Apply an overlay's blend mode to its layer container. The container
+     * div only exists once the layer has rendered, so retry on later
+     * frames (bounded: rendering settles within a frame or two of any
+     * add/visibility change).
+     */
+    _paintOverlayBlend(
+        entry: { className?: string; blendMode?: string },
+        retries = 60,
+    ): void {
+        if (!entry.blendMode || !entry.className) {
+            return;
+        }
+        // OpenLayers replaces the container class wholesale (it is not
+        // merged with the default), so match every safe token instead of
+        // assuming a lone class name
+        const tokens = entry.className.split(/\s+/).filter((token) => /^[\w-]+$/.test(token));
+        if (tokens.length === 0) {
+            return;
+        }
+        const el = this._el.map.querySelector("." + tokens.join("."));
+        if (el) {
+            (el as HTMLElement).style.mixBlendMode = entry.blendMode;
+            return;
+        }
+        // the container div only exists once the layer has rendered
+        if (retries > 0) {
+            requestAnimationFrame(() => this._paintOverlayBlend(entry, retries - 1));
+        }
+    }
+
+    /** Refresh the attribution line with the visible overlays' credits. */
+    _syncOverlayAttributions(): void {
+        const overlays = this.options.overlays ?? [];
+        const parts: string[] = [];
+        this._overlay_layers.forEach((layer, i) => {
+            const credit = overlays[i]?.attribution;
+            if (credit && layer.getVisible()) {
+                parts.push(credit);
+            }
+        });
+        this.setExtraAttributions(parts);
+    }
+
+    /** Number of stacked overlay layers (see the `overlays` option). */
+    getOverlayCount(): number {
+        return this._overlay_layers.length;
+    }
+
+    /** Show or hide a stacked overlay by index (re-syncs attribution). */
+    setOverlayVisible(index: number, visible: boolean): void {
+        const layer = this._overlay_layers[index];
+        if (!layer) {
+            return;
+        }
+        layer.setVisible(visible);
+        const entry = (this.options.overlays ?? [])[index];
+        if (entry && visible) {
+            this._paintOverlayBlend(entry);
+        }
+        this._syncOverlayAttributions();
+    }
+
+    /** Set a stacked overlay's opacity by index. */
+    setOverlayOpacity(index: number, opacity: number): void {
+        this._overlay_layers[index]?.setOpacity(opacity);
+    }
+
     /**
      * Map tiles were allowed: attach the main tile layer, create the
      * minimap's deferred layer if it was withheld, then re-fit.
      */
     _onTilesAllowed(): void {
         this._addTileLayer();
+        this._buildOverlays();
         if (!this._tile_layer_mini) {
             this._tile_layer_mini = this._createTileLayer(this.options.map_type);
         }
@@ -1578,6 +1719,11 @@ export default class OpenLayers extends Map {
                     this._refreshMiniMapLayer();
                     this._updateAttribution();
                     this._el.map.style.backgroundColor = this.options.map_background_color;
+                    break;
+                }
+                case "overlays": {
+                    // Rebuild the stacked overlays from the new option value
+                    this._buildOverlays();
                     break;
                 }
                 case "show_lines":

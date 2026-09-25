@@ -126,6 +126,7 @@ class MapBase {
             map_background_color: "#d9d9d9",
             map_subdomains: "",
             map_access_token: "",
+            overlays: [],
             iiif: {
                 url: "",
                 attribution: "",

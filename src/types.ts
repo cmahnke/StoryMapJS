@@ -105,6 +105,13 @@ export interface StorymapOptions {
     map_overview_center: { lat: number; lon: number } | null;
     map_type: string;
     attribution: string;
+    /**
+     * Stacked raster overlays above the base map, below the route lines.
+     * Each entry accepts any `map_type` value (XYZ template, `osm:style`,
+     * …) plus per-layer presentation; see StorymapOverlayLayer. Empty
+     * (default) means base map only.
+     */
+    overlays: StorymapOverlayLayer[];
     map_mini: boolean;
     map_subdomains: string;
     map_as_image: boolean;
@@ -199,6 +206,34 @@ export interface AnimationHandle {
 }
 
 // ---------- map ----------
+
+/**
+ * A stacked raster overlay above the base map (StorymapOptions.overlays).
+ * Presentation is declarative: hosts no longer need to reach into the
+ * layer objects for blend modes, clips or stacking tweaks.
+ */
+export interface StorymapOverlayLayer {
+    /** Any `map_type` value the tile layer factory accepts */
+    map_type: string;
+    /** Layer opacity 0..1 (default 1) */
+    opacity?: number;
+    /** Initial visibility (default true) */
+    visible?: boolean;
+    /** Extra attribution fragment, listed while the overlay is visible */
+    attribution?: string;
+    /**
+     * CSS class for the layer container. OpenLayers paints every layer
+     * with the same class into one shared div/canvas, so a distinct
+     * class isolates this layer (e.g. for blend modes). The class
+     * replaces the default wholesale, so keep the `ol-layer` token
+     * (e.g. `"ol-layer historic-sheet"`) unless you know why not.
+     */
+    className?: string;
+    /** CSS mix-blend-mode for the layer container (needs className) */
+    blendMode?: string;
+    /** Clip box `[west, south, east, north]` in lon/lat (mercator maps) */
+    extent?: [number, number, number, number];
+}
 
 /** OpenLayers passthrough options (see StorymapOptions.map_options) */
 export interface StorymapMapOptions {
