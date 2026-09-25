@@ -16,6 +16,64 @@
       padding: 0;
       margin: 0;
     }
+    #storymap-embed {
+      width: 100%;
+      height: 100%;
+    }
+    .storymap-url-prompt {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #333;
+      font-family: sans-serif;
+    }
+    .storymap-url-card {
+      width: 100%;
+      max-width: 480px;
+      text-align: left;
+    }
+    .storymap-url-card h1 {
+      font-size: 1.25rem;
+      margin: 0 0 8px;
+    }
+    .storymap-url-card p {
+      margin: 0 0 12px;
+    }
+    .storymap-url-card label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    .storymap-url-row {
+      display: flex;
+      gap: 8px;
+    }
+    .storymap-url-card input {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      font-size: 1rem;
+      border: 1px solid #999;
+      border-radius: 4px;
+    }
+    .storymap-url-card button {
+      padding: 8px 16px;
+      font-size: 1rem;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background-color: #333;
+      color: #fff;
+      cursor: pointer;
+    }
+    .storymap-url-error {
+      margin-top: 8px;
+      color: #a00;
+    }
   </style>
 </head>
 
@@ -71,10 +129,71 @@
         document.getElementById("storymap-embed").append(el);
     };
 
+    const showUrlPrompt = (message) => {
+        const container = document.getElementById("storymap-embed");
+        container.innerHTML = "";
+        const el = document.createElement("div");
+        el.className = "storymap-url-prompt";
+        const card = document.createElement("div");
+        card.className = "storymap-url-card";
+        const heading = document.createElement("h1");
+        heading.textContent = "Open a StoryMap";
+        const hint = document.createElement("p");
+        hint.textContent =
+            message || "Enter the URL of a storymap.json file to view it here.";
+        const form = document.createElement("form");
+        form.id = "storymap-url-form";
+        const label = document.createElement("label");
+        label.setAttribute("for", "storymap-url-input");
+        label.textContent = "Storymap JSON URL";
+        const row = document.createElement("div");
+        row.className = "storymap-url-row";
+        const input = document.createElement("input");
+        input.id = "storymap-url-input";
+        input.name = "url";
+        // type="text" (not "url") so relative storymap paths like
+        // "examples/katrina.json" pass native form validation; validity is
+        // checked via new URL(value, siteRoot) on submit instead.
+        input.type = "text";
+        input.inputMode = "url";
+        input.required = true;
+        input.placeholder = "https://example.com/storymap.json";
+        input.autocomplete = "off";
+        input.spellcheck = false;
+        const button = document.createElement("button");
+        button.type = "submit";
+        button.textContent = "Open storymap";
+        const error = document.createElement("p");
+        error.id = "storymap-url-error";
+        error.className = "storymap-url-error";
+        error.hidden = true;
+        row.append(input, button);
+        form.append(label, row, error);
+        card.append(heading, hint, form);
+        el.append(card);
+        container.append(el);
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const value = input.value.trim();
+            if (!value) {
+                return;
+            }
+            try {
+                // validate + resolve like the viewer fetch below (supports
+                // relative, root-relative and absolute URLs)
+                new URL(value, siteRoot);
+            } catch {
+                error.textContent = "Please enter a valid URL to a storymap.json file.";
+                error.hidden = false;
+                return;
+            }
+            urlParams.set("url", value);
+            window.location.search = urlParams.toString();
+        });
+    };
+
     if (!urlParam) {
-        showEmbedError(
-            "No storymap url given. Append ?url=<storymap.json> to the embed url.",
-        );
+        showUrlPrompt();
     } else {
         fetch(new URL(urlParam, siteRoot).href)
             .then((response) => {

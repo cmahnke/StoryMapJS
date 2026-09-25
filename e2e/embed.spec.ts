@@ -51,3 +51,28 @@ test("embed page honors start_at_slide", async ({ page }) => {
         .poll(() => page.evaluate(() => window.location.hash), { timeout: 20_000 })
         .toBe("#slide-2");
 });
+
+test("embed page without url shows an input to open a storymap", async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on("pageerror", (err) => pageErrors.push(String(err)));
+
+    await page.goto("/embed/index.html");
+
+    await expect(page.locator("#storymap-url-form")).toBeVisible();
+    await expect(page.locator("#storymap-url-input")).toBeVisible();
+    await expect(page.locator("#storymap-embed .vco-slide")).toHaveCount(0);
+
+    await page.locator("#storymap-url-input").fill("examples/katrina.json");
+    await page.locator("#storymap-url-form button[type=submit]").click();
+
+    await expect
+        .poll(
+            () =>
+                page.evaluate(() => document.querySelectorAll("#storymap-embed .vco-slide").length),
+            { timeout: 20_000, message: "waiting for slides to render after url submit" },
+        )
+        .toBeGreaterThan(0);
+
+    expect(new URL(page.url()).searchParams.get("url")).toBe("examples/katrina.json");
+    expect(pageErrors, "uncaught exceptions on the embed page").toEqual([]);
+});
