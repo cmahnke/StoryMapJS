@@ -1,5 +1,8 @@
 dist/*
 
+# Generated docs (built from docs/*.md by plugins/sitegen.ts)
+public/docs/*.html
+
 # Playwright
 test-results/
 playwright-report/
