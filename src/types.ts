@@ -1,4 +1,6 @@
 // Shared types for the StoryMapJS codebase.
+import type { Tile as TileLayer } from "ol/layer";
+import type Source from "ol/source/Source";
 
 // ---------- Storymap data (exchange format) ----------
 
@@ -67,6 +69,16 @@ export interface StorymapDataWrapper {
 
 // ---------- StoryMap / Map options ----------
 
+/**
+ * Custom tile layer/source factory (see
+ * `StorymapOptions.tile_source_factory`). `createDefault` runs the
+ * built-in `map_type` handling, so a factory can decorate or delegate.
+ */
+export type TileSourceFactory = (
+    map_type: string,
+    context: { options: StorymapOptions; createDefault: () => TileLayer },
+) => TileLayer | Source | null | undefined;
+
 export interface StorymapOptions {
     width: number;
     height: number;
@@ -110,6 +122,15 @@ export interface StorymapOptions {
     /** Override the overview fit center (issues #107, #271) */
     map_overview_center: { lat: number; lon: number } | null;
     map_type: string;
+    /**
+     * Custom OpenLayers tile layer/source factory (issue #473): consulted
+     * by the tile layer factory before the built-in `map_type` switch, for
+     * every base, overlay and minimap layer. Return a `TileLayer` (or a
+     * bare `Source`, auto-wrapped in one) for custom handling — e.g. WMS —
+     * or `null`/`undefined` to fall through to the default types.
+     * Constructor- and runtime-only: functions cannot ride storymap JSON.
+     */
+    tile_source_factory: TileSourceFactory | null;
     attribution: string;
     /**
      * Stacked raster overlays above the base map, below the route lines.

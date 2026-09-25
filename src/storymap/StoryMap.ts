@@ -199,6 +199,7 @@ class StoryMapBase {
             text_align: "left",
             map_overview_center: null,
             map_type: "", // "osm:standard",
+            tile_source_factory: null,
             attribution: "",
             map_mini: true,
             map_subdomains: "",

@@ -120,6 +120,54 @@ storymap JSON sources.
 - New basemap options: vector styles via `map_type: "osm:<style>"` (OpenFreeMap)
   or a Mapbox style JSON URL.
 
+## Custom map providers
+
+Any slippy-map tile URL works as `map_type` — pass the template verbatim
+(including `{z}/{x}/{y}`), relative or absolute:
+
+```js
+new StoryMap("embed", data, {
+    map_type: "https://tiles.example.org/base/{z}/{x}/{y}.png",
+});
+```
+
+Mapbox style JSON URLs render as vector tile layers; OpenLayers
+`Map`/`View` pass-through stays available via `options.map_options`
+(`controls`/`interactions` replace the defaults, `view` merges over the
+computed default).
+
+For source classes the templates cannot express (WMS, authenticated or
+gridded sources), use the `tile_source_factory` option. It is consulted
+for every base, overlay and minimap layer before the built-in
+`map_type` handling — return a `TileLayer` (or a bare `Source`, which
+is wrapped in one), or `null`/`undefined` to fall through:
+
+```js
+import TileLayer from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS";
+
+new StoryMap("embed", data, {
+    map_type: "wms:flood",
+    tile_source_factory: (map_type, { createDefault }) =>
+        map_type.startsWith("wms:")
+            ? new TileLayer({
+                  source: new TileWMS({
+                      url: "https://geoserver.example.org/wms",
+                      params: { LAYERS: map_type.slice(4) },
+                      crossOrigin: "anonymous",
+                  }),
+              })
+            : createDefault(),
+});
+```
+
+Custom sources must carry their own attributions (via the returned
+source or the `attribution` option) — only the built-in `osm*` types
+are credited automatically. `tile_source_factory` is constructor- and
+runtime-only (functions cannot ride storymap JSON) and also applies to
+`overlays[]` entries, whose `map_type` values go through the same
+factory.
+
 ## Data and tooling
 
 - Storymap JSON is now validated against a JSON Schema

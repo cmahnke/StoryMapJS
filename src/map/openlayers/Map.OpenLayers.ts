@@ -478,6 +478,32 @@ export default class OpenLayers extends Map {
     }
 
     _createTileLayer(map_type: string): TileLayer {
+        // issue #473: custom OpenLayers tile layer/source factory first —
+        // the base layer, overlays, minimap and runtime map_type switches
+        // all funnel through here, so one check covers them
+        const factory = this.options.tile_source_factory;
+        if (typeof factory === "function") {
+            const custom = factory(map_type, {
+                options: this.options,
+                createDefault: () => this._createDefaultTileLayer(map_type),
+            });
+            if (custom) {
+                // layers (TileLayer and siblings exposing getSource) pass
+                // through; a bare Source is wrapped in a TileLayer
+                if (
+                    typeof (custom as unknown as { getSource?: unknown }).getSource ===
+                    "function"
+                ) {
+                    return custom as TileLayer;
+                }
+                // any tile-capable Source satisfies the TileLayer generic
+                return new TileLayer({ source: custom as unknown as XYZ });
+            }
+        }
+        return this._createDefaultTileLayer(map_type);
+    }
+
+    _createDefaultTileLayer(map_type: string): TileLayer {
         const _map_type_arr = map_type.split(":");
 
         switch (_map_type_arr[0]) {
