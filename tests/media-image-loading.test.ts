@@ -100,4 +100,40 @@ describe("slide image loading strategy", () => {
         expect(img.loading).toBe("lazy");
         expect(img.decoding).toBe("async");
     }, 25_000);
+
+    it("passes author srcset/sizes through unchanged", async () => {
+        const el = document.createElement("div");
+        el.id = "sm-img-srcset";
+        document.body.appendChild(el);
+        const data = {
+            storymap: {
+                map_type: "osm",
+                slides: [
+                    {
+                        date: "",
+                        type: "overview",
+                        text: { headline: "Overview", text: "" },
+                        media: {
+                            url: "https://example.com/overview.jpg",
+                            srcset: "https://example.com/overview-480.jpg 480w",
+                            sizes: "50vw",
+                            caption: "",
+                            credit: "",
+                        },
+                    },
+                ],
+            },
+        };
+        const storymap = new StoryMap("sm-img-srcset", data as unknown as StorymapDataWrapper);
+        await vi.waitFor(
+            () => {
+                expect(imageOf(slidesOf(storymap)[0])).not.toBeNull();
+            },
+            { timeout: 15_000 },
+        );
+        const img = imageOf(slidesOf(storymap)[0]) as HTMLImageElement;
+        expect(img.getAttribute("src")).toBe("https://example.com/overview.jpg");
+        expect(img.getAttribute("srcset")).toBe("https://example.com/overview-480.jpg 480w");
+        expect(img.getAttribute("sizes")).toBe("50vw");
+    }, 25_000);
 });

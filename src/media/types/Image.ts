@@ -2,6 +2,31 @@ import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
 
+/* IIIF Image API 2/3 URL tail: .../region/size/rotation/quality.format
+   (optionally a query string). Used to request container-matched widths
+   instead of the full-size image (perf, backwards-compatible). */
+const IIIF_TAIL =
+    /\/(full|max|pct:[\d.]+|\d+,?\d*)\/(full|max|pct:[\d.]+|\d+,?\d*)\/(\d+|full)\/(default|color|gray|bitonal)\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i;
+
+/**
+ * Rewrite an IIIF Image API URL to the given pixel width (`w,` size
+ * component, height unconstrained). Returns the URL unchanged when it is
+ * not a recognizable IIIF image URL.
+ */
+export function iiifSizedUrl(url: string | null, width: number): string | null {
+    if (!url || !(width > 0)) {
+        return url;
+    }
+    const match = url.match(IIIF_TAIL);
+    if (!match) {
+        return url;
+    }
+    return (
+        url.slice(0, match.index) +
+        `/${match[1]}/${width},/${match[3]}/${match[4]}.${match[5]}${match[6] ?? ""}`
+    );
+}
+
 /*	Media.Image
 	Produces image assets.
 	Takes a data object and populates a dom object
@@ -44,7 +69,18 @@ export default class Image extends Media {
         // is only a hint — old browsers ignore both attributes
         img.decoding = "async";
         img.loading = this._state.eager ? "eager" : "lazy";
-        img.src = this.data.url;
+        // responsive sizes (perf): IIIF image URLs request a container-
+        // matched width; author-provided srcset/sizes pass through;
+        // everything else renders byte-identically
+        const media_width = Number(this.options.width) || 0;
+        const sized = iiifSizedUrl(this.data.url, media_width);
+        img.src = sized ?? this.data.url;
+        if (this.data.srcset) {
+            img.srcset = this.data.srcset as string;
+        }
+        if (this.data.sizes) {
+            img.sizes = this.data.sizes as string;
+        }
 
         this.onLoaded();
     }
