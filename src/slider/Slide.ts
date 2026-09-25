@@ -36,7 +36,7 @@ interface MediaInstance {
     stopMedia: () => void;
     updateDisplay: (w?: number, h?: number, l?: string) => void;
     on?: EventedInstance["on"];
-    _state?: { loaded?: boolean };
+    _state?: { loaded?: boolean; eager?: boolean };
 }
 
 interface SlideHas {
@@ -164,7 +164,14 @@ class SlideBase {
             // the hint may re-appear on a revisit if the content still
             // overflows (the dismissed flag resets per activation)
             this._scroll_hint_dismissed = false;
+            // the active slide's images load eagerly: media built after this
+            // point (the 1200ms load timer) honors the flag, already-built
+            // images are upgraded below
+            if (this._media) {
+                this._media._state.eager = true;
+            }
             this.loadMedia();
+            this._eagerLoadImages();
             this._updateScrollHint();
         } else {
             this.stopMedia();
@@ -181,6 +188,17 @@ class SlideBase {
             this._media.loadMedia();
             this._state.loaded = true;
         }
+    }
+
+    /*  Perf: preloaded slide images are `lazy`; make them `eager` the
+        moment the slide becomes active so navigation never waits on a
+        deferred fetch (loading starts now, not on intersection). */
+    _eagerLoadImages() {
+        this._el.container
+            .querySelectorAll<HTMLImageElement>("img.vco-media-image")
+            .forEach((img) => {
+                img.loading = "eager";
+            });
     }
 
     stopMedia() {
@@ -235,11 +253,7 @@ class SlideBase {
             return;
         }
         if (!this._scroll_hint) {
-            this._scroll_hint = Dom.create(
-                "div",
-                "vco-slide-scroll-hint",
-                el,
-            );
+            this._scroll_hint = Dom.create("div", "vco-slide-scroll-hint", el);
             this._scroll_hint.innerHTML = "<span class='vco-icon-arrow-down'></span>";
             DomEvent.addListener(this._scroll_hint, "click", this._onScrollHintClick, this);
         }

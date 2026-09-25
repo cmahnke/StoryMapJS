@@ -38,7 +38,13 @@ export default class Image extends Media {
             this.onMediaLoaded();
         });
 
-        (this._el.content_item as HTMLImageElement).src = this.data.url;
+        const img = this._el.content_item as HTMLImageElement;
+        // offscreen/preloaded slides stay lazy (the active slide is
+        // upgraded to eager on activation, see Slide.setActive); decoding
+        // is only a hint — old browsers ignore both attributes
+        img.decoding = "async";
+        img.loading = this._state.eager ? "eager" : "lazy";
+        img.src = this.data.url;
 
         this.onLoaded();
     }
