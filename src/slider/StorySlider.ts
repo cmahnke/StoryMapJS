@@ -611,11 +611,13 @@ class StorySliderBase {
             this._swipable.enable();
 
             // Message
+            // the swipe hint icon mirrors in right-to-left locales (issue #269)
+            const rtl = (Language as unknown as { direction?: string }).direction === "rtl";
             this._message = new Message(
                 {},
                 {
                     message_class: "vco-message-full",
-                    message_icon_class: "vco-icon-swipe-left",
+                    message_icon_class: rtl ? "vco-icon-swipe-right" : "vco-icon-swipe-left",
                 },
             );
             this._message.updateMessage(Language.buttons.swipe_to_navigate);
