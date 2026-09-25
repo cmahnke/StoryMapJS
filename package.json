@@ -1,6 +1,6 @@
 {
     "name": "@projektemacher/storymapjs",
-    "version": "0.10.6",
+    "version": "0.10.7",
     "description": "StoryMapJS viewer library — unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
     "license": "MPL-2.0",
     "type": "module",
@@ -90,8 +90,8 @@
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.70.1",
         "unplugin-dts": "^1.1.1",
-        "vite": "^8.3.0",
-        "vitest": "^5.0.1"
+        "vite": "^8.3.1",
+        "vitest": "^5.0.2"
     },
     "scripts": {
         "dev": "vite",
