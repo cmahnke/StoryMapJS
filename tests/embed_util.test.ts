@@ -1,7 +1,8 @@
 import { test, expect } from "vitest";
 // Vitest runs in the jsdom environment (vitest.config.ts)
 
-const { buildIframe, sanitizeBlockquote, validateWebURL } = await import("../src/media/EmbedUtil");
+const { buildIframe, sanitizeBlockquote, sanitizeSlideText, validateWebURL } =
+    await import("../src/media/EmbedUtil");
 
 /*	validateWebURL
 ================================================== */
@@ -146,4 +147,51 @@ test("sanitizeBlockquote keeps links with valid href, drops javascript: href", (
         ) as Node,
     );
     expect(bad).toBe("<blockquote><a>link</a></blockquote>");
+});
+
+/*	sanitizeSlideText (issue #358)
+================================================== */
+
+test("sanitizeSlideText rebuilds iframe embeds with a validated src", () => {
+    const html = renderedHTML(
+        sanitizeSlideText(
+            '<p>extra media:</p><iframe src="https://example.com/embed/123" width="560" height="315" frameborder="0" allowfullscreen></iframe>',
+        ) as Node,
+    );
+    expect(html).toContain("<iframe");
+    expect(html).toContain('src="https://example.com/embed/123"');
+    expect(html).toContain('width="560"');
+    expect(html).toContain("loading=");
+});
+
+test("sanitizeSlideText drops javascript: iframes but keeps surrounding text", () => {
+    const html = renderedHTML(
+        sanitizeSlideText(
+            '<p>before</p><iframe src="javascript:alert(1)"></iframe><p>after</p>',
+        ) as Node,
+    );
+    expect(html).not.toContain("<iframe");
+    expect(html).toContain("before");
+    expect(html).toContain("after");
+});
+
+test("sanitizeSlideText strips scripts and event handlers but keeps formatting", () => {
+    const html = renderedHTML(
+        sanitizeSlideText(
+            '<p class="intro" onclick="alert(1)">Hello <strong>world</strong></p><script>alert(1)</script><ul><li>one <code>x</code></li></ul>',
+        ) as Node,
+    );
+    expect(html).not.toContain("<script");
+    expect(html).not.toContain("onclick");
+    expect(html).toContain("<strong>world</strong>");
+    expect(html).toContain("<code>x</code>");
+    expect(html).toContain('class="intro"');
+});
+
+test("sanitizeSlideText drops javascript: links but keeps the link text", () => {
+    const html = renderedHTML(
+        sanitizeSlideText('<p><a href="javascript:alert(1)">click</a></p>') as Node,
+    );
+    expect(html).toContain("click");
+    expect(html).not.toContain("javascript:");
 });

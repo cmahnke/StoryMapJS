@@ -348,6 +348,16 @@
     text-align: right;
 }
 
+/* Extra iframe media in slide text (issue #358)
+================================================== */
+.vco-text-content {
+    iframe {
+        width: 100%;
+        min-height: 280px;
+        border: 0;
+    }
+}
+
 /* Text Background 
 ================================================== */
 .vco-slide.vco-text-background {

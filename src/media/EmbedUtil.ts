@@ -66,6 +66,26 @@ const DROP_TAGS = [
     "SELECT",
 ];
 
+// Drop list for slide text (issue #358): same as DROP_TAGS but IFRAME is
+// rebuilt via buildIframe() instead of dropped, so extra media can be
+// embedded in the text field.
+const SLIDE_TEXT_DROP_TAGS = DROP_TAGS.filter((tag) => tag !== "IFRAME");
+
+// URL-bearing attributes validated to http(s) in slide text. Anything else
+// (javascript:, data:, ...) is removed but the element is kept.
+const URL_ATTRIBUTES = [
+    "href",
+    "src",
+    "cite",
+    "data",
+    "poster",
+    "action",
+    "formaction",
+    "longdesc",
+    "profile",
+    "background",
+];
+
 function parseInert(html: string): Document {
     return new DOMParser().parseFromString(html, "text/html");
 }
@@ -164,5 +184,68 @@ function appendSanitized(node: Node, parent: Node): void {
             }
         }
         // Comments and other node types are dropped
+    }
+}
+
+/*	Sanitize slide text (issue #358) into a DocumentFragment.
+	Unlike sanitizeBlockquote this is permissive: all formatting tags
+	survive (class/style/target kept for legacy stories), executable
+	tags are dropped with their contents, event-handler attributes and
+	non-web URLs are stripped, and <iframe> embeds are rebuilt via
+	buildIframe() so extra media can live in the text field. This is
+	the migration path for removed media types (e.g. vine): paste the
+	provider's iframe snippet into the slide text.
+================================================== */
+export function sanitizeSlideText(html: string): DocumentFragment {
+    const fragment = document.createDocumentFragment();
+    appendSlideText(parseInert(html).body, fragment);
+    return fragment;
+}
+
+function appendSlideText(node: Node, parent: Node): void {
+    for (let i = 0; i < node.childNodes.length; i++) {
+        const child = node.childNodes[i];
+        if (child.nodeType === 3) {
+            parent.appendChild(document.createTextNode(child.nodeValue));
+            continue;
+        }
+        if (child.nodeType !== 1) {
+            // Comments and other node types are dropped
+            continue;
+        }
+        const el = child as Element;
+        const tag = el.tagName.toUpperCase();
+        if (SLIDE_TEXT_DROP_TAGS.includes(tag)) {
+            continue;
+        }
+        if (tag === "IFRAME") {
+            const clean = buildIframe(el.outerHTML);
+            if (clean) {
+                clean.setAttribute("loading", "lazy");
+                parent.appendChild(clean);
+            }
+            continue;
+        }
+        const cleanEl = document.createElement(tag);
+        for (let j = 0; j < el.attributes.length; j++) {
+            const attr = el.attributes[j];
+            const name = attr.name.toLowerCase();
+            if (name.startsWith("on") || name === "srcdoc") {
+                continue;
+            }
+            if (URL_ATTRIBUTES.includes(name)) {
+                const safe = validateWebURL(attr.value);
+                if (safe) {
+                    cleanEl.setAttribute(attr.name, safe);
+                }
+                continue;
+            }
+            cleanEl.setAttribute(attr.name, attr.value);
+        }
+        if (tag === "A" && !cleanEl.hasAttribute("target")) {
+            cleanEl.setAttribute("target", "_blank");
+        }
+        appendSlideText(child, cleanEl);
+        parent.appendChild(cleanEl);
     }
 }

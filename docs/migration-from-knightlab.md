@@ -97,9 +97,27 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 
 | Removed                               | Replacement                                                                                                                                                                                                                  |
 | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — use another media source for those slides                                                                                                                                      |
+| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — or paste the provider's `<iframe>` snippet into the slide text (sanitized, https-only); use another media source for those slides                                               |
 | Juxtapose `frame/?uid=` embed URLs    | the `juxtapose.knightlab.com/frame/?uid=` host is dead — use the published format `https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...` (note: this keeps a Knight Lab CDN dependency for those slides) |
 | Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                                                                                              |
+| Ricoh360/theta360 embeds (#391)       | service no longer available (won't fix) — paste the provider's `<iframe>` snippet into the slide text if the service returns                                                                                                 |
+
+Extra media per slide (#358, partial): each slide still has one primary
+`media` item, but an `<iframe>` embed snippet pasted into the slide `text`
+field now renders sanitized (scripts, event handlers and non-https sources
+dropped) — use this for a second video/map/embed or as the migration path
+for removed media types:
+
+```html
+<p>Extra footage:</p>
+<iframe
+    src="https://example.com/embed/123"
+    width="560"
+    height="315"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+```
 
 `map_type: "zoomify"` is supported again (legacy): the image pyramid renders
 via the storymap data's `zoomify` options (`path`, `width`, `height`), using a

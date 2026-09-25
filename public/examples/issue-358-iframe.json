@@ -1,0 +1,57 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Extra iframe media in text",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Iframe in text",
+                    "text": "<p>An extra video below the primary media:</p><iframe src=\"https://example.com/embed/123\" width=\"560\" height=\"315\" frameborder=\"0\" allowfullscreen></iframe>"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Unsafe markup is neutralized",
+                    "text": "<p>Scripts and handlers never execute:</p><script>window.__smXss358 = true;</script><p><a href=\"javascript:alert(1)\">bad link</a></p><iframe src=\"javascript:alert(1)\"></iframe>"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 51.5,
+                    "lon": -0.12,
+                    "zoom": 6
+                }
+            }
+        ]
+    }
+}

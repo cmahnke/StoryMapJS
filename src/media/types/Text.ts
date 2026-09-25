@@ -1,6 +1,7 @@
 import { mergeData, setData, htmlify, convertUnixTime } from "../../core/Util";
 import { Evented, type EventedInstance } from "../../core/mixins";
 import Dom from "../../dom/Dom";
+import { sanitizeSlideText } from "../EmbedUtil";
 
 interface TextData {
     uniqueid?: string | null;
@@ -126,17 +127,17 @@ class TextBase {
             this.addDateText(convertUnixTime(this.data.date.created_time));
         }
 
-        // Headline
+        // Headline (sanitized; issue #358 keeps formatting but drops scripts)
         if (this.data.headline !== "") {
             let headline_class = "vco-headline";
             if (this.options.title) {
                 headline_class = "vco-headline vco-headline-title";
             }
             this._el.headline = Dom.create("h2", headline_class, this._el.content_container);
-            this._el.headline.innerHTML = this.data.headline;
+            this._el.headline.appendChild(sanitizeSlideText(this.data.headline));
         }
 
-        // Text
+        // Text (sanitized; issue #358 allows extra iframe media in the text field)
         if (this.data.text !== "") {
             let text_content = "";
 
@@ -157,7 +158,7 @@ class TextBase {
             }
 
             this._el.content = Dom.create("div", "vco-text-content", this._el.content_container);
-            this._el.content.innerHTML = text_content;
+            this._el.content.appendChild(sanitizeSlideText(text_content));
         }
 
         // Fire event that the slide is loaded
