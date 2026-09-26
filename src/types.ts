@@ -14,6 +14,12 @@ export interface StorymapSlideLocation {
     lat?: number;
     lon?: number;
     zoom?: number;
+    /**
+     * Image region `[x, y, w, h]` in image pixels (IIIF xywh convention,
+     * StrollView-style image stops): the view fits the region on
+     * navigation; image maps (`map_type: "iiif"` + `map_as_image`) only.
+     */
+    region?: [number, number, number, number];
     line?: boolean;
     icon?: string;
     iconSize?: number[];

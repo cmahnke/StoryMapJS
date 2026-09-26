@@ -55,6 +55,17 @@ function asStringArray(value: unknown): string[] {
 }
 
 /**
+ * Reads an IIIF xywh image region (`storymap:imageRegion`): an array of
+ * exactly 4 finite numbers ([x, y, w, h] in image pixels). Returns null
+ * for anything else — invalid regions are ignored.
+ */
+function readImageRegion(value: unknown): [number, number, number, number] | null {
+    if (!Array.isArray(value) || value.length !== 4) return null;
+    if (!value.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
+    return value as [number, number, number, number];
+}
+
+/**
  * Flattens a IIIF language map (`{"none": ["text"]}`, `{"en": ["Hello"]}`) to a
  * plain string. The `none` language is preferred; entries are joined with a
  * space. Also accepts a plain string and a TextualBody (`{value: "..."}`),
@@ -249,6 +260,12 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     // aggregated in items order (both are allowed by the proposal)
     const location = readLocation(record.navPlace) ?? readFeatureLocation(manifestFeature);
     if (location !== null) slide.location = location;
+    // IIIF xywh region (StrollView-style image stops): [x, y, w, h] pixels;
+    // invalid regions are ignored
+    const region = readImageRegion(record[STORYMAP_PREFIX + "imageRegion"]);
+    if (region !== null) {
+        slide.location = { ...(slide.location ?? {}), region };
+    }
 
     // StoryMap extension terms
     const slideType = asString(record[STORYMAP_PREFIX + "type"]);

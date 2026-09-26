@@ -221,7 +221,7 @@ class MapBase {
                         // nothing to show
                     }
                 } else {
-                    if (this._hasLocation(marker.data)) {
+                    if (this._hasLocation(marker.data) || this._hasRegion(marker.data)) {
                         // Calculate Zoom
                         zoom = this._calculateZoomChange(
                             this._getMapCenter(true),
@@ -473,6 +473,15 @@ class MapBase {
         return (
             !!d.location && typeof d.location.lat == "number" && typeof d.location.lon == "number"
         );
+    }
+
+    /**
+     * Image region stop: the slide carries an xywh region ([x, y, w, h]
+     * image pixels). Only the OpenLayers engine applies it (image mode);
+     * the region never contributes to route lines.
+     */
+    _hasRegion(d: StorymapSlide): boolean {
+        return !!d.location && Array.isArray(d.location.region) && d.location.region.length === 4;
     }
 
     /*	Map Specific

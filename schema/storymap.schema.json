@@ -150,6 +150,13 @@
                             "type": "number",
                             "description": "Longitude, or horizontal position in image pixels for image maps"
                         },
+                        "region": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 4,
+                            "maxItems": 4,
+                            "description": "Image region [x, y, w, h] in image pixels (IIIF xywh convention) for image maps; the view fits the region on navigation"
+                        },
                         "zoom": { "type": "number" },
                         "line": { "type": "boolean" },
                         "name": { "type": "string" },

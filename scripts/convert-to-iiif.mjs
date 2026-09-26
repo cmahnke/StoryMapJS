@@ -308,6 +308,14 @@ function buildCanvasTerms(slide) {
     if (present(slide.media?.alt)) {
         terms["storymap:mediaAlt"] = slide.media.alt;
     }
+    if (
+        Array.isArray(slide.location?.region) &&
+        slide.location.region.length === 4 &&
+        slide.location.region.every((n) => typeof n === "number" && Number.isFinite(n))
+    ) {
+        // IIIF xywh convention: [x, y, w, h] in image pixels
+        terms["storymap:imageRegion"] = slide.location.region;
+    }
     if (present(slide.date)) {
         terms["storymap:date"] = slide.date;
     }

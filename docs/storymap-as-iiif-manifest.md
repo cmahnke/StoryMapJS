@@ -114,19 +114,21 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 (`<canvas-id>/annotationpage/1`) holding the slide's painted media
 (`<canvas-id>/annotation/1`, `motivation: "painting"`, `target: <canvas-id>`).
 
-| IIIF                    | StoryMap              | Notes                                                                                    |
-| ----------------------- | --------------------- | ---------------------------------------------------------------------------------------- |
-| `id`, `type`            | —                     | `"Canvas"`                                                                               |
-| `label`                 | `slide.text.headline` | Language map `{"none": [headline]}`; omitted when the headline is empty                  |
-| `summary`               | `slide.text.text`     | Language map; the slide body text (may contain HTML)                                     |
-| `height`, `width`       | —                     | Nominal `1080 × 1080` for non-image slides; actual image dimensions for image-map slides |
-| `items`                 | `slide.media`         | AnnotationPage with the painting annotation, see below                                   |
-| `storymap:type`         | `slide.type`          | `"overview"` marks the map overview slide                                                |
-| `storymap:background`   | `slide.background`    | `{url, color}` — only present keys                                                       |
-| `storymap:mediaCaption` | `slide.media.caption` |                                                                                          |
-| `storymap:mediaCredit`  | `slide.media.credit`  |                                                                                          |
-| `storymap:date`         | `slide.date`          | String or object, verbatim                                                               |
-| `navPlace`              | `slide.location`      | See below                                                                                |
+| IIIF                    | StoryMap                | Notes                                                                                    |
+| ----------------------- | ----------------------- | ---------------------------------------------------------------------------------------- |
+| `id`, `type`            | —                       | `"Canvas"`                                                                               |
+| `label`                 | `slide.text.headline`   | Language map `{"none": [headline]}`; omitted when the headline is empty                  |
+| `summary`               | `slide.text.text`       | Language map; the slide body text (may contain HTML)                                     |
+| `height`, `width`       | —                       | Nominal `1080 × 1080` for non-image slides; actual image dimensions for image-map slides |
+| `items`                 | `slide.media`           | AnnotationPage with the painting annotation, see below                                   |
+| `storymap:type`         | `slide.type`            | `"overview"` marks the map overview slide                                                |
+| `storymap:background`   | `slide.background`      | `{url, color}` — only present keys                                                       |
+| `storymap:mediaCaption` | `slide.media.caption`   |                                                                                          |
+| `storymap:mediaCredit`  | `slide.media.credit`    |                                                                                          |
+| `storymap:mediaAlt`     | `slide.media.alt`       | Accessible image description (falls back to the caption when rendering)                  |
+| `storymap:imageRegion`  | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides      |
+| `storymap:date`         | `slide.date`            | String or object, verbatim                                                               |
+| `navPlace`              | `slide.location`        | See below                                                                                |
 
 ## Locations via navPlace
 
@@ -494,6 +496,8 @@ photo, and a slide with a YouTube video — full manifest:
 | `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`        |
 | `media.caption`                | Canvas `storymap:mediaCaption`                             |
 | `media.credit`                 | Canvas `storymap:mediaCredit`                              |
+| `media.alt`                    | Canvas `storymap:mediaAlt`                                 |
+| `location.region`              | Canvas `storymap:imageRegion` `[x, y, w, h]` (xywh)        |
 | `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`) |
 | `background`                   | Canvas `storymap:background` `{url, color}`                |
 | `uniqueid`                     | _dropped_ (canvas `id`s are the canonical identifiers)     |

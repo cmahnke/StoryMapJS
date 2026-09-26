@@ -250,11 +250,7 @@ export default class OpenLayers extends Map {
         this._overlay_layers = [];
         const consent = consentManagerOf(this.options);
         const tile_service = consentMessage("consent_service_tiles", "map tiles");
-        if (
-            this.options.consent_required &&
-            consent &&
-            !consent.isGranted(tile_service)
-        ) {
+        if (this.options.consent_required && consent && !consent.isGranted(tile_service)) {
             return;
         }
         const overlays = this.options.overlays ?? [];
@@ -312,10 +308,7 @@ export default class OpenLayers extends Map {
      * frames (bounded: rendering settles within a frame or two of any
      * add/visibility change).
      */
-    _paintOverlayBlend(
-        entry: { className?: string; blendMode?: string },
-        retries = 60,
-    ): void {
+    _paintOverlayBlend(entry: { className?: string; blendMode?: string }, retries = 60): void {
         if (!entry.blendMode || !entry.className) {
             return;
         }
@@ -493,8 +486,7 @@ export default class OpenLayers extends Map {
                 // layers (TileLayer and siblings exposing getSource) pass
                 // through; a bare Source is wrapped in a TileLayer
                 if (
-                    typeof (custom as unknown as { getSource?: unknown }).getSource ===
-                    "function"
+                    typeof (custom as unknown as { getSource?: unknown }).getSource === "function"
                 ) {
                     return custom as TileLayer;
                 }
@@ -856,9 +848,7 @@ export default class OpenLayers extends Map {
                 // the minimap starts collapsed (no layout size yet) in its
                 // 150x100 box — fall back to that until it expands
                 const size =
-                    raw_size && raw_size[0] >= 50 && raw_size[1] >= 50
-                        ? raw_size
-                        : [150, 100];
+                    raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 100];
                 overview_map.getView().fit(zoomify_pyramid.extent, {
                     size: size,
                 });
@@ -870,7 +860,12 @@ export default class OpenLayers extends Map {
         } else if (!is_zoomify && this.bounds_array && this.bounds_array.length) {
             // the minimap shows the story's world: with a bbox set, markers
             // outside of the box are unreachable and must not skew the fit
-            this._fitView(this._mini_map.getOverviewMap(), this.bounds_array, 0, this._bboxExtent() !== null);
+            this._fitView(
+                this._mini_map.getOverviewMap(),
+                this.bounds_array,
+                0,
+                this._bboxExtent() !== null,
+            );
         }
 
         if (this.options.map_type === "iiif" && this.options.map_as_image) {
@@ -1394,6 +1389,20 @@ export default class OpenLayers extends Map {
     }
 
     _viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {
+        // Image region stops (StrollView-style): in image mode the view is
+        // EPSG:4326 where coordinates are raw image pixels — fit the xywh
+        // region instead of flying to a point. Everything else (geo maps,
+        // absent/invalid regions) keeps the point behavior unchanged.
+        const is_image_space = this._map.getView().getProjection().getCode() === "EPSG:4326";
+        const region =
+            is_image_space && Array.isArray(loc.region) && loc.region.length === 4
+                ? loc.region
+                : null;
+        if (region) {
+            this._fitRegion(region, opts);
+            return;
+        }
+
         let _animate = true,
             _duration = this.options.duration,
             _zoom = this._getMapZoom(),
@@ -1441,6 +1450,36 @@ export default class OpenLayers extends Map {
             } else {
                 this._mini_map.setCollapsed(false);
             }
+        }
+    }
+
+    /**
+     * Image region stop: fit the xywh bbox ([x, y, w, h] image pixels —
+     * the EPSG:4326 image space) with the shared animation options, then
+     * keep the minimap collapse state in sync like `_viewTo`.
+     */
+    _fitRegion(region: [number, number, number, number], opts?: ViewToOptions): void {
+        const [x, y, w, h] = region;
+        if (!(w > 0) || !(h > 0)) {
+            return;
+        }
+        let _animate = true;
+        let _duration = this.options.duration;
+        if (opts && opts.duration !== undefined) {
+            if (opts.duration === 0) {
+                _animate = false;
+            } else {
+                _duration = opts.duration;
+            }
+        }
+        this._map.getView().fit([x, y, x + w, y + h], {
+            size: this._map.getSize(),
+            padding: this._opaquePanelPadding(),
+            duration: _animate ? _duration : 0,
+            easing: this.options.ease as ((t: number) => number) | undefined,
+        });
+        if (this._mini_map && this.options.width > this.options.skinny_size) {
+            this._mini_map.setCollapsed(true);
         }
     }
 
@@ -1735,8 +1774,7 @@ export default class OpenLayers extends Map {
         const zoomify_pyramid = is_zoomify ? this._zoomifyPyramid() : null;
         if (zoomify_pyramid) {
             const raw_size = overview.getSize();
-            const size =
-                raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 100];
+            const size = raw_size && raw_size[0] >= 50 && raw_size[1] >= 50 ? raw_size : [150, 100];
             overview.getView().fit(zoomify_pyramid.extent, { size: size });
         } else if (this.bounds_array && this.bounds_array.length) {
             this._fitView(overview, this.bounds_array, 0, this._bboxExtent() !== null);
