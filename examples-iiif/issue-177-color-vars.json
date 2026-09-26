@@ -1,0 +1,182 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/issue-177-color-vars",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-177-color-vars"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-177-color-vars/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-177-color-vars/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-177-color-vars/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Text color theming."
+                            },
+                            "target": "https://example.org/storymap/issue-177-color-vars/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Themed colors"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Text color theming."
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-177-color-vars/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-177-color-vars/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-177-color-vars/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "More text."
+                            },
+                            "target": "https://example.org/storymap/issue-177-color-vars/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Second slide"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "More text."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-177-color-vars/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-177-color-vars/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                34.79,
+                                31.25
+                            ]
+                        },
+                        "properties": {}
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-177-color-vars/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-177-color-vars/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-177-color-vars/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Even more text."
+                            },
+                            "target": "https://example.org/storymap/issue-177-color-vars/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Third slide"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Even more text."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-177-color-vars/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-177-color-vars/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                35.39,
+                                31.45
+                            ]
+                        },
+                        "properties": {}
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-177-color-vars/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

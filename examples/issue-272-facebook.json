@@ -1,0 +1,47 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Facebook embeds",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "FB post",
+                    "text": "A facebook post."
+                },
+                "media": {
+                    "url": "https://www.facebook.com/NASA/posts/101111111111111",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "FB video",
+                    "text": "A facebook video."
+                },
+                "media": {
+                    "url": "https://www.facebook.com/NASA/videos/202222222222222",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

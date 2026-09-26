@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>StoryMapJS</title>
+        <meta
+            name="description"
+            content="Maps that tell stories. StoryMapJS is a viewer for place-based slide stories, built on OpenLayers."
+        />
+      <script type="module" crossorigin src="./assets/index-DDsPBPZA.js"></script>
+      <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm.js">
+        <link rel="stylesheet" href="./site.css" />
+    </head>
+
+    <body class="sm-site">
+        <nav class="navbar navbar-dark">
+            <ul>
+                <li class="logo">
+                    <a href="./index.html">StoryMap <span>JS</span></a>
+                </li>
+            </ul>
+            <ul class="nav-right">
+                <li>
+                    <a
+                        class="button button-dark button-active"
+                        href="https://github.com/cmahnke/StoryMapJS"
+                        >GitHub</a
+                    >
+                </li>
+                <li>
+                    <a
+                        class="button button-dark"
+                        href="https://github.com/cmahnke/StoryMapJS/issues"
+                        >Issues</a
+                    >
+                </li>
+                <li>
+                    <a class="button button-dark" href="https://github.com/NUKnightLab/StoryMapJS"
+                        >Upstream</a
+                    >
+                </li>
+            </ul>
+        </nav>
+
+        <header class="header-product">
+            <h1 class="product-logo">StoryMap <span>JS</span></h1>
+            <h2 class="product-tagline">Maps that tell stories.</h2>
+            <a class="button button-secondary button-large" href="#overview">Get started</a>
+
+            <nav id="navbar-secondary" class="navbar navbar-subnav" aria-label="Page navigation">
+                <ul>
+                    <li><a class="button" href="#overview">Overview</a></li>
+                    <li><a class="button" href="#examples">Examples</a></li>
+                    <li><a class="button" href="./docs/readme.html">README</a></li>
+                    <li>
+                        <a class="button" href="./docs/migration.html">Migration guide</a>
+                    </li>
+                    <li><a class="button" href="./docs/iiif.html">IIIF docs</a></li>
+                    <li><a class="button" href="./docs/api/index.html">API docs</a></li>
+                    <li><a class="button" href="#help">Help</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <article id="product-body">
+            <!-- The widget runs in its own document: its CSS can never mix
+                 with the page chrome (and vice versa). -->
+            <section id="demo" class="container-fluid">
+                <iframe
+                    class="demo-frame"
+                    id="demo-frame"
+                    src="./demo.html"
+                    title="StoryMapJS demo"
+                ></iframe>
+            </section>
+
+            <section id="overview" class="section container">
+                <div class="grid grid-size-2">
+                    <div class="grid-item">
+                        <p class="note">
+                            <strong>Unofficial fork:</strong> this is an unofficial, unapproved fork
+                            of the original
+                            <a href="https://github.com/NUKnightLab/StoryMapJS"
+                                >NUKnightLab/StoryMapJS</a
+                            >
+                            repository and a proof of concept for an AI-based renovation using the
+                            model GLM 5.3 Flash. It is not endorsed by Northwestern University
+                            Knight Lab.
+                        </p>
+                        <p>
+                            StoryMapJS tells stories on the web that highlight the locations of a
+                            series of events. This is a TypeScript rewrite of the original Knight
+                            Lab viewer: it renders storymap JSON (and IIIF manifests) on modern web
+                            maps — the authoring tool is not part of this repository.
+                        </p>
+                        <p>There are a couple ways you can use a StoryMap.</p>
+                        <ul>
+                            <li>
+                                <h5>Maps</h5>
+                                <p>
+                                    Add a slide for each place in your story. The viewer draws
+                                    cartography from OpenStreetMap or custom tile servers, and
+                                    renders the route between your places.
+                                </p>
+                            </li>
+                            <li>
+                                <h5>Really big images</h5>
+                                <p>
+                                    You can tell stories with large photographs, works of art,
+                                    historic maps and other image files. Because it works best with
+                                    pixel-dense files served over the
+                                    <strong>IIIF Image API</strong>.
+                                </p>
+                                <p class="text-align-center">
+                                    <a class="button button-small" href="./docs/iiif.html"
+                                        >Learn more about IIIF</a
+                                    >
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h3 style="margin-top: 0">Tips &amp; tricks</h3>
+                        <ol>
+                            <li>
+                                Keep it short. We recommend not having more than 20 slides for a
+                                reader to click through.
+                            </li>
+                            <li>
+                                Pick stories that have a strong location narrative. It does not work
+                                well for stories that need to jump around in the map.
+                            </li>
+                            <li>Write each event as a part of a larger narrative.</li>
+                            <li>
+                                Include events that build up to major occurrences — not just the
+                                major events.
+                            </li>
+                        </ol>
+                        <h3>Media sources</h3>
+                        <p>
+                            The viewer can pull in media from a variety of sources: Twitter/X,
+                            Flickr, YouTube, Vimeo, Dailymotion, Wikipedia, SoundCloud, Facebook,
+                            DocumentCloud, Juxtapose, Google Docs, images, audio, video, quotes and
+                            more.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-color fill-color-grey" id="examples">
+                <div class="container">
+                    <h2>Examples</h2>
+                    <div class="cards cards-link" id="examples-cards">
+                        <!-- Populated by /src/site/site.ts -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="section container" id="help">
+                <div class="grid">
+                    <div class="grid-item" style="flex: 2">
+                        <h2>Help</h2>
+                        <p>
+                            Need help? Start with the frequently asked questions below, then check
+                            the
+                            <a href="./docs/readme.html">README</a> and the
+                            <a href="./docs/migration.html">migration guide</a>.
+                        </p>
+                        <p>
+                            If you don't find an answer there, open a
+                            <a href="https://github.com/cmahnke/StoryMapJS/issues">GitHub issue</a>.
+                            Please be clear with your question, include the storymap JSON you are
+                            loading and, if appropriate, a link to a page which shows the issue.
+                        </p>
+                        <p class="note">
+                            <strong>Find a bug?</strong> If you are confident you have found a bug,
+                            please report it as
+                            <a href="https://github.com/cmahnke/StoryMapJS/issues">a GitHub issue</a
+                            >. Be sure to include detailed instructions on how to reproduce it.
+                            Upstream bugs go to
+                            <a href="https://github.com/NUKnightLab/StoryMapJS/issues"
+                                >NUKnightLab/StoryMapJS</a
+                            >.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h3>Technical documentation</h3>
+                        <p>Go further with StoryMap:</p>
+                        <ul>
+                            <li>
+                                <a href="./docs/migration.html"
+                                    >Migrating from Knight Lab StoryMapJS</a
+                                >
+                            </li>
+                            <li>
+                                <a href="./docs/migration.html">Storymap options</a>
+                            </li>
+                            <li>
+                                <a href="./docs/iiif.html">StoryMap data as IIIF manifests</a>
+                            </li>
+                            <li>
+                                <a href="./docs/readme.html#development">Development setup</a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/cmahnke/StoryMapJS/tree/main/schema"
+                                    >JSON schema</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="grid" id="faq">
+                    <div class="grid-item">
+                        <h3>Frequently asked questions</h3>
+                        <ul class="accordion">
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>How do I install the viewer?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        <code>npm install @projektemacher/storymapjs</code>, then
+                                        import the module and the stylesheet:
+                                    </p>
+                                    <pre><code>import { StoryMap } from "@projektemacher/storymapjs";
+import "@projektemacher/storymapjs/css/storymap.css";
+
+new StoryMap("mapdiv", "my-storymap.json");</code></pre>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>How do I embed a published storymap?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Use the embed page in an iframe; the
+                                        <code>url</code> parameter is resolved against the site
+                                        root:
+                                    </p>
+                                    <pre><code>&lt;iframe src="/embed/index.html?url=my-storymap.json"
+        width="100%" height="800"&gt;&lt;/iframe&gt;</code></pre>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>How can I link to a specific slide?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        The viewer keeps the current slide in the URL as a
+                                        <code>#slide-N</code>
+                                        hash. Open a storymap at
+                                        <code>…#slide-5</code> to start there, or use the
+                                        <code>start_at_slide</code> option (also available as an
+                                        embed URL parameter). Copy the URL at any time — it always
+                                        points at the slide you are viewing.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Can the storymap play automatically?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Set the <code>autoplay</code> option to the number of
+                                        milliseconds each slide stays on screen (also available as
+                                        an embed URL parameter):
+                                    </p>
+                                    <pre><code>/embed/index.html?url=my-storymap.json&amp;autoplay=5000</code></pre>
+                                    <p>
+                                        Playback stops at the last slide, and any click, tap or
+                                        keypress hands control back to the viewer.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>How can I have a map without lines between points?</h3>
+                                <div class="accordion-content">
+                                    Set <code>show_lines: false</code> in the storymap options (or
+                                    use <code>map_as_image</code> for IIIF image stories, where
+                                    lines are off by default).
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>How can I use a custom map?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Set <code>map_type</code> to a tile URL template (e.g.
+                                        <code>"https://tile.example.org/{z}/{x}/{y}.png"</code>) or
+                                        pass raw OpenLayers options via <code>map_options</code> —
+                                        view, controls and interactions are all configurable.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>How can I adjust the zoom?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        The viewer fits the map to all markers and zooms between
+                                        places as the reader navigates
+                                        (<code>calculate_zoom</code>). With
+                                        <code>calculate_zoom: true</code> (the default) the
+                                        calculated zoom overrides per-slide
+                                        <code>location.zoom</code> values; set
+                                        <code>calculate_zoom: false</code> to use your own
+                                        <code>location.zoom</code> per slide.
+                                        <code>map_options.view</code> accepts raw OpenLayers view
+                                        options.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Can I change the fonts?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Yes — ship a font theme with your storymap (<code
+                                            >font_css</code
+                                        >
+                                        in the data, relative to the script) or reference a stock
+                                        theme with <code>font_css: "stock:knightlab"</code>. The
+                                        compiled stock themes are resolved from the library's
+                                        <code>css/fonts/</code> directory (next to the bundled JS).
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Can I use custom HTML in a slide?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Yes — the slide <code>text</code> renders as HTML: links,
+                                        images, lists and <code>vco-note</code> spans all work. Text
+                                        without a <code>&lt;p&gt;</code>
+                                        tag is wrapped in one automatically. The markup is rendered
+                                        raw, so only load storymaps from sources you trust.
+                                    </p>
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Can I limit the map to an area?</h3>
+                                <div class="accordion-content">
+                                    Set
+                                    <code>map_bbox: [west, south, east, north]</code>
+                                    (lon/lat) in the options — the view center is constrained to the
+                                    box, so the map cannot pan away from it. For IIIF image stories
+                                    the coordinates are raw image pixels. To also limit the map to the
+                                    left, visible area (opaque slide panel, no gradient over the map),
+                                    set <code>map_area: "left"</code>.
+                                </div>
+                            </li>
+                            <li>
+                                <input type="checkbox" checked />
+                                <i></i>
+                                <h3>Does the viewer load external services by default?</h3>
+                                <div class="accordion-content">
+                                    <p>
+                                        Yes, but set
+                                        <code>consent_required: true</code> to ask for permission
+                                        before anything is loaded from external services (media
+                                        embeds, map tiles, external fonts). Each service asks once
+                                        per page load with an Allow/Deny panel; denied services show
+                                        a placeholder instead. Decisions are stored in a cookie for
+                                        90 days — clearing cookies asks again.
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </article>
+
+        <footer class="footer-knightlab">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">StoryMap <span>JS</span></div>
+                    <ul class="list-social">
+                        <li>
+                            <a
+                                href="https://github.com/cmahnke/StoryMapJS"
+                                title="StoryMapJS fork on GitHub"
+                                >GitHub</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                href="https://github.com/NUKnightLab/StoryMapJS"
+                                title="Upstream Knight Lab repository"
+                                >Upstream</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer-description">
+                    <p>
+                        A TypeScript rewrite of
+                        <a href="https://github.com/NUKnightLab/StoryMapJS"
+                            >NUKnightLab/StoryMapJS</a
+                        >, the original tool by
+                        <a href="https://knightlab.northwestern.edu/"
+                            >Northwestern University Knight Lab</a
+                        >. The storymap JSON format is preserved; the rendering engine moved from
+                        Leaflet to OpenLayers, so some rendering details differ (see the
+                        <a href="./docs/migration.html">migration notes</a>).
+                    </p>
+                    <span class="copyright">
+                        Released under the
+                        <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a>
+                        license.
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

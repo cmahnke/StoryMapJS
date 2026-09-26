@@ -1,0 +1,244 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/issue-381-dateline",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-381-dateline"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-381-dateline/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-381-dateline/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-381-dateline/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-381-dateline/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Dateline crossing"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-381-dateline/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-381-dateline/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-381-dateline/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "West of the dateline."
+                            },
+                            "target": "https://example.org/storymap/issue-381-dateline/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Fiji"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "West of the dateline."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-381-dateline/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-381-dateline/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                177.3,
+                                -17.7
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 5,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-381-dateline/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-381-dateline/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-381-dateline/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "East of the dateline."
+                            },
+                            "target": "https://example.org/storymap/issue-381-dateline/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Fiji east"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "East of the dateline."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-381-dateline/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-381-dateline/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -179.9,
+                                -17.8
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 5,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-381-dateline/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-381-dateline/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-381-dateline/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Further east."
+                            },
+                            "target": "https://example.org/storymap/issue-381-dateline/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Samoa"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Further east."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-381-dateline/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-381-dateline/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -171.8,
+                                -13.8
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 5,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-381-dateline/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

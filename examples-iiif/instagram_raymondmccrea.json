@@ -1,0 +1,1165 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/instagram_raymondmccrea",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "instagram_raymondmccrea"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "<span class=\"vco-snapmap-instagram\">Raymond McCrea<small><a href=\"http://instagram.com/raymondmccrea\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> raymondmccrea</a></small></span>"
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_5782778_75sq_1309296349.jpg"
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Sky Lounge at the Glenn Hotel"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Storms leave the best sunsets in their wake."
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520313_1470161229888880_2083271051_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -84.39300443,
+                                33.757043677
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Top of Lookout Mountain!"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Incline Railway to the top of Lookout Mountain. 72% grade!"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915596_481209185346949_1041922227_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -85.343209798,
+                                35.006054008
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Rock City Lookout Mountain, Georgia"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Tenn/Georgia line."
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499157_653039784780889_1265234880_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -85.350172134,
+                                34.973561225
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Hunter Museum of American Art"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Amazing architecture and design around this space."
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10474971_593901507375923_1356620213_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -85.306419052,
+                                35.055654491
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Kudzu FTW"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522319_1407013566190130_1386823463_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -84.361778333,
+                                33.716041667
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Zoo Atlanta"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Sad vulture"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/925306_672343749514116_264377219_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -84.372127319,
+                                33.73153647
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Inman Park / Reynoldstown"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Found in Inman Park #jones"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10554227_696870267051853_1448242429_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -84.352797,
+                                33.757497
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/9",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "McCarran International Airport"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Let the spectacle begin. #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467893_844818885569662_373644111_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.135978578,
+                                36.080933804
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/10",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/10/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/10/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/10"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "MGM Grand Las Vegas"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "What a racket. #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10561065_486814728129494_2113163521_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/10/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/10/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.168597346,
+                                36.10197231
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/11",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/11/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/11/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/11"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Venitian - Hotel & Casino"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "The Venetian, whatever that means. #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925327_811492352194469_399590127_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/11/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/11/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.169483531,
+                                36.123789514
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/12",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/12/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/12/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/12"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "DaVinci:The Genius"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "DaVinci, it's all original. #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10554274_1513021125580691_1059664607_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/12/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/12/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.17066019,
+                                36.121516136
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/13",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/13/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/13/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/13"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "The Signature at MGM Grand"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Balcony is on point, if you like parking garages. I do. #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/915614_734476036590541_1596699216_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/13/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/13/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.166852428,
+                                36.105969762
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/14",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/14/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/14/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/14"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Slice of Vegas Pizza"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "#empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10499063_264954443707818_1234044803_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/14/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/14/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.175894498,
+                                36.094070175
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/15",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/15/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/15/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/15"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Wynn Casino, Las Vegas Strip"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "You can't escape doom in Las Vegas. #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549890_330375857118555_1513907118_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/15/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/15/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.166691576,
+                                36.126514989
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/16",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/16/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/16/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/16"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "MGM Grand Las Vegas"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Managed to get all 8 together long enough for a photo before the end of #empirevegasvacation2014"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10499190_342995539186956_1156978052_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/16/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/16/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.168597346,
+                                36.10197231
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/17",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/17/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/17/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/17"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "First post is up. Follow @echosight l week.  Hello world! This week #EchoSight is being taken over by Raymond McCrea Jones and Laura Wilson. Join as we explore the notion of Near/Far through this awesome creative experiment. Ray @RaymondMcCrea is a photographer/filmmaker based in Atlanta. Laura @loreleiwlsn is a portrait/lifestyle photographer based in Brooklyn. The two have been good friends since meeting in NYC in 2008. #echosight #photography #mashup"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10570241_1517153348498124_1734532319_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/17/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/17/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.168253263,
+                                36.103328518
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/18",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/18/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/18/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/18"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Follow @echosight and @loreleiwlsn"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488805_713383958723868_48054213_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/18/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/18/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.168025265,
+                                36.10405377
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/19",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/19/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/19/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/19"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "A typewriter from Goshen and tattooer from Charlotte. #echosight #portrait #photography Follow @RaymondMcCrea and @loreleiwlsn July 20-27 on @echosight"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554223_301292116715950_1231761983_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/19/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/19/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.165695958,
+                                36.129295854
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/20",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/20/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/20/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/20"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Wynn Encore"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "God bless America. Did I already say that?"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_672236002853318_698424189_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/20/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/20/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.165078384,
+                                36.128937581
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/21",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/21/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/21/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_raymondmccrea/canvas/21"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Hey y'all. Laura here! Ray and I would like to officially introduce ourselves! We'll be taking over the @echosight account all this week exploring the concept of Near/Far. Coming at you from Atlanta and Brooklyn- hang and follow along with us! #makeportraits #mashup #doubleexposure #echosight \nRaymond McCrea Jones @RaymondMcCrea is a photographer/filmmaker based in Atlanta. Laura Wilson @loreleiwlsn is a portrait/lifestyle photographer based in Brooklyn."
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/891413_819891748023778_518282451_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/21/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_raymondmccrea/canvas/21/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -115.137658697,
+                                36.081094109
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/instagram_raymondmccrea/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapAsImage": false
+        }
+    ]
+}

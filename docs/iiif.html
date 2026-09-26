@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>StoryMap data as IIIF manifests — StoryMapJS</title>
+        <meta name="description" content="StoryMap data as IIIF manifests — StoryMapJS documentation" />
+        <link rel="stylesheet" href="../site.css" />
+    </head>
+    <body class="sm-site">
+        
+    <nav class="navbar navbar-dark">
+        <ul>
+            <li class="logo">
+                <a href="../index.html">StoryMap <span>JS</span></a>
+            </li>
+        </ul>
+        <ul class="nav-right">
+            <li>
+                <a class="button button-dark button-active" href="https://github.com/cmahnke/StoryMapJS"
+                    >GitHub</a
+                >
+            </li>
+            <li>
+                <a class="button button-dark" href="https://github.com/cmahnke/StoryMapJS/issues"
+                    >Issues</a
+                >
+            </li>
+        </ul>
+    </nav>
+    <header class="header-product header-product-docs">
+        <nav id="navbar-secondary" class="navbar navbar-subnav" aria-label="Page navigation">
+            <ul>
+                <li><a class="button" href="../index.html#overview">Overview</a></li>
+                <li><a class="button" href="../index.html#examples">Examples</a></li>
+                <li><a class="button" href="./readme.html">README</a></li>
+                <li><a class="button" href="./migration.html">Migration guide</a></li>
+                <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="./api/index.html">API docs</a></li>
+                <li><a class="button" href="../index.html#help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+        <main class="sm-docs">
+            <h1>StoryMap data as IIIF Presentation 3.0 manifests</h1>
+<p>A proposal for exchanging StoryMapJS data as
+<a href="https://iiif.io/api/presentation/3.0/">IIIF Presentation API 3.0</a> manifests so
+that stories can be preserved, harvested and re-rendered by IIIF-aware tools.</p>
+<p>The legacy format is described by <a href="https://github.com/cmahnke/StoryMapJS/tree/main/schema/storymap.schema.json"><code>schema/storymap.schema.json</code></a>;
+the fixtures in <a href="../examples/"><code>public/examples/</code></a> are real-world samples.
+<code>scripts/convert-to-iiif.mjs</code> converts every fixture to this proposal
+(<a href="../examples-iiif/"><code>public/examples-iiif/</code></a>), and
+<code>scripts/validate-iiif.mjs</code> checks every converted manifest against the
+<a href="https://presentation-validator.iiif.io/">official IIIF presentation validator</a>
+(<code>npm run validate:iiif</code>). All converted fixtures pass the official validator.</p>
+<h2>Contexts</h2>
+<p>A manifest carries three context URLs: the Presentation 3.0 context, the
+official <a href="https://iiif.io/api/extension/navplace/">navPlace extension</a> context,
+and the StoryMap extension context:</p>
+<pre><code class="language-json">{
+    &quot;@context&quot;: [
+        &quot;http://iiif.io/api/presentation/3/context.json&quot;,
+        &quot;http://iiif.io/api/extension/navplace/context.json&quot;,
+        &quot;https://cmahnke.github.io/StoryMapJS/context.json&quot;
+    ]
+}
+</code></pre>
+<h3>navPlace context (official)</h3>
+<p>Served at <code>http://iiif.io/api/extension/navplace/context.json</code>. It binds the
+<code>navPlace</code> property to a GeoJSON FeatureCollection:</p>
+<pre><code class="language-json">{
+    &quot;@context&quot;: {
+        &quot;@version&quot;: 1.1,
+        &quot;iiif_navPlace&quot;: &quot;http://iiif.io/api/extension/navplace#&quot;,
+        &quot;navPlace&quot;: {
+            &quot;@context&quot;: &quot;https://geojson.org/geojson-ld/geojson-context.jsonld&quot;,
+            &quot;@id&quot;: &quot;iiif_navPlace:navPlace&quot;
+        }
+    }
+}
+</code></pre>
+<h3>StoryMap context</h3>
+<p>StoryMap-specific terms use the <code>storymap:</code> prefix (the term IRIs live under
+<code>https://christianmahnke.de/iiif/storymap#</code>). The context document is
+<a href="../context.json"><code>public/context.json</code></a> — it ships with the demo build
+and is served at <code>https://cmahnke.github.io/StoryMapJS/context.json</code>, which is
+what the fixtures reference. Content:</p>
+<pre><code class="language-json">{
+    &quot;@context&quot;: {
+        &quot;@version&quot;: 1.1,
+        &quot;storymap&quot;: &quot;https://christianmahnke.de/iiif/storymap#&quot;,
+        &quot;mapType&quot;: &quot;storymap:mapType&quot;,
+        &quot;mapAsImage&quot;: &quot;storymap:mapAsImage&quot;,
+        &quot;mapAccessToken&quot;: &quot;storymap:mapAccessToken&quot;,
+        &quot;mapBackgroundColor&quot;: &quot;storymap:mapBackgroundColor&quot;,
+        &quot;mapCenterOffset&quot;: &quot;storymap:mapCenterOffset&quot;,
+        &quot;mapSubdomains&quot;: &quot;storymap:mapSubdomains&quot;,
+        &quot;iiifUrl&quot;: { &quot;@id&quot;: &quot;storymap:iiifUrl&quot;, &quot;@type&quot;: &quot;@id&quot; },
+        &quot;fontCss&quot;: &quot;storymap:fontCss&quot;,
+        &quot;callToAction&quot;: &quot;storymap:callToAction&quot;,
+        &quot;callToActionText&quot;: &quot;storymap:callToActionText&quot;,
+        &quot;startAtSlide&quot;: &quot;storymap:startAtSlide&quot;,
+        &quot;language&quot;: &quot;storymap:language&quot;,
+        &quot;calculateZoom&quot;: &quot;storymap:calculateZoom&quot;,
+        &quot;lessBounce&quot;: &quot;storymap:lessBounce&quot;,
+        &quot;lineFollowsPath&quot;: &quot;storymap:lineFollowsPath&quot;,
+        &quot;showLines&quot;: &quot;storymap:showLines&quot;,
+        &quot;showHistoryLine&quot;: &quot;storymap:showHistoryLine&quot;,
+        &quot;lineColor&quot;: &quot;storymap:lineColor&quot;,
+        &quot;lineColorInactive&quot;: &quot;storymap:lineColorInactive&quot;,
+        &quot;lineWeight&quot;: &quot;storymap:lineWeight&quot;,
+        &quot;lineOpacity&quot;: &quot;storymap:lineOpacity&quot;,
+        &quot;lineDash&quot;: &quot;storymap:lineDash&quot;,
+        &quot;lineJoin&quot;: &quot;storymap:lineJoin&quot;,
+        &quot;useCustomMarkers&quot;: &quot;storymap:useCustomMarkers&quot;,
+        &quot;type&quot;: { &quot;@id&quot;: &quot;storymap:type&quot;, &quot;@type&quot;: &quot;@id&quot; },
+        &quot;background&quot;: &quot;storymap:background&quot;,
+        &quot;mediaCaption&quot;: &quot;storymap:mediaCaption&quot;,
+        &quot;mediaCredit&quot;: &quot;storymap:mediaCredit&quot;,
+        &quot;date&quot;: &quot;storymap:date&quot;
+    }
+}
+</code></pre>
+<h2>Manifest ↔ storymap root</h2>
+<table>
+<thead>
+<tr>
+<th>IIIF</th>
+<th>StoryMap</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>—</td>
+<td><code>https://example.org/storymap/&lt;name&gt;</code> (absolute URIs required)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>—</td>
+<td><code>&quot;Manifest&quot;</code></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code>storymap.title</code> (extra)</td>
+<td>Language map, e.g. <code>{&quot;none&quot;: [&quot;StoryMapJS&quot;]}</code>; the legacy format has no title field, so readers keep it as an extra <code>title</code> field</td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td><code>storymap.slides</code></td>
+<td>One Canvas per slide, in slide order</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td>—</td>
+<td>Optional language map</td>
+</tr>
+<tr>
+<td><code>provider</code></td>
+<td>—</td>
+<td>Optional publishing institution</td>
+</tr>
+<tr>
+<td><code>behavior</code></td>
+<td>—</td>
+<td><code>[&quot;paged&quot;]</code> — the story is consumed slide by slide</td>
+</tr>
+<tr>
+<td><code>requiredStatement</code></td>
+<td><code>storymap.iiif.attribution</code></td>
+<td>Only when an attribution is present</td>
+</tr>
+<tr>
+<td><code>navPlace</code> <em>(optional)</em></td>
+<td>—</td>
+<td>Optional manifest-level aggregation of canvas locations</td>
+</tr>
+<tr>
+<td><code>service</code> (map config)</td>
+<td><code>storymap.*</code> map settings</td>
+<td>See &quot;StoryMap-specific terms&quot; below</td>
+</tr>
+</tbody></table>
+<h2>Canvas ↔ slide</h2>
+<p>Each slide becomes one Canvas in <code>items</code> order. Canvas ids are
+<code>&lt;manifest-id&gt;/canvas/&lt;n&gt;</code> (1-based); each Canvas carries a single AnnotationPage
+(<code>&lt;canvas-id&gt;/annotationpage/1</code>) holding the slide&#39;s painted media
+(<code>&lt;canvas-id&gt;/annotation/1</code>, <code>motivation: &quot;painting&quot;</code>, <code>target: &lt;canvas-id&gt;</code>).</p>
+<table>
+<thead>
+<tr>
+<th>IIIF</th>
+<th>StoryMap</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code>, <code>type</code></td>
+<td>—</td>
+<td><code>&quot;Canvas&quot;</code></td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td><code>slide.text.headline</code></td>
+<td>Language map <code>{&quot;none&quot;: [headline]}</code>; omitted when the headline is empty</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td><code>slide.text.text</code></td>
+<td>Language map; the slide body text (may contain HTML)</td>
+</tr>
+<tr>
+<td><code>height</code>, <code>width</code></td>
+<td>—</td>
+<td>Nominal <code>1080 × 1080</code> for non-image slides; actual image dimensions for image-map slides</td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td><code>slide.media</code></td>
+<td>AnnotationPage with the painting annotation, see below</td>
+</tr>
+<tr>
+<td><code>storymap:type</code></td>
+<td><code>slide.type</code></td>
+<td><code>&quot;overview&quot;</code> marks the map overview slide</td>
+</tr>
+<tr>
+<td><code>storymap:background</code></td>
+<td><code>slide.background</code></td>
+<td><code>{url, color}</code> — only present keys</td>
+</tr>
+<tr>
+<td><code>storymap:mediaCaption</code></td>
+<td><code>slide.media.caption</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>storymap:mediaCredit</code></td>
+<td><code>slide.media.credit</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>storymap:date</code></td>
+<td><code>slide.date</code></td>
+<td>String or object, verbatim</td>
+</tr>
+<tr>
+<td><code>navPlace</code></td>
+<td><code>slide.location</code></td>
+<td>See below</td>
+</tr>
+</tbody></table>
+<h2>Locations via navPlace</h2>
+<p>Canvas locations use the official
+<a href="https://iiif.io/api/extension/navplace/">navPlace extension</a>: each Canvas with
+a numeric <code>location.lat</code>/<code>location.lon</code> carries a <code>navPlace</code> FeatureCollection
+with one GeoJSON Feature:</p>
+<ul>
+<li><code>geometry</code>: <code>{type: &quot;Point&quot;, coordinates: [lon, lat]}</code> — the storymap values
+verbatim. For image-map storymaps (<code>storymap:mapAsImage: true</code>) the values are
+image coordinates rather than WGS84 degrees; consumers can detect this via
+<code>storymap:mapAsImage</code>.</li>
+<li><code>properties</code>: marker data — <code>zoom</code>, <code>line</code>, <code>icon</code>, <code>iconSize</code>, <code>image</code>,
+<code>use_custom_marker</code>, <code>name</code> (only present keys).</li>
+<li><code>location.use_custom_marker</code> / <code>use_custom_markers</code> (manifest) opt into
+custom marker rendering; see the storymap terms below.</li>
+</ul>
+<p>Alternatively a manifest MAY aggregate all slide locations in a single
+manifest-level <code>navPlace</code> with one Feature per Canvas in <code>items</code> order.</p>
+<h2>Slide media</h2>
+<p>The slide&#39;s media becomes a painting annotation on the canvas with a typed body:</p>
+<ul>
+<li>Image URLs → <code>{id, type: &quot;Image&quot;, format: &quot;image/jpeg&quot; | ...}</code></li>
+<li>Video services (YouTube, Vimeo, Dailymotion, Vine) → <code>{id, type: &quot;Video&quot;}</code></li>
+<li>Audio services (SoundCloud) → <code>{id, type: &quot;Sound&quot;}</code></li>
+<li>Page-embedded media (tweets, Wikipedia, photo pages) → <code>{id, type: &quot;Text&quot;, format: &quot;text/html&quot;}</code></li>
+<li>Text-only slides (no media URL, or a media value that is an HTML snippet) →
+<code>{type: &quot;TextualBody&quot;, format: &quot;text/html&quot;, value: &quot;&lt;html&gt;&quot;}</code></li>
+</ul>
+<p>Media URL inference (YouTube players, Twitter embeds, etc.) remains a viewer
+concern — manifests carry plain typed bodies and never embed service-specific
+logic.</p>
+<h2>IIIF image-map slides (replacing zoomify)</h2>
+<p>Storymaps that paint an image as the map (<code>map_as_image: true</code> with <code>map_type: &quot;iiif&quot;</code>, formerly <code>&quot;zoomify&quot;</code>) have canvases that paint an Image annotation
+whose body references an IIIF Image API service. The canvas dimensions are the
+actual image dimensions. Two body variants are valid:</p>
+<p><strong>(a) plain image body:</strong></p>
+<pre><code class="language-json">{
+    &quot;id&quot;: &quot;https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg&quot;,
+    &quot;type&quot;: &quot;Image&quot;,
+    &quot;format&quot;: &quot;image/jpeg&quot;,
+    &quot;width&quot;: 2315,
+    &quot;height&quot;: 3000
+}
+</code></pre>
+<p><strong>(b) body with an ImageService3 reference (preferred):</strong></p>
+<pre><code class="language-json">{
+    &quot;id&quot;: &quot;https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg&quot;,
+    &quot;type&quot;: &quot;Image&quot;,
+    &quot;format&quot;: &quot;image/jpeg&quot;,
+    &quot;width&quot;: 2315,
+    &quot;height&quot;: 3000,
+    &quot;service&quot;: [
+        {
+            &quot;id&quot;: &quot;https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json&quot;,
+            &quot;type&quot;: &quot;ImageService3&quot;,
+            &quot;profile&quot;: &quot;level2&quot;
+        }
+    ]
+}
+</code></pre>
+<p>The converter emits variant (b). Legacy <code>zoomify</code> storymaps are converted to
+<code>storymap:mapType: &quot;iiif&quot;</code>; since the original zoomify tile paths are dead, the
+converter substitutes the IIIF reference image above (the legacy pyramid
+definition is not carried — nothing reads it).</p>
+<h2>StoryMap-specific terms</h2>
+<h3>Manifest level — via a map configuration service</h3>
+<p>The official validator validates manifests against a JSON Schema whose Manifest
+class is closed (<code>additionalProperties: false</code>), so manifest-level StoryMap
+settings cannot be placed directly on the Manifest object. They live on a
+dedicated extension service instead — a JSON-LD-idiomatic place for extended
+configuration, and one the validator accepts (<code>service</code> entries allow extra
+properties):</p>
+<pre><code class="language-json">{
+    &quot;service&quot;: [
+        {
+            &quot;id&quot;: &quot;https://example.org/storymap/&lt;name&gt;/map-config&quot;,
+            &quot;type&quot;: &quot;Service&quot;,
+            &quot;profile&quot;: &quot;https://christianmahnke.de/iiif/storymap/mapconfig&quot;,
+            &quot;storymap:mapType&quot;: &quot;osm:standard&quot;
+        }
+    ]
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Service property (storymap:)</th>
+<th>StoryMap field</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mapType</code></td>
+<td><code>map_type</code></td>
+<td><code>osm:standard</code>, <code>mapbox:...</code>, <code>stadia:...</code>, <code>iiif</code>, or an <code>https://...</code> tile URL; <code>zoomify</code> is replaced by <code>iiif</code></td>
+</tr>
+<tr>
+<td><code>mapAsImage</code></td>
+<td><code>map_as_image</code></td>
+<td><code>true</code> when the image itself is the map</td>
+</tr>
+<tr>
+<td><code>mapAccessToken</code></td>
+<td><code>map_access_token</code></td>
+<td>Mapbox/Stadia token from the storymap data, never the repository</td>
+</tr>
+<tr>
+<td><code>mapBackgroundColor</code></td>
+<td><code>map_background_color</code></td>
+<td>CSS color</td>
+</tr>
+<tr>
+<td><code>mapCenterOffset</code></td>
+<td><code>map_center_offset</code></td>
+<td><code>{left, top}</code></td>
+</tr>
+<tr>
+<td><code>mapSubdomains</code></td>
+<td><code>map_subdomains</code></td>
+<td>Tile URL subdomains</td>
+</tr>
+<tr>
+<td><code>iiifUrl</code></td>
+<td><code>iiif.url</code></td>
+<td>IIIF Image API <code>info.json</code> URL for image-map storymaps</td>
+</tr>
+<tr>
+<td><code>fontCss</code></td>
+<td><code>font_css</code></td>
+<td>e.g. <code>stock:dancing-ledger</code></td>
+</tr>
+<tr>
+<td><code>callToAction</code></td>
+<td><code>call_to_action</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>callToActionText</code></td>
+<td><code>call_to_action_text</code></td>
+<td>string</td>
+</tr>
+<tr>
+<td><code>startAtSlide</code></td>
+<td><code>start_at_slide</code></td>
+<td>0-based slide index</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td><code>language</code></td>
+<td>IETF language tag</td>
+</tr>
+<tr>
+<td><code>calculateZoom</code></td>
+<td><code>calculate_zoom</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>lessBounce</code></td>
+<td><code>less_bounce</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>lineFollowsPath</code></td>
+<td><code>line_follows_path</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>showLines</code></td>
+<td><code>show_lines</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>showHistoryLine</code></td>
+<td><code>show_history_line</code></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><code>lineColor</code></td>
+<td><code>line_color</code></td>
+<td>CSS color</td>
+</tr>
+<tr>
+<td><code>lineColorInactive</code></td>
+<td><code>line_color_inactive</code></td>
+<td>CSS color</td>
+</tr>
+<tr>
+<td><code>lineWeight</code></td>
+<td><code>line_weight</code></td>
+<td>number (px)</td>
+</tr>
+<tr>
+<td><code>lineOpacity</code></td>
+<td><code>line_opacity</code></td>
+<td>0–1</td>
+</tr>
+<tr>
+<td><code>lineDash</code></td>
+<td><code>line_dash</code></td>
+<td>CSS dash pattern</td>
+</tr>
+<tr>
+<td><code>lineJoin</code></td>
+<td><code>line_join</code></td>
+<td>CSS line join</td>
+</tr>
+<tr>
+<td><code>useCustomMarkers</code></td>
+<td><code>use_custom_markers</code></td>
+<td>boolean</td>
+</tr>
+</tbody></table>
+<h3>Canvas level — direct properties</h3>
+<p>Canvas objects are open for extension terms, so slide-specific StoryMap data is
+carried directly on the Canvas: <code>storymap:type</code>, <code>storymap:background</code>,
+<code>storymap:mediaCaption</code>, <code>storymap:mediaCredit</code>, <code>storymap:date</code> (see the
+Canvas table above).</p>
+<p>Readers must use the prefixed term for the slide type (<code>storymap:type</code>): the
+bare <code>type</code> key of a Canvas is the IIIF class type (<code>&quot;Canvas&quot;</code>) and can never
+carry the StoryMap slide type.</p>
+<h2>Validator interop</h2>
+<p>The official IIIF presentation validator
+(<code>https://presentation-validator.iiif.io/validate?version=3.0&amp;format=json</code>)
+validates manifests with a static JSON Schema:</p>
+<ul>
+<li><code>navPlace</code> (manifest- and canvas-level) is part of the schema and passes;
+GeoJSON Feature <code>properties</code> are open objects and tolerate marker data.</li>
+<li>Canvas objects are open and tolerate <code>storymap:</code> terms.</li>
+<li>The Manifest object is <strong>closed</strong> — <code>storymap:</code> terms directly on the Manifest
+are rejected, hence the map configuration service described above.</li>
+<li><code>@context</code> entries must be URI strings; a StoryMap namespace cannot be
+declared inline but must be referenced by URL.</li>
+</ul>
+<p><code>npm run validate:iiif</code> posts every manifest in <code>public/examples-iiif/</code> to the
+official validator and fails CI when any of them is rejected.</p>
+<h2>Worked example</h2>
+<p>A small hurricane storymap: an overview slide (text-only media), a slide with a
+photo, and a slide with a YouTube video — full manifest:</p>
+<pre><code class="language-json">{
+    &quot;@context&quot;: [
+        &quot;http://iiif.io/api/presentation/3/context.json&quot;,
+        &quot;http://iiif.io/api/extension/navplace/context.json&quot;,
+        &quot;https://cmahnke.github.io/StoryMapJS/context.json&quot;
+    ],
+    &quot;id&quot;: &quot;https://example.org/storymap/storm&quot;,
+    &quot;type&quot;: &quot;Manifest&quot;,
+    &quot;label&quot;: { &quot;none&quot;: [&quot;storm&quot;] },
+    &quot;behavior&quot;: [&quot;paged&quot;],
+    &quot;provider&quot;: [
+        {
+            &quot;id&quot;: &quot;https://example.org/&quot;,
+            &quot;type&quot;: &quot;Agent&quot;,
+            &quot;label&quot;: { &quot;none&quot;: [&quot;StoryMapJS&quot;] }
+        }
+    ],
+    &quot;service&quot;: [
+        {
+            &quot;id&quot;: &quot;https://example.org/storymap/storm/map-config&quot;,
+            &quot;type&quot;: &quot;Service&quot;,
+            &quot;profile&quot;: &quot;https://christianmahnke.de/iiif/storymap/mapconfig&quot;,
+            &quot;storymap:mapType&quot;: &quot;osm:standard&quot;,
+            &quot;storymap:language&quot;: &quot;en&quot;,
+            &quot;storymap:showLines&quot;: true,
+            &quot;storymap:showHistoryLine&quot;: true,
+            &quot;storymap:lineColor&quot;: &quot;#c0392b&quot;,
+            &quot;storymap:lineWeight&quot;: 3,
+            &quot;storymap:lineOpacity&quot;: 0.8
+        }
+    ],
+    &quot;items&quot;: [
+        {
+            &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/1&quot;,
+            &quot;type&quot;: &quot;Canvas&quot;,
+            &quot;height&quot;: 1080,
+            &quot;width&quot;: 1080,
+            &quot;label&quot;: { &quot;none&quot;: [&quot;The Path of the Storm&quot;] },
+            &quot;summary&quot;: { &quot;none&quot;: [&quot;A storm formed over the warm ocean.&quot;] },
+            &quot;items&quot;: [
+                {
+                    &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/1/annotationpage/1&quot;,
+                    &quot;type&quot;: &quot;AnnotationPage&quot;,
+                    &quot;items&quot;: [
+                        {
+                            &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/1/annotation/1&quot;,
+                            &quot;type&quot;: &quot;Annotation&quot;,
+                            &quot;motivation&quot;: &quot;painting&quot;,
+                            &quot;body&quot;: {
+                                &quot;type&quot;: &quot;TextualBody&quot;,
+                                &quot;format&quot;: &quot;text/html&quot;,
+                                &quot;value&quot;: &quot;A storm formed over the warm ocean.&quot;
+                            },
+                            &quot;target&quot;: &quot;https://example.org/storymap/storm/canvas/1&quot;
+                        }
+                    ]
+                }
+            ],
+            &quot;storymap:type&quot;: &quot;overview&quot;,
+            &quot;storymap:date&quot;: &quot;Sep 1&quot;
+        },
+        {
+            &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/2&quot;,
+            &quot;type&quot;: &quot;Canvas&quot;,
+            &quot;height&quot;: 1080,
+            &quot;width&quot;: 1080,
+            &quot;label&quot;: { &quot;none&quot;: [&quot;Sep 2&quot;] },
+            &quot;summary&quot;: { &quot;none&quot;: [&quot;The storm made landfall.&quot;] },
+            &quot;items&quot;: [
+                {
+                    &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/2/annotationpage/1&quot;,
+                    &quot;type&quot;: &quot;AnnotationPage&quot;,
+                    &quot;items&quot;: [
+                        {
+                            &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/2/annotation/1&quot;,
+                            &quot;type&quot;: &quot;Annotation&quot;,
+                            &quot;motivation&quot;: &quot;painting&quot;,
+                            &quot;body&quot;: {
+                                &quot;id&quot;: &quot;https://example.org/images/landfall.jpg&quot;,
+                                &quot;type&quot;: &quot;Image&quot;,
+                                &quot;format&quot;: &quot;image/jpeg&quot;
+                            },
+                            &quot;target&quot;: &quot;https://example.org/storymap/storm/canvas/2&quot;
+                        }
+                    ]
+                }
+            ],
+            &quot;storymap:mediaCaption&quot;: &quot;Landfall&quot;,
+            &quot;storymap:mediaCredit&quot;: &quot;Weather Service&quot;,
+            &quot;storymap:date&quot;: &quot;Sep 2&quot;,
+            &quot;navPlace&quot;: {
+                &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/2/navplace&quot;,
+                &quot;type&quot;: &quot;FeatureCollection&quot;,
+                &quot;features&quot;: [
+                    {
+                        &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/2/navplace/feature/1&quot;,
+                        &quot;type&quot;: &quot;Feature&quot;,
+                        &quot;geometry&quot;: { &quot;type&quot;: &quot;Point&quot;, &quot;coordinates&quot;: [-89.6, 28.2] },
+                        &quot;properties&quot;: { &quot;zoom&quot;: 10, &quot;line&quot;: true }
+                    }
+                ]
+            }
+        },
+        {
+            &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/3&quot;,
+            &quot;type&quot;: &quot;Canvas&quot;,
+            &quot;height&quot;: 1080,
+            &quot;width&quot;: 1080,
+            &quot;label&quot;: { &quot;none&quot;: [&quot;Sep 3&quot;] },
+            &quot;items&quot;: [
+                {
+                    &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/3/annotationpage/1&quot;,
+                    &quot;type&quot;: &quot;AnnotationPage&quot;,
+                    &quot;items&quot;: [
+                        {
+                            &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/3/annotation/1&quot;,
+                            &quot;type&quot;: &quot;Annotation&quot;,
+                            &quot;motivation&quot;: &quot;painting&quot;,
+                            &quot;body&quot;: {
+                                &quot;id&quot;: &quot;https://www.youtube.com/watch?v=example&quot;,
+                                &quot;type&quot;: &quot;Video&quot;
+                            },
+                            &quot;target&quot;: &quot;https://example.org/storymap/storm/canvas/3&quot;
+                        }
+                    ]
+                }
+            ],
+            &quot;storymap:mediaCredit&quot;: &quot;News&quot;,
+            &quot;storymap:date&quot;: &quot;Sep 3&quot;,
+            &quot;navPlace&quot;: {
+                &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/3/navplace&quot;,
+                &quot;type&quot;: &quot;FeatureCollection&quot;,
+                &quot;features&quot;: [
+                    {
+                        &quot;id&quot;: &quot;https://example.org/storymap/storm/canvas/3/navplace/feature/1&quot;,
+                        &quot;type&quot;: &quot;Feature&quot;,
+                        &quot;geometry&quot;: { &quot;type&quot;: &quot;Point&quot;, &quot;coordinates&quot;: [-90.1, 29.9] },
+                        &quot;properties&quot;: { &quot;zoom&quot;: 9, &quot;line&quot;: true }
+                    }
+                ]
+            }
+        }
+    ]
+}
+</code></pre>
+<h2>Full mapping table</h2>
+<table>
+<thead>
+<tr>
+<th>Legacy field (storymap root)</th>
+<th>IIIF path</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>slides</code></td>
+<td><code>items[]</code> (Canvas per slide)</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td><code>service[0].storymap:language</code></td>
+</tr>
+<tr>
+<td><code>map_type</code></td>
+<td><code>service[0].storymap:mapType</code> (<code>zoomify</code> → <code>iiif</code>)</td>
+</tr>
+<tr>
+<td><code>map_as_image</code></td>
+<td><code>service[0].storymap:mapAsImage</code></td>
+</tr>
+<tr>
+<td><code>map_mini</code></td>
+<td><em>dropped</em> (viewer setting, not part of the exchange format)</td>
+</tr>
+<tr>
+<td><code>map_subdomains</code></td>
+<td><code>service[0].storymap:mapSubdomains</code></td>
+</tr>
+<tr>
+<td><code>map_access_token</code></td>
+<td><code>service[0].storymap:mapAccessToken</code></td>
+</tr>
+<tr>
+<td><code>map_background_color</code></td>
+<td><code>service[0].storymap:mapBackgroundColor</code></td>
+</tr>
+<tr>
+<td><code>map_center_offset</code></td>
+<td><code>service[0].storymap:mapCenterOffset</code></td>
+</tr>
+<tr>
+<td><code>map_popup</code></td>
+<td><em>dropped</em> (viewer setting)</td>
+</tr>
+<tr>
+<td><code>use_custom_markers</code></td>
+<td><code>service[0].storymap:useCustomMarkers</code></td>
+</tr>
+<tr>
+<td><code>zoom_distance</code></td>
+<td><em>dropped</em> (viewer setting)</td>
+</tr>
+<tr>
+<td><code>calculate_zoom</code></td>
+<td><code>service[0].storymap:calculateZoom</code></td>
+</tr>
+<tr>
+<td><code>less_bounce</code></td>
+<td><code>service[0].storymap:lessBounce</code></td>
+</tr>
+<tr>
+<td><code>line_follows_path</code></td>
+<td><code>service[0].storymap:lineFollowsPath</code></td>
+</tr>
+<tr>
+<td><code>show_lines</code></td>
+<td><code>service[0].storymap:showLines</code></td>
+</tr>
+<tr>
+<td><code>show_history_line</code></td>
+<td><code>service[0].storymap:showHistoryLine</code></td>
+</tr>
+<tr>
+<td><code>line_color</code></td>
+<td><code>service[0].storymap:lineColor</code></td>
+</tr>
+<tr>
+<td><code>line_color_inactive</code></td>
+<td><code>service[0].storymap:lineColorInactive</code></td>
+</tr>
+<tr>
+<td><code>line_weight</code></td>
+<td><code>service[0].storymap:lineWeight</code></td>
+</tr>
+<tr>
+<td><code>line_opacity</code></td>
+<td><code>service[0].storymap:lineOpacity</code></td>
+</tr>
+<tr>
+<td><code>line_dash</code></td>
+<td><code>service[0].storymap:lineDash</code></td>
+</tr>
+<tr>
+<td><code>line_join</code></td>
+<td><code>service[0].storymap:lineJoin</code></td>
+</tr>
+<tr>
+<td><code>iiif.url</code></td>
+<td><code>service[0].storymap:iiifUrl</code> + canvas Image annotation <code>service[]</code></td>
+</tr>
+<tr>
+<td><code>iiif.attribution</code></td>
+<td><code>requiredStatement</code></td>
+</tr>
+<tr>
+<td><code>zoomify</code></td>
+<td><em>dropped</em> (zoomify is replaced by the IIIF reference image)</td>
+</tr>
+<tr>
+<td><code>font_css</code></td>
+<td><code>service[0].storymap:fontCss</code></td>
+</tr>
+<tr>
+<td><code>call_to_action</code></td>
+<td><code>service[0].storymap:callToAction</code></td>
+</tr>
+<tr>
+<td><code>call_to_action_text</code></td>
+<td><code>service[0].storymap:callToActionText</code></td>
+</tr>
+<tr>
+<td><code>relative_date</code></td>
+<td><em>dropped</em> (viewer setting)</td>
+</tr>
+<tr>
+<td><code>start_at_slide</code></td>
+<td><code>service[0].storymap:startAtSlide</code></td>
+</tr>
+<tr>
+<td><em>(root) <code>width</code>, <code>height</code></em></td>
+<td><em>dropped</em> (viewer embed size)</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Legacy field (slide)</th>
+<th>IIIF path</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type: &quot;overview&quot;</code></td>
+<td>Canvas <code>storymap:type: &quot;overview&quot;</code></td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>Canvas <code>storymap:date</code></td>
+</tr>
+<tr>
+<td><code>text.headline</code></td>
+<td>Canvas <code>label</code> (language map)</td>
+</tr>
+<tr>
+<td><code>text.text</code></td>
+<td>Canvas <code>summary</code> (language map)</td>
+</tr>
+<tr>
+<td><code>location.lat</code>, <code>location.lon</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>geometry.coordinates</code></td>
+</tr>
+<tr>
+<td><code>location.zoom</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.zoom</code></td>
+</tr>
+<tr>
+<td><code>location.line</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.line</code></td>
+</tr>
+<tr>
+<td><code>location.name</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.name</code></td>
+</tr>
+<tr>
+<td><code>location.icon</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.icon</code></td>
+</tr>
+<tr>
+<td><code>location.iconSize</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.iconSize</code></td>
+</tr>
+<tr>
+<td><code>location.image</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.image</code></td>
+</tr>
+<tr>
+<td><code>location.use_custom_marker</code></td>
+<td>Canvas <code>navPlace</code> Feature <code>properties.use_custom_marker</code></td>
+</tr>
+<tr>
+<td><code>media.url</code> (image)</td>
+<td>Annotation body <code>{type: &quot;Image&quot;, format: ...}</code></td>
+</tr>
+<tr>
+<td><code>media.url</code> (video service)</td>
+<td>Annotation body <code>{type: &quot;Video&quot;}</code></td>
+</tr>
+<tr>
+<td><code>media.url</code> (audio service)</td>
+<td>Annotation body <code>{type: &quot;Sound&quot;}</code></td>
+</tr>
+<tr>
+<td><code>media.url</code> (web page)</td>
+<td>Annotation body <code>{type: &quot;Text&quot;, format: &quot;text/html&quot;}</code></td>
+</tr>
+<tr>
+<td><code>media.url</code> (absent / HTML)</td>
+<td>Annotation body <code>{type: &quot;TextualBody&quot;, value: ...}</code></td>
+</tr>
+<tr>
+<td><code>media.caption</code></td>
+<td>Canvas <code>storymap:mediaCaption</code></td>
+</tr>
+<tr>
+<td><code>media.credit</code></td>
+<td>Canvas <code>storymap:mediaCredit</code></td>
+</tr>
+<tr>
+<td><code>media.thumb</code></td>
+<td><em>dropped</em> (thumbnails may be added via Canvas <code>thumbnail</code>)</td>
+</tr>
+<tr>
+<td><code>background</code></td>
+<td>Canvas <code>storymap:background</code> <code>{url, color}</code></td>
+</tr>
+<tr>
+<td><code>uniqueid</code></td>
+<td><em>dropped</em> (canvas <code>id</code>s are the canonical identifiers)</td>
+</tr>
+</tbody></table>
+<h2>Conversion</h2>
+<p><code>node scripts/convert-to-iiif.mjs</code> regenerates <code>public/examples-iiif/</code> from
+<code>public/examples/</code>. Ids are deterministic:</p>
+<ul>
+<li>Manifest: <code>https://example.org/storymap/&lt;name&gt;</code></li>
+<li>Canvas: <code>&lt;manifest-id&gt;/canvas/&lt;n&gt;</code> (1-based, slide order)</li>
+<li>AnnotationPage: <code>&lt;canvas-id&gt;/annotationpage/1</code></li>
+<li>Annotation: <code>&lt;canvas-id&gt;/annotation/1</code></li>
+<li>FeatureCollection / Feature: <code>&lt;canvas-id&gt;/navplace[.../feature/1]</code></li>
+</ul>
+
+        </main>
+        
+    <footer class="footer-knightlab">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">StoryMap <span>JS</span></div>
+                <ul class="list-social">
+                    <li>
+                        <a href="https://github.com/cmahnke/StoryMapJS" title="StoryMapJS fork on GitHub"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a href="https://github.com/NUKnightLab/StoryMapJS" title="Upstream Knight Lab repository"
+                            >Upstream</a
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="footer-description">
+                <p>
+                    A TypeScript rewrite of
+                    <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+                    the original tool by
+                    <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
+                </p>
+                <span class="copyright">
+                    Released under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
+                </span>
+            </div>
+        </div>
+    </footer>
+    </body>
+</html>

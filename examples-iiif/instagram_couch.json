@@ -1,0 +1,1166 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/instagram_couch",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "instagram_couch"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "<span class=\"vco-snapmap-instagram\">Bill Couch<small><a href=\"http://instagram.com/couch\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> couch</a></small></span>"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<div class=\"vco-snapmap-instagram-text\"><span class=\"vco-snapmap-instagram-posts\">656</span><span class=\"vco-snapmap-instagram-followed_by\">24037</span><span class=\"vco-snapmap-instagram-follows\">258</span><span class=\"vco-snapmap-instagram-website\"><a href=\"http://williamcouch.com\" target=\"_blank\">http://williamcouch.com</a></span></div>"
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_652_75sq_1382829649.jpg?instagramprofile"
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Mount Tamalpais State Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "I am not allowed to complain about anything ever.<span class=\"vco-media-instagram-likes\">378</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10483347_786032961436267_725514152_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.596644444,
+                                37.923922222
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Alpine Lake"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Alpine Dam drop<span class=\"vco-media-instagram-likes\">176</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10475101_1493435787557725_527506329_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.635846143,
+                                37.941593191
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Mount Tamalpais State Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Yesterday on the bike, looking to my right.<span class=\"vco-media-instagram-likes\">265</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488737_1470134833230706_1018075160_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.596644444,
+                                37.923922222
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Grandview Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "The Sunset is a secret.<span class=\"vco-media-instagram-likes\">254</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10520198_780176792035098_1142583387_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.471764631,
+                                37.756275256
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Fort Funston"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Waveforms.<span class=\"vco-media-instagram-likes\">329</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467695_648597075222160_1033016379_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.502708435,
+                                37.715161588
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "San Bruno Mountain State Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "This is how I’ll remember summers in San Francisco.<span class=\"vco-media-instagram-likes\">257</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10508085_1445383065714880_2117209835_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.435,
+                                37.686111111
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Foglines<span class=\"vco-media-instagram-likes\">384</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10467759_1506009949611342_1366706119_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.484275,
+                                37.783438333
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/9",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Golden Gate Bridge"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "West coast red, white, and blue.<span class=\"vco-media-instagram-likes\">297</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10454009_1473052939606613_584288724_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.478611111,
+                                37.819722222
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/10",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/10/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/10/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/10"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "A Fourth cookout on the sidewalk, empty streets, neighbors walking about, powers out, wind blowing and fog invading, feels like a snow day in San Francisco.<span class=\"vco-media-instagram-likes\">292</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-prn/t51.2885-15/929136_250718841795901_1879631386_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/10/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/10/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.436675,
+                                37.7758
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/11",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/11/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/11/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/11"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Mount Tamalpais State Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Seeking sunlight.<span class=\"vco-media-instagram-likes\">348</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/927092_650914828331185_1165693375_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/11/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/11/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.596644444,
+                                37.923922222
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/12",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/12/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/12/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/12"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Mount Tamalpais State Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Settled at 1500'<span class=\"vco-media-instagram-likes\">322</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926801_1590837847809415_263852512_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/12/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/12/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.596644444,
+                                37.923922222
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/13",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/13/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/13/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/13"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "The Cathedral of Christ the Light"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Afternoon dedicated to explorations of architecture.<span class=\"vco-media-instagram-likes\">244</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925034_326424910844311_466022625_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/13/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/13/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.263144197,
+                                37.810074026
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/14",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/14/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/14/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/14"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "The Cathedral of Christ the Light"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">251</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488616_683343168414897_1281040327_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/14/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/14/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.263144197,
+                                37.810074026
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/15",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/15/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/15/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/15"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Weekend ending with @kvanscha.<span class=\"vco-media-instagram-likes\">237</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522315_1504204289793357_87668020_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/15/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/15/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.40982,
+                                37.758658333
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/16",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/16/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/16/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/16"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Hawk Hill, California"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Despite high humidity and the warm air, the sky this morning reminded me of Michigan in the fall.<span class=\"vco-media-instagram-likes\">264</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10520345_1456232291300225_1466525789_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/16/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/16/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.499192591,
+                                37.827193877
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/17",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/17/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/17/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/17"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Measured in weeks.<span class=\"vco-media-instagram-likes\">177</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1515084_315821795250608_441617042_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/17/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/17/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.416183333,
+                                37.776875
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/18",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/18/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/18/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/18"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Bolinas Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Weathered by the wind, salt, sun, and sea today in my first time out surfing for @kristen_fortier’s birthday with @bradleyrhughes, @weightshift, and @jenschuetz. I’m afraid a new hobby is stirring.<span class=\"vco-media-instagram-likes\">212</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475006_1450370065222414_711580170_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/18/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/18/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.684982997,
+                                37.909976095
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/19",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/19/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/19/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/19"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "San Bruno Mountain State Park"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "There.<span class=\"vco-media-instagram-likes\">261</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/928588_1442596822675350_1247118963_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/19/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/19/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.435,
+                                37.686111111
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/20",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/20/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/20/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/20"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Pacelining through Half Moon Bay.<span class=\"vco-media-instagram-likes\">158</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549615_716308391763002_42187880_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/20/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/20/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.499396667,
+                                37.517066667
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_couch/canvas/21",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_couch/canvas/21/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_couch/canvas/21/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_couch/canvas/21"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Junipero Serra<span class=\"vco-media-instagram-likes\">172</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915611_527537560706314_239241638_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_couch/canvas/21/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_couch/canvas/21/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.359558333,
+                                37.530678333
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/instagram_couch/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapAsImage": false,
+            "storymap:useCustomMarkers": true
+        }
+    ]
+}

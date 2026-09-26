@@ -1,0 +1,300 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/issue-305-start-at-slide",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-305-start-at-slide"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Overview"
+                            },
+                            "target": "https://example.org/storymap/issue-305-start-at-slide/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Start slide test"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Overview"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "First."
+                            },
+                            "target": "https://example.org/storymap/issue-305-start-at-slide/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "One"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "First."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                2.35,
+                                48.85
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Second."
+                            },
+                            "target": "https://example.org/storymap/issue-305-start-at-slide/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Two"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Second."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                13.4,
+                                52.52
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Third."
+                            },
+                            "target": "https://example.org/storymap/issue-305-start-at-slide/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Three"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Third."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                12.49,
+                                41.9
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Fourth."
+                            },
+                            "target": "https://example.org/storymap/issue-305-start-at-slide/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Four"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Fourth."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-305-start-at-slide/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                9.19,
+                                45.46
+                            ]
+                        },
+                        "properties": {
+                            "zoom": 6,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-305-start-at-slide/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

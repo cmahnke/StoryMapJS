@@ -1,0 +1,23 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Accessible images",
+                    "text": "Explicit alt text on the overview image."
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-portrait.jpg",
+                    "alt": "Portrait-oriented placeholder photograph",
+                    "caption": "<p>The caption stays HTML.</p>",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,77 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Dateline crossing",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Fiji",
+                    "text": "West of the dateline."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": -17.7,
+                    "lon": 177.3,
+                    "zoom": 5,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Fiji east",
+                    "text": "East of the dateline."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": -17.8,
+                    "lon": -179.9,
+                    "zoom": 5,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Samoa",
+                    "text": "Further east."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": -13.8,
+                    "lon": -171.8,
+                    "zoom": 5,
+                    "line": true
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "WebP",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "WebP slide",
+                    "text": "Should render as an image."
+                },
+                "media": {
+                    "url": "https://www.gstatic.com/webp/gallery3/1.webp",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

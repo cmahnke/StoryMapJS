@@ -1,0 +1,1946 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/instagram_joegermuska",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "instagram_joegermuska"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "<span class=\"vco-snapmap-instagram\">Joe Germuska<small><a href=\"http://instagram.com/joegermuska\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> joegermuska</a></small></span>"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<div class=\"vco-snapmap-instagram-text\"><span class=\"vco-snapmap-instagram-posts\">89</span><span class=\"vco-snapmap-instagram-followed_by\">322</span><span class=\"vco-snapmap-instagram-follows\">259</span><span class=\"vco-snapmap-instagram-website\"></span></div>"
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_171460_75sq_1287373067.jpg?instagramprofile"
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Chicago Cultural Center"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Han Bennink on the minimalist drum kit, Umbrella Music Festival<span class=\"vco-media-instagram-likes\">4</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1170271_354991251313291_29073852_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.624717233,
+                                41.883472822
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Chicago Cultural Center"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Even more minimal, Han plays the floor (w/Wilbert de Joode)<span class=\"vco-media-instagram-likes\">5</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1208274_251696704980746_1901311485_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.624717233,
+                                41.883472822
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Fluffing the tree<span class=\"vco-media-instagram-likes\">14</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/1389299_228747127301176_466858739_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.665106459,
+                                42.022046931
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Vivi & Mr Bingle<span class=\"vco-media-instagram-likes\">1</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1171086_648655238520265_2120392757_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -90.099097167,
+                                29.987103333
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Celebration In the Oaks"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">1</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1170246_1440854236133591_446887962_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -90.097995067,
+                                29.987061939
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Celebration In the Oaks"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">5</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/917270_446618888773680_1111622767_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -90.097995067,
+                                29.987061939
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "#redline #shoes<span class=\"vco-media-instagram-likes\">6</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/1389900_532243866871426_2121320819_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.65942202,
+                                41.997167179
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/9",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Redmoon"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Drum machine a la Redmoon. 5 shows left in the winter pageant, some sold out—but see it if you can!<span class=\"vco-media-instagram-likes\">4</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage6/t0.0-17/OBPTH/a49dda4c65c911e3ac8b12812f0cc8a2_8.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.664088479,
+                                41.889259423
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/10",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/10/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/10/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/10"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Happy Sarukkah!<span class=\"vco-media-instagram-likes\">8</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/outbound-distilleryimage4/t0.0-17/OBPTH/2aeb85506a5b11e39ef30ecb098d5c88_8.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/10/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/10/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.698209637,
+                                41.967497376
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/11",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/11/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/11/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/11"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Lincoln Restaurant"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/outbound-distilleryimage8/t0.0-17/OBPTH/6d46059c6b2811e3bb80129c7073a39c_8.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/11/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/11/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.678924304,
+                                41.954436777
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/12",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/12/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/12/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/12"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "\"The time to be happy is now.\" (not just Christmas 1973)<span class=\"vco-media-instagram-likes\">2</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage2/t0.0-17/OBPTH/50455e826d7d11e393a6121f8691a216_8.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/12/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/12/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -82.007653778,
+                                41.417588565
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/13",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/13/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/13/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/13"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Cleveland Botanical Garden"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/927522_552904614787231_1689051353_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/13/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/13/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -81.609813771,
+                                41.511017777
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/14",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/14/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/14/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/14"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Cleveland Botanical Garden"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Christmas Story gingerbread house (detail)<span class=\"vco-media-instagram-likes\">7</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1172193_238718666289298_395456179_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/14/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/14/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -81.609813771,
+                                41.511017777
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/15",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/15/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/15/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/15"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "The band (Glenwood Ave mural) #rogerspark<span class=\"vco-media-instagram-likes\">10</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928109_652778594761308_1360268739_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/15/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/15/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.665294447,
+                                42.007976856
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/16",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/16/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/16/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/16"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Another Glenwood Ave mural #rogerspark<span class=\"vco-media-instagram-likes\">14</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516470_777199408969678_56999863_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/16/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/16/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.663322632,
+                                42.012790202
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/17",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/17/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/17/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/17"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "It's happening again: @danrybicky's hearty Caribbean soup from @marthabayne cookbook (w/@chronicbabe & @loosetooth)<span class=\"vco-media-instagram-likes\">8</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1516005_603769086361544_1302911410_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/17/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/17/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.665085839,
+                                42.021950246
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/18",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/18/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/18/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/18"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">7</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1530730_659231024120794_338653257_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/18/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/18/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.679008348,
+                                42.007415104
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/19",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/19/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/19/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/19"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Hacking knot #coderfashion<span class=\"vco-media-instagram-likes\">12</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1741736_1441413522758395_882443631_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/19/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/19/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.665019287,
+                                42.022038046
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/20",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/20/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/20/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/20"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Scrappy Joe (note the ornament near the J)<span class=\"vco-media-instagram-likes\">13</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924986_232599750269407_1325883759_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/20/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/20/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.672653333,
+                                42.019413833
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/21",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/21/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/21/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/21"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">9</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/10362112_1421331924797857_2028847886_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/21/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/21/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.6689,
+                                42.0194805
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/22",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/22/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/22/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/22"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "National September 11 Memorial & Museum"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">4</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10362267_266624956849910_1821925645_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/22/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/22/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.013021159,
+                                40.711746103
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/23",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/23/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/23/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/23"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "National September 11 Memorial & Museum"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">6</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10326567_1377511912538640_84453724_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/23/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/23/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.013021159,
+                                40.711746103
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/24",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/24/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/24/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/24"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Totally love these sculptures from Rockefeller Park #latergram<span class=\"vco-media-instagram-likes\">7</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/l/t51.2885-15/10387848_251304458409279_188302275_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/24/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/24/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.015236117,
+                                40.7179
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/25",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/25/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/25/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/25"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Another #latergram from Rockefeller Park<span class=\"vco-media-instagram-likes\">6</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10358346_1420868631518942_383541786_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/25/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/25/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.015716667,
+                                40.717921667
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/26",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/26/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/26/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/26"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "New York morning (in response to @johnsbracken)<span class=\"vco-media-instagram-likes\">6</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10268787_472550682890557_2036156195_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/26/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/26/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.002091667,
+                                40.704645
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/27",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/27/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/27/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/27"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">8</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/914712_652792584800829_1820055162_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/27/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/27/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.009766667,
+                                40.706078333
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/28",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/28/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/28/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/28"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Taqueria De Los Muertos"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-media-instagram-likes\">6</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10354286_673833412682480_1158284059_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/28/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/28/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -73.963677511,
+                                40.677357982
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/29",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/29/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/29/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/29"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Same species? http://instagram.com/p/foiokfltex/<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10349753_1437874399802558_1860148587_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/29/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/29/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -74.011636117,
+                                40.710411667
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/30",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/30/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/30/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/30"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Pratt Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Artists of the Wall 2014 space #8<span class=\"vco-media-instagram-likes\"></span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10424534_709184212481432_1712785835_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/30/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/30/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.657709346,
+                                42.006131089
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/31",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/31/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/31/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/31"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Pratt Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Artists of the Wall 2014 space #38<span class=\"vco-media-instagram-likes\"></span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472039_276886439151064_1267032171_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/31/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/31/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.657709346,
+                                42.006131089
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/32",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/32/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/32/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/32"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Tobey Prinz Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "\"Jukebox Hero\" Artists of the Wall 2014<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10483349_752566224784556_1218745002_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/32/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/32/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.65783,
+                                42.007222217
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/33",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/33/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/33/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/33"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Tobey Prinz Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "\"Make no little plans\" Artists of the Wall 2014<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10424551_669895366438819_445779210_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/33/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/33/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.65783,
+                                42.007222217
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/34",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/34/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/34/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-landscape.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/34"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Tobey Prinz Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Artists of the Wall 2014<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/l/t51.2885-15/10453999_1462108990695571_286781087_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/34/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/34/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.65783,
+                                42.007222217
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-portrait.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/35",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/35/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/35/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-portrait.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/35"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Tobey Prinz Beach"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "\"You can fly!\" Artists of the Wall 2014<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10401829_662178973869881_988355314_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/35/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/35/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.65783,
+                                42.007222217
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-city.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/canvas/36",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/instagram_joegermuska/canvas/36/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/instagram_joegermuska/canvas/36/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "/examples/assets/placeholder-city.jpg"
+                            },
+                            "target": "https://example.org/storymap/instagram_joegermuska/canvas/36"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Maple Hall. <- a physical manifestation of the \"aggressive period?\"<span class=\"vco-media-instagram-likes\">3</span>"
+                ]
+            },
+            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/928600_1437212396555105_577217547_n.jpg",
+            "navPlace": {
+                "id": "https://example.org/storymap/instagram_joegermuska/canvas/36/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/instagram_joegermuska/canvas/36/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -122.420875,
+                                37.7909
+                            ]
+                        },
+                        "properties": {
+                            "image": "/examples/assets/placeholder-landscape.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/instagram_joegermuska/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapAsImage": false,
+            "storymap:useCustomMarkers": true
+        }
+    ]
+}

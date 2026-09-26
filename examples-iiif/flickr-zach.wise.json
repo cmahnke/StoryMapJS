@@ -1,0 +1,1074 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/flickr-zach.wise",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "flickr-zach.wise"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://farm6.staticflickr.com/5565/buddyicons/46419706@N00.jpg?profile",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "<span class=\"vco-snapmap-flickr\">Zach Wise<small><a href=\"https://www.flickr.com/photos/zach.wise\" target=\"_blank\"><span class=\"vco-icon-flickr\"></span> zach.wise</a></small></span>"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<span class=\"vco-snapmap-user-location\">Brooklyn, NY, USA</span><span class=\"vco-snapmap-user-description\">Zach Wise is an Emmy Award winning interactive producer and Associate Professor at Northwestern University. Former senior multimedia producer at The New York Times. \n\nHis work at the Las Vegas Sun and The New York Times has been recognized by the Online News Association, Webby Awards, NPPA Best of Photojournalism, the Pulitzer Prize,  the Peabody Awards , the Emmy awards, and numerous other industry honors.</span>"
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm8.staticflickr.com/7434/11278097093_437426a634_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Driving through the snow in a 100 horse ford sleigh.<span class=\"vco-snapmap-flickr-views\">268</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.028808,
+                                40.659568
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm8.staticflickr.com/7434/11278097093_437426a634_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3718/11360716606_ba261c0786_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Saying goodbye to Jeremy Gilbert as he leaves Northwestern for National Geographic.<span class=\"vco-snapmap-flickr-views\">295</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.674171,
+                                42.050845
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3718/11360716606_ba261c0786_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm8.staticflickr.com/7333/11717826883_aaf1e73231_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Walking to the train station. Will the snow ever stop? Last time I checked there was 15in at our house. #selfie #firstselfie #blizzard<span class=\"vco-snapmap-flickr-views\">187</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.67034,
+                                42.05353
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm8.staticflickr.com/7333/11717826883_aaf1e73231_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm8.staticflickr.com/7447/11717910263_7ab3621fc2_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "White-out<span class=\"vco-snapmap-flickr-views\">196</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.674171,
+                                42.050845
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm8.staticflickr.com/7447/11717910263_7ab3621fc2_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3773/11762438655_8e404a4186_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "I'm not sure I'd call it a mountain, but skiing is skiing. Right?<span class=\"vco-snapmap-flickr-views\">350</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -88.188355,
+                                42.498783
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3773/11762438655_8e404a4186_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm8.staticflickr.com/7459/11880207036_6141f206d2_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Chicago is deicing.<span class=\"vco-snapmap-flickr-views\">285</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.624464,
+                                41.888828
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm8.staticflickr.com/7459/11880207036_6141f206d2_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm3.staticflickr.com/2835/11985485494_3c1d8dfb7a_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "An illuminated bed floating in one if the canals of Amsterdam.<span class=\"vco-snapmap-flickr-views\">161</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.900494,
+                                52.375597
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm3.staticflickr.com/2835/11985485494_3c1d8dfb7a_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/9",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/9/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/9/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm8.staticflickr.com/7313/11996751974_6f0db90f8a_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/9"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Just a little intimidated to be speaking here. By little I actually mean a lot. #Hoofdredacteurendag #Amsterdam #Rijksmuseum<span class=\"vco-snapmap-flickr-views\">156</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/9/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/9/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.88516,
+                                52.359876
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm8.staticflickr.com/7313/11996751974_6f0db90f8a_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/10",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/10/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/10/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3750/11996607135_0869393f45_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/10"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Pretty good turnout. #hoofdredacteur #rijksmuseum<span class=\"vco-snapmap-flickr-views\">173</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/10/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/10/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.88516,
+                                52.359876
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3750/11996607135_0869393f45_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/11",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/11/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/11/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3751/11997616966_c062039142_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/11"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "The Rijksmuseum is presenting awards for the best use of the digital versions of the artwork they've put online. #hoofdredacteur #rijksmuseum<span class=\"vco-snapmap-flickr-views\">171</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/11/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/11/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.88516,
+                                52.359876
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3751/11997616966_c062039142_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/12",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/12/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/12/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm8.staticflickr.com/7380/12002050044_a4d78603cd_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/12"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "I got a tour of the Rijksmuseum  after they closed to the public along with the magazine editors of the Netherlands. #awesome #Rijksmuseum #hoofdredacteur<span class=\"vco-snapmap-flickr-views\">232</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/12/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/12/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.88516,
+                                52.359876
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm8.staticflickr.com/7380/12002050044_a4d78603cd_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/13",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/13/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/13/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm3.staticflickr.com/2813/12002112794_0373b148c8_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/13"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Touring the Rijksmuseum afterhours. #awesome #hoofdredacteur #rijksmuseum<span class=\"vco-snapmap-flickr-views\">245</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/13/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/13/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.88516,
+                                52.359876
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm3.staticflickr.com/2813/12002112794_0373b148c8_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/14",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/14/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/14/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5510/12016365114_5cb2088f64_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/14"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Walking around old Amsterdam today.<span class=\"vco-snapmap-flickr-views\">248</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/14/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/14/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.900116,
+                                52.370935
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5510/12016365114_5cb2088f64_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/15",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/15/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/15/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3802/12019759384_4163da9eaf_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/15"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Some pretty intense colors in the hotel bar. #amsterdam<span class=\"vco-snapmap-flickr-views\">425</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/15/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/15/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.888522,
+                                52.370506
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3802/12019759384_4163da9eaf_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/16",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/16/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/16/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm6.staticflickr.com/5236/14108595914_deea75d6af_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/16"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Saturn V rocket<span class=\"vco-snapmap-flickr-views\">344</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/16/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/16/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -77.01971,
+                                38.887986
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm6.staticflickr.com/5236/14108595914_deea75d6af_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/17",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/17/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/17/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3885/14514563402_a67c80a9b6_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/17"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Gone fishing.<span class=\"vco-snapmap-flickr-views\">67</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/17/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/17/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -81.7975,
+                                39.2217
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3885/14514563402_a67c80a9b6_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/18",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/18/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/18/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3863/14572433421_d945d53f6b_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/18"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Happy Independence Day!<span class=\"vco-snapmap-flickr-views\">46</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/18/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/18/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.694855,
+                                42.064417
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3863/14572433421_d945d53f6b_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/19",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/19/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/19/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3839/14443647908_ebfcf1f096_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/19"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Legoland jungle pond<span class=\"vco-snapmap-flickr-views\">50</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/19/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/19/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -88.033682,
+                                42.039727
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3839/14443647908_ebfcf1f096_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/20",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/20/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/20/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3917/14628287094_da675d8344_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/20"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "Spaceport at Mos Eisley, Legoland.<span class=\"vco-snapmap-flickr-views\">69</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/20/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/20/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -88.033682,
+                                42.039727
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3917/14628287094_da675d8344_s.jpg"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/canvas/21",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/flickr-zach.wise/canvas/21/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/flickr-zach.wise/canvas/21/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://farm4.staticflickr.com/3904/14443826998_4ae743cec0_n.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/flickr-zach.wise/canvas/21"
+                        }
+                    ]
+                }
+            ],
+            "summary": {
+                "none": [
+                    "POTUS in Lego.<span class=\"vco-snapmap-flickr-views\">82</span>"
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/flickr-zach.wise/canvas/21/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/flickr-zach.wise/canvas/21/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -88.033682,
+                                42.039727
+                            ]
+                        },
+                        "properties": {
+                            "image": "https://farm4.staticflickr.com/3904/14443826998_4ae743cec0_s.jpg"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/flickr-zach.wise/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapAsImage": false
+        }
+    ]
+}

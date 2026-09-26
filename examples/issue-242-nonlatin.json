@@ -1,0 +1,55 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Карта мира",
+                    "text": "Обзор на русском языке."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Αθήνα",
+                    "text": "Ελληνικό κείμενο για την Αθήνα."
+                },
+                "location": {
+                    "lat": 37.98,
+                    "lon": 23.73
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "ירושלים",
+                    "text": "טקסט עברי לירושלים."
+                },
+                "location": {
+                    "lat": 31.77,
+                    "lon": 35.21
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "القاهرة",
+                    "text": "نص عربي عن القاهرة."
+                },
+                "location": {
+                    "lat": 30.04,
+                    "lon": 31.24
+                }
+            }
+        ]
+    }
+}

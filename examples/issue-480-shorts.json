@@ -1,0 +1,35 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Shorts",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Shorts slide",
+                    "text": "Should play the shorts video."
+                },
+                "media": {
+                    "url": "https://youtube.com/shorts/yjGBkWXC55w?feature=share",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,95 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Start slide test",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "One",
+                    "text": "First."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Two",
+                    "text": "Second."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 52.52,
+                    "lon": 13.4,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Three",
+                    "text": "Third."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 41.9,
+                    "lon": 12.49,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Four",
+                    "text": "Fourth."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 45.46,
+                    "lon": 9.19,
+                    "zoom": 6,
+                    "line": true
+                }
+            }
+        ]
+    }
+}

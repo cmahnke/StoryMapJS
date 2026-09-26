@@ -1,0 +1,235 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/issue-242-nonlatin",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "issue-242-nonlatin"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-242-nonlatin/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Обзор на русском языке."
+                            },
+                            "target": "https://example.org/storymap/issue-242-nonlatin/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Карта мира"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Обзор на русском языке."
+                ]
+            },
+            "storymap:type": "overview"
+        },
+        {
+            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-242-nonlatin/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "Ελληνικό κείμενο για την Αθήνα."
+                            },
+                            "target": "https://example.org/storymap/issue-242-nonlatin/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Αθήνα"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "Ελληνικό κείμενο για την Αθήνα."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-242-nonlatin/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-242-nonlatin/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                23.73,
+                                37.98
+                            ]
+                        },
+                        "properties": {}
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-242-nonlatin/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "טקסט עברי לירושלים."
+                            },
+                            "target": "https://example.org/storymap/issue-242-nonlatin/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "ירושלים"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "טקסט עברי לירושלים."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-242-nonlatin/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-242-nonlatin/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                35.21,
+                                31.77
+                            ]
+                        },
+                        "properties": {}
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/issue-242-nonlatin/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/issue-242-nonlatin/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "نص عربي عن القاهرة."
+                            },
+                            "target": "https://example.org/storymap/issue-242-nonlatin/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "القاهرة"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "نص عربي عن القاهرة."
+                ]
+            },
+            "navPlace": {
+                "id": "https://example.org/storymap/issue-242-nonlatin/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/issue-242-nonlatin/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                31.24,
+                                30.04
+                            ]
+                        },
+                        "properties": {}
+                    }
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/issue-242-nonlatin/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "osm",
+            "storymap:mapAsImage": false,
+            "storymap:callToAction": false
+        }
+    ]
+}

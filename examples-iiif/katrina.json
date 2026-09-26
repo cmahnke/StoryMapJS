@@ -1,0 +1,499 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/katrina",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "katrina"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/katrina/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://en.wikipedia.org/wiki/Hurricane_Katrina",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/1"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "The Path of Hurricane Katrina"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "In just a few short days nature left a serious mark on the Southeastern United States."
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCaption": "Hurricane Katrina",
+            "storymap:mediaCredit": "wikipedia",
+            "storymap:date": "2013"
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://twitter.com/seymourdfair/status/370893881640247296",
+                                "type": "Text",
+                                "format": "text/html"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 23"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>Tropical Depression Twelve formed a category 1 hurricane over the Bahamas at 5:00 p.m. EDT on August 23, 2005.</li></ul>"
+                ]
+            },
+            "storymap:background": {
+                "url": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg"
+            },
+            "storymap:mediaCaption": "Twitter status update",
+            "storymap:mediaCredit": "Twitter",
+            "storymap:date": "Aug 23",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -75.5,
+                                23.2
+                            ]
+                        },
+                        "properties": {
+                            "name": "Bahamas",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/3",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/3/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/3/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://www.youtube.com/watch?v=Uu2cAFb7Odg",
+                                "type": "Video"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/3"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 26"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>At 1:00 AM EDT, maximum sustained winds had decreased to 70 mph (110 km/h) and Katrina was again downgraded to a tropical storm.</li><li> At 5:00 AM EDT, the eye of Hurricane Katrina was located just offshore of southwestern Florida over the Gulf of Mexico about 50 miles north-northeast of Key West, Florida.</li><li> Maximum sustained winds had again increased to 75 mph (121 km/h) and Katrina was upgraded again to a Category 1 hurricane. </li><li>In the early afternoon, the National Hurricane Center officially shifts the possible track of Katrina from the Florida Panhandle to the Mississippi/Louisiana coast.</li></ul>"
+                ]
+            },
+            "storymap:background": {
+                "url": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg"
+            },
+            "storymap:mediaCaption": "Hurricane Katrina First Landfall In S FL (Aug 25, 2005) ",
+            "storymap:mediaCredit": "cdcollura",
+            "storymap:date": "Aug 26",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/3/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/3/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -81.1,
+                                25.4
+                            ]
+                        },
+                        "properties": {
+                            "name": "location",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/4",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/4/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/4/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://www.recmod.com/hurricane/hurricane2005/katrina/neworleans/sept1-refugee-evacuationsofcitya.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/4"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 27"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>By 5:00 AM EDT, Hurricane Katrina reached Category 3 intensity.</li><li>Tolls were suspended on the Lake Pontchartrain Causeway as well as the Crescent City Connection, to speed up the evacuation process.</li><li> At 5:00 PM EDT, New Orleans Mayor Ray Nagin announced a state of emergency and a called for a voluntary evacuation. Nagin said the city would open the Superdome as a shelter of last resort for evacuees with special needs. </li><li>The Louisiana National Guard had delivered three truckloads of water and seven truckloads of MRE's to the Superdome, enough to supply 15,000 people for three days.</li></ul>"
+                ]
+            },
+            "storymap:background": {
+                "url": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg"
+            },
+            "storymap:mediaCaption": "Hurricane Evacuation",
+            "storymap:mediaCredit": "recmod.com",
+            "storymap:date": "Aug 27",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/4/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/4/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -84,
+                                24.4
+                            ]
+                        },
+                        "properties": {
+                            "name": "location",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/5",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/5/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/5/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://www.youtube.com/watch?v=-Kou0HBpX4A",
+                                "type": "Video"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/5"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 28"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>Just after midnight, at 12:40 AM CDT, Hurricane Katrina reached Category 4 intensity with 145 mph (233 km/h) winds. </li><li>By 7:00 AM CDT, it was a Category 5 storm, with maximum sustained winds of 175 mph (282 km/h), gusts up to 190 mph (310 km/h) and a central pressure of 902 mbar. </li><li>At 12:00 PM CDT, the Louisiana Superdome was opened for those residents that were unable to obtain safe transport out of the city. 20,000 people entered the Dome. </li><li>4444 Army National Guard and 932 Air National Guard are deployed (5,376 total). </li><ul>"
+                ]
+            },
+            "storymap:background": {
+                "url": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg"
+            },
+            "storymap:mediaCaption": "Hurricane Katrina Historic Storm Surge Video - Gulfport, Mississippi ",
+            "storymap:mediaCredit": "Mike Theiss",
+            "storymap:date": "Aug 28",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/5/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/5/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -86.8,
+                                25.1
+                            ]
+                        },
+                        "properties": {
+                            "name": "location",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/6",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/6/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/6/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://upload.wikimedia.org/wikipedia/commons/9/97/Hurricane_Katrina_LA_landfall_radar.gif",
+                                "type": "Image",
+                                "format": "image/gif"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/6"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 29"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>At 5:10 AM CDT, Hurricane Katrina made its second landfall as a strong Category 3 hurricane near Buras-Triumph, Louisiana, with sustained winds of more than 125 mph (205 km/h), although Category 4 winds may have briefly affected the area.</li><li>By 9:00 AM CDT, there was 6–8 feet of water in the Lower Ninth Ward. </li><li>By 11:00 AM CDT, there was approximately 10 feet of water in St. Bernard Parish. Many rooftops could not be seen here as they were submerged. </li><li>At 2:00 PM CDT, New Orleans officials confirmed a breach of the 17th Street Canal levee. There was also confirmation of breaches at two other canals. Governor Blanco ordered 68 school buses into New Orleans from surrounding parishes to begin evacuating any survivors that remained in the city.</li></ul> "
+                ]
+            },
+            "storymap:mediaCaption": "Hurricane Katrina making its second landfall in Louisiana, as seen by NWS New Orleans radar.",
+            "storymap:mediaCredit": "NOAA",
+            "storymap:date": "Aug 29",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/6/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/6/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -89.6,
+                                28.2
+                            ]
+                        },
+                        "properties": {
+                            "name": "location",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/7",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/7/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/7/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://vimeo.com/21821970",
+                                "type": "Video"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/7"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 30"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>At 12:00 PM CDT, Homeland Security Secretary Michael Chertoff became aware that the New Orleans levee breaches could not be plugged.</li><li> Governor Blanco ordered that all of New Orleans, including the Superdome, be evacuated due to the flooding of the city. She commandeered hundreds of buses from across Louisiana using her executive powers, and those buses eventually evacuated more than 15,000 people that were stranded in the city to the Superdome by Thursday, September 1. </li><li>USCG helicopters rescue 350 people off roof tops.</li></ul>"
+                ]
+            },
+            "storymap:mediaCaption": "Hurricane Katrina aftermath",
+            "storymap:mediaCredit": "Vimeo",
+            "storymap:date": "Aug 30",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/7/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/7/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.5,
+                                36.3
+                            ]
+                        },
+                        "properties": {
+                            "name": "location",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/katrina/canvas/8",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "items": [
+                {
+                    "id": "https://example.org/storymap/katrina/canvas/8/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/katrina/canvas/8/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "http://api.ning.com/files/DgJl8IbalZiVjphWi2SfqoBhonpNNZNLZeTconOtqptv38c11mWYn38O5L6ZHErcbhygVcAoWr3lhYlYbPl1Pv24cAiBzLoq/wxwhyHurricaneKatrinaAugust23302005385X287X96.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/storymap/katrina/canvas/8"
+                        }
+                    ]
+                }
+            ],
+            "label": {
+                "none": [
+                    "Aug 31"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<ul><li>Hurricane Katrina is downgraded to a tropical depression. </li><li>At 10:00 PM CDT, Mayor Ray Nagin announced that the planned sandbagging of the 17th Street Canal levee breach had failed.</li> <li> President Bush returned early to Washington from vacationing at his ranch in Crawford, Texas. Though he does not stop in Louisiana, Air Force One flies low over the Gulf Coast so that he can view the devastation in Air Force One. He later declared a Public Health Emergency for the Gulf Coast.</li> <li>Mayor Nagin ordered almost the entire New Orleans' police force to abandon search and rescue missions and turn their attention toward controlling the widespread looting and a curfew is placed in effect. USCG helicopters rescued 1,259 more people off roof tops to total of 1,609.</li></ul>"
+                ]
+            },
+            "storymap:type": "overview",
+            "storymap:mediaCaption": "Overview of Katrina",
+            "storymap:mediaCredit": "weatherbug.com",
+            "storymap:date": "Aug 31",
+            "navPlace": {
+                "id": "https://example.org/storymap/katrina/canvas/8/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/katrina/canvas/8/navplace/feature/1",
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                -87.5,
+                                36.3
+                            ]
+                        },
+                        "properties": {
+                            "name": "location",
+                            "zoom": 10,
+                            "line": true
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
