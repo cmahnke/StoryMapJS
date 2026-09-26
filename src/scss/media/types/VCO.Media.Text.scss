@@ -56,6 +56,14 @@
             // font-weight:normal;
         }
     }
+
+    // Inline images embedded in slide text HTML (e.g. sketches, maps):
+    // constrain to the text column, keep aspect ratio with explicit
+    // width/height attributes
+    img {
+        max-width: 100%;
+        height: auto;
+    }
 }
 
 // When the background is an image
