@@ -24,6 +24,12 @@ jobs:
             - name: Build
               run: npm run build
 
+            - name: API docs
+              # TypeDoc output (public/docs/api) is not part of `npm run
+              # build`, so generate it here before packaging dist/ — the
+              # site nav links to docs/api/index.html.
+              run: npm run docs:api && cp -r public/docs/api dist/docs/api
+
             - name: Prepare Pages output
               run: touch dist/.nojekyll
 

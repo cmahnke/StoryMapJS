@@ -3,6 +3,9 @@ dist/*
 # Generated docs (built from docs/*.md by plugins/sitegen.ts)
 public/docs/*.html
 
+# Generated API docs (built by `npm run docs:api` into public/docs/api)
+public/docs/api/
+
 # Playwright
 test-results/
 playwright-report/
