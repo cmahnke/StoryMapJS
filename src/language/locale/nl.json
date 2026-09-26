@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Laden",
         "wikipedia": "Van Wikipedia, de gratis encyclopedie",
-        "start": "Start Exploring"
+        "start": "Start Exploring",
+        "consent_start_title": "Externe inhoud",
+        "consent_start_message": "Deze story laadt inhoud van externe diensten. Kies welke zijn toegestaan.",
+        "consent_allow_all": "Alles toestaan",
+        "consent_decline_all": "Alles weigeren"
     },
     "buttons": {
         "map_overview": "Kaart overzicht",

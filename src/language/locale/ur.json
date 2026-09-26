@@ -5,7 +5,11 @@
     "messages": {
         "loading": "لوڈ ہو رہا ہے",
         "wikipedia": "ویکیپیڈیا, مفت دستیاب انسائیکلوپیڈیا سے ",
-        "start": "دریافت شروع کی جایے "
+        "start": "دریافت شروع کی جایے ",
+        "consent_start_title": "بیرونی مواد",
+        "consent_start_message": "یہ کہانی بیرونی خدمات سے مواد لوڈ کرتی ہے۔ منتخب کریں کہ کون سی اجازت شدہ ہیں۔",
+        "consent_allow_all": "سب کو اجازت دیں",
+        "consent_decline_all": "سب کو مسترد کریں"
     },
     "buttons": {
         "map_overview": "نقشے کا جائزہ",

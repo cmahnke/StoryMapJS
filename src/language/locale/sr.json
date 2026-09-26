@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Učitavanje",
         "wikipedia": "Wikipedia",
-        "start": "Explore"
+        "start": "Explore",
+        "consent_start_title": "Спољашњи садржај",
+        "consent_start_message": "Ова прича учитава садржај из спољашњих сервиса. Изаберите који су дозвољени.",
+        "consent_allow_all": "Дозволи све",
+        "consent_decline_all": "Одбиј све"
     },
     "buttons": {
         "map_overview": "Pregled mapę",

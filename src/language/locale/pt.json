@@ -4,7 +4,11 @@
     "messages": {
         "loading": "carregando",
         "wikipedia": "de Wikipedia, a enciclopédia livre",
-        "start": "início"
+        "start": "início",
+        "consent_start_title": "Conteúdo externo",
+        "consent_start_message": "Esta história carrega conteúdo de serviços externos. Escolha quais são permitidos.",
+        "consent_allow_all": "Permitir tudo",
+        "consent_decline_all": "Recusar tudo"
     },
     "buttons": {
         "map_overview": "vista geral do mapa",

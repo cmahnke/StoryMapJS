@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Laadib",
         "wikipedia": "Vikipeedia, vaba entsüklopeedia",
-        "start": "Uuri"
+        "start": "Uuri",
+        "consent_start_title": "Väline sisu",
+        "consent_start_message": "See lugu laadib sisu välistest teenustest. Valige, millised on lubatud.",
+        "consent_allow_all": "Luba kõik",
+        "consent_decline_all": "Keela kõik"
     },
     "buttons": {
         "map_overview": "Kaardi ülevaade",

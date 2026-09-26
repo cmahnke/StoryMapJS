@@ -75,3 +75,47 @@
     font-size: $base-font-size;
     text-align: center;
 }
+
+/* Start-of-story consent: allow all / individually / decline all
+================================================= */
+.vco-consent-start {
+    .vco-consent-services {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 420px;
+        width: 100%;
+        margin-top: 6px;
+    }
+
+    .vco-consent-service {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 4px 0;
+        border-bottom: 1px solid rgb(0 0 0 / 10%);
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    .vco-consent-service-label {
+        color: $color-dark;
+        text-align: left;
+    }
+
+    .vco-consent-buttons {
+        margin-top: 0;
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    }
+
+    .vco-consent-start-actions {
+        margin-top: 12px;
+    }
+}

@@ -12,7 +12,11 @@
         "consent_deny": "Deny",
         "consent_blocked": "Content from {service} is blocked.",
         "consent_service_tiles": "map tiles",
-        "consent_service_fonts": "web fonts"
+        "consent_service_fonts": "web fonts",
+        "consent_start_title": "External content",
+        "consent_start_message": "This story loads content from external services. Choose which ones are allowed.",
+        "consent_allow_all": "Allow all",
+        "consent_decline_all": "Decline all"
     },
     "buttons": {
         "map_overview": "Map Overview",

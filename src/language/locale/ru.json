@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Загрузка",
         "wikipedia": "Из Википедии, свободной энциклопедии",
-        "start": "Начать просмотр"
+        "start": "Начать просмотр",
+        "consent_start_title": "Внешний контент",
+        "consent_start_message": "Эта история загружает контент из внешних сервисов. Выберите, какие разрешены.",
+        "consent_allow_all": "Разрешить все",
+        "consent_decline_all": "Отклонить все"
     },
     "buttons": {
         "map_overview": "Просмотр карты",

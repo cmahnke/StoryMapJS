@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Загрузка",
         "wikipedia": "Вікіпедыя",
-        "start": "Start Exploring"
+        "start": "Start Exploring",
+        "consent_start_title": "Знешні кантэнт",
+        "consent_start_message": "Гэтая гісторыя загружае кантэнт з знешніх сэрвісаў. Выберыце, якія дазволены.",
+        "consent_allow_all": "Дазволіць усе",
+        "consent_decline_all": "Адхіліць усе"
     },
     "buttons": {
         "map_overview": "Прагляд мапы",

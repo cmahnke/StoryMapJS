@@ -4,7 +4,11 @@
     "messages": {
         "loading": "불러오는중",
         "wikipedia": "위키피디아",
-        "start": "시작하기"
+        "start": "시작하기",
+        "consent_start_title": "외부 콘텐츠",
+        "consent_start_message": "이 스토리는 외부 서비스에서 콘텐츠를 불러옵니다. 허용할 서비스를 선택하세요.",
+        "consent_allow_all": "모두 허용",
+        "consent_decline_all": "모두 거부"
     },
     "buttons": {
         "map_overview": "지도 전체보기",

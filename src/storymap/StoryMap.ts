@@ -6,6 +6,7 @@ import { ConsentManager, consentManagerOf, consentMessage } from "./Consent";
 import Dom from "../dom/Dom";
 import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import { setLanguage, Language } from "../language/Language";
+import MediaType from "../media/MediaType";
 import { Evented, type EventedInstance } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
@@ -855,7 +856,47 @@ class StoryMapBase {
         this._initEvents();
         this._initResizeHandling();
         this.ready = true;
+        this._startConsentAsk();
         this._startAutoplay();
+    }
+
+    /**
+     * Start-of-story consent (issue: allow all / individually / decline
+     * all): with `consent_required`, one dialog lists every external
+     * service the story uses — map tiles, external web fonts and the media
+     * services in the slides. Shown only while some service is unanswered;
+     * per-service slide asks remain the fallback.
+     */
+    _startConsentAsk(): void {
+        const manager = consentManagerOf(this.options);
+        if (!manager || !this.options.consent_required) {
+            return;
+        }
+        const services: Array<{ key: string; label: string }> = [];
+        // map tiles (the ask name the map code uses)
+        services.push({
+            key: consentMessage("consent_service_tiles", "map tiles"),
+            label: consentMessage("consent_service_tiles", "map tiles"),
+        });
+        // media services with a real URL in the slides
+        const seen = new Set<string>();
+        for (const slide of this.data.slides) {
+            const url = (slide.media as { url?: string | null } | null)?.url;
+            if (!url) continue;
+            const match = MediaType({ url } as never) as { type: string; name: string } | false;
+            if (!match || seen.has(match.type)) continue;
+            seen.add(match.type);
+            services.push({ key: match.type, label: match.name });
+        }
+        // external web fonts (same-origin themes never ask)
+        const font = resolveFontCssUrl(this.options.font_css || "stock:default");
+        if (/^https?:|^\/\//.test(font)) {
+            services.push({
+                key: consentMessage("consent_service_fonts", "web fonts"),
+                label: consentMessage("consent_service_fonts", "web fonts"),
+            });
+        }
+        manager.requestAll(services, this._el.container);
     }
 
     /*  Autoplay (issue #380) and hash bookmarks (issue #146)

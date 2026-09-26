@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Hleðsla",
         "wikipedia": "Frá Wikipedia",
-        "start": "Hefja"
+        "start": "Hefja",
+        "consent_start_title": "Ytra efni",
+        "consent_start_message": "Þessi saga hleður efni utanaðar. Veldu hvað er leyft.",
+        "consent_allow_all": "Leyfa allt",
+        "consent_decline_all": "Hafna öllu"
     },
     "buttons": {
         "map_overview": "Kortayfirlit",

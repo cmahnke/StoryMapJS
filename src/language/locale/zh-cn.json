@@ -4,7 +4,11 @@
     "messages": {
         "loading": "加载中",
         "wikipedia": "来自维基百科，自由的百科全书",
-        "start": "Explore"
+        "start": "Explore",
+        "consent_start_title": "外部内容",
+        "consent_start_message": "本故事从外部服务加载内容。请选择允许的服务。",
+        "consent_allow_all": "全部允许",
+        "consent_decline_all": "全部拒绝"
     },
     "buttons": {
         "map_overview": "地图总览",

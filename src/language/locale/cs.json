@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Nahrávání",
         "wikipedia": "Z Wikipedie, svobodné encyklopedie",
-        "start": "Prozkoumat"
+        "start": "Prozkoumat",
+        "consent_start_title": "Externí obsah",
+        "consent_start_message": "Tento příběh načítá obsah z externích služeb. Zvolte, které jsou povoleny.",
+        "consent_allow_all": "Povolit vše",
+        "consent_decline_all": "Odmítnout vše"
     },
     "buttons": {
         "map_overview": "Přehledová mapa",

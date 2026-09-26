@@ -4,7 +4,11 @@
     "messages": {
         "loading": "töltés",
         "wikipedia": "Wikipedia",
-        "start": "Indítsd"
+        "start": "Indítsd",
+        "consent_start_title": "Külső tartalom",
+        "consent_start_message": "Ez a történet külső szolgáltatásoktól tölt be tartalmat. Válassza ki, melyek engedélyezettek.",
+        "consent_allow_all": "Mindet engedélyez",
+        "consent_decline_all": "Mindet elutasít"
     },
     "buttons": {
         "map_overview": "teljes térkép",

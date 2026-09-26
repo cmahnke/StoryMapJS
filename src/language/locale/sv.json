@@ -4,7 +4,11 @@
     "messages": {
         "loading": "Laddar",
         "wikipedia": "Från Wikipedia, den fria encyklopedin",
-        "start": "Explore"
+        "start": "Explore",
+        "consent_start_title": "Externt innehåll",
+        "consent_start_message": "Den här historien laddar innehåll från externa tjänster. Välj vilka som är tillåtna.",
+        "consent_allow_all": "Tillåt alla",
+        "consent_decline_all": "Neka alla"
     },
     "buttons": {
         "map_overview": "Översiktskarta",
