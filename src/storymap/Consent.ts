@@ -1,16 +1,13 @@
-import Cookies from "js-cookie";
 import { Language } from "../language/Language";
 
-/** Cookie holding the per-service consent state (JSON). */
-const CONSENT_COOKIE = "storymapjs-consent";
-/** Consent retention period in days. */
-const CONSENT_COOKIE_DAYS = 90;
+/** localStorage key holding the per-service consent state (JSON). */
+const CONSENT_STORAGE_KEY = "storymapjs-consent";
 
 /**
  * Per-StoryMap GDPR consent manager. When the `consent_required` option is
  * set, every external service (media embeds, map tiles, external font CSS)
  * asks for permission before anything is loaded. Decisions are remembered
- * per service in a cookie for 90 days — clearing cookies asks again.
+ * per service in localStorage for 90 days — clearing site data asks again.
  */
 export class ConsentManager {
     private granted = new Set<string>();
@@ -22,10 +19,10 @@ export class ConsentManager {
         this.restore();
     }
 
-    /** Seed the per-service state from the consent cookie, if present. */
+    /** Seed the per-service state from localStorage, if present. */
     private restore(): void {
         try {
-            const raw = Cookies.get(CONSENT_COOKIE);
+            const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
             if (!raw) return;
             const state = JSON.parse(raw) as Record<string, boolean>;
             for (const service in state) {
@@ -38,20 +35,17 @@ export class ConsentManager {
                 }
             }
         } catch {
-            // ignore malformed cookies
+            // ignore malformed or unavailable storage
         }
     }
 
-    /** Persist the per-service state to the consent cookie. */
+    /** Persist the per-service state to localStorage. */
     private persist(): void {
         const state: Record<string, boolean> = {};
         for (const service of this.granted) state[service] = true;
         for (const service of this.denied) state[service] = false;
         try {
-            Cookies.set(CONSENT_COOKIE, JSON.stringify(state), {
-                expires: CONSENT_COOKIE_DAYS,
-                sameSite: "Lax",
-            });
+            window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(state));
         } catch {
             // storage unavailable (e.g. sandboxed contexts)
         }

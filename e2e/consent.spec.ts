@@ -105,3 +105,28 @@ test("answering one panel resolves the pending panels of the same service", asyn
     );
     expect(iframes).toBeGreaterThan(0);
 });
+
+test("decisions persist in localStorage across reloads", async ({ page }) => {
+    await page.goto(harnessUrl("katrina", { consent_required: true }));
+    await page.waitForTimeout(4500);
+    await clickVisibleButton(page, "allow"); // map tiles
+
+    // the decision is stored, not in a cookie
+    const stored = await page.evaluate(() => window.localStorage.getItem("storymapjs-consent"));
+    expect(stored).toContain("map tiles");
+    const cookie = await page.context().cookies();
+    expect(cookie.find((c) => c.name === "storymapjs-consent")).toBeUndefined();
+
+    // after a reload the stored decision is honored: tiles load without a
+    // new ask (the request listener must be attached before the reload)
+    const tileRequests: string[] = [];
+    page.on("request", (r) => {
+        if (/openfreemap|basemaps|tile|osm/i.test(r.url())) tileRequests.push(r.url());
+    });
+    await page.reload();
+    await page.waitForTimeout(4500);
+    await expect.poll(() => tileRequests.length, { timeout: 20_000 }).toBeGreaterThan(0);
+    // the map-tiles ask is gone (asks for other services in preloaded
+    // slides legitimately remain until they are visited)
+    await expect(page.locator(".vco-consent", { hasText: "map tiles" })).toHaveCount(0);
+});
