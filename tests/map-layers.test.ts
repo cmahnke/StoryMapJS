@@ -92,4 +92,33 @@ describe("tile layer switches", () => {
         vcoMap.setExtraAttributions([]);
         expect(attribution(root)).not.toContain("Historic overlay");
     });
+
+    it("collapses duplicate extra attributions", () => {
+        const { storymap, root } = storymapWithAttribution("sm-layers-dedupe-extra");
+        const vcoMap = (storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } })
+            ._map;
+        vcoMap.setExtraAttributions(["Gallica", "Gallica"]);
+        expect((attribution(root).match(/Gallica/g) ?? []).length).toBe(1);
+        vcoMap.setExtraAttributions([]);
+        expect(attribution(root)).not.toContain("Gallica");
+    });
+
+    it("collapses identical credits from stacked overlays", () => {
+        const { storymap, root } = storymapWithAttribution("sm-layers-dedupe-overlays");
+        storymap.setMapOption("overlays", [
+            {
+                map_type: "https://tiles.example.com/a/{z}/{x}/{y}.png",
+                attribution: "Gallica",
+                visible: true,
+            },
+            {
+                map_type: "https://tiles.example.com/b/{z}/{x}/{y}.png",
+                attribution: "Gallica",
+                visible: true,
+            },
+        ]);
+        expect((attribution(root).match(/Gallica/g) ?? []).length).toBe(1);
+        storymap.setMapOption("overlays", []);
+        expect(attribution(root)).not.toContain("Gallica");
+    });
 });

@@ -24,9 +24,9 @@ Viewer-only restructure of the repository:
 - Runtime language switching without reload (MenuBar.refreshLabels,
   StoryMap.refreshLanguage); locale fallback no longer mutates English;
   German fullscreen labels
-- Attribution refresh on basemap switch (+setExtraAttributions); route
-  lines pinned above rebuilt tile layers; font_css resolves page-relative;
-  slide colors accept any CSS color
+- Attribution refresh on basemap switch (+setExtraAttributions); identical
+  credits collapse to one entry; route lines pinned above rebuilt tile
+  layers; font_css resolves page-relative; slide colors accept any CSS color
 
 0.9.5 (2025-11-05)
 * Implement basic Audio and Video media types

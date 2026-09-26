@@ -181,9 +181,11 @@ export default class OpenLayers extends Map {
      */
     _updateAttribution(): void {
         const extras = this._extra_attributions ?? [];
-        const parts = [this._getAttribution(this.options.map_type), ...extras]
-            .filter(Boolean)
-            .join(" | ");
+        // Identical credits (e.g. stacked overlays sharing one source, or the
+        // attribution option restating the base credit) collapse to one entry
+        const parts = [
+            ...new Set([...this._getAttribution(this.options.map_type), ...extras].filter(Boolean)),
+        ].join(" | ");
         let el = this._el.map.querySelector(".vco-map-attribution") as HTMLElement | null;
         if (!el) {
             this._el.map.insertAdjacentHTML("beforeend", `<div class="vco-map-attribution"></div>`);
@@ -194,7 +196,7 @@ export default class OpenLayers extends Map {
         }
     }
 
-    _getAttribution(map_type: string): string {
+    _getAttribution(map_type: string): string[] {
         const parts = [
             "<a href='https://storymap.knightlab.com/' target='_blank' class='vco-knightlab-brand'><span>&#x25a0;</span> StoryMapJS</a>",
         ];
@@ -206,7 +208,7 @@ export default class OpenLayers extends Map {
         if (this.options.attribution) {
             parts.push(this.options.attribution);
         }
-        return parts.join(" | ");
+        return parts;
     }
 
     /*	Create Tile Layer
