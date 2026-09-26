@@ -14,6 +14,7 @@ import type { AnimateOptions, AnimationHandle } from "../types";
 interface DragEventNames {
     down: string;
     up: string;
+    cancel?: string;
     leave: string;
     move: string;
 }
@@ -70,6 +71,7 @@ class SwipableBase {
         this.touchdrag = {
             down: "touchstart",
             up: "touchend",
+            cancel: "touchcancel",
             leave: "mouseleave",
             move: "touchmove",
         };
@@ -148,6 +150,12 @@ class SwipableBase {
     enable(e?: LegacyEvent): void {
         DomEvent.addListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.addListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
+        // iOS fires touchcancel when the browser claims the gesture (page
+        // scroll): without it, touchend never runs and the move/leave
+        // listeners registered in _onDragStart leak on every cancelled touch
+        if (this.dragevent === this.touchdrag) {
+            DomEvent.addListener(this._el.drag, this.touchdrag.cancel, this._onDragEnd, this);
+        }
         this.data.pos.start = 0 as unknown as { x: number; y: number }; //VCO.Dom.getPosition(this._el.move);
         this._el.move.style.left = this.data.pos.start.x + "px";
         this._el.move.style.top = this.data.pos.start.y + "px";
@@ -159,6 +167,9 @@ class SwipableBase {
     disable() {
         DomEvent.removeListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.removeListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
+        if (this.dragevent === this.touchdrag) {
+            DomEvent.removeListener(this._el.drag, this.touchdrag.cancel, this._onDragEnd, this);
+        }
     }
 
     stopMomentum() {
@@ -175,21 +186,29 @@ class SwipableBase {
     /*    Private Methods
     ================================================== */
     _onDragStart(e: LegacyEvent) {
+        // an in-flight momentum animation must not fight the new gesture
         if (this.animator) {
             this.animator.stop();
         }
-        if (Browser.touch) {
-            if (e.originalEvent) {
-                this.data.pagex.start = e.originalEvent.touches[0].screenX;
-                this.data.pagey.start = e.originalEvent.touches[0].screenY;
-            } else {
-                this.data.pagex.start = e.targetTouches[0].screenX;
-                this.data.pagey.start = e.targetTouches[0].screenY;
-            }
-        } else {
-            this.data.pagex.start = e.pageX;
-            this.data.pagey.start = e.pageY;
+        // guard against duplicate move/leave listeners when a previous
+        // gesture never ended (e.g. a touchcancel before the fix) — an
+        // in-flight gesture is restarted from the new touch position
+        if (this.data.sliding) {
+            this._detachGestureListeners();
         }
+        if (Browser.touch) {
+            const touch = e.originalEvent
+                ? e.originalEvent.touches[0]
+                : e.targetTouches
+                  ? e.targetTouches[0]
+                  : null;
+            this.data.pagex.start = touch ? touch.clientX : (e.pageX ?? 0);
+            this.data.pagey.start = touch ? touch.clientY : (e.pageY ?? 0);
+        } else {
+            this.data.pagex.start = e.pageX ?? 0;
+            this.data.pagey.start = e.pageY ?? 0;
+        }
+        this.data.sliding = true;
         // Center element to finger or mouse
         if (this.options.enable.x) {
             //this._el.move.style.left = this.data.pagex.start - (this._el.move.offsetWidth / 2) + "px";
@@ -200,16 +219,42 @@ class SwipableBase {
         this.data.pos.start = { x: this._el.move.offsetLeft, y: this._el.move.offsetTop };
         this.data.time.start = Date.now();
         this.fire("dragstart", this.data);
+        this._attachGestureListeners();
+    }
+
+    _onDragEnd(e: LegacyEvent) {
+        // touchcancel/touchend may arrive without a move, or twice (touchend
+        // after touchcancel): record the position and finish exactly once
+        const was_sliding = this.data.sliding;
+        if (Browser.touch && was_sliding) {
+            const touch = e.originalEvent
+                ? (e.originalEvent.changedTouches[0] ?? e.originalEvent.touches[0])
+                : null;
+            if (touch) {
+                this.data.pagex.end = touch.clientX;
+                this.data.pagey.end = touch.clientY;
+            }
+        } else if (!Browser.touch && was_sliding) {
+            this.data.pagex.end = e.pageX ?? this.data.pagex.end;
+            this.data.pagey.end = e.pageY ?? this.data.pagey.end;
+        }
+        this.data.sliding = false;
+        this._detachGestureListeners();
+        if (!was_sliding) {
+            return;
+        }
+        this.fire("dragend", this.data);
+        this._momentum();
+    }
+
+    _attachGestureListeners(): void {
         DomEvent.addListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.addListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
     }
 
-    _onDragEnd(e: LegacyEvent) {
-        this.data.sliding = false;
+    _detachGestureListeners(): void {
         DomEvent.removeListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
         DomEvent.removeListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
-        this.fire("dragend", this.data);
-        this._momentum();
     }
 
     _onDragMove(e: LegacyEvent) {
@@ -220,22 +265,25 @@ class SwipableBase {
         //e.preventDefault();
         this.data.sliding = true;
         if (Browser.touch) {
-            if (e.originalEvent) {
-                this.data.pagex.end = e.originalEvent.touches[0].screenX;
-                this.data.pagey.end = e.originalEvent.touches[0].screenY;
-            } else {
-                this.data.pagex.end = e.targetTouches[0].screenX;
-                this.data.pagey.end = e.targetTouches[0].screenY;
-            }
+            const touch = e.originalEvent
+                ? e.originalEvent.touches[0]
+                : e.targetTouches
+                  ? e.targetTouches[0]
+                  : null;
+            this.data.pagex.end = touch ? touch.clientX : (e.pageX ?? this.data.pagex.end);
+            this.data.pagey.end = touch ? touch.clientY : (e.pageY ?? this.data.pagey.end);
         } else {
-            this.data.pagex.end = e.pageX;
-            this.data.pagey.end = e.pageY;
+            this.data.pagex.end = e.pageX ?? this.data.pagex.end;
+            this.data.pagey.end = e.pageY ?? this.data.pagey.end;
         }
-        change.x = this.data.pagex.start - this.data.pagex.end;
-        change.y = this.data.pagey.start - this.data.pagey.end;
-        this.data.pos.end = { x: this._el.drag.offsetLeft, y: this._el.drag.offsetTop };
-        this.data.new_pos.x = -(change.x - this.data.pos.start.x);
-        this.data.new_pos.y = -(change.y - this.data.pos.start.y);
+        // signed gesture deltas: direction must follow the movement, not the
+        // absolute screen position (|end| - |start| misread rightward swipes
+        // that stay on the left half of the screen as "left")
+        change.x = this.data.pagex.end - this.data.pagex.start;
+        change.y = this.data.pagey.end - this.data.pagey.start;
+        this.data.pos.end = { x: this.data.pos.start.x, y: this.data.pos.start.y };
+        this.data.new_pos.x = this.data.pos.start.x - change.x;
+        this.data.new_pos.y = this.data.pos.start.y - change.y;
         if (this.options.enable.x && Math.abs(change.x) > Math.abs(change.y)) {
             e.preventDefault();
             this._el.move.style.left = this.data.new_pos.x + "px";
@@ -263,29 +311,22 @@ class SwipableBase {
                 y: false,
             };
         let swipe = false;
-        const _swipe_direction = "";
         this.data.direction = null;
-        pos_adjust.time = (Date.now() - this.data.time.start) * 10;
-        pos_change.time = (Date.now() - this.data.time.start) * 10;
+        // signed travel distance of the gesture (px), scaled by speed
         pos_change.x =
-            this.options.momentum_multiplier *
-            (Math.abs(this.data.pagex.end) - Math.abs(this.data.pagex.start));
+            this.options.momentum_multiplier * (this.data.pagex.end - this.data.pagex.start);
         pos_change.y =
-            this.options.momentum_multiplier *
-            (Math.abs(this.data.pagey.end) - Math.abs(this.data.pagey.start));
-        pos_adjust.x = Math.round(pos_change.x / pos_change.time);
-        pos_adjust.y = Math.round(pos_change.y / pos_change.time);
-        this.data.new_pos.x = this.data.pos.end.x + pos_adjust.x;
-        this.data.new_pos.y = this.data.pos.end.y + pos_adjust.y;
+            this.options.momentum_multiplier * (this.data.pagey.end - this.data.pagey.start);
+        pos_change.time = (Date.now() - this.data.time.start) * 10;
+        pos_adjust.x = Math.round(pos_change.x / Math.max(pos_change.time, 1));
+        pos_adjust.y = Math.round(pos_change.y / Math.max(pos_change.time, 1));
+        this.data.new_pos.x = this.data.pos.start.x + pos_adjust.x;
+        this.data.new_pos.y = this.data.pos.start.y + pos_adjust.y;
         if (!this.options.enable.x) {
             this.data.new_pos.x = this.data.pos.start.x;
-        } else if (this.data.new_pos.x > 0) {
-            this.data.new_pos.x = 0;
         }
         if (!this.options.enable.y) {
             this.data.new_pos.y = this.data.pos.start.y;
-        } else if (this.data.new_pos.y < 0) {
-            this.data.new_pos.y = 0;
         }
         // Detect Swipe
         if (pos_change.time < 2000) {
@@ -309,26 +350,29 @@ class SwipableBase {
         // Detect Direction and long swipe
         if (swipe_detect.x) {
             // Long Swipe
-            if (Math.abs(pos_change.x) > this._el.drag.offsetWidth / 2) {
+            if (
+                Math.abs(this.data.pagex.end - this.data.pagex.start) >
+                this._el.drag.offsetWidth / 2
+            ) {
                 swipe = true;
             }
             if (Math.abs(pos_change.x) > 10000) {
-                this.data.direction = "left";
-                if (pos_change.x > 0) {
-                    this.data.direction = "right";
-                }
+                // leftward finger travel (end < start) pulls the next slide
+                // into view → "left"; rightward travel goes back → "right"
+                this.data.direction =
+                    this.data.pagex.end < this.data.pagex.start ? "left" : "right";
             }
         }
         if (swipe_detect.y) {
             // Long Swipe
-            if (Math.abs(pos_change.y) > this._el.drag.offsetHeight / 2) {
+            if (
+                Math.abs(this.data.pagey.end - this.data.pagey.start) >
+                this._el.drag.offsetHeight / 2
+            ) {
                 swipe = true;
             }
             if (Math.abs(pos_change.y) > 10000) {
-                this.data.direction = "up";
-                if (pos_change.y > 0) {
-                    this.data.direction = "down";
-                }
+                this.data.direction = this.data.pagey.end < this.data.pagey.start ? "up" : "down";
             }
         }
         this._animateMomentum();
