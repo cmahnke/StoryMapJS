@@ -192,10 +192,6 @@ factory.
   (`schema/storymap.schema.json`); invalid documents are reported to the
   console at load time.
 - IIIF Presentation 3 manifests are accepted directly as storymap sources.
-- The StoryMap IIIF extension context changed to
-  `https://christianmahnke.de/iiif/storymap` — manifests produced with the old
-  `https://example.org/ns/storymap/v1` context need re-converting
-  (`scripts/convert-to-iiif.mjs`).
 - The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
   Python authoring server are gone — this is a viewer-only library.
 
