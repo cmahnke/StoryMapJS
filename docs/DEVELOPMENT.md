@@ -125,6 +125,42 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
 - Locales are imported statically. The viewer resolves its labels while it is
   being constructed, so an async locale would silently render in English.
 
+## Multiple instances on one page
+
+`new StoryMap(el, data)` is not a singleton: each viewer owns its own map,
+slider, slides, media and DOM, and `dispose()` tears its half down without
+touching a sibling's. `e2e/multiple-instances.spec.ts` and
+`tests/multiple-instances.test.ts` cover it; `harness-multi.html` mounts two
+side by side.
+
+A few things are page-wide by nature, because a page has one of each:
+
+- **UI strings.** The labels are a single module-level binding, read
+  synchronously while a viewer is constructed. A viewer therefore _claims_ the
+  locale it needs (`claimLanguage` in `src/language/Language.ts`) and a second
+  viewer asking for a different one **throws** rather than silently repainting
+  the first in the wrong language. The claim is refcounted and released in
+  `dispose()`, so an SPA that tears down a viewer may change locale. Pass the
+  same `language` to every viewer on a page.
+- **Consent decisions.** One `storymapjs-consent` record, so a visitor answers
+  for a service once. Every viewer merges into it and re-reads it on each ask,
+  so concurrent decisions cannot clobber each other.
+- **The URL hash.** `#slide-N` is a single document fragment. Two viewers will
+  fight over it: a navigation in one rewrites the hash, and the other
+  applies it. This is not namespaced per instance, so a page with two viewers
+  cannot give each an independent deep link.
+- **`StoryMap.SCRIPT_PATH`.** A static, so assigning it affects every live
+  viewer.
+- **External scripts and stylesheets.** `loadJS` / `loadCSS` share one injected
+  element per URL, so the YouTube and SoundCloud APIs and the font theme load
+  once for the page. This is per bundle copy: two separately bundled copies
+  each keep their own map and both inject.
+
+Page-wide _inputs_ are arbitrated through `src/core/viewers.ts`, a small
+registry of live viewers. With `keyboard: true` on more than one viewer, an
+arrow keypress goes to the viewer that holds focus, or else the one the
+visitor interacted with most recently.
+
 ## OpenLayers notes
 
 - `src/map/openlayers/Map.OpenLayers.ts` implements the Map contract

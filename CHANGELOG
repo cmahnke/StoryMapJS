@@ -41,6 +41,32 @@ Added
 
 Fixed
 -----
+- The consent registry keyed its stored decisions on a *localized* label, so
+  the same service hashed differently in German than in English and renaming a
+  label orphaned every saved decision. Keys are now stable and namespaced
+  (`map:tiles`, `fonts:web`, `media:<type>`) with the localized name carried
+  alongside, and existing decisions are migrated on read. The per-slide dialog
+  also asked "Load content from youtube?" — it now shows the media's display
+  name, matching the start-of-story dialog
+- 27 of the 29 bundled locales had no `consent_*` strings at all and silently
+  fell back to English, including the whole start-of-story dialog. The 9
+  missing keys are translated in 23 locales; `npm run check:locales` now fails
+  on a new gap (its `--strict` flag was documented but never implemented, and
+  the check was not in CI) instead of only reporting
+- Removing a map marker did not renumber the ones behind it, even though
+  `marker_number` is the index a click hands to `goTo()`: a click on the third
+  pin after removing the second navigated to the wrong slide
+- Every slide got an empty element id. The generated `uniqueid` was only
+  created when the field was the empty string, but it is optional in the
+  schema and absent from 47 of the 48 bundled fixtures
+- `dispose()` released the timers and the OpenLayers map but nothing they
+  owned, so a torn-down storymap left its slider, slides, media players,
+  markers and buttons in the document. Each class now releases what it owns,
+  and three listeners that could not be removed at all (registered as inline
+  arrows or a throwaway `.bind()`) keep a reference
+- A preload was tracked in one `preloadTimer` that held either a
+  `setTimeout` or a `requestIdleCallback` handle. Both are numbers, so
+  cancelling one with the other's API appeared to work while leaking it
 - map_bbox was ignored for every IIIF map: the runtime test was "map_type is
   iiif", so a *georeferenced* IIIF map was treated as image space and its view
   was fitted to the image extent instead of the bbox
@@ -99,6 +125,22 @@ Security
 
 Changed
 -------
+- A second viewer on a page asking for a different `language` now **throws**
+  instead of silently repainting the first one. The UI strings are a single
+  page-wide binding read while a viewer is constructed, so a conflict was
+  never survivable; the claim is released by `dispose()`. Pages that call the
+  public `setLanguage()` and then construct a viewer without a matching
+  `language` option will now see this error
+- Several viewers on a page no longer overwrite each other's consent
+  decisions: each manager merges into the shared record and re-reads it on
+  every ask, instead of writing its whole set back
+- With `keyboard: true` on more than one viewer, an arrow keypress goes to the
+  viewer that holds focus, or else the one interacted with most recently
+- External scripts and stylesheets are injected once per URL for the page, so
+  two viewers no longer both load the YouTube/SoundCloud APIs and the font
+  theme
+- `dispose()` empties the host container and turns the public methods and
+  accessors into no-ops; there is no re-init path (build a new StoryMap)
 - strictNullChecks is enabled. The `{} as HTMLElement` placeholders it was
   masking are now honestly nullable, which is what the consent-denied crash
   came from
