@@ -276,11 +276,7 @@ class StorySliderBase {
         DomEvent.removeListener(this._el.container, "keydown", this._onKeyDown, this);
         // Web Animations API (morpheus replacement): stop slide transitions
         // mid-flight so they don't keep running against a detached tree
-        for (const el of [
-            this._el.container,
-            this._el.slider_container,
-            this._el.background,
-        ]) {
+        for (const el of [this._el.container, this._el.slider_container, this._el.background]) {
             el?.getAnimations?.().forEach((a) => a.cancel());
         }
     }

@@ -765,10 +765,7 @@ export default class OpenLayers extends Map {
         }
         const onChange = () => {
             if (source.getState?.() === "ready") {
-                (source as { un?: (t: string, f: () => void) => void }).un?.(
-                    "change",
-                    onChange,
-                );
+                (source as { un?: (t: string, f: () => void) => void }).un?.("change", onChange);
                 this.fire("imageready", payload);
             }
         };
@@ -805,7 +802,9 @@ export default class OpenLayers extends Map {
                 console.error(
                     "StoryMapJS: legacy 'mapbox:<style>' map types are no longer supported (the Mapbox v4 tile API was retired); use 'mapbox://styles/<user>/<style>' with map_access_token instead.",
                 );
-                return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
+                return new TileLayer({
+                    source: new OSM({ attributions: this._sourceAttributions(map_type) }),
+                });
             }
 
             case "stadia": {
@@ -898,10 +897,10 @@ export default class OpenLayers extends Map {
                 }
                 return new TileLayer({
                     source: new XYZ({
-                            url: map_type,
-                            attributions: this._sourceAttributions(map_type),
-                            crossOrigin: "anonymous",
-                        }),
+                        url: map_type,
+                        attributions: this._sourceAttributions(map_type),
+                        crossOrigin: "anonymous",
+                    }),
                 });
 
             case "ch-watercolor":
@@ -924,7 +923,9 @@ export default class OpenLayers extends Map {
                     console.error(
                         "StoryMapJS: map_type 'zoomify' needs a zoomify image pyramid (path, width, height) in the storymap data.",
                     );
-                    return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
+                    return new TileLayer({
+                        source: new OSM({ attributions: this._sourceAttributions(map_type) }),
+                    });
                 }
                 const path = (this.options.zoomify as { path?: string }).path ?? "";
                 const { sizes, maxZoom: pyramidMaxZoom } = pyramid;
@@ -980,7 +981,9 @@ export default class OpenLayers extends Map {
                         `https://tiles.openfreemap.org/styles/${style_name}`,
                     );
                 }
-                return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
+                return new TileLayer({
+                    source: new OSM({ attributions: this._sourceAttributions(map_type) }),
+                });
             }
             default: {
                 // Relative/custom templates (./tiles/{z}/{x}/{y}.png,
@@ -1002,7 +1005,9 @@ export default class OpenLayers extends Map {
                 if (map_type.includes("/") || map_type.endsWith(".json")) {
                     return this._createVectorStyleLayer(map_type);
                 }
-                return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
+                return new TileLayer({
+                    source: new OSM({ attributions: this._sourceAttributions(map_type) }),
+                });
             }
         }
     }
@@ -2204,9 +2209,7 @@ export default class OpenLayers extends Map {
                     // must match _createMap's test exactly: a *georeferenced*
                     // IIIF layer (map_as_image false) is a mercator map, so
                     // testing map_type alone handed it the image-pixel view
-                    const is_image_map =
-                        this.options.map_type === "iiif" &&
-                        this.isImageSpace();
+                    const is_image_map = this.options.map_type === "iiif" && this.isImageSpace();
                     const user_view = this.options.map_options?.view as
                         Record<string, unknown> | undefined;
                     this._map.setView(
