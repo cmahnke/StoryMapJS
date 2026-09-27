@@ -941,7 +941,7 @@ test("point navPlaces are unaffected by the polygon mapping", () => {
     expect(data.slides[0].location?.name).toBe("Rotterdam");
 });
 
-test("maps georeferenced layers to overlays", () => {
+test("maps georeferencing annotations to overlays", () => {
     const body = {
         type: "FeatureCollection",
         transformation: { type: "polynomial", options: { order: 1 } },
@@ -957,6 +957,203 @@ test("maps georeferenced layers to overlays", () => {
             },
         ],
     };
+    // The extension's own spelling: the image to place is embedded in the
+    // target, because a map layer is external to the canvas it ships in
+    const georeferencing = (id: string, target: unknown, gcpBody: unknown) => ({
+        id,
+        type: "Annotation",
+        motivation: "georeferencing",
+        target,
+        body: gcpBody,
+    });
+    const imageTarget = (url: string, width: number, height: number) => ({
+        id: url,
+        type: "Image",
+        width,
+        height,
+        service: [{ id: url, type: "ImageService3", profile: "level2" }],
+    });
+    const canvas = (id: string, annotations: unknown[]) => ({
+        id,
+        type: "Canvas",
+        width: 1080,
+        height: 1080,
+        items: [{ id: `${id}/page/1`, type: "AnnotationPage", items: annotations }],
+    });
+    const painting = (canvasId: string) => ({
+        id: `${canvasId}/annotation/1`,
+        type: "Annotation",
+        motivation: "painting",
+        body: { id: "https://example.org/i.jpg", type: "Image" },
+        target: canvasId,
+    });
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [{ type: "Service", profile: "mapconfig", mapType: "osm" }],
+        items: [
+            canvas("https://example.org/canvas/1", [
+                painting("https://example.org/canvas/1"),
+                georeferencing(
+                    "https://example.org/layer/1",
+                    imageTarget("https://iiif.example.org/image1", 2315, 3000),
+                    body,
+                ),
+                // too few control points: dropped
+                georeferencing(
+                    "https://example.org/layer/2",
+                    imageTarget("https://iiif.example.org/image2", 100, 100),
+                    { type: "FeatureCollection", features: body.features.slice(0, 2) },
+                ),
+                // no image size: dropped
+                georeferencing(
+                    "https://example.org/layer/3",
+                    { id: "https://iiif.example.org/image3", type: "Image" },
+                    body,
+                ),
+            ]),
+            canvas("https://example.org/canvas/2", [painting("https://example.org/canvas/2")]),
+        ],
+    });
+
+    const entries = data.overlays as StorymapOverlayLayer[];
+    expect(entries).toHaveLength(1);
+    const entry = entries[0];
+    expect(entry.map_type).toBeUndefined();
+    expect(entry.georeference?.url).toBe("https://iiif.example.org/image1");
+    expect(entry.georeference?.width).toBe(2315);
+    expect(entry.georeference?.body.transformation).toEqual({
+        type: "polynomial",
+        options: { order: 1 },
+    });
+});
+
+test("a georeferencing annotation on the first canvas is still map-wide", () => {
+    // The trap §2.10 warns about: the annotation is canvas-scoped but the layer
+    // it describes belongs on the map for the whole story. Reading it must not
+    // attach it to the slide whose canvas carried it, and must not need it
+    // repeated on every canvas.
+    const canvas = (id: string, extra: unknown[] = []) => ({
+        id,
+        type: "Canvas",
+        width: 1080,
+        height: 1080,
+        items: [
+            {
+                id: `${id}/page/1`,
+                type: "AnnotationPage",
+                items: [
+                    {
+                        id: `${id}/annotation/1`,
+                        type: "Annotation",
+                        motivation: "painting",
+                        body: { id: "https://example.org/i.jpg", type: "Image" },
+                        target: id,
+                    },
+                    ...extra,
+                ],
+            },
+        ],
+    });
+    const layer = {
+        id: "https://example.org/canvas/1/georeferencing/1",
+        type: "Annotation",
+        motivation: "georeferencing",
+        target: {
+            id: "https://iiif.example.org/image1",
+            type: "Image",
+            width: 2315,
+            height: 3000,
+        },
+        body: {
+            type: "FeatureCollection",
+            features: [
+                {
+                    properties: { resourceCoords: [0, 0] },
+                    geometry: { coordinates: [4.45, 51.92] },
+                },
+                {
+                    properties: { resourceCoords: [2315, 0] },
+                    geometry: { coordinates: [4.5, 51.92] },
+                },
+                {
+                    properties: { resourceCoords: [0, 3000] },
+                    geometry: { coordinates: [4.45, 51.9] },
+                },
+            ],
+        },
+    };
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            canvas("https://example.org/canvas/1", [layer]),
+            canvas("https://example.org/canvas/2"),
+            canvas("https://example.org/canvas/3"),
+        ],
+    });
+
+    // one map-wide layer, not one per slide
+    const entries = data.overlays as StorymapOverlayLayer[];
+    expect(entries).toHaveLength(1);
+    expect(entries[0].georeference?.url).toBe("https://iiif.example.org/image1");
+    // and it belongs to no slide: the layer is not slide state
+    expect(data.slides).toHaveLength(3);
+    expect(data.slides[1].overlays).toBeUndefined();
+    expect(data.slides[2].overlays).toBeUndefined();
+});
+
+test("a georeferencing annotation's requiredStatement is the layer's attribution", () => {
+    const canvas = {
+        id: "https://example.org/canvas/1",
+        type: "Canvas",
+        width: 1080,
+        height: 1080,
+        items: [
+            {
+                id: "https://example.org/canvas/1/page/1",
+                type: "AnnotationPage",
+                items: [
+                    {
+                        id: "https://example.org/canvas/1/layer/1",
+                        type: "Annotation",
+                        motivation: "georeferencing",
+                        requiredStatement: {
+                            label: { none: ["Attribution"] },
+                            value: { none: ["Placed sheet"] },
+                        },
+                        target: {
+                            id: "https://iiif.example.org/image1",
+                            type: "Image",
+                            width: 2315,
+                            height: 3000,
+                        },
+                        body: {
+                            type: "FeatureCollection",
+                            features: [
+                                {
+                                    properties: { resourceCoords: [0, 0] },
+                                    geometry: { coordinates: [4.45, 51.92] },
+                                },
+                                {
+                                    properties: { resourceCoords: [2315, 0] },
+                                    geometry: { coordinates: [4.5, 51.92] },
+                                },
+                                {
+                                    properties: { resourceCoords: [0, 3000] },
+                                    geometry: { coordinates: [4.45, 51.9] },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            },
+        ],
+    };
+    const data = manifestToStorymapData({ "@context": CONTEXTS, items: [canvas] });
+    const entries = data.overlays as StorymapOverlayLayer[];
+    expect(entries[0].attribution).toBe("Attribution: Placed sheet");
+});
+
+test("ignores a georeferencedLayers term left over from before §2.10", () => {
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
         service: [
@@ -966,41 +1163,33 @@ test("maps georeferenced layers to overlays", () => {
                 mapType: "osm",
                 georeferencedLayers: [
                     {
-                        id: "https://example.org/layer/1",
                         url: "https://iiif.example.org/image1",
                         width: 2315,
                         height: 3000,
-                        opacity: 0.75,
-                        attribution: "Placed sheet",
-                        body,
+                        body: {
+                            type: "FeatureCollection",
+                            features: [
+                                {
+                                    properties: { resourceCoords: [0, 0] },
+                                    geometry: { coordinates: [4.45, 51.92] },
+                                },
+                                {
+                                    properties: { resourceCoords: [2315, 0] },
+                                    geometry: { coordinates: [4.5, 51.92] },
+                                },
+                                {
+                                    properties: { resourceCoords: [0, 3000] },
+                                    geometry: { coordinates: [4.45, 51.9] },
+                                },
+                            ],
+                        },
                     },
-                    // too few control points: dropped
-                    {
-                        url: "https://iiif.example.org/image2",
-                        width: 100,
-                        height: 100,
-                        body: { type: "FeatureCollection", features: body.features.slice(0, 2) },
-                    },
-                    // no image size: dropped
-                    { url: "https://iiif.example.org/image3", body },
                 ],
             },
         ],
         items: [],
     });
-
-    const entries = data.overlays as StorymapOverlayLayer[];
-    expect(entries).toHaveLength(1);
-    const entry = entries[0];
-    expect(entry.map_type).toBeUndefined();
-    expect(entry.opacity).toBe(0.75);
-    expect(entry.attribution).toBe("Placed sheet");
-    expect(entry.georeference?.url).toBe("https://iiif.example.org/image1");
-    expect(entry.georeference?.width).toBe(2315);
-    expect(entry.georeference?.body.transformation).toEqual({
-        type: "polynomial",
-        options: { order: 1 },
-    });
+    expect(data.overlays).toBeUndefined();
 });
 
 test("the shipped georeferenced-layer manifest maps as documented", () => {

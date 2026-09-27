@@ -108,9 +108,10 @@ test("rejects malformed overlays, map_area and overview_extent", () => {
             map_area: "sideways",
             overview_extent: [1, 2, 3],
             overlays: [
-                { opacity: 0.5 }, // no map_type
+                { opacity: 0.5 }, // neither map_type nor georeference
                 { map_type: "osm", opacity: 4 }, // out of range
                 { map_type: "osm", extent: [1, 2, 3] }, // not four numbers
+                { georeference: { url: "https://example.org/i", width: 10, height: 10, body: {} } },
             ],
             slides: [],
         },
@@ -118,7 +119,49 @@ test("rejects malformed overlays, map_area and overview_extent", () => {
     const errors = validateStorymap(data);
     expect(errors.some((e) => e.path.includes("map_area"))).toBe(true);
     expect(errors.some((e) => e.path.includes("overview_extent"))).toBe(true);
-    expect(errors.filter((e) => e.path.includes("overlays")).length).toBe(3);
+    // an entry needs a map_type or a georeference, and the georeference needs
+    // a body that is a FeatureCollection of points
+    expect(errors.filter((e) => e.path.includes("overlays")).length).toBeGreaterThanOrEqual(3);
+});
+
+test("an overlays entry may carry a georeference instead of a map_type", () => {
+    // §2.10 moved the placed rasters to Georeference Extension annotations;
+    // storymap-JSON still has to be able to say one
+    const valid = {
+        storymap: {
+            overlays: [
+                {
+                    georeference: {
+                        url: "https://iiif.example.org/image1",
+                        width: 2315,
+                        height: 3000,
+                        body: {
+                            type: "FeatureCollection",
+                            features: [
+                                {
+                                    properties: { resourceCoords: [0, 0] },
+                                    geometry: { coordinates: [4.45, 51.92] },
+                                },
+                            ],
+                        },
+                    },
+                    opacity: 0.75,
+                },
+            ],
+            slides: [],
+        },
+    };
+    expect(validateStorymap(valid).filter((e) => e.path.includes("overlays"))).toEqual([]);
+
+    const missingSize = {
+        storymap: {
+            overlays: [{ georeference: { url: "https://iiif.example.org/image1" } }],
+            slides: [],
+        },
+    };
+    expect(
+        validateStorymap(missingSize).filter((e) => e.path.includes("georeference")).length,
+    ).toBeGreaterThan(0);
 });
 
 /*	anyOf / format coverage

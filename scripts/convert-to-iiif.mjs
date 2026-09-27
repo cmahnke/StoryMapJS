@@ -106,7 +106,9 @@ export function storymapToManifest(name, legacy) {
                 label: languageMap("StoryMapJS"),
             },
         ],
-        items: slides.map((slide, i) => buildCanvas(manifestId, i, slide, isImageMap)),
+        items: slides.map((slide, i) =>
+            buildCanvas(manifestId, i, slide, isImageMap, i === 0 ? storymap.overlays : null),
+        ),
     };
 
     // A map bbox has no extension term: the interoperable spelling is a
@@ -270,7 +272,7 @@ function isLonLatBox(value) {
     );
 }
 
-function buildCanvas(manifestId, index, slide, isImageMap) {
+function buildCanvas(manifestId, index, slide, isImageMap, georeferencedLayers) {
     const canvasId = `${manifestId}/canvas/${index + 1}`;
     const headline = slide.text?.headline || "";
     const bodyText = slide.text?.text || "";
@@ -307,6 +309,11 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
                         body: buildBody(slide, isImageMap),
                         target: buildRegionTarget(canvasId, slide.location?.region) ?? canvasId,
                     },
+                    // Georeference Extension annotations for the placed rasters
+                    // (§2.10). The layers are map-wide but an annotation is
+                    // canvas-scoped, so they are written on the first canvas and
+                    // the reader collects them from every canvas.
+                    ...buildGeoreferencing(canvasId, georeferencedLayers),
                 ],
             },
         ],
@@ -326,6 +333,48 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
         canvas.navPlace = navPlace;
     }
     return canvas;
+}
+
+/**
+ * A map's georeferenced rasters as Georeference Extension annotations
+ * (§2.10).
+ *
+ * Per the extension, a layer that is not part of the canvas it ships in — which
+ * is every placed raster — carries the image it places in `target` as an
+ * embedded resource, and the ground control points in `body` as a
+ * FeatureCollection whose features carry `resourceCoords`.
+ *
+ * The `opacity`, `visible`, `className` and `blendMode` the term could carry
+ * have no IIIF vocabulary for a georeferencing annotation, so they are not
+ * written; the attribution is, as a `requiredStatement`, which is where P3 puts
+ * it.
+ */
+function buildGeoreferencing(canvasId, overlays) {
+    const layers = (overlays || []).filter((entry) => entry && entry.georeference);
+    return layers.map((entry) => {
+        const georeference = entry.georeference;
+        return {
+            id: `${canvasId}/georeferencing/${layers.indexOf(entry) + 1}`,
+            type: "Annotation",
+            motivation: "georeferencing",
+            target: {
+                id: georeference.url,
+                type: "Image",
+                width: georeference.width,
+                height: georeference.height,
+                service: [{ id: georeference.url, type: "ImageService3", profile: "level2" }],
+            },
+            ...(present(entry.attribution)
+                ? {
+                      requiredStatement: {
+                          label: languageMap("Attribution"),
+                          value: languageMap(entry.attribution),
+                      },
+                  }
+                : {}),
+            body: georeference.body,
+        };
+    });
 }
 
 /**

@@ -297,8 +297,6 @@ describe("context agreement", () => {
             "storymap:lineOpacity",
             "storymap:lineDash",
             "storymap:lineJoin",
-            // only in the two hand-authored georeferenced manifests
-            "storymap:georeferencedLayers",
         ]);
         const unaccounted = [...declared].filter(
             (t) => !emitted.has(t) && !NOT_EXERCISED_BY_A_FIXTURE.has(t),
@@ -325,6 +323,7 @@ describe("context agreement", () => {
             "storymap:background",
             "storymap:iiifUrl",
             "storymap:imageRegion",
+            "storymap:georeferencedLayers",
         ];
         const offenders: string[] = [];
         for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {

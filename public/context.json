@@ -29,7 +29,6 @@
         "overviewExtent": "storymap:overviewExtent",
         "keyboard": "storymap:keyboard",
         "overlays": "storymap:overlays",
-        "georeferencedLayers": "storymap:georeferencedLayers",
         "type": {
             "@id": "storymap:type",
             "@type": "@id"

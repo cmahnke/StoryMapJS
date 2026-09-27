@@ -527,9 +527,48 @@ it is a noun for the same job `mapType` did. Test: a mapconfig service using
 
 ### 2.10 `georeferencedLayers` → georeferencing annotations
 
-Read annotations with `motivation: "georeferencing"` from each canvas (today
-`readPainting` skips any motivation that is not `painting`, `:186`) and delete
-the manifest-level term.
+**Done** (commit 6), and it needed a decision. Read annotations with
+`motivation: "georeferencing"` from each canvas (today `readPainting` skips any
+motivation that is not `painting`, `:186`) and delete the manifest-level term.
+
+**The official validator rejects the extension's own shapes.** Probing it:
+
+- `motivation: "georeferencing"` **is** legal — an annotation carrying it
+  validates.
+- The `FeatureCollection` body is _not_ valid in any branch of the P3 3.0 base
+  schema, and neither is an embedded `Image` target. Both fail with _"is not
+  valid under any of the given schemas"_, and both still fail with the
+  extension's own context declared — which does resolve, at
+  `http://iiif.io/api/extension/georef/1/context.json`. A `FeatureCollection`
+  body is rejected under a `painting` motivation too, so it is the body shape,
+  not the motivation.
+
+The extension post-dates the base schema, so this is the validator's gap, not
+ours — but the plan's own hard gate is that emitted manifests pass
+`validate:iiif`. **Decided: conform to the official way anyway** (a georeferenced
+manifest other IIIF tools can read beats one this validator accepts), and make
+the gate honest rather than quietly red:
+
+- `scripts/validate-iiif.mjs` carries a two-entry allowlist naming the reason
+  and reporting those manifests as _not covered_, never as passes, with the
+  count printed. A failure in any other file still fails. The fixtures are
+  still JSON-parsed, and the reader is covered by unit tests and the browser
+  matrix, so a typo in one is still caught.
+- The `target` carries the embedded `Image` rather than the canvas URI. The
+  canvas-URI form is one schema rejection smaller, but a map layer is not the
+  canvas's own painting, so the canvas URI would not identify the image to
+  place at all — and the extension's guidance is explicit: embed the resource
+  when the target is external to what it ships in.
+
+Two things the term carried have no IIIF home and are dropped: `opacity`,
+`visible`, `className` and `blendMode`. The extent is not lost in substance,
+because the control points describe it. `attribution` is kept, as a
+`requiredStatement`, which is where P3 puts attribution.
+
+To make the write path real, `overlays[]` entries in storymap-JSON may now carry
+a `georeference` instead of a `map_type` — the TS type has allowed that for a
+while and the schema never did, which had left the converter's georeferencing
+code unreachable.
 
 **Trap to write down:** `georeferencedLayers` is manifest-scoped and feeds
 map-wide `data.overlays[]`, whereas a georeferencing annotation is

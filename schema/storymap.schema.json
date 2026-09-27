@@ -107,11 +107,10 @@
                     "description": "Raster layers stacked above the base map and below the route lines",
                     "items": {
                         "type": "object",
-                        "required": ["map_type"],
                         "properties": {
                             "map_type": {
                                 "type": "string",
-                                "description": "Any map_type the tile layer factory accepts"
+                                "description": "Any map_type the tile layer factory accepts. Omit when the entry carries a georeference instead."
                             },
                             "opacity": {
                                 "type": "number",
@@ -139,8 +138,54 @@
                                 "minItems": 4,
                                 "maxItems": 4,
                                 "description": "Clip the layer to this lon/lat bounding box [west, south, east, north] (mercator maps)"
+                            },
+                            "georeference": {
+                                "type": "object",
+                                "description": "A IIIF Georeference Extension annotation body plus the image it places. In a IIIF manifest this is a motivation: \"georeferencing\" annotation whose target embeds the image and whose body is the FeatureCollection of ground control points.",
+                                "required": ["url", "width", "height", "body"],
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "description": "IIIF Image API service base, or a full-size image URL"
+                                    },
+                                    "width": {
+                                        "type": "number",
+                                        "exclusiveMinimum": 0,
+                                        "description": "Image width in pixels (the resourceCoords space)"
+                                    },
+                                    "height": {
+                                        "type": "number",
+                                        "exclusiveMinimum": 0,
+                                        "description": "Image height in pixels"
+                                    },
+                                    "body": {
+                                        "type": "object",
+                                        "description": "The Georeference Extension annotation body, verbatim: a GeoJSON FeatureCollection of ground control points pairing properties.resourceCoords (image pixels) with geometry.coordinates (WGS84 lon/lat), optionally with a transformation hint.",
+                                        "required": ["type", "features"],
+                                        "properties": {
+                                            "type": {
+                                                "const": "FeatureCollection"
+                                            },
+                                            "transformation": {
+                                                "type": "object"
+                                            },
+                                            "features": {
+                                                "type": "array",
+                                                "minItems": 1
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
+                        },
+                        "anyOf": [
+                            {
+                                "required": ["map_type"]
+                            },
+                            {
+                                "required": ["georeference"]
+                            }
+                        ]
                     }
                 },
                 "consent_required": {
@@ -436,19 +481,39 @@
                     "type": ["object", "null"],
                     "description": "Per-slide marker presentation. location.icon/iconSize/image/use_custom_marker and location.name remain supported as legacy spellings; marker.* wins when present. In a IIIF manifest these arrive in the navPlace Feature properties instead.",
                     "properties": {
-                        "icon": { "type": "string", "format": "uri" },
-                        "iconSize": { "type": "array", "items": { "type": "number" } },
-                        "image": { "type": "string", "format": "uri" },
-                        "label": { "type": "string" },
-                        "popup": { "type": "boolean" },
-                        "audioBadge": { "type": "boolean" }
+                        "icon": {
+                            "type": "string",
+                            "format": "uri"
+                        },
+                        "iconSize": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "image": {
+                            "type": "string",
+                            "format": "uri"
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "popup": {
+                            "type": "boolean"
+                        },
+                        "audioBadge": {
+                            "type": "boolean"
+                        }
                     }
                 },
                 "narration": {
                     "type": ["object", "null"],
                     "description": "Spoken narration for this slide, played through a dedicated audio element. In a IIIF manifest this is a Sound body on the stop annotation.",
                     "properties": {
-                        "url": { "type": "string", "format": "uri" }
+                        "url": {
+                            "type": "string",
+                            "format": "uri"
+                        }
                     },
                     "required": ["url"]
                 },

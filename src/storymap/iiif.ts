@@ -998,6 +998,17 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         applyMapConfig(data, config);
     }
 
+    // georeferenced IIIF images (Georeference Extension) sit above the
+    // term-based overlay layers. The annotations are canvas-scoped but the
+    // layers they describe are map-wide, so they are collected from *every*
+    // canvas: a layer annotated on canvas 0 must not disappear for the rest
+    // of the story (§2.10).
+    const georeferenced = readGeoreferencedLayers(record);
+    if (georeferenced.length > 0) {
+        const existing = (data.overlays as StorymapOverlayLayer[] | undefined) ?? [];
+        data.overlays = [...existing, ...georeferenced];
+    }
+
     // An image basemap is a painting body carrying an Image API service in
     // `service[]`; its base is where `iiif.url` comes from (§2.4). Gated on
     // map_type "iiif" because an ordinary slide can just as easily be an IIIF
@@ -1143,12 +1154,8 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
     const keyboard = asBoolean(readTerm(config, "keyboard"));
     if (keyboard !== null) data.keyboard = keyboard;
 
-    // stacked layers above the basemap: extension-term entries and
-    // georeferenced IIIF images (Georeference Extension) may be mixed
-    const overlays = [
-        ...readOverlays(readTerm(config, "overlays")),
-        ...readGeoreferencedLayers(readTerm(config, "georeferencedLayers")),
-    ];
+    // stacked layers above the basemap, as extension-term entries
+    const overlays = readOverlays(readTerm(config, "overlays"));
     if (overlays.length > 0) data.overlays = overlays;
 }
 
@@ -1201,39 +1208,67 @@ function readOverlays(value: unknown): StorymapOverlayLayer[] {
 }
 
 /**
- * Reads `storymap:georeferencedLayers`: IIIF images placed on the geographic
- * map from a Georeference Extension annotation body (the standard model for
- * a raster map layer — the navPlace/Georeference extensions are the only
- * geospatial modeling IIIF defines; there is no basemap or tile-stack
- * vocabulary, which is what the `mapconfig` service above is for).
+ * IIIF images placed on the geographic map, from the Georeference Extension's
+ * `motivation: "georeferencing"` annotations (§2.10).
  *
- * Each entry names the image to place (`url`, either an Image API service
- * base or its info.json), its pixel size and the annotation `body` with its
- * ground control points. Entries without three usable points are dropped;
- * whether the points can be placed affinely is decided by the map.
+ * Per the extension, a layer that is not part of the canvas it ships in — which
+ * is every map layer — carries the image it places in `target` as an embedded
+ * resource, and the ground control points in `body` as a FeatureCollection
+ * whose features carry `resourceCoords`.
+ *
+ * The annotations are read from every canvas, because the layers they describe
+ * are map-wide. Entries without a usable image or without ground control points
+ * are dropped; whether the points can be placed affinely is the map's decision.
+ *
+ * `requiredStatement` is read as the layer's attribution, which is where P3 puts
+ * attribution. The term also carried `opacity`, `visible`, `className`,
+ * `blendMode` and `extent`; none of those has IIIF vocabulary for a
+ * georeferencing annotation, so they no longer round-trip. The extent is not
+ * lost in substance — the control points describe it.
  */
-function readGeoreferencedLayers(value: unknown): StorymapOverlayLayer[] {
-    if (!Array.isArray(value)) return [];
+function readGeoreferencedLayers(manifest: Record<string, unknown>): StorymapOverlayLayer[] {
     const overlays: StorymapOverlayLayer[] = [];
-    for (const item of value) {
-        const record = asRecord(item);
-        if (!record) continue;
-        const url = asString(record.url);
-        if (url === null) continue;
-        const width = asNumber(record.width);
-        const height = asNumber(record.height);
-        if (width === null || height === null || width <= 0 || height <= 0) continue;
-        const body = asRecord(record.body);
-        if (!body || readGroundControlPoints(body) === null) continue;
-        const georeference: StorymapGeoreference = {
-            url,
-            width,
-            height,
-            body: body as unknown as StorymapGeoreference["body"],
-        };
-        const entry: StorymapOverlayLayer = { georeference };
-        readOverlayPresentation(record, entry);
-        overlays.push(entry);
+    const canvases = Array.isArray(manifest.items) ? manifest.items : [];
+    for (const canvas of canvases) {
+        const canvasRecord = asRecord(canvas);
+        if (!canvasRecord) continue;
+        const pages = Array.isArray(canvasRecord.items) ? canvasRecord.items : [];
+        for (const page of pages) {
+            const pageRecord = asRecord(page);
+            if (!pageRecord) continue;
+            const annotations = Array.isArray(pageRecord.items) ? pageRecord.items : [];
+            for (const annotation of annotations) {
+                const record = asRecord(annotation);
+                if (!record) continue;
+                const motivations = Array.isArray(record.motivation)
+                    ? record.motivation
+                    : [record.motivation];
+                if (!motivations.some((m) => asString(m) === "georeferencing")) continue;
+
+                const target = asRecord(record.target);
+                if (!target) continue;
+                const url = asString(target.id);
+                if (url === null) continue;
+                const width = asNumber(target.width);
+                const height = asNumber(target.height);
+                if (width === null || height === null || width <= 0 || height <= 0) continue;
+                const body = asRecord(record.body);
+                if (!body || readGroundControlPoints(body) === null) continue;
+
+                const georeference: StorymapGeoreference = {
+                    url,
+                    width,
+                    height,
+                    body: body as unknown as StorymapGeoreference["body"],
+                };
+                const entry: StorymapOverlayLayer = { georeference };
+                const attribution = formatAttribution(
+                    readRequiredStatement(record.requiredStatement),
+                );
+                if (attribution !== "") entry.attribution = attribution;
+                overlays.push(entry);
+            }
+        }
     }
     return overlays;
 }

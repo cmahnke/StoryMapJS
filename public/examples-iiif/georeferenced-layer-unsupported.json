@@ -20,55 +20,7 @@
             "id": "https://example.org/storymap/georeferenced-layer-unsupported/config",
             "type": "StoryMapMapConfiguration",
             "profile": "mapconfig",
-            "storymap:mapType": "osm",
-            "storymap:georeferencedLayers": [
-                {
-                    "id": "https://example.org/storymap/georeferenced-layer-unsupported/layer/1",
-                    "url": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon",
-                    "width": 2315,
-                    "height": 3000,
-                    "attribution": "Never placed",
-                    "body": {
-                        "id": "https://example.org/storymap/georeferenced-layer-unsupported/layer/1/features",
-                        "type": "FeatureCollection",
-                        "transformation": {
-                            "type": "thinPlateSpline"
-                        },
-                        "features": [
-                            {
-                                "type": "Feature",
-                                "properties": {
-                                    "resourceCoords": [0, 0]
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [4.45, 51.92]
-                                }
-                            },
-                            {
-                                "type": "Feature",
-                                "properties": {
-                                    "resourceCoords": [2315, 0]
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [4.5, 51.92]
-                                }
-                            },
-                            {
-                                "type": "Feature",
-                                "properties": {
-                                    "resourceCoords": [1157, 1500]
-                                },
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [4.475, 51.91]
-                                }
-                            }
-                        ]
-                    }
-                }
-            ]
+            "storymap:mapType": "osm"
         }
     ],
     "items": [
@@ -104,6 +56,93 @@
                                 "height": 3000
                             },
                             "target": "https://example.org/storymap/georeferenced-layer-unsupported/canvas/1"
+                        },
+                        {
+                            "id": "https://example.org/storymap/georeferenced-layer-unsupported/canvas/1/georeferencing/1",
+                            "type": "Annotation",
+                            "motivation": "georeferencing",
+                            "target": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon",
+                                "type": "Image",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Attribution"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Never placed"
+                                    ]
+                                }
+                            },
+                            "body": {
+                                "id": "https://example.org/storymap/georeferenced-layer-unsupported/layer/1/features",
+                                "type": "FeatureCollection",
+                                "transformation": {
+                                    "type": "thinPlateSpline"
+                                },
+                                "features": [
+                                    {
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                0,
+                                                0
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.45,
+                                                51.92
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                2315,
+                                                0
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.5,
+                                                51.92
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                1157,
+                                                1500
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.475,
+                                                51.91
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     ]
                 }

@@ -4,9 +4,10 @@ import { collectPageErrors, getState, waitForStoryMap } from "./known-issues/hel
 /**
  * A georeferenced layer is the one map feature IIIF models natively: the
  * Georeference Extension supplies ground control points that place a IIIF
- * image on the geographic map. The manifest's map configuration service
- * carries them as `storymap:georeferencedLayers`; the viewer fits them
- * affinely and places the image.
+ * image on the geographic map. A canvas carries them as a
+ * `motivation: "georeferencing"` annotation, whose target embeds the image to
+ * place; the viewer collects them from every canvas, fits the points affinely
+ * and places the image.
  */
 async function openManifest(
     page: Page,

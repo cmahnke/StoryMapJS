@@ -9,6 +9,34 @@ import { join } from "node:path";
 const VALIDATOR_URL = "https://presentation-validator.iiif.io/validate?version=3.0&format=json";
 const REQUEST_DELAY_MS = 500;
 
+/**
+ * Manifests the official validator cannot accept, with the reason.
+ *
+ * The validator checks against the Presentation 3.0 base JSON Schema, which
+ * predates every extension. The Georeference Extension is published and its
+ * context resolves, but the extension's shapes — a `FeatureCollection` body and
+ * an embedded `Image` target — are in no branch of that schema, so they are
+ * rejected with "is not valid under any of the given schemas". We keep the
+ * extension's own spelling anyway: a georeferenced manifest that other IIIF
+ * tools can read is worth more than one this validator happens to accept, and
+ * the two spellings cannot both be shipped. See docs/plans/iiif-interop.md
+ * §2.10.
+ *
+ * These are still parsed as JSON, and the reader is covered by unit tests and
+ * the browser matrix, so a typo in one does not go unnoticed. Any *other*
+ * failure is still a failure.
+ */
+const EXTENSION_NOT_IN_BASE_SCHEMA = new Map([
+    [
+        "georeferenced-layer.json",
+        "Georeference Extension: FeatureCollection body and embedded Image target",
+    ],
+    [
+        "georeferenced-layer-unsupported.json",
+        "Georeference Extension: FeatureCollection body and embedded Image target",
+    ],
+]);
+
 const args = process.argv.slice(2);
 let files;
 if (args.length > 0) {
@@ -62,6 +90,13 @@ for (const file of files) {
         failed++;
         continue;
     }
+    const extensionReason = EXTENSION_NOT_IN_BASE_SCHEMA.get(name);
+    if (extensionReason !== undefined) {
+        // parsed above, so the JSON is at least well-formed
+        console.log(`⊘ ${name}: not covered — ${extensionReason} is not in the P3 3.0 base schema`);
+        await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY_MS));
+        continue;
+    }
     try {
         const result = await validate(manifest);
         if (result.okay === 1 && result.skipped) {
@@ -85,7 +120,9 @@ for (const file of files) {
     await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY_MS));
 }
 
+const notCovered = files.filter((f) => EXTENSION_NOT_IN_BASE_SCHEMA.has(f.split("/").pop())).length;
 console.log(
-    `\n${files.length - failed}/${files.length} manifest(s) passed the official IIIF validator.`,
+    `\n${files.length - failed - notCovered}/${files.length - notCovered} manifest(s) passed the official IIIF validator` +
+        (notCovered > 0 ? `, ${notCovered} not covered by the base schema.` : "."),
 );
 process.exit(failed > 0 ? 1 : 0);
