@@ -323,7 +323,13 @@ export interface PaintingBody {
     label: string | null;
     /** `body.accessibilitySummary` — the interoperable alt text. */
     accessibilitySummary: string | null;
-    /** `body.requiredStatement` values, in order, joined for the credit. */
+    /**
+     * `body.requiredStatement`'s `value`, or `body.provider`. The statement
+     * is a single `{label, value}` object in the spec — the official IIIF
+     * validator rejects an array — so the array branch in `readBodyCredit()`
+     * is producer leniency, not conformance. The `label` is not read yet;
+     * that is the one open item in docs/plans/iiif-interop.md §2.1.
+     */
     credit: string | null;
     thumbnail: string | null;
     /** `duration` in seconds, and an explicit `start`/`end` range. */
@@ -339,8 +345,15 @@ export interface PaintingBody {
     subtitles: string | null;
 }
 
-/** Credit from `body.requiredStatement` (0..n, each a label/value pair) or
- *  `body.provider`, which is where a manifest records who made the media. */
+/**
+ * Credit from `body.requiredStatement`'s `value`, or `body.provider`, which is
+ * where a manifest records who made the media.
+ *
+ * `requiredStatement` is a single `{label, value}` object in P3, not 0..n: the
+ * official IIIF validator rejects `requiredStatement: [...]` with "is not of
+ * type 'object'". The array branch is here for producers that emit one
+ * anyway, and costs three lines.
+ */
 function readBodyCredit(body: unknown): string | null {
     const record = asRecord(body);
     if (!record) return null;

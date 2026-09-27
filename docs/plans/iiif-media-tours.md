@@ -75,7 +75,7 @@ references of the previous revision of this plan were stale.
   IIIF is a mercator map.
 - Marker presentation today is split: storymap JSON
   `location.{icon,iconSize,image,use_custom_marker}` + global
-  `use_custom_markers` (`_createMarker`, `MapMarker.OpenLayers.ts:21-31`),
+  `use_custom_markers` (`_createMarker()`,
   manifests via navPlace properties (`LOCATION_PROPERTIES`,
   `iiif.ts:23-32` — `name`,
   `zoom`, `line`, `icon`, `iconSize`, `image`, `use_custom_marker`; **no**
@@ -155,7 +155,7 @@ references of the previous revision of this plan were stale.
 audioBadge?: boolean }` — with `location.*` kept as legacy aliases
   (`marker.*` wins when present, else fall back to `location.*`;
   location stays geographic + region, marker is presentation).
-  `MapMarker.OpenLayers.ts:21-31` reads the merged view. Schema + types +
+  `_createMarker()` reads the merged view. Schema + types +
   validate. `audioBadge` renders a small indicator on markers whose slide
   has narration/audio media (Micrio-like affordance).
 - **No new term is added for any of this** (interop §2's term policy). The
@@ -183,7 +183,7 @@ audioBadge?: boolean }` — with `location.*` kept as legacy aliases
     1. It is `marker.popup`, **not** `createPopup()`. That name is a
        documented deprecated no-op for pre-0.10 compatibility (the original
        viewer never implemented it either) and must stay one.
-    2. Anchor through `marker.latLon()` (`MapMarker.OpenLayers.ts:84`) rather
+    2. Anchor through `marker.latLon()` rather
        than reading `data.location`, so the popup also works if markers ever
        move to the vector renderer of `docs/plans/issue-159-vector-markers.md`.
     3. The popup overlay must be released by the marker's existing

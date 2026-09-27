@@ -235,10 +235,11 @@ function rewriteLinks(html: string): string {
             .replace(/href="[^"]*?storymap-as-iiif-manifest\.md/g, 'href="./iiif.html')
             .replace(/href="[^"]*?migration-from-knightlab\.md/g, 'href="./migration.html')
             .replace(/href="[^"]*?iiif-authoring\.md/g, 'href="./authoring.html"')
-            // a plan file has no published page; keep the reference readable
+            // a plan file has no published page; point at it in the repo, and
+            // keep the filename — a directory link 404s on GitHub too
             .replace(
-                /href="[^"]*?plans\/[a-z0-9-]+\.md/g,
-                'href="https://github.com/cmahnke/StoryMapJS/tree/main/docs/plans/',
+                /href="[^"]*?plans\/([a-z0-9-]+\.md)/g,
+                'href="https://github.com/cmahnke/StoryMapJS/tree/main/docs/plans/$1"',
             )
             .replace(/href="\.\.\/public\//g, 'href="../')
             .replace(/href="\.\/docs\//g, 'href="./')
