@@ -327,6 +327,63 @@ describe("context agreement", () => {
         expect(unused, "NOT_EXERCISED_BY_A_FIXTURE is stale").toEqual([]);
     });
 
+    test("the mapping doc's context block is public/context.json", () => {
+        // docs/storymap-as-iiif-manifest.md says its block is "the exact same
+        // content the fixtures reference", which is only true if something
+        // checks it: §2 removed nine terms and added basemap, and a stale copy
+        // in the prose is how a host ends up authoring a manifest that no
+        // longer validates
+        const doc = readFileSync(join(process.cwd(), "docs/storymap-as-iiif-manifest.md"), "utf8");
+        const block = /```json\n(\{\n    "@context"[\s\S]*?\n\})\n```/.exec(doc);
+        expect(block, "the mapping doc has no @context block").not.toBeNull();
+        const inDoc = (JSON.parse(block?.[1] ?? "{}") as { "@context": unknown })["@context"];
+        const onDisk = (
+            JSON.parse(readFileSync(join(process.cwd(), "public/context.json"), "utf8")) as {
+                "@context": unknown;
+            }
+        )["@context"];
+        expect(inDoc).toEqual(onDisk);
+    });
+
+    test("the navPlace properties context describes exactly the properties the reader copies", () => {
+        // §3.3: the navPlace extension asks for a Feature `properties` bag to
+        // be described by a registered extension or a local linked-data
+        // context, and a client that finds a property it does not understand
+        // must ignore it. So the context and the reader's copy list have to
+        // agree — the plan called that a conformance gap in its own right.
+        const context = JSON.parse(
+            readFileSync(join(process.cwd(), "public/navplace-properties.json"), "utf8"),
+        )["@context"] as Record<string, unknown>;
+        const described = Object.keys(context).filter(
+            (term) => !term.startsWith("@") && term !== "xsd" && !term.startsWith("storymap_"),
+        );
+        // the same list the reader copies out of navPlace properties
+        const READ = [
+            "name",
+            "zoom",
+            "line",
+            "icon",
+            "iconSize",
+            "image",
+            "use_custom_marker",
+            "popup",
+            "audioBadge",
+        ];
+        expect([...described].sort()).toEqual([...READ].sort());
+    });
+
+    test("every manifest that uses navPlace properties names the context", () => {
+        const CONTEXT_URL = "https://cmahnke.github.io/StoryMapJS/navplace-properties.json";
+        const missing: string[] = [];
+        for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
+            if (!file.endsWith(".json")) continue;
+            const raw = readFileSync(join(process.cwd(), "public/examples-iiif", file), "utf8");
+            if (!raw.includes('"properties"')) continue;
+            if (!raw.includes(CONTEXT_URL)) missing.push(file);
+        }
+        expect(missing).toEqual([]);
+    });
+
     test("leaves no dropped term in any shipped manifest", () => {
         // A term replaced by a standard property in docs/plans/iiif-interop.md
         // §2 must be gone from the reader, the emitter, the context *and* every

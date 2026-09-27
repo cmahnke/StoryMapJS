@@ -20,11 +20,43 @@ and the StoryMap extension context:
 
 ```json
 {
-    "@context": [
-        "http://iiif.io/api/presentation/3/context.json",
-        "http://iiif.io/api/extension/navplace/context.json",
-        "https://cmahnke.github.io/StoryMapJS/context.json"
-    ]
+    "@context": {
+        "@version": 1.1,
+        "storymap": "https://christianmahnke.de/iiif/storymap#",
+        "mapAsImage": "storymap:mapAsImage",
+        "basemap": "storymap:basemap",
+        "mapAccessToken": "storymap:mapAccessToken",
+        "mapBackgroundColor": "storymap:mapBackgroundColor",
+        "mapCenterOffset": "storymap:mapCenterOffset",
+        "mapSubdomains": "storymap:mapSubdomains",
+        "fontCss": "storymap:fontCss",
+        "callToAction": "storymap:callToAction",
+        "callToActionText": "storymap:callToActionText",
+        "startAtSlide": "storymap:startAtSlide",
+        "language": "storymap:language",
+        "calculateZoom": "storymap:calculateZoom",
+        "lessBounce": "storymap:lessBounce",
+        "lineFollowsPath": "storymap:lineFollowsPath",
+        "showLines": "storymap:showLines",
+        "showHistoryLine": "storymap:showHistoryLine",
+        "lineColor": "storymap:lineColor",
+        "lineColorInactive": "storymap:lineColorInactive",
+        "lineWeight": "storymap:lineWeight",
+        "lineOpacity": "storymap:lineOpacity",
+        "lineDash": "storymap:lineDash",
+        "lineJoin": "storymap:lineJoin",
+        "useCustomMarkers": "storymap:useCustomMarkers",
+        "mapArea": "storymap:mapArea",
+        "overviewExtent": "storymap:overviewExtent",
+        "keyboard": "storymap:keyboard",
+        "overlays": "storymap:overlays",
+        "type": {
+            "@id": "storymap:type",
+            "@type": "@id"
+        },
+        "mediaSrcset": "storymap:mediaSrcset",
+        "mediaSizes": "storymap:mediaSizes"
+    }
 }
 ```
 
@@ -141,10 +173,20 @@ with one GeoJSON Feature:
   verbatim. For image-map storymaps (`storymap:mapAsImage: true`) the values are
   image coordinates rather than WGS84 degrees; consumers can detect this via
   `storymap:mapAsImage`.
-- `properties`: marker data — `zoom`, `line`, `icon`, `iconSize`, `image`,
-  `use_custom_marker`, `name` (only present keys).
+- `properties`: marker data — `name`, `zoom`, `line`, `icon`, `iconSize`,
+  `image`, `use_custom_marker`, plus the presentation-only `popup` and
+  `audioBadge` (only present keys).
 - `location.use_custom_marker` / `use_custom_markers` (manifest) opt into
   custom marker rendering; see the storymap terms below.
+
+Those properties are described by **`https://cmahnke.github.io/StoryMapJS/navplace-properties.json`**,
+which a manifest using a `properties` bag should name in its `@context`
+alongside the navPlace extension. The extension requires it: terms in a GeoJSON
+Feature's `properties` must be described either by a registered IIIF extension
+or by a local linked-data context, and a client that meets a property it does
+not understand must ignore it. It is why `popup` and `audioBadge` need no
+`storymap:` term of their own — and the same mechanism is what
+`docs/plans/iiif-media-tours.md` §2 wants for its marker config.
 
 Alternatively a manifest MAY aggregate all slide locations in a single
 manifest-level `navPlace` with one Feature per Canvas in `items` order.

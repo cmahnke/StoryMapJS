@@ -35,6 +35,10 @@ const STORYMAP_CONTEXT = "https://cmahnke.github.io/StoryMapJS/context.json";
 const CONTEXTS = [
     "http://iiif.io/api/presentation/3/context.json",
     "http://iiif.io/api/extension/navplace/context.json",
+    // the navPlace extension asks for the Feature `properties` bag to be
+    // described by a registered extension or a local linked-data context, and
+    // ours is the local one (§3.3)
+    `${STORYMAP_CONTEXT.replace(/context\.json$/, "")}navplace-properties.json`,
     STORYMAP_CONTEXT,
 ];
 

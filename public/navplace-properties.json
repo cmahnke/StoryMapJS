@@ -1,0 +1,40 @@
+{
+    "@context": {
+        "@version": 1.1,
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "storymap_navplace": "https://christianmahnke.de/iiif/storymap/navplace#",
+        "name": "storymap_navplace:name",
+        "zoom": {
+            "@id": "storymap_navplace:zoom",
+            "@type": "xsd:integer"
+        },
+        "line": {
+            "@id": "storymap_navplace:line",
+            "@type": "xsd:boolean"
+        },
+        "icon": {
+            "@id": "storymap_navplace:icon",
+            "@type": "@id"
+        },
+        "iconSize": {
+            "@id": "storymap_navplace:iconSize",
+            "@type": "xsd:integer"
+        },
+        "image": {
+            "@id": "storymap_navplace:image",
+            "@type": "@id"
+        },
+        "use_custom_marker": {
+            "@id": "storymap_navplace:useCustomMarker",
+            "@type": "xsd:boolean"
+        },
+        "popup": {
+            "@id": "storymap_navplace:popup",
+            "@type": "xsd:boolean"
+        },
+        "audioBadge": {
+            "@id": "storymap_navplace:audioBadge",
+            "@type": "xsd:boolean"
+        }
+    }
+}

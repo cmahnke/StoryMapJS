@@ -637,7 +637,8 @@ slides.
     already slipped three past it (`title`, `tilejson`, `map_as_image`); the loop
     now walks the union, like the per-slide loop always did.
 
-- **A local linked-data context for the `navPlace` properties bag.** The
+- **DONE (commit 11): a local linked-data context for the `navPlace` properties
+  bag.** The
   navPlace extension §3.2 says terms used in a GeoJSON Feature's `properties`
   "should be described either by registered IIIF API extensions or local
   linked data contexts", and that a client discovering a property it does not
@@ -651,6 +652,16 @@ slides.
   Standardise on `name` for the label even though the navPlace extension's own
   example uses `label`, because `name` is what the reader already copies and
   changing it would break the 7 properties already in the fixtures.
+
+    `public/navplace-properties.json` is that context: a sibling of
+    `public/context.json`, published at the same place, defining all nine
+    properties with their types. Every manifest that uses a `properties` bag names
+    it, and a round-trip test asserts the context and the reader's copy list are
+    the same nine — the two drifting apart is exactly the gap this closes, so a
+    test is the only thing that keeps it closed. `popup` and `audioBadge` need no
+    `storymap:` term because of this, which is the mechanism
+    `docs/plans/iiif-media-tours.md` §2 wants for its marker config.
+
 - **DONE (commit 9): language maps.** `flattenLanguageMap` concatenated every
   language and lost which is which — for a bilingual tour, a headline of
   "Hallo Hello". `pickLanguageMap` now chooses: the configured language, then
