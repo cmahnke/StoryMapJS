@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>StoryMapJS Multi-Instance Harness</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            /* Two viewers side by side: the point of the fixture is that
+               neither may look at the other's DOM. */
+            .sm-host {
+                width: 50%;
+                height: 100%;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="sm-a" class="sm-host"></div>
+        <div id="sm-b" class="sm-host"></div>
+        <script type="module">
+            import { StoryMap } from "./src/main.ts";
+
+            window.__smErrors = [];
+            window.__smReady = false;
+            window.addEventListener("error", (e) => {
+                window.__smErrors.push(String(e.message || e));
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            // ?a=<example>&b=<example>, each optionally followed by a JSON
+            // options object: ?a=katrina&b=courbet&bopts={"language":"de"}
+            const examples = { a: params.get("a") ?? "katrina", b: params.get("b") ?? "seurat" };
+            const options = {
+                a: parseOptions(params.get("aopts")),
+                b: parseOptions(params.get("bopts")),
+            };
+
+            function parseOptions(raw) {
+                if (!raw) return {};
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    window.__smErrors.push("harness-multi: bad options: " + e);
+                    return {};
+                }
+            }
+
+            async function load(name) {
+                const response = await fetch("/examples/" + examples[name] + ".json");
+                if (!response.ok) throw new Error("no example " + examples[name]);
+                return response.json();
+            }
+
+            // Both viewers are built from their own fetch. `?shared=1` makes
+            // them share ONE parsed document object instead, which is how an
+            // SPA renders two stories from a single payload — and what used to
+            // make the second viewer adopt the first viewer's slide ids.
+            const shared = params.get("shared") === "1" ? await load("a") : null;
+
+            try {
+                const dataA = shared ?? (await load("a"));
+                window.__smA = new StoryMap("sm-a", dataA, options.a, {});
+                const dataB = shared ?? (await load("b"));
+                window.__smB = new StoryMap("sm-b", dataB, options.b, {});
+            } catch (err) {
+                window.__smErrors.push("harness-multi: " + (err?.message ?? err));
+            }
+            window.__smReady = true;
+        </script>
+    </body>
+</html>

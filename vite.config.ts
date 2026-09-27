@@ -88,7 +88,11 @@ function widgetCssLinks(): Plugin {
         name: "storymap-widget-css-links",
         transformIndexHtml(html, ctx) {
             const file = ctx.filename ?? "";
-            if (file.endsWith("demo.html") || file.endsWith("harness.html")) {
+            // ctx.filename is an absolute path, so match on the basename. An
+            // anchored regex silently stopped matching here, which dropped the
+            // stylesheet from every harness page and left the viewer unstyled.
+            const base = file.split("/").pop() ?? "";
+            if (base === "demo.html" || base === "harness.html" || base === "harness-multi.html") {
                 return html.replace("</head>", `    ${widgetCssLink}\n    </head>`);
             }
             if (file.endsWith("index.html") && !html.includes("site.css")) {
@@ -153,6 +157,7 @@ export default defineConfig(({ mode }) => {
                         index: resolve(ROOT, "index.html"),
                         demo: resolve(ROOT, "demo.html"),
                         harness: resolve(ROOT, "harness.html"),
+                        "harness-multi": resolve(ROOT, "harness-multi.html"),
                     },
                     output: {
                         entryFileNames: "assets/[name]-[hash].js",
