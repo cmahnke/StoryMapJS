@@ -3,8 +3,47 @@
 Code audit: one regression, a set of latent bugs, seven stored-XSS sinks, a
 disabled type check that had been hiding them, and a dependency swap.
 
+Added
+-----
+- A typed OpenLayers surface: all OL types (`Map`, `View`, `Layer`,
+  `Source`, ...) plus the StoryMapJS extension types are re-exported, so a
+  consumer can build and type its own layers without depending on `ol`
+  separately. `storymap.map` is the raw `ol/Map` and is now honestly nullable
+  (`OlMap | null`) instead of an `{} as Map` placeholder
+- Accessors for everything the viewer kept private:
+  `getBaseLayer()`, `getOverlayLayers()`/`getOverlayLayer(i)`,
+  `getOverlayCount()`, `setOverlayVisible()`/`setOverlayOpacity()`,
+  `getMinimap()`, `getLine()`/`getLineActive()`, `getMarker(n)`/`getMarkers()`
+  and `setExtraAttributions()`; underscore internals are no longer needed
+- `tile_source_factory` may return a full `ol/layer/Layer`, not only a source,
+  so a custom layer can carry its own opacity, z-index and events
+- `imageready` event (`{ source, kind, layer }`) fired once an image source is
+  actually ready, and re-fired on the storymap: `loaded` can fire before the
+  imagery exists
+- `storymap.dispose()` releases timers, the resize observer, window/document
+  listeners, running slide animations, the slider and the OpenLayers map
+- `isImageSpace()` tells an IIIF image presented as a picture of the world
+  (`map_as_image`) from a georeferenced IIIF map; the five places that tested
+  `map_type === "iiif" && map_as_image` inline now share it
+- The no-op `show()`/`hide()` methods (map and marker) are marked deprecated
+  with the reason, and the surviving map/marker methods are documented as
+  aliases over the OpenLayers map
+
 Fixed
 -----
+- map_bbox was ignored for every IIIF map: the runtime test was "map_type is
+  iiif", so a *georeferenced* IIIF map was treated as image space and its view
+  was fitted to the image extent instead of the bbox
+- 12 tile/vector source sites declared `attributions: []`, so the OSM, Stadia,
+  Mapbox, Esri, Carto, OpenTopo, Esri Ocean, NASA, overlay and mini-map
+  credits never reached the attribution control. They are now credited from
+  the source; custom `.vco-map-attribution` lines are unchanged
+- Navigating mutated the caller's document: the computed marker zoom was
+  written back onto `slides[i].location.zoom`, and `StoryMap.data` is that very
+  object. The zoom ladder now lives in an internal store; the authored value is
+  left alone and is still used for the min/max bounds
+- `map_options.interactions` was documented as replacing the defaults; it is
+  additive (the viewer's own pan/zoom set is always installed)
 - Image media never called onLoaded(): the call had drifted into a dead
   position after a `return` in _altText(), so every image slide kept a
   permanent "Loading Image" overlay painted over it and never rendered its

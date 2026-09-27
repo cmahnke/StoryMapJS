@@ -40,6 +40,14 @@ Points are set to only display on mouseover in image mode, but you can set map_a
 To disable connecting lines on maps set `map_as_image: true` in the storymap
 options (the default `false` renders cartography).
 
+`storymap.map` is the raw OpenLayers map, typed with the re-exported `ol`
+types, and `getBaseLayer()`, `getOverlayLayers()`, `getMinimap()`,
+`getMarkers()` and friends hand out the layers the viewer built. Listen for
+`imageready` to run code against the real imagery, and call
+`storymap.dispose()` when the embedding view goes away — see
+[docs/migration-from-knightlab.md](docs/migration-from-knightlab.md#reaching-the-map-layers-and-markers)
+for the full surface.
+
 The menubar buttons can be disabled individually:
 
     show_overview:       false,   // map overview button

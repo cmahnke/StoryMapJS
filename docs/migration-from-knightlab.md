@@ -131,12 +131,115 @@ storymap JSON sources.
 ## Map engine: Leaflet → OpenLayers
 
 - `storymap.map` now exposes the **OpenLayers `Map`** instance instead of a
-  Leaflet map. Port any direct Leaflet calls (e.g. `setView`, `flyTo`) to the
-  OpenLayers API (`getView().animate(...)`, ...).
+  Leaflet map. Port any direct Leaflet calls to the OpenLayers API (table
+  below). It is `null` until the map has been built.
 - Markers are DOM overlays (`.vco-mapmarker` / `.vco-mapmarker-active`) like
   before; the mini map is an OpenLayers `OverviewMap` control.
 - New basemap options: vector styles via `map_type: "osm:<style>"` (OpenFreeMap)
   or a Mapbox style JSON URL.
+- All OL types (`Map`, `View`, `Layer`, `Source`, `Feature`, ...) are
+  re-exported, so a consumer can type its own overlays without depending on
+  `ol` directly.
+
+### Direct Leaflet calls → OpenLayers
+
+Both maps are reachable from the same place (`storymap.map`), so only the
+call syntax changes:
+
+| Leaflet                                    | OpenLayers                                                                |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| `map.getCenter()`                          | `map.getView().getCenter()`                                               |
+| `map.getZoom()`                            | `map.getView().getZoom()`                                                 |
+| `map.setView(c, z)` / `map.fitBounds(b)`   | `map.getView().fit(extent, { size: map.getSize() })`                      |
+| `map.panTo(c)` / `map.flyTo(c, z)`         | `map.getView().animate({ center: c, duration: 300 })`                     |
+| `map.setZoom(z)`                           | `map.getView().setZoom(z)` (or `.animate({ zoom: z })`)                   |
+| `map.getSize()` / `map.getBounds()`        | `map.getSize()` / `map.getView().calculateExtent(map.getSize())`          |
+| `map.on("moveend", fn)`                    | `map.on("moveend", fn)` (same event names; `movestart`/`move` also exist) |
+| `L.tileLayer(url, opts).addTo(map)`        | `new TileLayer({ source: new XYZ({ url, attributions }) }).setMap(map)`   |
+| `L.control.attribution` / `L.control.zoom` | OL `Attribution` / `Zoom` controls (pass them via `map_options.controls`) |
+| `map.getPane("overlayPane")`               | `map.getOverlayContainer()` (markers are DOM siblings, not OL features)   |
+| `map.invalidateSize()`                     | `map.updateSize()`                                                        |
+| `map.remove()`                             | `map.setTarget(undefined); map.dispose();` (or `storymap.dispose()`)      |
+| `map.options.crs` / `map.getPixelOrigin()` | `map.getView().getProjection()` / `map.getPixelFromCoordinate(coord)`     |
+
+Marker positions are still DOM elements, so `marker.getLatLng()` has no
+equivalent — read the slide data (`storymap.data.stlides[n].location`) or use
+`storymap._map.getMarker(n).latLon()`.
+
+### Map and marker methods
+
+The map/marker methods of the original viewer are still there with the same
+names and behaviour (`storymap._map.<method>()`, `marker.<method>()`); the OL
+engine implements them as thin wrappers over `storymap.map`. Two methods are
+deprecated no-ops and one is gone:
+
+| Original method                                                                                           | Status                                                                                                                       |
+| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `updateDisplay`, `goTo`, `panTo`, `zoomTo`, `viewTo`                                                      | unchanged                                                                                                                    |
+| `getBoundsZoom`, `markerOverview`, `calculateMarkerZooms`                                                 | unchanged (`getBoundsZoom()` now returns `number \| undefined` instead of a falsy value)                                     |
+| `createMiniMap`, `createMarkers`, `createMarker`                                                          | unchanged                                                                                                                    |
+| `setMapOffset`, `calculateMinMaxZoom`, `updateMinMaxZoom`, `initialMapLocation`                           | unchanged                                                                                                                    |
+| `show()` / `hide()` (map and marker)                                                                      | **deprecated no-ops** — they were already empty in the original viewer. Style `.vco-mapmarker` or use `marker.active(false)` |
+| `map.addTo()` / `map.removeFrom()`                                                                        | **removed** — the map is placed in the constructor; use `storymap.map.setTarget(el)` or `options.map_options.element`        |
+| `marker.createPopup()`                                                                                    | **removed** with Leaflet's popups. `map_popup` is accepted but inert; render slide text yourself                             |
+| `marker.addTo()`, `marker.removeFrom()`, `marker.updateDisplay()`, `marker.active()`, `marker.location()` | unchanged                                                                                                                    |
+
+Marker helpers that Leaflet provided on the marker object (`getLatLng`,
+`setIcon`, `bindPopup`) are gone; use `marker.latLon()`, `marker.element`
+and your own DOM/CSS.
+
+## Reaching the map, layers and markers
+
+`storymap.map` is the raw `ol/Map` (typed as `OlMap | null` — it is set during
+construction, so check it before first use in an async setup). Everything the
+viewer keeps internally is available through accessors on `storymap` (and on
+`storymap._map` for the engine methods):
+
+| Accessor                                                     | Returns                                                            |
+| ------------------------------------------------------------ | ------------------------------------------------------------------ |
+| `getBaseLayer()`                                             | the base tile/vector layer                                         |
+| `getOverlayLayers()` / `getOverlayLayer(i)`                  | overlay layers / one by index (`null` if out of range)             |
+| `getOverlayCount()`                                          | number of overlays                                                 |
+| `setOverlayVisible(i, on)` / `setOverlayOpacity(i, opacity)` | show/hide and fade one overlay                                     |
+| `getMinimap()`                                               | the `OverviewMap` control, or its inner map via `getOverviewMap()` |
+| `getLine()` / `getLineActive()`                              | the full and the travelled route `VectorLayer`                     |
+| `getMarker(n)` / `getMarkers()`                              | one marker or all of them, in slide order                          |
+| `setExtraAttributions(html)`                                 | extra attribution HTML, listed after the source credits            |
+| `isImageSpace()`                                             | whether the map is a IIIF image in image space (see below)         |
+
+`tile_source_factory` may return a full `ol/layer/Layer` (not just a source)
+anywhere a layer is built, so custom layers can carry their own opacity,
+z-index and events.
+
+### Image space vs. georeferenced
+
+`map_type: "iiif"` is a mercator map by default. With `map_as_image: true` the
+image _is_ the map: the view projection becomes `EPSG:4326`, the view is
+fitted to the image extent and marker locations are pixel offsets into the
+image rather than lat/lon. Ask `storymap.isImageSpace()` instead of testing
+`map_type` — georeferenced IIIF (a manifest with `navPlace` regions) is an
+ordinary mercator map, and `map_bbox` with a georeferenced layer is one too.
+
+### Knowing when the imagery is there
+
+Tile and image sources attach asynchronously, so `loaded` can fire before the
+imagery exists. Listen for `imageready`, which fires once a source is ready and
+carries `{ source, kind, layer }` (`kind` is `"iiif"`, `"zoomify"` or
+`"tiles"`); it is re-fired on the `storymap` as well:
+
+```js
+storymap.on("imageready", ({ kind, source }) => {
+    console.log("imagery ready", kind, source);
+});
+```
+
+### Tearing a storymap down
+
+Call `storymap.dispose()` when the embedding view goes away (SPA route change,
+dialog close). It clears the timers and the resize observer, removes the
+`window`/`document` listeners, cancels running slide animations, disposes the
+slider and the OpenLayers map, and sets `storymap.map` to `null`. Calling it
+twice is safe; the instance is unusable afterwards.
 
 ## Custom map providers
 
@@ -207,3 +310,5 @@ factory.
 
 `change` (with `current_slide`), `loaded`, `title`, `dataloaded`,
 `fontLoaded`, plus the listener map in the constructor — all work as before.
+`markerAdded`/`markerRemoved` still fire on the map object, and `imageready`
+is new (see above).

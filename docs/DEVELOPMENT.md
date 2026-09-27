@@ -140,6 +140,25 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
   `getOverlayLayers()` is the only correct index → layer mapping.
   `ol` types (`OlMap`, `OlView`, `OlLayer`, …) are re-exported from
   `src/main.ts` so consumers can type the map without depending on `ol`.
+  `storymap.map` is `OlMap | null`: it is assigned during construction, so
+  an async setup has to check it.
+- **Two lifecycle hooks**: `imageready` (`{ source, kind, layer }`) fires
+  once a tile/IIIF/zoomify source is ready — `loaded` fires earlier, while
+  the source may still be attaching — and `storymap.dispose()` tears
+  everything down (timers, resize observer, window/document listeners, WAAPI
+  animations, slider, OL map). Listener references are stored on the
+  instance (`_on_resize`, `_on_keydown_global`, `_on_fullscreen`,
+  `_on_hashchange`) precisely so they can be removed again; anything added
+  with an inline arrow or a fresh `bind()` cannot be.
+- `isImageSpace()` is the single source of truth for "IIIF shown as a
+  picture of the world" (`map_type: "iiif"` + `map_as_image`), the view being
+  `EPSG:4326` image space. Do not re-test `map_type` at a call site: that is
+  what made `map_bbox` (georeferenced IIIF, a mercator map) behave like an
+  image map.
+- The viewer never mutates the caller's document: the computed marker zoom
+  lives in `Map._marker_zooms` and is read back through `_markerZoom(i)`,
+  not written to `marker.data.location.zoom` (`StoryMap.data` is the host's
+  object graph).
 - `tile_source_factory` may return any `ol/layer/Layer` (used as-is — this
   is what lets a third-party layer such as an Allmaps `WarpedMapLayer`
   render), a bare `Source` (wrapped in a `TileLayer`), or `null` to fall
