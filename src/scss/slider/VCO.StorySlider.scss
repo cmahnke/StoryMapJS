@@ -13,9 +13,7 @@
     // horizontal drags belong to the slider; vertical panning passes
     // through to the page (mobile navigation, #288)
     touch-action: pan-y;
-
-    @include user-select(none);
-
+    user-select: none;
     position: relative;
 
     img,

@@ -32,8 +32,6 @@
 @use "media/types/VCO.Media.Image" as *;
 @use "media/types/VCO.Media.Twitter" as *;
 @use "media/types/VCO.Media.Blockquote" as *;
-@use "media/types/VCO.Media.Instagram" as *;
-@use "media/types/VCO.Media.Profile" as *;
 @use "media/types/VCO.Media.IFrame" as *;
 @use "media/types/VCO.Media.Wikipedia" as *;
 @use "map/openlayers/VCO.Map.OpenLayers" as *;
@@ -51,8 +49,7 @@
     line-height: normal;
     overflow: hidden;
     position: relative;
-
-    @include user-select(none);
+    user-select: none;
 }
 
 /* Portrait
@@ -60,8 +57,7 @@
 .vco-layout-portrait {
     .vco-storyslider {
         padding-top: 10px;
-
-        @include box-shadow(0 -3px 6px rgba(0, 0, 0, 0.2));
+        box-shadow: 0 -3px 6px rgb(0 0 0 / 20%);
     }
 }
 

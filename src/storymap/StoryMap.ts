@@ -12,7 +12,7 @@ import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
 import StorySlider from "../slider/StorySlider";
 import { Browser } from "../core/Browser";
-import Animate from "morpheus";
+import Animate from "../animation/tween";
 import type { Map as OlMap } from "ol";
 import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
 
@@ -450,6 +450,9 @@ class StoryMapBase {
 	================================================== */
 
     _loadLanguage() {
+        // the locale chunk is fetched on demand, so the language is not
+        // available synchronously; layout proceeds with the English defaults
+        // and the labels are repainted once the locale arrives
         setLanguage(this.options.language);
         this._onDataLoaded();
     }
@@ -460,10 +463,21 @@ class StoryMapBase {
     refreshLanguage(code: string): void {
         this.options.language = code;
         setLanguage(code);
-        if (this._menubar && typeof this._menubar.refreshLabels === "function") {
-            this._menubar.refreshLabels();
-        }
-        this.updateDisplay();
+        this._applyLanguageLayout();
+    }
+
+    /**
+     * Repaint everything a runtime language switch affects: the menubar
+     * labels and the `vco-rtl` class.
+     *
+     * This deliberately does *not* call `updateDisplay()`. A full re-layout
+     * re-runs the slider's `goTo(current_slide)`, which goes through the
+     * navigation path that re-arms autoplay — so calling it here silently
+     * cancelled a pending autoplay tick and the story stopped advancing.
+     */
+    _applyLanguageLayout(): void {
+        this._menubar?.refreshLabels?.();
+        this._el.container.classList.toggle("vco-rtl", isRtl());
     }
 
     /*  Load the font theme stylesheet

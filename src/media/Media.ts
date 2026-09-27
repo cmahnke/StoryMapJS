@@ -13,6 +13,43 @@ import { loadJS } from "../core/Load";
 	Takes a data object and populates a dom object
 ================================================== */
 
+/**
+ * The icon glyph each media type shows in its error state.
+ *
+ * The icon font does not carry a glyph for every registered type, and the
+ * class used to be built straight from `media_type`, so dailymotion, audio,
+ * googledocs, iframe, documentcloud, juxtapose and website rendered an empty
+ * box next to the error text. The mapping is explicit rather than derived, so
+ * a type added later falls back to a real glyph instead of a blank one —
+ * `tests/embed-util-media.test.ts` checks the whole table against the font.
+ */
+const LOAD_ERROR_ICONS: Record<string, string> = {
+    youtube: "youtube",
+    vimeo: "vimeo",
+    dailymotion: "video",
+    soundcloud: "soundcloud",
+    twitter: "twitter",
+    flickr: "flickr",
+    image: "image",
+    video: "video",
+    audio: "music",
+    googledocs: "doc",
+    wikipedia: "wikipedia",
+    iframe: "web",
+    facebook: "facebook",
+    documentcloud: "doc",
+    juxtapose: "image",
+    blockquote: "blockquote",
+    website: "web",
+};
+
+const GENERIC_LOAD_ERROR_ICON = "web";
+
+export function loadErrorIcon(media_type: unknown): string {
+    const type = typeof media_type === "string" ? media_type : "";
+    return LOAD_ERROR_ICONS[type] ?? GENERIC_LOAD_ERROR_ICON;
+}
+
 /*	Options for Media and its subclasses: the fields Media itself sets
 	or reads. Everything else merged in via mergeData is absorbed by the
 	index signature. */
@@ -340,8 +377,18 @@ export class MediaBase {
             "vco-media-item vco-media-loaderror",
             this._el.content,
         );
-        this._el.content_item.innerHTML =
-            "<div class='vco-icon-" + this.options.media_type + "'></div><p>" + message + "</p>";
+        // The icon font has no glyph for every media type (dailymotion, audio,
+        // googledocs, iframe, documentcloud, juxtapose and website had none),
+        // and the class was built by string concatenation, so those error
+        // states rendered an empty box. Map the missing ones to a glyph that
+        // exists, and fall back to a generic "web" icon for anything added
+        // later.
+        this._el.content_item.appendChild(
+            Dom.create("div", `vco-icon-${loadErrorIcon(this.options.media_type)}`),
+        );
+        const text = Dom.create("p", "");
+        text.appendChild(document.createTextNode(message));
+        this._el.content_item.appendChild(text);
 
         // After Loaded
         this.onLoaded(true);

@@ -1,7 +1,7 @@
 {
     "name": "@projektemacher/storymapjs",
     "version": "0.10.7",
-    "description": "StoryMapJS viewer library — unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
+    "description": "StoryMapJS viewer library \u2014 unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
     "license": "MPL-2.0",
     "type": "module",
     "types": "./dist/js/storymap.d.ts",
@@ -40,7 +40,6 @@
         "@fontsource-utils/scss": "^0.2.4",
         "bezier-easing": "^3.1.0",
         "d3-ease": "^3.0.1",
-        "morpheus": "^0.7.2",
         "ol": "^10.10.0",
         "ol-mapbox-style": "^13.5.1"
     },
@@ -104,6 +103,7 @@
         "test:e2e": "playwright test",
         "typecheck": "tsc --noEmit",
         "validate": "node scripts/validate-storymap.mjs",
+        "check:locales": "node scripts/check-locales.mjs",
         "validate:iiif": "node scripts/validate-iiif.mjs",
         "lint": "eslint . && stylelint 'src/scss/**/*.scss'",
         "format": "prettier --write .",

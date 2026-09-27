@@ -1,4 +1,4 @@
-import Animate from "morpheus";
+import Animate from "../animation/tween";
 import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import { Browser } from "../core/Browser";
 import { Evented, type EventedInstance } from "../core/mixins";

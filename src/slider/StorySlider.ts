@@ -12,7 +12,7 @@ import { DomEvent } from "../dom/DomEvent";
 import { easeInOutQuint } from "../animation/easings";
 import SlideNav from "./SlideNav";
 import Slide from "./Slide";
-import Animate from "morpheus";
+import Animate from "../animation/tween";
 import Swipable from "../ui/Swipable";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";

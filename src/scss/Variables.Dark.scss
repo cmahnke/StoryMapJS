@@ -51,6 +51,7 @@ $arrow-size: 20px;
 $time-marker-border-radius: 10px;
 
 /* Animation
+   The animation curves live in src/animation/easings.ts, not here: the
+   widget animates through OpenLayers and the Web Animations API, not CSS
+   transitions. See that file.
 ================================================== */
-$animation-ease: cubic-bezier(0.77, 0, 0.175, 1);
-$animation-duration: 1000ms;

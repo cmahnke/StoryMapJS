@@ -1,3 +1,4 @@
+import { flickrId } from "../embedId";
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 
@@ -54,13 +55,13 @@ export default class Flickr extends Media {
     }
 
     establishMediaID() {
-        const marker = "flickr.com/photos/";
-        const idx = this._url().indexOf(marker);
-        if (idx === -1) {
-            throw "Invalid Flickr URL";
+        // threw a bare string (not an Error) and could assign `undefined` when
+        // the URL had the host but no photo segment
+        const id = flickrId(this._url());
+        if (!id) {
+            throw new Error("Invalid Flickr URL");
         }
-        const pos = idx + marker.length;
-        this.media_id = this._url().slice(pos).split("/")[1];
+        this.media_id = id;
     }
 
     createMedia(d: unknown) {

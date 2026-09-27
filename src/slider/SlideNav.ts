@@ -1,7 +1,7 @@
 import { mergeData } from "../core/Util";
 import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
-import Animate from "morpheus";
+import Animate from "../animation/tween";
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
 import { sanitizeSlideText } from "../media/EmbedUtil";

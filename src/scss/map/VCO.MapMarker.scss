@@ -115,12 +115,11 @@ $map-icon-width: 38px;
         // top:4px;
         top: 8px;
         left: 0;
-
-        @include opacity(75);
+        opacity: 0.75;
     }
 
     .vco-mapmarker-active.vco-mapmarker-icon::after {
-        @include opacity(100);
+        opacity: 1;
     }
 
     .vco-mapmarker-icon.vco-icon-youtube::after {

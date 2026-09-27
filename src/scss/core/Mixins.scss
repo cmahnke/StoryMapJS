@@ -3,22 +3,12 @@
 
 /*	Mixins.scss
 	Snippets of reusable CSS to develop faster and keep code readable
+
+	Kept deliberately small: a mixin that only wraps one declaration costs a
+	reader more than the declaration does, and four of the previous mixins had
+	zero call sites. Reach for `display: flow-root` over a clearfix, and for a
+	variable over a hard-coded easing.
  * ----------------------------------------------------------------- */
-
-// Cubic Bezier
-@mixin animation-timing-cubic-bezier {
-    transition-timing-function: cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-// Property Animation
-@mixin property-animation($prop: height, $time: 1000ms, $ease: cubic-bezier(0.77, 0, 0.175, 1)) {
-    transition: $prop $time $ease;
-}
-
-// Opacity
-@mixin opacity($opacity: 100) {
-    opacity: math.div($opacity, 100);
-}
 
 // Background Color Opacity
 @mixin background-color-opacity($cr: 0, $cg: 0, $cb: 0, $opacity: 100) {
@@ -31,11 +21,6 @@
     text-shadow: $shadow !important;
 }
 
-// Border Radius
-@mixin border-radius($radius: 5px) {
-    border-radius: $radius;
-}
-
 // Single side border-radius
 @mixin border-right-radius($radius) {
     border-bottom-right-radius: $radius;
@@ -45,35 +30,6 @@
 @mixin border-left-radius($radius) {
     border-bottom-left-radius: $radius;
     border-top-left-radius: $radius;
-}
-
-// Box Shadow
-@mixin box-shadow($shadow: 1px 1px 7px rgba(0, 0, 0, 0.3)) {
-    box-shadow: $shadow;
-}
-
-// Transform
-@mixin transform($transform) {
-    transform: $transform;
-}
-
-// User select
-// For selecting text on the page
-@mixin user-select($select) {
-    user-select: $select;
-}
-
-// Clear Fix
-@mixin clearfix {
-    &::before,
-    &::after {
-        display: table;
-        content: "";
-    }
-
-    &::after {
-        clear: both;
-    }
 }
 
 @mixin translucent-background($color: #fff, $alpha: 1) {
@@ -95,18 +51,4 @@
         $start-color $start-percent,
         $end-color $end-percent
     );
-}
-
-@mixin gradient-horizontal-three-colors(
-    $start-color: #00b3ee,
-    $mid-color: #7a43b6,
-    $color-stop: 50%,
-    $end-color: #c3325f
-) {
-    background-image: linear-gradient(to right, $start-color, $mid-color $color-stop, $end-color);
-    background-repeat: no-repeat;
-}
-
-@mixin gradient-radial($inner-color: #555, $outer-color: #333) {
-    background-image: radial-gradient(circle, $inner-color, $outer-color);
 }

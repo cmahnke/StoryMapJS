@@ -1,3 +1,4 @@
+import { dailymotionId } from "../embedId";
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 
@@ -21,13 +22,10 @@ export default class DailyMotion extends Media {
         );
 
         // Get Media ID
-        const id = this._url().match("video")
-            ? this._url().split("video/")[1]
-            : this._url().split("embed/")[1];
-        if (!id) {
+        this.media_id = dailymotionId(this._url()) ?? "";
+        if (!this.media_id) {
             throw new Error("Invalid DailyMotion URL");
         }
-        this.media_id = id.split(/[?&]/)[0];
 
         // API URL
         const api_url =

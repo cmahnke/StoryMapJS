@@ -196,9 +196,7 @@
         display: block;
         line-height: $base-font-size + 2;
         padding: 10px;
-
-        @include border-radius(7px);
-
+        border-radius: 7px;
         color: #8a6d3b;
         background-color: #fcf8e3;
         border: 1px solid #faebcc;

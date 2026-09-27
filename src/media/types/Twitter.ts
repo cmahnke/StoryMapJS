@@ -27,6 +27,8 @@ export default class Twitter extends Media {
         if (match) {
             this.user_id = match[1];
             this.media_id = match[2];
+        } else {
+            throw new Error("Invalid Twitter URL");
         }
         const callbackName = uniqueGlobalName(`twitterCallback_${this.media_id}`);
         const api_url = `https://api.twitter.com/1/statuses/oembed.json?id=${this.media_id}&include_entities=true&callback=${callbackName}`;

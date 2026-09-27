@@ -33,7 +33,7 @@ import type {
     StorymapSlideLocation,
 } from "../../types";
 import { fitGeoreference, resolveInfoJsonUrl } from "../georeference";
-import { consentManagerOf, consentMessage, type ConsentManager } from "../../storymap/Consent";
+import { consentManagerOf, tileServiceName, type ConsentManager } from "../../storymap/Consent";
 import { sanitizeSlideText } from "../../media/EmbedUtil";
 
 /*	Map.OpenLayers
@@ -132,7 +132,7 @@ export default class OpenLayers extends Map {
         // Tile Layer — GDPR consent mode defers it until the visitor allows
         // map tiles (the consent bar renders over the map)
         const consent = consentManagerOf(this.options);
-        const tile_service = consentMessage("consent_service_tiles", "map tiles");
+        const tile_service = tileServiceName();
         if (this.options.consent_required && consent) {
             if (consent.isGranted(tile_service)) {
                 this._addTileLayer();
@@ -292,9 +292,7 @@ export default class OpenLayers extends Map {
         }
         this._overlay_layers = [];
         this._overlay_entries = [];
-        const consent = consentManagerOf(this.options);
-        const tile_service = consentMessage("consent_service_tiles", "map tiles");
-        if (this.options.consent_required && consent && !consent.isGranted(tile_service)) {
+        if (!this._tilesAllowed()) {
             return;
         }
         const overlays = this.options.overlays ?? [];
@@ -872,14 +870,9 @@ export default class OpenLayers extends Map {
         // consent mode: the minimap layer is only created once map tiles are
         // allowed — creating an IIIF/vector layer object fetches info.json or
         // the style JSON immediately, which must not happen while denied
-        const consent = consentManagerOf(this.options);
-        const tile_service = consentMessage("consent_service_tiles", "map tiles");
-        const tiles_allowed = !(
-            this.options.consent_required &&
-            consent &&
-            !consent.isGranted(tile_service)
-        );
-        this._tile_layer_mini = tiles_allowed ? this._createTileLayer(this.options.map_type) : null;
+        this._tile_layer_mini = this._tilesAllowed()
+            ? this._createTileLayer(this.options.map_type)
+            : null;
         const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
         // Legacy zoomify maps are mercator-based: the minimap fits the image's
         // mercator bounds with a free zoom so the whole image stays visible
@@ -1689,6 +1682,20 @@ export default class OpenLayers extends Map {
         return { lat: c[1], lon: (coord[0] / 6378137) * (180 / Math.PI) };
     }
 
+    /**
+     * May a tile-backed layer (base map, overlay, minimap, overview) be
+     * created right now? Under `consent_required` that is only true once the
+     * visitor has allowed the tile service. This was the same five-line
+     * predicate at five call sites.
+     */
+    private _tilesAllowed(): boolean {
+        const consent = consentManagerOf(this.options);
+        if (!this.options.consent_required || !consent) {
+            return true;
+        }
+        return consent.isGranted(tileServiceName());
+    }
+
     /** A slide's {lat, lon} when both are real numbers, else null. */
     private _latLngOf(loc: StorymapSlideLocation | null | undefined): LatLngLiteral | null {
         if (!loc || typeof loc.lat !== "number" || typeof loc.lon !== "number") {
@@ -1944,14 +1951,7 @@ export default class OpenLayers extends Map {
         if (!this._mini_map) return;
         const overview = this._mini_map.getOverviewMap();
         overview.getLayers().clear();
-        const consent = consentManagerOf(this.options);
-        const tile_service = consentMessage("consent_service_tiles", "map tiles");
-        const tiles_allowed = !(
-            this.options.consent_required &&
-            consent &&
-            !consent.isGranted(tile_service)
-        );
-        if (!tiles_allowed) {
+        if (!this._tilesAllowed()) {
             this._tile_layer_mini = null;
             return;
         }
@@ -1986,13 +1986,7 @@ export default class OpenLayers extends Map {
                     if (this._tile_layer) {
                         this._map.removeLayer(this._tile_layer);
                     }
-                    const consent = consentManagerOf(this.options);
-                    const tile_service = consentMessage("consent_service_tiles", "map tiles");
-                    if (!(
-                        this.options.consent_required &&
-                        consent &&
-                        !consent.isGranted(tile_service)
-                    )) {
+                    if (this._tilesAllowed()) {
                         this._tile_layer = this._createTileLayer(this.options.map_type);
                         this._tile_layer.setZIndex(0);
                         this._map.addLayer(this._tile_layer);

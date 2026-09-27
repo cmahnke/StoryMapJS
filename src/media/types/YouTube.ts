@@ -1,4 +1,5 @@
-import { unique_ID, getUrlVars, clearTimer } from "../../core/Util";
+import { unique_ID, clearTimer } from "../../core/Util";
+import { youtubeId, queryParam } from "../embedId";
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 
@@ -56,26 +57,16 @@ export default class YouTube extends Media {
         );
         (this._el.content_item as HTMLElement).id = unique_ID(7);
 
-        // URL Vars
-        const url_vars = getUrlVars(this._url());
-
-        // Get Media ID
-        this.media_id = {};
-
-        if (this._url().match("v=")) {
-            this.media_id.id = url_vars["v"];
-        } else if (this._url().match("/embed/")) {
-            this.media_id.id = this._url().split("embed/")[1].split(/[?&]/)[0];
-        } else if (this._url().match(/v\/|v=|youtu\.be\/|shorts\//)) {
-            this.media_id.id = this._url()
-                .split(/v\/|v=|youtu\.be\/|shorts\//)[1]
-                .split(/[?&]/)[0];
-        } else {
-            console.log("YouTube in URL but not a valid video");
+        // Get Media ID — the previous four-way branch chain missed /live/ and
+        // playlist links, and fell through to a console.log while still
+        // building a player with `id === undefined`
+        const id = youtubeId(this._url());
+        if (!id) {
+            throw new Error("Invalid YouTube URL");
         }
-
-        this.media_id.start = url_vars["t"];
-        this.media_id.hd = url_vars["hd"];
+        this.media_id = { id: id };
+        this.media_id.start = queryParam(this._url(), "t") ?? undefined;
+        this.media_id.hd = queryParam(this._url(), "hd") ?? undefined;
 
         // API Call
         try {

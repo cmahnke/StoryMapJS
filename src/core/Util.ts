@@ -376,26 +376,6 @@ export function htmlify(str: string): string {
     }
 }
 
-export function getUrlVars(string: string): string[] & Record<string, string> {
-    let str: string, hash: string[];
-    const vars: string[] = [];
-    str = string.toString();
-    if (str.match("&#038;")) {
-        str = str.replace("&#038;", "&");
-    } else if (str.match("&#38;")) {
-        str = str.replace("&#38;", "&");
-    } else if (str.match("&amp;")) {
-        str = str.replace("&amp;", "&");
-    }
-    const hashes = str.slice(str.indexOf("?") + 1).split("&");
-    for (let i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split("=");
-        vars.push(hash[0]);
-        (vars as unknown as Record<string, string>)[hash[0]] = hash[1];
-    }
-    return vars as string[] & Record<string, string>;
-}
-
 export const ratio = {
     /**
      * The 16:9 height for a given width, or the 16:9 width for a given

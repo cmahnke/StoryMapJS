@@ -12,6 +12,9 @@
 /* UI
 ================================================== */
 /* Animation
+   The animation curves live in src/animation/easings.ts, not here: the
+   widget animates through OpenLayers and the Web Animations API, not CSS
+   transitions. See that file.
 ================================================== */
 /*	Font Base
 ----------------------------------------------------- */

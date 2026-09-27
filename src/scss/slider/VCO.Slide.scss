@@ -61,8 +61,7 @@
         z-index: -1;
         overflow: hidden;
         display: none;
-
-        @include opacity(50);
+        opacity: 0.5;
     }
 
     .vco-slide-scrollable-container {
@@ -366,7 +365,8 @@
             padding: 20px;
 
             @include background-color-opacity(0, 0, 0, 60);
-            @include border-radius(7px);
+
+            border-radius: 7px;
 
             h2 {
                 margin-top: 5px;

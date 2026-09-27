@@ -8,8 +8,10 @@
  * check on every one of the ~30 `Language.messages.*` reads.
  *
  * The locale JSON files themselves are *not* complete: only `en.json` defines
- * every key (see `scripts/check-locales.mjs`, which fails CI when a locale
- * drifts). `direction` is present on every entry that has a real translation.
+ * every key, and 28 of the 29 bundled locales are missing 8-10 of them
+ * (the per-service consent strings and the fullscreen button labels). The
+ * runtime falls back to English per key, so this is a translation gap rather
+ * than a defect — `npm run check:locales` reports it.
  */
 export interface LanguageEntry {
     /** Display name of the language, e.g. "Deutsch". */
@@ -23,8 +25,16 @@ export interface LanguageEntry {
     [key: string]: unknown;
 }
 
-// Static locale map: the bundler-agnostic form of what `import.meta.glob`
-// with `{ eager: true }` desugars to (works in vite dev and rollup builds).
+// The locales are imported statically rather than through `import.meta.glob`
+// on purpose. The viewer reads `Language.messages.*` while it is being
+// constructed — the consent dialog, the RTL class, the swipe hint icon and
+// every button label are all decided synchronously inside `new StoryMap()` —
+// so a locale that has not finished fetching yet would silently render in
+// English. The saving from splitting them is ~6 kB gzip, which is not worth
+// making the language load order-dependent.
+//
+// English remains the fallback for every key a translation is missing (see
+// `getLanguage`), and `npm run check:locales` reports those gaps.
 import be from "./locale/be.json";
 import bg from "./locale/bg.json";
 import cs from "./locale/cs.json";
@@ -102,38 +112,52 @@ const FALLBACK: LanguageEntry = {
 
 let Language: LanguageEntry = FALLBACK;
 
-function getLanguage(code: string): LanguageEntry {
-    const lang = structuredClone(
-        (localeModules[`./locale/${code}.json`]?.default as Record<string, unknown> | undefined) ||
-            {},
-    );
+function getLanguage(code: string): Record<string, unknown> {
+    const lang: Record<string, unknown> = {};
+    // start from a deep copy of the English defaults, then layer this locale
+    // on top: a key the translation is missing keeps its English value
     for (const k in EN) {
-        if (lang[k]) {
-            if (typeof EN[k] == "object" && EN[k] !== null && typeof lang[k] == "object") {
-                // fresh object: never mutate the shared English default,
-                // otherwise one setLanguage() call would poison every later
-                // lookup (and every other language falling back to English)
-                lang[k] = Object.assign({}, EN[k] as object, lang[k]);
-            }
+        lang[k] = structuredClone(EN[k]);
+    }
+    const entry = (localeModules[`./locale/${code}.json`]?.default ?? {}) as Record<
+        string,
+        unknown
+    >;
+    applyLanguage(lang, entry);
+    return lang;
+}
+
+/** Merge `entry` over `target`, per key, never mutating the English defaults. */
+function applyLanguage(target: Record<string, unknown>, entry: Record<string, unknown>): void {
+    for (const k in entry) {
+        if (!entry[k]) {
+            continue;
+        }
+        if (typeof EN[k] === "object" && EN[k] !== null && typeof entry[k] === "object") {
+            // fresh object: never mutate the shared English default,
+            // otherwise one setLanguage() call would poison every later
+            // lookup (and every other language falling back to English)
+            target[k] = Object.assign({}, EN[k] as object, entry[k] as object);
         } else {
-            lang[k] = structuredClone(EN[k]);
+            target[k] = structuredClone(entry[k]);
         }
     }
-    return {
-        ...(lang as Omit<LanguageEntry, "messages" | "buttons">),
-        messages: (lang.messages as Record<string, string>) ?? FALLBACK.messages,
-        buttons: (lang.buttons as Record<string, string>) ?? FALLBACK.buttons,
-    };
 }
 
 /**
- * Switch the active UI language.
+ * Switch the active UI language. Synchronous: the viewer resolves its labels
+ * while it is being constructed.
  *
  * @param code - A locale code for which a locale file exists (e.g. `"en"`).
  * @returns The language entry that is now active.
  */
 function setLanguage(code: string): LanguageEntry {
-    Language = getLanguage(code);
+    const merged = getLanguage(code);
+    Language = {
+        ...(merged as Omit<LanguageEntry, "messages" | "buttons">),
+        messages: (merged.messages as Record<string, string>) ?? FALLBACK.messages,
+        buttons: (merged.buttons as Record<string, string>) ?? FALLBACK.buttons,
+    };
     return Language;
 }
 

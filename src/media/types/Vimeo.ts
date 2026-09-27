@@ -1,3 +1,4 @@
+import { vimeoId } from "../embedId";
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 
@@ -22,11 +23,10 @@ export default class Vimeo extends Media {
         );
 
         // Get Media ID
-        const parts = this._url().split(/video\/|\/\/vimeo\.com\//);
-        if (!parts[1]) {
+        this.media_id = vimeoId(this._url()) ?? "";
+        if (!this.media_id) {
             throw new Error("Invalid Vimeo URL");
         }
-        this.media_id = parts[1].split(/[?&]/)[0];
 
         // API URL — plain `&` separators. The HTML entity `&amp;` is correct
         // inside markup but is not decoded in a URL property, so Vimeo was
