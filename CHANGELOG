@@ -128,9 +128,13 @@ Changed
 - A second viewer on a page asking for a different `language` now **throws**
   instead of silently repainting the first one. The UI strings are a single
   page-wide binding read while a viewer is constructed, so a conflict was
-  never survivable; the claim is released by `dispose()`. Pages that call the
-  public `setLanguage()` and then construct a viewer without a matching
-  `language` option will now see this error
+  never survivable; the claim is released by `dispose()`. Only an explicit
+  `language` — the constructor option or the document's — counts as a request:
+  a viewer that was not given one adopts the page's current locale, so calling
+  the public `setLanguage()` and then building viewers without a `language`
+  option keeps the locale instead of resetting the page to English. The
+  trade-off is that such a viewer follows a previous viewer's
+  `refreshLanguage()`
 - Several viewers on a page no longer overwrite each other's consent
   decisions: each manager merges into the shared record and re-reads it on
   every ask, instead of writing its whole set back

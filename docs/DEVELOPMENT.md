@@ -140,8 +140,16 @@ A few things are page-wide by nature, because a page has one of each:
   locale it needs (`claimLanguage` in `src/language/Language.ts`) and a second
   viewer asking for a different one **throws** rather than silently repainting
   the first in the wrong language. The claim is refcounted and released in
-  `dispose()`, so an SPA that tears down a viewer may change locale. Pass the
-  same `language` to every viewer on a page.
+  `dispose()`, so an SPA that tears down a viewer may change locale.
+
+    A viewer only claims a locale it was actually _asked_ for — the constructor
+    option or the document's own `language`. If neither mentions one it adopts
+    the page's current locale (`currentLanguageCode()`), so a host that calls
+    `setLanguage("de")` and then builds viewers without a `language` option gets
+    German throughout. Note the consequence: a viewer with no `language` follows
+    a previous viewer's `refreshLanguage()`. Pass an explicit `language` to every
+    viewer on a page when they must not.
+
 - **Consent decisions.** One `storymapjs-consent` record, so a visitor answers
   for a service once. Every viewer merges into it and re-reads it on each ask,
   so concurrent decisions cannot clobber each other.

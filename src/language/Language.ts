@@ -113,6 +113,16 @@ const FALLBACK: LanguageEntry = {
 let Language: LanguageEntry = FALLBACK;
 
 /**
+ * The locale code last passed to `setLanguage`, defaulting to the fallback.
+ *
+ * Deliberately not derived from `Language.lang`: every bundled locale's `lang`
+ * happens to equal its file name today, but a locale like `pt-BR` would make
+ * the claim comparison below judge two different identifiers for one locale.
+ * Tracking what the caller passed keeps every comparison on one vocabulary.
+ */
+let activeLanguageCode = "en";
+
+/**
  * Which live viewer owns the page-wide locale.
  *
  * `Language` above is a single module-level binding, and every label read in
@@ -225,6 +235,9 @@ function applyLanguage(target: Record<string, unknown>, entry: Record<string, un
  * @returns The language entry that is now active.
  */
 function setLanguage(code: string): LanguageEntry {
+    // recorded before the merge, and unconditionally: a rejected *claim* never
+    // reaches here, so a throw cannot leave the page locale half-switched
+    activeLanguageCode = code;
     const merged = getLanguage(code);
     Language = {
         ...(merged as Omit<LanguageEntry, "messages" | "buttons">),
@@ -232,6 +245,17 @@ function setLanguage(code: string): LanguageEntry {
         buttons: (merged.buttons as Record<string, string>) ?? FALLBACK.buttons,
     };
     return Language;
+}
+
+/**
+ * The locale code the page is currently set to.
+ *
+ * A viewer that was not given a `language` adopts this instead of claiming the
+ * hardcoded `"en"` default, so a host that called `setLanguage("de")` and then
+ * constructed a viewer gets German rather than a conflict with a sibling.
+ */
+function currentLanguageCode(): string {
+    return activeLanguageCode;
 }
 
 /** The active locale's BCP 47 code, for `Intl` formatting. */
@@ -249,6 +273,7 @@ export {
     Language,
     currentLocale,
     isRtl,
+    currentLanguageCode,
     claimLanguage,
     releaseLanguage,
     claimedLanguage,

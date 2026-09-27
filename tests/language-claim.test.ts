@@ -2,8 +2,10 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
     claimLanguage,
     claimedLanguage,
+    currentLanguageCode,
     releaseLanguage,
     isLanguageConflict,
+    setLanguage,
 } from "../src/language/Language";
 
 /**
@@ -29,6 +31,9 @@ describe("page-wide language claim", () => {
         for (const holder of holders.splice(0)) {
             releaseLanguage(holder);
         }
+        // the active locale is module-level too, and the assertion below
+        // depends on where it starts
+        setLanguage("en");
     });
 
     it("lets two viewers share the same language", () => {
@@ -87,5 +92,41 @@ describe("page-wide language claim", () => {
     it("does not treat an unrelated error as a language conflict", () => {
         expect(isLanguageConflict(new Error("boom"))).toBe(false);
         expect(isLanguageConflict("boom")).toBe(false);
+    });
+});
+
+/**
+ * A viewer that was not given a `language` adopts the page's current locale
+ * rather than claiming the hardcoded `"en"` default, so a host that called
+ * `setLanguage()` and then built a viewer gets that locale instead of a
+ * conflict with a sibling.
+ */
+describe("currentLanguageCode", () => {
+    let holder: symbol | undefined;
+
+    afterEach(() => {
+        if (holder) {
+            releaseLanguage(holder);
+            holder = undefined;
+        }
+        setLanguage("en");
+    });
+
+    it("tracks the code the caller passed, not a locale's own lang field", () => {
+        expect(currentLanguageCode()).toBe("en");
+        setLanguage("de");
+        expect(currentLanguageCode()).toBe("de");
+        setLanguage("zh-tw");
+        expect(currentLanguageCode()).toBe("zh-tw");
+    });
+
+    it("is not changed by a rejected claim", () => {
+        // a throw must not leave the page locale half-switched: the claim
+        // check happens before setLanguage is reached
+        holder = Symbol("test-viewer");
+        claimLanguage("de", holder);
+        setLanguage("de");
+        expect(() => claimLanguage("fr", Symbol("test-viewer-b"))).toThrow();
+        expect(currentLanguageCode()).toBe("de");
     });
 });

@@ -15,6 +15,7 @@ import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import {
     setLanguage,
     isRtl,
+    currentLanguageCode,
     claimLanguage,
     releaseLanguage,
     isLanguageConflict,
@@ -149,6 +150,8 @@ class StoryMapBase {
     declare "_disposed": boolean;
     /** identity of this viewer's claim on the page-wide locale */
     declare "_language_holder": symbol;
+    /** the locale the caller actually asked for, if any; see _loadLanguage */
+    declare "_language_requested": string | undefined;
     /** bumped on interaction, so page-wide keys can pick one viewer */
     declare "_interaction": number;
     declare "_onInteraction": (() => void) | null;
@@ -342,6 +345,7 @@ class StoryMapBase {
         this._on_hashchange = null;
         this._disposed = false;
         this._language_holder = Symbol("storymap");
+        this._language_requested = undefined;
         this._interaction = 0;
         this._onInteraction = null;
         this._resize_timer = null;
@@ -350,6 +354,14 @@ class StoryMapBase {
         this._autoplay_stopped = false;
         this._hash_initialized = false;
         this._collapsed = false;
+
+        // The caller's own `language`, read before the merge: afterwards
+        // options.language is always set (the default is "en"), so "asked for
+        // German" and "never mentioned a language" are indistinguishable.
+        this._language_requested =
+            typeof options?.language === "string" && options.language !== ""
+                ? options.language
+                : undefined;
 
         // Merge Options -- legacy, in case people still need to pass in
         mergeData(this.options, options);
@@ -516,9 +528,36 @@ class StoryMapBase {
         // strings are one module-level binding, so a conflicting locale would
         // otherwise repaint this viewer in the other viewer's language. It
         // throws rather than warn, before any of this viewer's DOM exists.
-        claimLanguage(this.options.language, this._language_holder);
-        setLanguage(this.options.language);
+        //
+        // The document may carry its own `language` (updateData merges the
+        // document's keys into the options), so that counts as a request too.
+        const requested = this._requestedLanguage();
+        if (requested === undefined) {
+            // Nobody asked for a locale, so adopt whatever the page is already
+            // using. Claiming the "en" default instead would conflict with a
+            // sibling that did ask — a host that called setLanguage("de") and
+            // then built a viewer with no `language` option used to get
+            // English, silently repainting its German sibling's chrome.
+            claimLanguage(currentLanguageCode(), this._language_holder);
+        } else {
+            claimLanguage(requested, this._language_holder);
+            setLanguage(requested);
+        }
         this._onDataLoaded();
+    }
+
+    /**
+     * The locale this viewer was actually asked for, or undefined when the
+     * caller and the document both stayed silent.
+     */
+    _requestedLanguage(): string | undefined {
+        // the document wins, because updateData merges it over the options, so
+        // a document-level `language` is what options.language ends up holding
+        const fromDocument = (this.data as { language?: unknown } | null | undefined)?.language;
+        if (typeof fromDocument === "string" && fromDocument !== "") {
+            return fromDocument;
+        }
+        return this._language_requested;
     }
 
     /*  Switch the UI language at runtime, without a page reload.
