@@ -101,7 +101,12 @@ class StoryMapBase {
     };
     declare "_storyslider": StorySlider;
     declare "_map": OpenLayersMap;
-    declare "map": OlMap;
+    /**
+     * The raw OpenLayers map. `null` until the map is built (the
+     * constructor assigns it during data load) — check it, or use the
+     * accessors, which return `null` until then.
+     */
+    declare "map": OlMap | null;
     declare "_menubar": MenuBar;
     declare "data": StorymapData;
     declare "options": StorymapOptions;
@@ -198,7 +203,8 @@ class StoryMapBase {
 
         // Map
         this._map = {} as OpenLayersMap;
-        this.map = {} as OlMap; // direct access to the OpenLayers map
+        // direct access to the OpenLayers map; null until it is built
+        this.map = null;
 
         // Menu Bar
         this._menubar = {} as MenuBar;

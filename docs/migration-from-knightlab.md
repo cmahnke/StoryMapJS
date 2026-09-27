@@ -151,8 +151,8 @@ new StoryMap("embed", data, {
 
 Mapbox style JSON URLs render as vector tile layers; OpenLayers
 `Map`/`View` pass-through stays available via `options.map_options`
-(`controls`/`interactions` replace the defaults, `view` merges over the
-computed default).
+(`controls` replaces the defaults, `interactions` are added to the
+viewer's own pan/zoom set, `view` merges over the computed default).
 
 For source classes the templates cannot express (WMS, authenticated or
 gridded sources), use the `tile_source_factory` option. It is consulted

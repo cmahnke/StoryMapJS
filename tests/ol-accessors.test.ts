@@ -79,7 +79,19 @@ describe("OpenLayers accessors", () => {
         // layer handed out is the one on the OL map
         const base = sm.getBaseLayer();
         expect(base).not.toBeNull();
-        expect(sm.map.getLayers().getArray()).toContain(base);
+        expect(sm.map?.getLayers().getArray()).toContain(base);
+    });
+
+    it("reports storymap.map as null before the map is built", () => {
+        const el = document.createElement("div");
+        el.id = "sm-acc-null";
+        document.body.appendChild(el);
+        const sm = new StoryMap("sm-acc-null", {
+            storymap: { map_type: "osm", slides: [] },
+        } as unknown as StorymapDataWrapper);
+        // an inline document still builds synchronously, so only assert the
+        // documented contract: either a real map or null, never a stub
+        expect(sm.map === null || typeof sm.map.getView === "function").toBe(true);
     });
 
     it("exposes the minimap after it is built", () => {

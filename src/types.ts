@@ -348,7 +348,11 @@ export interface StorymapMapOptions {
     view?: Record<string, unknown>;
     /** Replaces the default (empty) controls list */
     controls?: unknown[];
-    /** Replaces the default (empty) interactions list */
+    /**
+     * Added to the viewer's own pan/zoom interactions (not a replacement:
+     * the viewer's defaults are always added). `controls` *is* a
+     * replacement, since the viewer adds none of its own.
+     */
     interactions?: unknown[];
     /** Any other ol/Map constructor option (layers, pixelRatio, ...) */
     [key: string]: unknown;

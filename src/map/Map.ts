@@ -38,6 +38,12 @@ class MapBase {
     declare "_map": OlMap | null;
     declare "_mini_map": OverviewMap | null;
     declare "_markers": MapMarker[];
+    /**
+     * Zooms computed by the engine's `_calculateMarkerZooms`, keyed by
+     * marker index. Kept off `marker.data` so navigating never mutates the
+     * author's storymap document (`StoryMap.data` is that same object graph).
+     */
+    declare "_marker_zooms": (number | undefined)[];
     declare "zoom_min_max": { min: number | null; max: number | null };
     declare "_line": VectorLayer | null;
     declare "_line_active": VectorLayer | null;
@@ -90,6 +96,7 @@ class MapBase {
 
         // Markers
         this._markers = [];
+        this._marker_zooms = [];
 
         // Marker Zoom Miniumum and Maximum
         this.zoom_min_max = {
@@ -383,11 +390,21 @@ class MapBase {
 
     calculateMinMaxZoom(): void {
         for (let i = 0; i < this._markers.length; i++) {
-            const zoom = this._markers[i].data.location?.zoom;
+            const zoom = this._markerZoom(i);
             if (typeof zoom === "number") {
                 this.updateMinMaxZoom(zoom);
             }
         }
+    }
+
+    /**
+     * The zoom to use for min/max bounds at marker `index`: the value
+     * computed by the engine when there is one, else the zoom authored on
+     * the slide. The engine overrides this to serve its computed-zoom store
+     * so `StoryMap.data` is never written to.
+     */
+    _markerZoom(index: number): number | undefined {
+        return this._markers[index]?.data.location?.zoom;
     }
 
     updateMinMaxZoom(zoom: number): void {

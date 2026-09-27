@@ -273,9 +273,12 @@ export default class OpenLayers extends Map {
         const parts = [
             "<a href='https://storymap.knightlab.com/' target='_blank' class='vco-knightlab-brand'><span>&#x25a0;</span> StoryMapJS</a>",
         ];
-        // Every source is created with `attributions: []` and the OL
-        // attribution control is disabled, so this hand-built line is the
-        // *only* attribution the visitor ever sees. Emitting provider credit
+        // Our own `.vco-map-attribution` line is the rendered default (the
+        // OL attribution control is not added), so this hand-built line is
+        // what the visitor sees. Sources additionally carry the plain-text
+        // credit from `_sourceAttributions`, so `source.getAttributions()`
+        // and a consumer's own Attribution control are not left empty.
+        // Emitting provider credit
         // only for OSM left Stadia, Mapbox and the OL XYZ template providers
         // uncredited, which their terms of service require. The credit is
         // keyed off the resolved map_type, so a custom `{z}` template gets
@@ -295,6 +298,32 @@ export default class OpenLayers extends Map {
             parts.push('© <a target="_blank" href="https://www.mapbox.com/about/maps/">Mapbox</a>');
         } else if (map_type.startsWith("ch-") || map_type.startsWith("esri")) {
             parts.push('Map data © <a target="_blank" href="https://www.esri.com/">Esri</a>');
+        } else {
+            parts.push("Map data");
+        }
+        if (this.options.attribution) {
+            parts.push(this.options.attribution);
+        }
+        return parts;
+    }
+
+    /**
+     * The provider credit for `map_type` as plain text (no HTML), for the
+     * OpenLayers source `attributions`. Our own `.vco-map-attribution` line
+     * stays the rendered default and uses the linked `_getAttribution`
+     * version; this makes `source.getAttributions()` (and a consumer's
+     * `ol/control/Attribution`) work instead of returning nothing.
+     */
+    _sourceAttributions(map_type: string): string[] {
+        const parts: string[] = [];
+        if (map_type === "" || map_type.startsWith("osm")) {
+            parts.push("© OpenStreetMap contributors");
+        } else if (map_type.startsWith("stadia") || map_type === "stamen") {
+            parts.push("© Stadia Maps, © OpenMapTiles © OpenStreetMap contributors");
+        } else if (map_type.startsWith("mapbox://")) {
+            parts.push("© Mapbox");
+        } else if (map_type.startsWith("ch-") || map_type.startsWith("esri")) {
+            parts.push("Map data © Esri");
         } else {
             parts.push("Map data");
         }
@@ -688,6 +717,11 @@ export default class OpenLayers extends Map {
         return this._createDefaultTileLayer(map_type);
     }
 
+    /** Computed zooms take precedence over the authored slide zoom. */
+    _markerZoom(index: number): number | undefined {
+        return this._marker_zooms[index] ?? super._markerZoom(index);
+    }
+
     _createDefaultTileLayer(map_type: string): TileLayer {
         const _map_type_arr = map_type.split(":");
 
@@ -705,7 +739,7 @@ export default class OpenLayers extends Map {
                     return new TileLayer({
                         source: new XYZ({
                             url: mapbox_url,
-                            attributions: [],
+                            attributions: this._sourceAttributions(map_type),
                             crossOrigin: "anonymous",
                         }),
                     });
@@ -713,7 +747,7 @@ export default class OpenLayers extends Map {
                 console.error(
                     "StoryMapJS: legacy 'mapbox:<style>' map types are no longer supported (the Mapbox v4 tile API was retired); use 'mapbox://styles/<user>/<style>' with map_access_token instead.",
                 );
-                return new TileLayer({ source: new OSM({ attributions: [] }) });
+                return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
             }
 
             case "stadia": {
@@ -732,7 +766,7 @@ export default class OpenLayers extends Map {
                 return new TileLayer({
                     source: new XYZ({
                         url: `https://tiles.stadiamaps.com/tiles/${style_url}/{z}/{x}/{y}{r}.png`,
-                        attributions: [],
+                        attributions: this._sourceAttributions(map_type),
                     }),
                 });
             }
@@ -742,7 +776,7 @@ export default class OpenLayers extends Map {
                 return new TileLayer({
                     source: new XYZ({
                         url: "https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}.png",
-                        attributions: [],
+                        attributions: this._sourceAttributions(map_type),
                     }),
                 });
 
@@ -804,14 +838,18 @@ export default class OpenLayers extends Map {
                     return this._createVectorStyleLayer(map_type);
                 }
                 return new TileLayer({
-                    source: new XYZ({ url: map_type, attributions: [], crossOrigin: "anonymous" }),
+                    source: new XYZ({
+                            url: map_type,
+                            attributions: this._sourceAttributions(map_type),
+                            crossOrigin: "anonymous",
+                        }),
                 });
 
             case "ch-watercolor":
                 return new TileLayer({
                     source: new XYZ({
                         url: "https://watercolormaps.collection.cooperhewitt.org/tile/watercolor/{z}/{x}/{y}.jpg",
-                        attributions: [],
+                        attributions: this._sourceAttributions(map_type),
                         maxZoom: 16,
                     }),
                 });
@@ -827,7 +865,7 @@ export default class OpenLayers extends Map {
                     console.error(
                         "StoryMapJS: map_type 'zoomify' needs a zoomify image pyramid (path, width, height) in the storymap data.",
                     );
-                    return new TileLayer({ source: new OSM({ attributions: [] }) });
+                    return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
                 }
                 const path = (this.options.zoomify as { path?: string }).path ?? "";
                 const { sizes, maxZoom: pyramidMaxZoom } = pyramid;
@@ -838,7 +876,7 @@ export default class OpenLayers extends Map {
                     source: new XYZ({
                         tileGrid: pyramid.tileGrid,
                         crossOrigin: "anonymous",
-                        attributions: [],
+                        attributions: this._sourceAttributions(map_type),
                         tileUrlFunction: (tile: number[]) => {
                             const [tileZ, x, y] = tile;
                             // the ladder is shifted one level down: mercator
@@ -883,7 +921,7 @@ export default class OpenLayers extends Map {
                         `https://tiles.openfreemap.org/styles/${style_name}`,
                     );
                 }
-                return new TileLayer({ source: new OSM({ attributions: [] }) });
+                return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
             }
             default: {
                 // Relative/custom templates (./tiles/{z}/{x}/{y}.png,
@@ -897,7 +935,7 @@ export default class OpenLayers extends Map {
                     return new TileLayer({
                         source: new XYZ({
                             url: map_type,
-                            attributions: [],
+                            attributions: this._sourceAttributions(map_type),
                             crossOrigin: "anonymous",
                         }),
                     });
@@ -905,7 +943,7 @@ export default class OpenLayers extends Map {
                 if (map_type.includes("/") || map_type.endsWith(".json")) {
                     return this._createVectorStyleLayer(map_type);
                 }
-                return new TileLayer({ source: new OSM({ attributions: [] }) });
+                return new TileLayer({ source: new OSM({ attributions: this._sourceAttributions(map_type) }) });
             }
         }
     }
@@ -1331,7 +1369,7 @@ export default class OpenLayers extends Map {
                 calculated_zoom = calculated_zoom - 1;
             }
 
-            marker.data.location.zoom = calculated_zoom;
+            this._marker_zooms[i] = calculated_zoom;
         }
     }
 
@@ -2096,7 +2134,12 @@ export default class OpenLayers extends Map {
                     const center = view.getCenter();
                     const zoom = view.getZoom();
                     const extent = this._bboxExtent();
-                    const is_image_map = this.options.map_type === "iiif";
+                    // must match _createMap's test exactly: a *georeferenced*
+                    // IIIF layer (map_as_image false) is a mercator map, so
+                    // testing map_type alone handed it the image-pixel view
+                    const is_image_map =
+                        this.options.map_type === "iiif" &&
+                        this.options.map_as_image === true;
                     const user_view = this.options.map_options?.view as
                         Record<string, unknown> | undefined;
                     this._map.setView(
