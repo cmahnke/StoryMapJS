@@ -31,6 +31,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "1890",
             "items": [
                 {
                     "id": "https://example.org/storymap/map-area-overlays/canvas/1/annotationpage/1",
@@ -71,7 +72,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:date": "1890",
             "navPlace": {
                 "id": "https://example.org/storymap/map-area-overlays/canvas/1/navplace",
                 "type": "FeatureCollection",
@@ -98,6 +98,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "1900",
             "items": [
                 {
                     "id": "https://example.org/storymap/map-area-overlays/canvas/2/annotationpage/1",
@@ -127,7 +128,6 @@
                     "Every option in this storymap is also expressible in a IIIF Presentation manifest: map_area, overlays, overview_extent and keyboard become storymap: extension terms of the map configuration service."
                 ]
             },
-            "storymap:date": "1900",
             "navPlace": {
                 "id": "https://example.org/storymap/map-area-overlays/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -155,6 +155,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "1910",
             "items": [
                 {
                     "id": "https://example.org/storymap/map-area-overlays/canvas/3/annotationpage/1",
@@ -184,7 +185,6 @@
                     "map_bbox and overview_extent use the same [west, south, east, north] lon/lat convention, and a polygon navPlace in a manifest is read as exactly that box."
                 ]
             },
-            "storymap:date": "1910",
             "navPlace": {
                 "id": "https://example.org/storymap/map-area-overlays/canvas/3/navplace",
                 "type": "FeatureCollection",

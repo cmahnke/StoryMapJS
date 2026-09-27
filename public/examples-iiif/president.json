@@ -31,6 +31,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/1/annotationpage/1",
@@ -77,14 +78,14 @@
                     "September 2013: events taken from the WhiteHouse.gov site."
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:date": "2013"
+            "storymap:type": "overview"
         },
         {
             "id": "https://example.org/storymap/president/canvas/2",
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/2/annotationpage/1",
@@ -131,7 +132,6 @@
                     "The President departs Joint Base Andrews.</i></b>"
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -161,6 +161,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/3/annotationpage/1",
@@ -210,7 +211,6 @@
                 "url": "http://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg",
                 "color": "#cdbfe3"
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -240,6 +240,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/4/annotationpage/1",
@@ -286,7 +287,6 @@
                     "The President meets with the King and Queen of Sweden."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -316,6 +316,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/5/annotationpage/1",
@@ -361,7 +362,6 @@
                     "The President arrives Saint Petersburg, Russia. The President holds a bilateral meeting with Prime Minister Abe of Japan. The President participates in an Official G-20 Arrival and Leaders Welcome. The President participates in G-20 Working Session One."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -391,6 +391,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/6/annotationpage/1",
@@ -440,7 +441,6 @@
                 "url": "http://gorod94.com/images/st-petersburg-sightseeing-08.jpg",
                 "color": "#cdbfe3"
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -470,6 +470,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/7/annotationpage/1",
@@ -516,7 +517,6 @@
                     "The President receives the Presidential Daily Briefing. The President and the Vice President meet with Secretary of Defense Hagel."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -546,6 +546,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/8/annotationpage/1",
@@ -591,7 +592,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President meets with the Senate Democratic Caucus. The President meets with the Senate Republican Conference. The President delivers a statement on Syria."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -621,6 +621,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/9/annotationpage/1",
@@ -667,7 +668,6 @@
                     "The President, The Vice President, The First Lady, Dr. Jill Biden and White House staff observe a moment of silence to mark the 12th anniversary of the 9/11 attacks. The President participates in a service project. The President attends September 11th Observance Ceremony."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -697,6 +697,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/10/annotationpage/1",
@@ -743,7 +744,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President holds a Cabinet meeting; the Vice President also attends. The President and the Vice President meet for lunch."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -773,6 +773,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/11/annotationpage/1",
@@ -818,7 +819,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President holds a bilateral meeting with the Amir of Kuwait, His Highness Shaykh Sabah Al-Ahmad Al-Jaber Al Sabah and the Vice President attends. The President and the Vice President meet with Labor Leaders."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -848,6 +848,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/12/annotationpage/1",
@@ -893,7 +894,6 @@
                     "The President receives the Presidential Daily Briefing. The President meets with senior advisors. The President delivers remarks to mark the five-year anniversary of the financial crisis."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -923,6 +923,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/13/annotationpage/1",
@@ -969,7 +970,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President and the Vice President meet for lunch. The President participates in an Ambassador Credentialing Ceremony. The President and the Vice President meet with Secretary of Defense."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -999,6 +999,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/14/annotationpage/1",
@@ -1044,7 +1045,6 @@
                     " The President receives the Presidential Daily Briefing. The President delivers remarks to members of the Business Roundtable and answer questions. The President and the Vice President meet with Secretary of the Treasury Lew. The President and the Vice President meet with Secretary of State Kerry."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -1074,6 +1074,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/15/annotationpage/1",
@@ -1120,7 +1121,6 @@
                     "The President and Vice President receive the Presidential Daily Briefing. The President delivers remarks at a meeting of his Export Council. The President meets with senior advisors. The President attends a DNC event."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -1150,6 +1150,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/16/annotationpage/1",
@@ -1200,7 +1201,6 @@
                 "url": "http://s.wsj.net/public/resources/images/OB-YZ561_Obama2_E_20130920154351.jpg",
                 "color": "#cdbfe3"
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -1230,6 +1230,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/17/annotationpage/1",
@@ -1276,7 +1277,6 @@
                     " The President and First Lady depart Joint Base Andrews. The President and First Lady arrive New York City. The President holds a bilateral meeting with President Goodluck Jonathan of the Federal Republic of Nigeria. The President meets with USUN Mission employees and their families. The President and First Lady attend a reception for visiting Heads of State and Government."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -1306,6 +1306,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/18/annotationpage/1",
@@ -1351,7 +1352,6 @@
                     "The President addresses the United Nations General Assembly; the First Lady also attends. The President participates in a conversation with former President Clinton about the future of health care reform. The President and the First Lady depart New York en route Andrews Air Force Base."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -1381,6 +1381,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/19/annotationpage/1",
@@ -1426,7 +1427,6 @@
                     "The President holds a call with mayors, county officials, and state legislators on the Affordable Care Act. The President meets with Treasury Secretary Lew."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1456,6 +1456,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/20/annotationpage/1",
@@ -1501,7 +1502,6 @@
                     "The President delivers remarks on the Affordable Care Act. The President attends a DNC event."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1531,6 +1531,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/21/annotationpage/1",
@@ -1577,7 +1578,6 @@
                     "The President holds a bilateral meeting with Prime Minister Singh of India; the Vice President attends. The President delivers a statement "
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/21/navplace",
                 "type": "FeatureCollection",
@@ -1607,6 +1607,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/22/annotationpage/1",
@@ -1652,7 +1653,6 @@
                     "The President holds a bilateral meeting with Israeli Prime Minister Netanyahu; the Vice President also attends. The President holds a working lunch with Israeli Prime Minister Netanyahu; the Vice President also attends. The President delivers a statement. The President holds a Cabinet Meeting; the Vice President also attends."
                 ]
             },
-            "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/22/navplace",
                 "type": "FeatureCollection",

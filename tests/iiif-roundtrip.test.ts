@@ -317,7 +317,12 @@ describe("context agreement", () => {
         // manifest we ship. The fixture-drift test already pins the generated
         // ones to the converter; this is the independent check, and it also
         // covers the hand-authored georeferenced manifests.
-        const DROPPED = ["storymap:mediaCaption", "storymap:mediaCredit", "storymap:mediaAlt"];
+        const DROPPED = [
+            "storymap:mediaCaption",
+            "storymap:mediaCredit",
+            "storymap:mediaAlt",
+            "storymap:date",
+        ];
         const offenders: string[] = [];
         for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
             if (!file.endsWith(".json")) continue;

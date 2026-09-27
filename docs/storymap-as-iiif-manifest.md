@@ -92,8 +92,7 @@ what the fixtures reference. Content:
         "background": "storymap:background",
         "mediaSrcset": "storymap:mediaSrcset",
         "mediaSizes": "storymap:mediaSizes",
-        "imageRegion": "storymap:imageRegion",
-        "date": "storymap:date"
+        "imageRegion": "storymap:imageRegion"
     }
 }
 ```
@@ -132,7 +131,7 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 | `storymap:mediaSrcset` | `slide.media.srcset`    | Responsive image candidates, passed through to the `img` element                                             |
 | `storymap:mediaSizes`  | `slide.media.sizes`     | The `sizes` companion of `mediaSrcset`                                                                       |
 | `storymap:imageRegion` | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides                          |
-| `storymap:date`        | `slide.date`            | String or object, verbatim                                                                                   |
+| `navDate`              | `slide.date`            | Plain string, verbatim; the official validator applies no format rule at all, so a human date is fine        |
 | `navPlace`             | `slide.location`        | See below                                                                                                    |
 
 ## Locations via navPlace
@@ -271,8 +270,8 @@ properties):
 ### Canvas level — direct properties
 
 Canvas objects are open for extension terms, so slide-specific StoryMap data is
-carried directly on the Canvas: `storymap:type`, `storymap:background`,
-`storymap:date` (see the Canvas table above). The media caption, credit and alt
+carried directly on the Canvas: `storymap:type` and `storymap:background` (see
+the Canvas table above). A slide's date is the standard `navDate`. The media caption, credit and alt
 text are **not** terms any more: they are the painting annotation's own `label`,
 `requiredStatement` and `accessibilitySummary`, which is where Presentation 3
 defines them. A manifest written against the old terms still loads — the strings
@@ -487,7 +486,7 @@ photo, and a slide with a YouTube video — full manifest:
                 }
             ],
             "storymap:type": "overview",
-            "storymap:date": "Sep 1"
+            "navDate": "Sep 1"
         },
         {
             "id": "https://example.org/storymap/storm/canvas/2",
@@ -520,7 +519,7 @@ photo, and a slide with a YouTube video — full manifest:
                     ]
                 }
             ],
-            "storymap:date": "Sep 2",
+            "navDate": "Sep 2",
             "navPlace": {
                 "id": "https://example.org/storymap/storm/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -562,7 +561,7 @@ photo, and a slide with a YouTube video — full manifest:
                     ]
                 }
             ],
-            "storymap:date": "Sep 3",
+            "navDate": "Sep 3",
             "navPlace": {
                 "id": "https://example.org/storymap/storm/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -624,7 +623,7 @@ photo, and a slide with a YouTube video — full manifest:
 | Legacy field (slide)           | IIIF path                                                  |
 | ------------------------------ | ---------------------------------------------------------- |
 | `type: "overview"`             | Canvas `storymap:type: "overview"`                         |
-| `date`                         | Canvas `storymap:date`                                     |
+| `date`                         | Canvas `navDate`                                           |
 | `text.headline`                | Canvas `label` (language map)                              |
 | `text.text`                    | Canvas `summary` (language map)                            |
 | `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`           |

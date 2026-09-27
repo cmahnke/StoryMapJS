@@ -76,6 +76,7 @@
             "type": "Canvas",
             "height": 3000,
             "width": 2315,
+            "navDate": "2026",
             "items": [
                 {
                     "id": "https://example.org/storymap/issue-iiif-geo/canvas/2/annotationpage/1",
@@ -114,7 +115,6 @@
                     "<p>Paris.</p>"
                 ]
             },
-            "storymap:date": "2026",
             "navPlace": {
                 "id": "https://example.org/storymap/issue-iiif-geo/canvas/2/navplace",
                 "type": "FeatureCollection",

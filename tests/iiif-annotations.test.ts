@@ -478,6 +478,45 @@ describe("manifestToStorymapData with annotation stops", () => {
         expect(data.slides[0].media?.credit).toBe("A credit");
     });
 
+    it("reads a slide's date from the canvas's navDate", () => {
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        // P3 constrains navDate to a plain string and applies no format rule
+        // at all, so even a human date survives verbatim
+        canvas.navDate = "Aug 23";
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].date).toBe("Aug 23");
+    });
+
+    it("reads a navDate language map, which the validator would reject", () => {
+        // We write a bare string, but other producers do emit a language map,
+        // and a manifest that is invalid for the official validator should
+        // still load rather than lose its date
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.navDate = { none: ["2005-08-23"], en: ["23 August 2005"] };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].date).toBe("2005-08-23");
+    });
+
+    it("ignores a storymap:date term left over from before §2.5", () => {
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas["storymap:date"] = "Term date";
+        canvas.navDate = "Sep 1";
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].date).toBe("Sep 1");
+    });
+
     it("ignores a mediaCaption term left over from before §2.7", () => {
         const manifest = manifestWith([]);
         const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<

@@ -723,10 +723,13 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     // StoryMap extension terms
     const slideType = asString(record[STORYMAP_PREFIX + "type"]);
     if (slideType !== null) slide.type = slideType;
-    const date = readTerm(record, "date");
-    const dateString = asString(date);
-    const dateRecord = asRecord(date);
-    if (dateString !== null) slide.date = dateString;
+    // P3's `navDate`, a string. A language map is read for leniency, since
+    // other producers do emit one, but the official validator rejects it and
+    // we never write one (§2.5).
+    const navDate = record.navDate;
+    const dateString = asString(navDate) ?? flattenLanguageMap(navDate);
+    const dateRecord = asRecord(navDate);
+    if (dateString !== null && dateString !== "") slide.date = dateString;
     else if (dateRecord !== null) slide.date = dateRecord;
     const background = readBackground(readTerm(record, "background"));
     if (background !== null) slide.background = background;

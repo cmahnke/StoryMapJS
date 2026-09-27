@@ -59,7 +59,7 @@ const manifest = {
                 },
             ],
             "storymap:type": "overview",
-            "storymap:date": "Sep 1",
+            navDate: "Sep 1",
         },
         {
             id: "https://example.org/storymap/storm/canvas/2",

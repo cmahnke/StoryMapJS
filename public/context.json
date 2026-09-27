@@ -41,7 +41,6 @@
         "background": "storymap:background",
         "mediaSrcset": "storymap:mediaSrcset",
         "mediaSizes": "storymap:mediaSizes",
-        "imageRegion": "storymap:imageRegion",
-        "date": "storymap:date"
+        "imageRegion": "storymap:imageRegion"
     }
 }

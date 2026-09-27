@@ -31,6 +31,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "2013",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/1/annotationpage/1",
@@ -77,14 +78,14 @@
                     "In just a few short days nature left a serious mark on the Southeastern United States."
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:date": "2013"
+            "storymap:type": "overview"
         },
         {
             "id": "https://example.org/storymap/katrina/canvas/2",
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 23",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/2/annotationpage/1",
@@ -134,7 +135,6 @@
             "storymap:background": {
                 "url": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg"
             },
-            "storymap:date": "Aug 23",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -163,6 +163,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 26",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/3/annotationpage/1",
@@ -211,7 +212,6 @@
             "storymap:background": {
                 "url": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg"
             },
-            "storymap:date": "Aug 26",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -240,6 +240,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 27",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/4/annotationpage/1",
@@ -289,7 +290,6 @@
             "storymap:background": {
                 "url": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg"
             },
-            "storymap:date": "Aug 27",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -318,6 +318,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 28",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/5/annotationpage/1",
@@ -366,7 +367,6 @@
             "storymap:background": {
                 "url": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg"
             },
-            "storymap:date": "Aug 28",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -395,6 +395,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 29",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/6/annotationpage/1",
@@ -441,7 +442,6 @@
                     "<ul><li>At 5:10 AM CDT, Hurricane Katrina made its second landfall as a strong Category 3 hurricane near Buras-Triumph, Louisiana, with sustained winds of more than 125 mph (205 km/h), although Category 4 winds may have briefly affected the area.</li><li>By 9:00 AM CDT, there was 6–8 feet of water in the Lower Ninth Ward. </li><li>By 11:00 AM CDT, there was approximately 10 feet of water in St. Bernard Parish. Many rooftops could not be seen here as they were submerged. </li><li>At 2:00 PM CDT, New Orleans officials confirmed a breach of the 17th Street Canal levee. There was also confirmation of breaches at two other canals. Governor Blanco ordered 68 school buses into New Orleans from surrounding parishes to begin evacuating any survivors that remained in the city.</li></ul> "
                 ]
             },
-            "storymap:date": "Aug 29",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -470,6 +470,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 30",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/7/annotationpage/1",
@@ -515,7 +516,6 @@
                     "<ul><li>At 12:00 PM CDT, Homeland Security Secretary Michael Chertoff became aware that the New Orleans levee breaches could not be plugged.</li><li> Governor Blanco ordered that all of New Orleans, including the Superdome, be evacuated due to the flooding of the city. She commandeered hundreds of buses from across Louisiana using her executive powers, and those buses eventually evacuated more than 15,000 people that were stranded in the city to the Superdome by Thursday, September 1. </li><li>USCG helicopters rescue 350 people off roof tops.</li></ul>"
                 ]
             },
-            "storymap:date": "Aug 30",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -544,6 +544,7 @@
             "type": "Canvas",
             "height": 1080,
             "width": 1080,
+            "navDate": "Aug 31",
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/8/annotationpage/1",
@@ -591,7 +592,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:date": "Aug 31",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/8/navplace",
                 "type": "FeatureCollection",

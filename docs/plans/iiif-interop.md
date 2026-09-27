@@ -398,10 +398,18 @@ Image API service yields the same `data.iiif.url` as the old term did.
 
 ### 2.5 `date` → `navDate`
 
-Read `navDate` (string or language map, flattened as today) and drop the
-manifest-side `storymap:date`. The storymap-JSON `date` field is untouched —
-this only removes the _manifest_ vocabulary. Test: `navDate` on a canvas
-produces the same `slide.date` the term did.
+**Done** (commit 2). Read `navDate` and drop the manifest-side `storymap:date`.
+The storymap-JSON `date` field is untouched — this only removes the _manifest_
+vocabulary. Test: `navDate` on a canvas produces the same `slide.date` the term
+did.
+
+Probing the validator settled the shape, and not in the direction the spec
+suggests: `navDate` takes a **plain string**, and a `Date` / `DateRange` object
+is rejected with _"is not of type 'string'"_. It also applies **no format rule
+at all** — `"Aug 23"`, `"2013"` and `"1790-2010"` all pass. So there is nothing
+to normalise and no fixture data to change; the storymap value is carried
+verbatim. A language map is rejected, so we never write one, but the reader
+still flattens one for leniency, since other producers emit it.
 
 ### 2.6 `background` → the canvas background annotation
 

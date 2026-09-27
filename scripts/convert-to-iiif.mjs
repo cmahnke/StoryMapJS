@@ -286,6 +286,11 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
         type: "Canvas",
         height,
         width,
+        // P3 spells a slide's date `navDate`, and the official validator
+        // constrains it to a plain string — a language map is rejected, and it
+        // applies no format constraint at all, so the storymap value is
+        // carried verbatim ("Aug 23" and "1790-2010" both pass) (§2.5)
+        ...(typeof slide.date === "string" && slide.date !== "" ? { navDate: slide.date } : {}),
         items: [
             {
                 id: `${canvasId}/annotationpage/1`,
@@ -413,9 +418,6 @@ function buildCanvasTerms(slide) {
     ) {
         // IIIF xywh convention: [x, y, w, h] in image pixels
         terms["storymap:imageRegion"] = slide.location.region;
-    }
-    if (present(slide.date)) {
-        terms["storymap:date"] = slide.date;
     }
     return terms;
 }
