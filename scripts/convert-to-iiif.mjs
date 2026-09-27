@@ -32,12 +32,15 @@ const LAOCOON_WIDTH = 2315;
 const LAOCOON_HEIGHT = 3000;
 
 const STORYMAP_CONTEXT = "https://cmahnke.github.io/StoryMapJS/context.json";
+// The navPlace extension's linked data context **must be included before** the
+// Presentation 3 context (navplace §3.1), and every fixture here carries a
+// navPlace, so the order is not negotiable. The two StoryMapJS contexts follow:
+// the properties one describes the terms inside the navPlace Feature bag, which
+// §3.2 allows only via "a registered IIIF API extension or a local linked data
+// context" — there is no extension for marker presentation, so it is local.
 const CONTEXTS = [
-    "http://iiif.io/api/presentation/3/context.json",
     "http://iiif.io/api/extension/navplace/context.json",
-    // the navPlace extension asks for the Feature `properties` bag to be
-    // described by a registered extension or a local linked-data context, and
-    // ours is the local one (§3.3)
+    "http://iiif.io/api/presentation/3/context.json",
     `${STORYMAP_CONTEXT.replace(/context\.json$/, "")}navplace-properties.json`,
     STORYMAP_CONTEXT,
 ];

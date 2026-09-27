@@ -1,11 +1,17 @@
 import { test, expect } from "@playwright/test";
-import { harnessUrl, waitForStoryMap } from "./known-issues/helpers";
+import { harnessUrl, stubTiles, waitForStoryMap } from "./known-issues/helpers";
 
 /**
  * The current slide must always be part of the URL as a #slide-N hash —
  * including the initial load (empty hash → #slide-0) and without destroying
  * the query string the pages carry their configuration in.
  */
+// Neither the deep link nor the URL sync has anything to do with imagery, so
+// these specs stub the tile host rather than depend on reaching it.
+test.beforeEach(async ({ page }) => {
+    await stubTiles(page);
+});
+
 test("initial load rewrites an empty hash to #slide-0 and keeps the query", async ({ page }) => {
     await page.goto(harnessUrl("katrina"));
     await waitForStoryMap(page);

@@ -65,10 +65,25 @@ describe("slide hash sync", () => {
         expect(window.location.hash).toBe("#slide-1");
     });
 
-    it("_applyHashSlide applies a #slide-N deep link", () => {
+    it("a #slide-N deep link is applied while the viewer is still loading", () => {
+        // Not on `loaded`: the map only reports itself loaded on OpenLayers'
+        // first loadend, which is the first paint of the base tiles, so gating
+        // the deep link on it meant a link was only honoured once
+        // tile.openstreetmap.org answered. The URL is ours as soon as the
+        // slider and the data are ready.
         window.history.replaceState(null, "", "/index.html#slide-2");
         const storymap = makeStoryMap("sm-hash-deep");
 
+        expect(storymap.current_slide).toBe(2);
+    });
+
+    it("_applyHashSlide reads a hash that arrives later", () => {
+        // the live path: the user pressed back/forward, or pasted a link into
+        // an already-loaded viewer
+        window.history.replaceState(null, "", "/index.html");
+        const storymap = makeStoryMap("sm-hash-late");
+
+        window.history.replaceState(null, "", "/index.html#slide-2");
         expect(storymap["_applyHashSlide"]()).toBe(true);
         expect(storymap.current_slide).toBe(2);
     });

@@ -2,38 +2,38 @@
     "@context": {
         "@version": 1.1,
         "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "storymap_navplace": "https://christianmahnke.de/iiif/storymap/navplace#",
-        "name": "storymap_navplace:name",
+        "storymap_navplace": "https://christianmahnke.de/iiif/storymap#",
+        "name": "storymap_navplace:navplaceName",
         "zoom": {
-            "@id": "storymap_navplace:zoom",
+            "@id": "storymap_navplace:navplaceZoom",
             "@type": "xsd:integer"
         },
         "line": {
-            "@id": "storymap_navplace:line",
+            "@id": "storymap_navplace:navplaceLine",
             "@type": "xsd:boolean"
         },
         "icon": {
-            "@id": "storymap_navplace:icon",
+            "@id": "storymap_navplace:navplaceIcon",
             "@type": "@id"
         },
         "iconSize": {
-            "@id": "storymap_navplace:iconSize",
+            "@id": "storymap_navplace:navplaceIconSize",
             "@type": "xsd:integer"
         },
         "image": {
-            "@id": "storymap_navplace:image",
+            "@id": "storymap_navplace:navplaceImage",
             "@type": "@id"
         },
         "use_custom_marker": {
-            "@id": "storymap_navplace:useCustomMarker",
+            "@id": "storymap_navplace:navplaceUseCustomMarker",
             "@type": "xsd:boolean"
         },
         "popup": {
-            "@id": "storymap_navplace:popup",
+            "@id": "storymap_navplace:navplacePopup",
             "@type": "xsd:boolean"
         },
         "audioBadge": {
-            "@id": "storymap_navplace:audioBadge",
+            "@id": "storymap_navplace:navplaceAudioBadge",
             "@type": "xsd:boolean"
         }
     }

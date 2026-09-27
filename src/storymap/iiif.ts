@@ -1184,6 +1184,292 @@ export function readCommentingAnnotations(canvas: unknown): StorymapSlide[] {
     return stops;
 }
 
+/** An external resource a manifest points at with `seeAlso`. */
+export type SeeAlsoReference = {
+    id: string;
+    /** The IIIF class, which is what tells us how to read it. */
+    type: string;
+};
+
+/**
+ * The `seeAlso` targets of a manifest, canvas or range.
+ *
+ * The class is recorded because it is what decides how a target is read: an
+ * `AnnotationCollection` or `AnnotationPage` is a list of annotations to merge,
+ * while a `SearchService1` is an endpoint to hand to a host rather than
+ * annotations to load. An untyped entry is reported as `unknown` rather than
+ * guessed at, because fetching a URI on the strength of a guess is how a viewer
+ * ends up dereferencing something it should not have.
+ */
+export function collectSeeAlso(value: unknown): SeeAlsoReference[] {
+    const record = asRecord(value);
+    if (!record) return [];
+    const entries = Array.isArray(record.seeAlso) ? record.seeAlso : [record.seeAlso];
+    const out: SeeAlsoReference[] = [];
+    for (const entry of entries) {
+        const linked = asRecord(entry);
+        if (!linked) continue;
+        const id = asString(linked.id) ?? asString(linked);
+        if (id === null) continue;
+        out.push({ id, type: asString(linked.type) ?? "unknown" });
+    }
+    return out;
+}
+
+/** Every `seeAlso` a manifest points at: its own, plus one per canvas. */
+export function collectManifestSeeAlso(manifest: unknown): SeeAlsoReference[] {
+    const record = asRecord(manifest);
+    if (!record) return [];
+    const seen = new Set<string>();
+    const out: SeeAlsoReference[] = [];
+    const add = (reference: SeeAlsoReference) => {
+        if (seen.has(reference.id)) return;
+        seen.add(reference.id);
+        out.push(reference);
+    };
+    for (const reference of collectSeeAlso(record)) add(reference);
+    const canvases = Array.isArray(record.items) ? record.items : [];
+    for (const canvas of canvases) {
+        for (const reference of collectSeeAlso(canvas)) add(reference);
+    }
+    return out;
+}
+
+/** The canvas an annotation targets, with a `#xywh=` fragment stripped. */
+function canvasIdOfTarget(target: unknown): string | null {
+    const text = asString(target);
+    if (text !== null) {
+        const at = text.indexOf("#");
+        return at === -1 ? text : text.slice(0, at);
+    }
+    const record = asRecord(target);
+    if (!record) return null;
+    if (record.source !== undefined) {
+        const source = asString(record.source) ?? asString(asRecord(record.source)?.id);
+        return source;
+    }
+    return asString(record.id);
+}
+
+function pushAnnotation(annotation: unknown, byCanvas: Map<string, unknown[]>): void {
+    const record = asRecord(annotation);
+    if (!record) return;
+    const canvasId = canvasIdOfTarget(record.target);
+    if (canvasId === null) return;
+    const list = byCanvas.get(canvasId);
+    if (list === undefined) byCanvas.set(canvasId, [annotation]);
+    else list.push(annotation);
+}
+
+function pushPageItems(page: Record<string, unknown>, byCanvas: Map<string, unknown[]>): void {
+    const items = Array.isArray(page.items) ? page.items : [];
+    for (const annotation of items) {
+        pushAnnotation(annotation, byCanvas);
+    }
+}
+
+/**
+ * The annotations of an external page, indexed by canvas id, plus the
+ * annotation-page URLs it refers to.
+ *
+ * One `AnnotationCollection` can carry annotations for many canvases, and a
+ * canvas's annotations may be split across several referenced pages, so a
+ * collection, a single page, and a bare list of annotations are all accepted.
+ */
+function indexExternalAnnotations(document: unknown): {
+    byCanvas: Map<string, unknown[]>;
+    pages: string[];
+} {
+    const byCanvas = new Map<string, unknown[]>();
+    const pages: string[] = [];
+    const record = asRecord(document);
+    if (!record) return { byCanvas, pages };
+
+    const type = asString(record.type);
+    if (type === "AnnotationPage") {
+        pushPageItems(record, byCanvas);
+        const id = asString(record.id);
+        if (id !== null) pages.push(id);
+        return { byCanvas, pages };
+    }
+    if (type === "AnnotationCollection") {
+        const items = Array.isArray(record.items) ? record.items : [];
+        for (const item of items) {
+            const entry = asRecord(item);
+            if (!entry) continue;
+            // A referenced page rather than an embedded annotation. The type
+            // is what tells them apart: an `Annotation` also has an `id` and
+            // no `items`, so keying on the absence of `items` alone sent every
+            // annotation back out to be fetched as a page of its own.
+            const entryType = asString(entry.type);
+            const isReference =
+                entry.items === undefined &&
+                (entryType === "AnnotationPage" || entryType === "AnnotationCollection") &&
+                asString(entry.id) !== null;
+            if (isReference) {
+                pages.push(asString(entry.id) as string);
+                continue;
+            }
+            // A collection's item is either an embedded page (which carries its
+            // own `items`) or a bare annotation, and a bare annotation has no
+            // `items` of its own — reading it as a page-shaped object silently
+            // dropped every annotation in the collection.
+            if (entry.items !== undefined) pushPageItems(entry, byCanvas);
+            else pushAnnotation(entry, byCanvas);
+        }
+        return { byCanvas, pages };
+    }
+    return { byCanvas, pages };
+}
+
+export type ExternalAnnotations = {
+    /** Tour stops, keyed by the canvas id they annotate. */
+    stops: Map<string, StorymapSlide[]>;
+    /** A `SearchService1` seen along the way, for a host to query. */
+    searchService: string | null;
+    /** Annotation-page URLs that could not be read, for a console report. */
+    failed: string[];
+};
+
+/**
+ * A per-(id, type) cache of fetched annotation documents.
+ *
+ * Keyed on both, because the same URI can be reached as a collection and as a
+ * page and the two are read differently. The *promise* is cached rather than
+ * the result, so two callers racing the same page share one request.
+ */
+const annotationCache = new Map<string, Promise<unknown>>();
+
+/** Forget every cached annotation document. Exported for tests. */
+export function clearSeeAlsoCache(): void {
+    annotationCache.clear();
+}
+
+/**
+ * Read the annotation documents a manifest points at with `seeAlso`.
+ *
+ * Asynchronous by design, and deliberately not called from
+ * `manifestToStorymapData`: a manifest can point at anything, a viewer should
+ * not block its first paint on a third party, and a host needs to decide whether
+ * it wants the extra round trips at all. One level is followed — a referenced
+ * `AnnotationPage` inside a collection is fetched, but a `seeAlso` *inside* that
+ * page is not — which is what keeps a cycle from becoming an infinite walk.
+ *
+ * A `SearchService1` is recorded and not followed: it is an endpoint for a host
+ * to query, not a list of annotations to load.
+ */
+export async function loadSeeAlso(
+    manifest: unknown,
+    options: { fetchImpl?: typeof fetch } = {},
+): Promise<ExternalAnnotations> {
+    const result: ExternalAnnotations = { stops: new Map(), searchService: null, failed: [] };
+    const record = asRecord(manifest);
+    if (!record) return result;
+
+    const impl = options.fetchImpl ?? fetch;
+    const canvases = Array.isArray(record.items) ? record.items : [];
+    const wanted = collectManifestSeeAlso(record);
+
+    const stopCollector = async (annotations: unknown[], canvasId: string): Promise<void> => {
+        const canvas = canvasStub(canvasId, canvases);
+        if (canvas === null) return;
+        const stops = readCommentingAnnotations({
+            ...(asRecord(canvas) as Record<string, unknown>),
+            items: [{ type: "AnnotationPage", items: annotations }],
+        });
+        if (stops.length === 0) return;
+        const existing = result.stops.get(canvasId);
+        if (existing === undefined) result.stops.set(canvasId, stops);
+        else existing.push(...stops);
+    };
+
+    await Promise.all(
+        wanted.map(async (reference) => {
+            if (reference.type === "SearchService1") {
+                result.searchService = reference.id;
+                return;
+            }
+            if (
+                reference.type !== "AnnotationCollection" &&
+                reference.type !== "AnnotationPage" &&
+                reference.type !== "unknown"
+            ) {
+                return;
+            }
+            const loaded = await loadDocument(reference, impl, result);
+            if (loaded === null) return;
+            for (const [canvasId, annotations] of loaded.byCanvas) {
+                await stopCollector(annotations, canvasId);
+            }
+            for (const pageId of loaded.pages) {
+                const page = await loadDocument(
+                    { id: pageId, type: "AnnotationPage" },
+                    impl,
+                    result,
+                );
+                if (page === null) continue;
+                for (const [canvasId, annotations] of page.byCanvas) {
+                    await stopCollector(annotations, canvasId);
+                }
+            }
+        }),
+    );
+
+    return result;
+}
+
+/**
+ * The canvas object an external annotation names, or null when the manifest
+ * does not have that canvas.
+ *
+ * Null rather than a synthetic stub on purpose: the plan merges external
+ * annotations "for the canvases we render", so an annotation aimed at a canvas
+ * this story does not carry is not a tour stop. A stub would also invent a
+ * canvas with no size, leaving a region with nothing to be relative to.
+ */
+function canvasStub(canvasId: string, manifestCanvases: unknown[]): unknown {
+    for (const canvas of manifestCanvases) {
+        const record = asRecord(canvas);
+        if (record !== null && asString(record.id) === canvasId) return record;
+    }
+    return null;
+}
+
+async function loadDocument(
+    reference: SeeAlsoReference,
+    impl: typeof fetch,
+    result: ExternalAnnotations,
+): Promise<{ byCanvas: Map<string, unknown[]>; pages: string[] } | null> {
+    const key = `${reference.type} ${reference.id}`;
+    let pending = annotationCache.get(key);
+    if (pending === undefined) {
+        pending = impl(reference.id, {
+            headers: { Accept: "application/ld+json, application/json" },
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json() as Promise<unknown>;
+            })
+            .catch((error: unknown) => {
+                // a cached rejection would be remembered forever, so drop it
+                // and let a later call retry
+                annotationCache.delete(key);
+                throw error;
+            });
+        annotationCache.set(key, pending);
+    }
+    try {
+        return indexExternalAnnotations(await pending);
+    } catch (error) {
+        result.failed.push(reference.id);
+        console.warn(
+            `StoryMapJS: the seeAlso target could not be read: ${reference.id}`,
+            error instanceof Error ? error.message : error,
+        );
+        return null;
+    }
+}
+
 /**
  * Converts a IIIF Presentation API 3.0 manifest into legacy StoryMapJS data
  * (the `storymap` object). Malformed or missing pieces are skipped; the
@@ -1264,6 +1550,14 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
     // generically — they are handed on as data (§3.2)
     const metadata = readMetadata(record.metadata);
     if (metadata.length > 0) data.metadata = metadata;
+
+    // The `seeAlso` targets are recorded but not followed here: reading them is
+    // a network round trip per document, and a viewer should not block its
+    // first paint on a third party. `loadSeeAlso()` fetches them on request,
+    // behind its own cache, and the storymap's own slides stand on their own
+    // meanwhile (§5.2).
+    const seeAlso = collectManifestSeeAlso(record);
+    if (seeAlso.length > 0) data.see_also = seeAlso;
 
     // items[] (Canvases) → slides[], in order
     const items = Array.isArray(record.items) ? record.items : [];

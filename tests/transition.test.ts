@@ -24,6 +24,11 @@ describe("slide navigation events", () => {
     });
 
     function storymapWithSlides(id: string, options?: Record<string, unknown>): StoryMap {
+        // The URL is shared across tests, and a viewer now applies any deep
+        // link while it is still loading — which it can do in jsdom, because
+        // that no longer waits for the map's loadend (never fired in jsdom, so
+        // nothing used to read the URL here). Start each viewer clean.
+        window.history.replaceState(null, "", "/index.html");
         const el = document.createElement("div");
         el.id = id;
         document.body.appendChild(el);

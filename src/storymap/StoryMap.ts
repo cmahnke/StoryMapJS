@@ -1,7 +1,18 @@
 import { mergeData, slideTransitionDuration, updateData, prefersReducedMotion } from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
-import { isPresentation3Manifest, isPresentation3Collection, manifestToStorymapData } from "./iiif";
+import {
+    CONTENT_STATE_PARAM,
+    formatContentState,
+    parseContentState,
+    type ContentState,
+} from "./content-state";
+import {
+    isPresentation3Manifest,
+    isPresentation3Collection,
+    loadSeeAlso,
+    manifestToStorymapData,
+} from "./iiif";
 import {
     ConsentManager,
     consentManagerOf,
@@ -138,6 +149,24 @@ class StoryMapBase {
     declare "data": StorymapData;
     declare "options": StorymapOptions;
     declare "current_slide": number;
+    /**
+     * The manifest this viewer was built from, kept so `loadAnnotations()` can
+     * resolve its `seeAlso` targets. `null` for a storymap-JSON viewer, which
+     * has no `seeAlso`.
+     */
+    declare "_raw_manifest": unknown | null;
+    /**
+     * The deep link the page was opened with, captured before anything can
+     * rewrite the URL.
+     *
+     * This has to be read *early*. The slider's opening `goTo()` can reach
+     * `_navigate()` before `_onLoaded()` runs, and `_navigate()` calls
+     * `_syncHash()` — which would overwrite the incoming link with the current
+     * slide before `_onLoaded()` ever looked at it. Whether that happens
+     * depends on the order the slider and map finish loading, which is exactly
+     * the kind of race that makes a deep link work most of the time.
+     */
+    declare "_initial_deep_link": { state: ContentState | null; hash: string } | null;
     declare "animator_map": AnimationHandle | null;
     declare "animator_storyslider": AnimationHandle | null;
     declare "_autoplay_timer": ReturnType<typeof setTimeout> | null;
@@ -366,6 +395,8 @@ class StoryMapBase {
         this._on_keydown_global = null;
         this._on_fullscreen = null;
         this._on_hashchange = null;
+        this._raw_manifest = null;
+        this._initial_deep_link = null;
         this._disposed = false;
         this._language_holder = Symbol("storymap");
         this._language_requested = undefined;
@@ -425,6 +456,7 @@ class StoryMapBase {
             // Manifests' canvases concatenate into one linear story
             if (isPresentation3Manifest(data) || isPresentation3Collection(data)) {
                 this._data_from_manifest = true;
+                this._raw_manifest = data;
                 this.data = manifestToStorymapData(data);
             } else {
                 const wrapper = data as StorymapDataWrapper;
@@ -453,6 +485,7 @@ class StoryMapBase {
             const result: unknown = await response.json();
             if (isPresentation3Manifest(result) || isPresentation3Collection(result)) {
                 this._data_from_manifest = true;
+                this._raw_manifest = result;
                 this.data = manifestToStorymapData(result);
             } else {
                 validateStorymapAndReport(result, source);
@@ -482,6 +515,15 @@ class StoryMapBase {
     _initOptions() {
         // Grab options from storymap data
         updateData(this.options, this.data);
+
+        // Capture the deep link now, before the slider and map exist and can
+        // navigate — and so rewrite the URL we would read it from later.
+        this._initial_deep_link = {
+            state: parseContentState(
+                new URLSearchParams(window.location.search).get(CONTENT_STATE_PARAM),
+            ),
+            hash: window.location.hash,
+        };
 
         // issue #305: the data may override start_at_slide. The constructor
         // read it before this merge, and the slider's opening goTo() fires
@@ -703,7 +745,17 @@ class StoryMapBase {
             // programmatic navigation reports outward like interaction does;
             // the bubbled slider/map change events are dropped by their
             // equality guards, so this fires exactly once
-            this.fire("change", { current_slide: this.current_slide }, this);
+            // `current_id` so a host can tell *which stop* it is on, not just
+            // how far along it is: an index moves when a slide is inserted, an
+            // id does not (§5.1)
+            this.fire(
+                "change",
+                {
+                    current_slide: this.current_slide,
+                    current_id: this._currentSlideId(),
+                },
+                this,
+            );
         }
         this._syncHash();
         this._playNarration(this.data.slides?.[this.current_slide]);
@@ -839,6 +891,76 @@ class StoryMapBase {
      */
     isImageSpace(): boolean {
         return !this._disposed && this._map ? this._map.isImageSpace() : false;
+    }
+
+    /**
+     * The `uniqueid` of a slide — the current one by default.
+     *
+     * A IIIF manifest supplies one per canvas (§2.3) and it is the only
+     * identity a link can be built on, since an index moves when a slide is
+     * inserted. A storymap-JSON slide usually has none, in which case this is
+     * `null` rather than a generated id: a random one would be stable to nobody.
+     */
+    getSlideId(index?: number): string | null {
+        if (this._disposed) return null;
+        const at = index ?? this.current_slide;
+        const id = this.data?.slides?.[at]?.uniqueid;
+        return typeof id === "string" && id !== "" ? id : null;
+    }
+
+    /**
+     * Read the annotation documents this manifest points at with `seeAlso` and
+     * add the tour stops they carry.
+     *
+     * Explicit and asynchronous on purpose (§5.2). The alternative — following
+     * `seeAlso` inside `manifestToStorymapData` — would mean one blocking
+     * network round trip per referenced document before the viewer could paint
+     * its first slide, against third-party servers the host may not want to
+     * contact at all. Here the story stands on its own immediately and the
+     * annotations arrive afterwards, behind a per-(id, type) cache, and
+     * `annotationsloaded` fires when they are in.
+     *
+     * The stops are **appended**, not placed after the canvas they annotate.
+     * A canvas's own annotations are inserted in position at parse time; doing
+     * the same to a live tour would mean rebuilding the slider and every piece
+     * of state that hangs off it, for an ordering nicety. A host that needs
+     * the stops placed exactly can read them off the resolved value and place
+     * them itself.
+     *
+     * @returns the stops that were added, keyed by canvas id, plus any
+     *   `SearchService1` endpoint seen and any document that failed to load.
+     */
+    async loadAnnotations(
+        options: { fetchImpl?: typeof fetch } = {},
+    ): Promise<{ stops: StorymapSlide[]; searchService: string | null; failed: string[] }> {
+        const added: StorymapSlide[] = [];
+        if (this._disposed || this._raw_manifest === null) {
+            return { stops: added, searchService: null, failed: [] };
+        }
+        const loaded = await loadSeeAlso(this._raw_manifest, options);
+        if (this._disposed) {
+            // torn down while the requests were in flight
+            return { stops: added, searchService: loaded.searchService, failed: loaded.failed };
+        }
+        // canvas order, so the appended stops follow the story rather than the
+        // order the documents happened to resolve in
+        for (const slide of this.data.slides ?? []) {
+            const stops = loaded.stops.get(slide.uniqueid ?? "");
+            if (stops === undefined) continue;
+            for (const stop of stops) {
+                stop.uniqueid = `${slide.uniqueid ?? "slide"}#seealso-${added.length}`;
+                added.push(stop);
+                this.data.slides.push(stop);
+                this._storyslider.createSlide(stop);
+            }
+        }
+        if (added.length > 0) {
+            this._updateProgress();
+            this._updateDistance();
+        }
+        const result = { stops: added, searchService: loaded.searchService, failed: loaded.failed };
+        this.fire("annotationsloaded", result, this);
+        return result;
     }
 
     /**
@@ -1515,31 +1637,120 @@ class StoryMapBase {
         this._autoplay_advance = null;
     }
 
-    /** Keep the URL hash in sync with the current slide (#slide-N). */
+    /**
+     * The current slide's `uniqueid`, or null when the data carries none.
+     *
+     * A storymap-JSON slide usually has no `uniqueid` — the slider generates
+     * one per slide for its own DOM ids, but that is not a shareable identity,
+     * so it is deliberately not used here. A IIIF manifest supplies one per
+     * canvas (§2.3), and that is what a deep link should name.
+     */
+    _currentSlideId(): string | null {
+        const id = this.data?.slides?.[this.current_slide]?.uniqueid;
+        return typeof id === "string" && id !== "" ? id : null;
+    }
+
+    /** The current slide as a Content State, or null when it has no id. */
+    _currentContentState(): ContentState | null {
+        const id = this._currentSlideId();
+        if (id === null) return null;
+        const region = this.data.slides[this.current_slide]?.location?.region;
+        return Array.isArray(region) && region.length === 4
+            ? { id, region: region as [number, number, number, number] }
+            : { id };
+    }
+
+    /**
+     * Keep the URL in sync with the current slide: the `#slide-…` hash and,
+     * when the slide has a shareable id, an `iiif-content` parameter (§5.1).
+     *
+     * The query string is rewritten rather than replaced, because pages like
+     * the embed player and the test harness carry their own configuration in
+     * it (`?url=…`, `?example=…`, `?manifest=…`).
+     */
     _syncHash() {
         try {
-            // preserve the query string: pages like the embed player carry
-            // their configuration in it (?url=..., ?example=...)
+            const state = this._currentContentState();
+            const params = new URLSearchParams(window.location.search);
+            if (state !== null) {
+                params.set(
+                    CONTENT_STATE_PARAM,
+                    formatContentState(
+                        state,
+                        (this.data as { uniqueid?: string }).uniqueid ?? null,
+                    ),
+                );
+            } else {
+                // a storymap-JSON slide with no id cannot be named, so the
+                // parameter would only ever point at the wrong stop
+                params.delete(CONTENT_STATE_PARAM);
+            }
+            const query = params.toString();
             history.replaceState(
                 null,
                 "",
-                window.location.pathname + window.location.search + "#slide-" + this.current_slide,
+                window.location.pathname +
+                    (query === "" ? "" : "?" + query) +
+                    "#slide-" +
+                    (state !== null ? encodeURI(state.id) : this.current_slide),
             );
         } catch {
             // non-browser or sandboxed contexts
         }
     }
 
-    /** A #slide-N hash deep-links the storymap (applied on load + hashchange). */
-    _applyHashSlide(): boolean {
-        const match = /^#slide-(\d+)$/.exec(window.location.hash);
-        if (!match) return false;
-        const n = parseInt(match[1], 10);
-        if (n >= 0 && n < this.data.slides.length && n !== this.current_slide) {
-            this.goTo(n);
-            return true;
+    /**
+     * A `#slide-…` hash or an `iiif-content` parameter deep-links the storymap
+     * (applied on load + hashchange).
+     *
+     * The hash token is an index when it is all digits and a `uniqueid`
+     * otherwise, which is unambiguous because an index never contains anything
+     * else. The index form stays supported, so links shared before ids were
+     * emitted keep working; they just stop being stable the moment a slide is
+     * inserted.
+     */
+    _applyHashSlide(captured?: { state: ContentState | null; hash: string } | null): boolean {
+        const link = captured ?? {
+            state: parseContentState(
+                new URLSearchParams(window.location.search).get(CONTENT_STATE_PARAM),
+            ),
+            hash: window.location.hash,
+        };
+        const target = this._resolveDeepLink(link.state, link.hash);
+        if (target === null || target === this.current_slide) return false;
+        this.goTo(target);
+        return true;
+    }
+
+    /**
+     * A content state or hash token as a slide index, or null when it names
+     * nothing. A content state wins over the hash, being the standard spelling.
+     */
+    _resolveDeepLink(state: ContentState | null, hash: string): number | null {
+        if (state !== null) {
+            const index = this._slideIndexById(state.id);
+            if (index !== null) return index;
+            console.warn(
+                `StoryMapJS: the content state names a canvas this storymap does not have: ${state.id}`,
+            );
         }
-        return false;
+        const match = /^#slide-(.+)$/.exec(hash);
+        if (match === null) return null;
+        const token = match[1];
+        if (/^\d+$/.test(token)) {
+            const n = parseInt(token, 10);
+            return n >= 0 && n < this.data.slides.length ? n : null;
+        }
+        return this._slideIndexById(decodeURIComponent(token));
+    }
+
+    /** A canvas id as a slide index, or null. */
+    _slideIndexById(id: string): number | null {
+        const slides = this.data?.slides ?? [];
+        for (let i = 0; i < slides.length; i++) {
+            if (slides[i]?.uniqueid === id) return i;
+        }
+        return null;
     }
 
     /*  Resize handling
@@ -1693,18 +1904,39 @@ class StoryMapBase {
         this._menubar.setDistance(km);
     }
 
+    /**
+     * The URL is ours to own as soon as the story is: the deep link is read
+     * and the hash is kept in step.
+     *
+     * This deliberately does **not** wait for the map. The map only reports
+     * itself loaded on OpenLayers' first `loadend`, which is the first paint of
+     * the base tiles — so a deep link used to be applied only once
+     * `tile.openstreetmap.org` answered, and on a slow or unreachable tile
+     * host it was never applied at all. Nothing about a URL depends on imagery:
+     * the data and the slider are what it needs, and both are ready before the
+     * map is. `_applyHashSlide` → `goTo` → `_navigate` already tolerates a map
+     * that has not reported loaded, and the map re-syncs when it does.
+     */
+    _initHash() {
+        if (this._hash_initialized || !this._loaded.storyslider) {
+            return;
+        }
+        this._hash_initialized = true;
+        // a #slide-N hash or an iiif-content parameter deep-links the initial
+        // slide (issue #146) and keeps working through the browser
+        // back/forward buttons
+        this._applyHashSlide(this._initial_deep_link);
+        // from here on the URL is ours to keep in sync, so a hashchange means
+        // the user moved and can be read live
+        this._on_hashchange = () => this._applyHashSlide();
+        window.addEventListener("hashchange", this._on_hashchange);
+        this._syncHash();
+    }
+
     _onLoaded() {
+        this._initHash();
         if (this._loaded.storyslider && this._loaded.map) {
             this.fire("loaded", this.data);
-            if (!this._hash_initialized) {
-                this._hash_initialized = true;
-                // a #slide-N hash deep-links the initial slide (issue #146)
-                // and keeps working through the browser back/forward buttons
-                this._applyHashSlide();
-                this._on_hashchange = () => this._applyHashSlide();
-                window.addEventListener("hashchange", this._on_hashchange);
-                this._syncHash();
-            }
             this._updateProgress();
             this._updateDistance();
         }

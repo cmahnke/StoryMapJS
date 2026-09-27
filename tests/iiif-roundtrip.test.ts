@@ -334,7 +334,7 @@ describe("context agreement", () => {
         // in the prose is how a host ends up authoring a manifest that no
         // longer validates
         const doc = readFileSync(join(process.cwd(), "docs/storymap-as-iiif-manifest.md"), "utf8");
-        const block = /```json\n(\{\n    "@context"[\s\S]*?\n\})\n```/.exec(doc);
+        const block = /```json\n(\{\n {4}"@context"[\s\S]*?\n\})\n```/.exec(doc);
         expect(block, "the mapping doc has no @context block").not.toBeNull();
         const inDoc = (JSON.parse(block?.[1] ?? "{}") as { "@context": unknown })["@context"];
         const onDisk = (
@@ -354,6 +354,24 @@ describe("context agreement", () => {
         const context = JSON.parse(
             readFileSync(join(process.cwd(), "public/navplace-properties.json"), "utf8"),
         )["@context"] as Record<string, unknown>;
+        // the properties are ours, but they still belong under the project's
+        // real, already-published namespace. The first version of this file
+        // coined `…/iiif/storymap/navplace#`, which is a URL that 404s to a
+        // personal site's error page — a term IRI pointing at nothing.
+        const storymapNamespace = (
+            JSON.parse(readFileSync(join(process.cwd(), "public/context.json"), "utf8")) as {
+                "@context": { storymap: string };
+            }
+        )["@context"].storymap;
+        expect(context["storymap_navplace"]).toBe(storymapNamespace);
+        // and every term must expand to an IRI under it, not a bare word
+        for (const [term, value] of Object.entries(context)) {
+            if (term.startsWith("@") || term === "xsd" || term === "storymap_navplace") {
+                continue;
+            }
+            const iri = typeof value === "string" ? value : (value as { "@id": string })["@id"];
+            expect(iri, term).toMatch(/^storymap_navplace:/);
+        }
         const described = Object.keys(context).filter(
             (term) => !term.startsWith("@") && term !== "xsd" && !term.startsWith("storymap_"),
         );
@@ -370,6 +388,33 @@ describe("context agreement", () => {
             "audioBadge",
         ];
         expect([...described].sort()).toEqual([...READ].sort());
+    });
+
+    test("the navPlace context precedes the Presentation 3 context, as the extension requires", () => {
+        // navplace §3.1: "The navPlace extension linked data context must be
+        // included before the IIIF Presentation API 3 linked data context on
+        // the top-level object." Every manifest here carries a navPlace, so
+        // this is a MUST on all of them — and every one of them had it
+        // backwards, Presentation 3 first.
+        const NAVPLACE = "navplace/context.json";
+        const P3 = "presentation/3/context.json";
+        const wrong: string[] = [];
+        for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
+            if (!file.endsWith(".json")) continue;
+            const context = (
+                JSON.parse(
+                    readFileSync(join(process.cwd(), "public/examples-iiif", file), "utf8"),
+                ) as {
+                    "@context": string[];
+                }
+            )["@context"];
+            if (!Array.isArray(context)) continue;
+            const navplace = context.findIndex((c) => c.includes(NAVPLACE));
+            if (navplace === -1) continue;
+            const p3 = context.findIndex((c) => c.includes(P3));
+            if (p3 === -1 || navplace > p3) wrong.push(file);
+        }
+        expect(wrong).toEqual([]);
     });
 
     test("every manifest that uses navPlace properties names the context", () => {

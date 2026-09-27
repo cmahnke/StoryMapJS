@@ -1,7 +1,7 @@
 {
     "@context": [
-        "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
+        "http://iiif.io/api/presentation/3/context.json",
         "https://cmahnke.github.io/StoryMapJS/navplace-properties.json",
         "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
@@ -25,7 +25,7 @@
         },
         "value": {
             "none": [
-                "The Laocoön and His Sons, IIIF Image API example reference"
+                "The Laoco\u00f6n and His Sons, IIIF Image API example reference"
             ]
         }
     },

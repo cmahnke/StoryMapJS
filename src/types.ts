@@ -304,6 +304,11 @@ export interface StorymapOptions {
     use_custom_markers: boolean;
     iiif: { url: string; attribution: string };
     tilejson?: StorymapTilejson;
+    /**
+     * The `seeAlso` targets a IIIF manifest points at, recorded but not
+     * fetched — see `loadSeeAlso()` (§5.2 of docs/plans/iiif-interop.md).
+     */
+    see_also?: { id: string; type: string }[];
     map_height: number;
     storyslider_height: number;
     slide_padding_lr: number;

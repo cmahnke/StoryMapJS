@@ -41,3 +41,30 @@ export async function getState(page: Page): Promise<StoryMapState> {
         slideCount: document.querySelectorAll("#storymap-embed .vco-slide").length,
     }));
 }
+
+/** Any base-tile host the viewer might pick. */
+const TILE_HOST = /openfreemap|basemaps|osm|tile/i;
+
+/**
+ * Intercept a tile host with a 1x1 transparent PNG, so a spec that is about
+ * something other than imagery does not depend on reaching the public tile
+ * service.
+ *
+ * This is not only about the network being down. The viewer's `loaded` used to
+ * wait for OpenLayers' first `loadend` — the first paint of the base tiles — so
+ * a slow or unreachable tile host delayed, or silently swallowed, work that had
+ * nothing to do with tiles. That is fixed in the source; stubbing here keeps
+ * these specs from inheriting the same dependency at all.
+ */
+export async function stubTiles(page: Page): Promise<string[]> {
+    const seen: string[] = [];
+    const png = Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+        "base64",
+    );
+    await page.route(TILE_HOST, async (route) => {
+        seen.push(route.request().url());
+        await route.fulfill({ status: 200, contentType: "image/png", body: png });
+    });
+    return seen;
+}

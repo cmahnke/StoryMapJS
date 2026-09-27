@@ -678,6 +678,33 @@ slides.
     `storymap:` term because of this, which is the mechanism
     `docs/plans/iiif-media-tours.md` §2 wants for its marker config.
 
+    **The first version of that file used a namespace that does not exist.** It
+    coined `https://christianmahnke.de/iiif/storymap/navplace#`, which resolves
+    to the site owner's 404 page — a term IRI pointing at someone's error page.
+    The properties now sit under the project's existing, already-published
+    namespace, `https://christianmahnke.de/iiif/storymap#`, as `navplaceName`,
+    `navplaceZoom` and so on. That namespace does not dereference either, but it
+    never claimed to: it is a vocabulary IRI, not a document, and it is the one
+    `public/context.json` already declares. A test now asserts the two files
+    agree on it.
+
+    Reading the extension turned up a second thing it states clearly and the
+    fixtures got wrong. §3.1: _"The navPlace extension linked data context
+    **must** be included before the IIIF Presentation API 3 linked data context
+    on the top-level object."_ All 52 fixtures had Presentation 3 first. A
+    viewer does not care — the reader consults neither context — but the
+    documents were wrong as linked data, which is the whole reason for shipping
+    a context at all. The order is now navPlace, Presentation 3, then the two
+    StoryMapJS contexts, and a test asserts the MUST holds for every fixture.
+
+    §3.2's wording is worth keeping verbatim, since it is what justifies a local
+    context rather than an extension: terms in the properties bag _"should be
+    described either by registered IIIF API extensions or local linked data
+    contexts"_, and a client that meets one it does not understand _"must ignore
+    it"_. And the extension's own §4 example puts a `label` in the properties
+    where we use `name` — a deliberate divergence, recorded in the mapping table
+    and kept because `name` is what the reader already copies.
+
 - **DONE (commit 9): language maps.** `flattenLanguageMap` concatenated every
   language and lost which is which — for a bilingual tour, a headline of
   "Hallo Hello". `pickLanguageMap` now chooses: the configured language, then
@@ -756,19 +783,75 @@ slides.
 
 ## 5. P4 — deep links and external annotations
 
-- **Content State 1.0**, emit and accept, alongside the hash. The hash parser is
-  digits-only (`/^#slide-(\d+)$/`, `src/storymap/StoryMap.ts:1342`) and
-  `_syncHash` (`:1326`) always writes the index, so a stop with an id is not
-  shareable today. Widen the regex to accept a `uniqueid`, emit the id form
-  when one exists, keep the index form working, and add `current_id` to the
-  `change` payload (`:636`, which today carries only `current_slide`) so hosts
-  can tell which _stop_ they are on. Region-level sharing (`canvas#xywh=`) is
-  the capability the ecosystem actually links to, so include it.
-- **`seeAlso`.** Read an external `AnnotationCollection` (or `AnnotationPage`)
-  and merge its annotations for the canvases we render, plus a
-  `SearchService1` link for later. This is the enabler for the mature
-  annotation servers (§1.8) and for Content Search, without which those
-  resources are invisible to us by construction — the converter does no I/O.
+**Both done** (commit 12). What changed, and the one design decision in each:
+
+### 5.1 Content State 1.0, `current_id`, and the hash
+
+- The hash parser was digits-only and `_syncHash` always wrote the index, so a
+  stop with an id was not shareable. The token is now **an index when it is all
+  digits and a `uniqueid` otherwise** — unambiguous, because an index never
+  contains anything else — and the id form is emitted whenever the slide has
+  one. The index form still works, so links shared earlier keep resolving; they
+  just stop being stable the moment a slide is inserted above them.
+- `current_id` is on the `change` payload, next to `current_slide`, and
+  `getSlideId()` reads a slide's id. A storymap-JSON slide usually has none, and
+  then it stays `null` rather than borrowing the random one the slider generates
+  for its DOM ids: a random id is stable to nobody, and a link built from it
+  would rot on the next load.
+- **`iiif-content` is emitted and accepted, per the IIIF Content State 1.0
+  spec** (`src/storymap/content-state.ts`). The encoding is the part worth
+  knowing: a **plain URI is never encoded** (§2.2.4) but a **JSON-LD form always
+  is** (§6.1: `encodeURIComponent`, base64url, padding stripped). So a whole
+  canvas is written as a bare target URI, and a region — which §2.2.5 says a
+  bare URI cannot express — as the encoded Target Body. A unit asserts the
+  encoder reproduces the spec's own published example byte for byte.
+- All four of the spec's forms are read: the full Annotation, the Target Body,
+  the Annotation URI, and the Target URI, plus inline JSON-LD (unencoded, which
+  is what `data-iiif-content`, paste and drag-and-drop pass) and a
+  `SpecificResource` with an `xywh` selector. Multiple targets resolve to the
+  first, since a storymap is linear.
+
+**The URL no longer waits for the map.** Applying the deep link used to sit
+inside `_onLoaded`, gated on the _map_ having reported loaded — which is
+OpenLayers' first `loadend`, the first paint of the base tiles. A deep link was
+therefore only honoured once `tile.openstreetmap.org` answered, and on a slow
+or unreachable tile host it was never honoured at all. Nothing about a URL
+depends on imagery, so the deep link is read and the hash kept in step as soon
+as the data and the slider are ready. This surfaced as an e2e test that failed
+about 2 runs in 4; stubbing tiles in the URL specs and moving the gate fixed it
+at both layers, and those specs are now ~4× faster.
+
+### 5.2 `seeAlso`
+
+`collectManifestSeeAlso()` records the targets statically — nothing is fetched
+during `manifestToStorymapData`, which stays synchronous and pre-paint. A host
+then calls `loadAnnotations()`, which fetches, indexes by canvas id, turns the
+annotations into tour stops and appends them, and fires `annotationsloaded` with
+what it added.
+
+The architecture the plan recorded is what shipped, with one addition: a
+per-`seeAlso` **promise** cache, so two callers racing the same document share
+one request, and a _rejected_ entry is evicted rather than remembered — a cached
+rejection would turn a transient outage into a permanent one.
+
+Three judgement calls, all recorded in the code:
+
+- **One level deep.** A referenced `AnnotationPage` inside a collection is
+  fetched; a `seeAlso` _inside_ that page is not. That is what stops a cycle
+  becoming an infinite walk.
+- **A `SearchService1` is recorded, not followed.** It is an endpoint for a host
+  to query, not a list of annotations to load.
+- **External stops are appended, not placed after their canvas.** A canvas's
+  own annotations are inserted in position at parse time; doing the same to a
+  live tour would mean rebuilding the slider and everything hanging off it, for
+  an ordering nicety. A host that cares can place them from the resolved value.
+
+Reading an `AnnotationCollection` needed two discriminations the obvious
+version gets wrong, both caught by tests: an `Annotation` also has an `id` and
+no `items`, so keying a "referenced page" on the absence of `items` sent every
+annotation back out to be fetched as a page; and a collection whose items are
+_bare annotations_ looks exactly like a page object with no items, so reading
+each item as page-shaped silently dropped the entire collection.
 
 ---
 

@@ -180,13 +180,40 @@ with one GeoJSON Feature:
   custom marker rendering; see the storymap terms below.
 
 Those properties are described by **`https://cmahnke.github.io/StoryMapJS/navplace-properties.json`**,
-which a manifest using a `properties` bag should name in its `@context`
-alongside the navPlace extension. The extension requires it: terms in a GeoJSON
-Feature's `properties` must be described either by a registered IIIF extension
-or by a local linked-data context, and a client that meets a property it does
-not understand must ignore it. It is why `popup` and `audioBadge` need no
-`storymap:` term of their own — and the same mechanism is what
-`docs/plans/iiif-media-tours.md` §2 wants for its marker config.
+which a manifest using a `properties` bag should name in its `@context`. The
+extension requires it (§3.2): terms in a GeoJSON Feature's `properties` must be
+described either by a registered IIIF extension or by a local linked-data
+context, and a client that meets a property it does not understand must ignore
+it. There is no IIIF extension for marker presentation — navPlace defines
+exactly one term, `navPlace` itself — so the local context is the only option.
+It is why `popup` and `audioBadge` need no `storymap:` term of their own, and
+the same mechanism is what `docs/plans/iiif-media-tours.md` §2 wants for its
+marker config. The nine local names hang off this project's existing namespace
+(`https://christianmahnke.de/iiif/storymap#`), not a new one.
+
+### Context order matters
+
+The navPlace extension's context **must be listed before** the Presentation 3
+context — §3.1 of the extension:
+
+> The navPlace extension linked data context must be included before the IIIF
+> Presentation API 3 linked data context on the top-level object.
+
+So a manifest that uses `navPlace` declares:
+
+```json
+"@context": [
+    "http://iiif.io/api/extension/navplace/context.json",
+    "http://iiif.io/api/presentation/3/context.json",
+    "https://cmahnke.github.io/StoryMapJS/navplace-properties.json",
+    "https://cmahnke.github.io/StoryMapJS/context.json"
+]
+```
+
+Getting this backwards does not break a viewer — the reader does not consult
+either context — but it does make the document wrong as linked data, which is
+the point of shipping a context at all. Every fixture in this repository had it
+backwards.
 
 Alternatively a manifest MAY aggregate all slide locations in a single
 manifest-level `navPlace` with one Feature per Canvas in `items` order.
@@ -450,6 +477,57 @@ order the document does not, which is what a storyboard is for:
 A canvas in no Range keeps its document position, after the ones a Range does
 mention. A Range with a `start` is a time segment of a canvas, not a group: it
 contributes order and nothing else.
+
+### Deep links and external annotations
+
+Two things a manifest can offer that a viewer used to ignore.
+
+**A stop can be linked by its identity.** Every canvas id is a `uniqueid`
+(§2.3), so a stop is addressable by something that survives a slide being
+inserted above it. The viewer writes both forms:
+
+| Where            | Form                                                         | Example                               |
+| ---------------- | ------------------------------------------------------------ | ------------------------------------- |
+| `change` payload | `current_id`, next to `current_slide`                        | —                                     |
+| URL hash         | `#slide-<uniqueid>`, or `#slide-3` for a storymap-JSON slide | `#slide-https%3A%2F%2F…%2Fcanvas%2F3` |
+| Query parameter  | `iiif-content`, IIIF Content State 1.0                       | `?iiif-content=https://…/canvas/3`    |
+
+Both are read on load, and the hash again on every `hashchange`, so browser
+back/forward keeps working. The index form is still accepted, so links shared
+before ids were emitted keep resolving.
+
+The `iiif-content` parameter is the standard's own format and follows its
+encoding rule, which is deliberately asymmetric: a **plain URI is written
+unencoded**, a **JSON-LD form is content-state-encoded** (base64url, no
+padding). A whole canvas is therefore a bare target URI, while a region — which
+the spec says a bare URI cannot express — is the encoded Target Body:
+
+```json
+{
+    "target": {
+        "type": "SpecificResource",
+        "source": { "id": "https://example.org/canvas/7", "type": "Canvas" },
+        "selector": { "type": "ImageApiSelector", "value": "xywh=pixel:10,20,30,40" }
+    }
+}
+```
+
+**External annotations.** A manifest's `seeAlso` points at annotation
+collections or pages that live on an annotation server. They are recorded on the
+data as `see_also` but **not fetched** — reading them is a network round trip
+per document, and a viewer should not block its first paint on a third party. A
+host opts in:
+
+```js
+const { stops, searchService, failed } = await storymap.loadAnnotations();
+```
+
+which fetches, merges the annotations for the canvases being rendered into tour
+stops, and fires `annotationsloaded` with the same value. A `SearchService1` in
+`seeAlso` is reported as `searchService` rather than followed. One level of
+indirection is followed, so a collection may reference its pages, but a cycle
+cannot become an infinite walk. Fetching is cached per document, so two calls
+share one request.
 
 ### Institutional credit
 
