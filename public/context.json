@@ -26,11 +26,18 @@
         "lineDash": "storymap:lineDash",
         "lineJoin": "storymap:lineJoin",
         "useCustomMarkers": "storymap:useCustomMarkers",
+        "mapArea": "storymap:mapArea",
+        "overviewExtent": "storymap:overviewExtent",
+        "keyboard": "storymap:keyboard",
+        "overlays": "storymap:overlays",
+        "georeferencedLayers": "storymap:georeferencedLayers",
         "type": { "@id": "storymap:type", "@type": "@id" },
         "background": "storymap:background",
         "mediaCaption": "storymap:mediaCaption",
         "mediaCredit": "storymap:mediaCredit",
         "mediaAlt": "storymap:mediaAlt",
+        "mediaSrcset": "storymap:mediaSrcset",
+        "mediaSizes": "storymap:mediaSizes",
         "imageRegion": "storymap:imageRegion",
         "date": "storymap:date"
     }

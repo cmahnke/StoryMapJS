@@ -54,6 +54,46 @@
                     "type": "string",
                     "enum": ["full", "left"]
                 },
+                "overview_extent": {
+                    "type": "array",
+                    "items": { "type": "number" },
+                    "minItems": 4,
+                    "maxItems": 4,
+                    "description": "Constrain the minimap overview to this lon/lat bounding box [west, south, east, north]; null (default) leaves it unconstrained"
+                },
+                "keyboard": {
+                    "type": "boolean",
+                    "description": "Navigate slides with the arrow keys anywhere on the page (default false)"
+                },
+                "overlays": {
+                    "type": "array",
+                    "description": "Raster layers stacked above the base map and below the route lines",
+                    "items": {
+                        "type": "object",
+                        "required": ["map_type"],
+                        "properties": {
+                            "map_type": {
+                                "type": "string",
+                                "description": "Any map_type the tile layer factory accepts"
+                            },
+                            "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+                            "visible": { "type": "boolean" },
+                            "attribution": { "type": "string" },
+                            "className": {
+                                "type": "string",
+                                "description": "CSS class of the layer container, isolating it from the shared ol-layer canvas (e.g. for blend modes)"
+                            },
+                            "blendMode": { "type": "string" },
+                            "extent": {
+                                "type": "array",
+                                "items": { "type": "number" },
+                                "minItems": 4,
+                                "maxItems": 4,
+                                "description": "Clip the layer to this lon/lat bounding box [west, south, east, north] (mercator maps)"
+                            }
+                        }
+                    }
+                },
                 "consent_required": { "type": "boolean" },
                 "map_center_offset": {
                     "type": "object",

@@ -61,7 +61,9 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "srcset passthrough"
+            "storymap:mediaCaption": "srcset passthrough",
+            "storymap:mediaSrcset": "/examples/assets/placeholder-portrait.jpg 480w, /examples/assets/placeholder-landscape.jpg 1024w",
+            "storymap:mediaSizes": "50vw"
         }
     ],
     "service": [

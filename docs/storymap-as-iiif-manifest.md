@@ -83,10 +83,19 @@ what the fixtures reference. Content:
         "lineDash": "storymap:lineDash",
         "lineJoin": "storymap:lineJoin",
         "useCustomMarkers": "storymap:useCustomMarkers",
+        "mapArea": "storymap:mapArea",
+        "overviewExtent": "storymap:overviewExtent",
+        "keyboard": "storymap:keyboard",
+        "overlays": "storymap:overlays",
+        "georeferencedLayers": "storymap:georeferencedLayers",
         "type": { "@id": "storymap:type", "@type": "@id" },
         "background": "storymap:background",
         "mediaCaption": "storymap:mediaCaption",
         "mediaCredit": "storymap:mediaCredit",
+        "mediaAlt": "storymap:mediaAlt",
+        "mediaSrcset": "storymap:mediaSrcset",
+        "mediaSizes": "storymap:mediaSizes",
+        "imageRegion": "storymap:imageRegion",
         "date": "storymap:date"
     }
 }
@@ -126,6 +135,8 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 | `storymap:mediaCaption` | `slide.media.caption`   |                                                                                          |
 | `storymap:mediaCredit`  | `slide.media.credit`    |                                                                                          |
 | `storymap:mediaAlt`     | `slide.media.alt`       | Accessible image description (falls back to the caption when rendering)                  |
+| `storymap:mediaSrcset`  | `slide.media.srcset`    | Responsive image candidates, passed through to the `img` element                         |
+| `storymap:mediaSizes`   | `slide.media.sizes`     | The `sizes` companion of `mediaSrcset`                                                   |
 | `storymap:imageRegion`  | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides      |
 | `storymap:date`         | `slide.date`            | String or object, verbatim                                                               |
 | `navPlace`              | `slide.location`        | See below                                                                                |
@@ -231,32 +242,37 @@ properties):
 }
 ```
 
-| Service property (storymap:) | StoryMap field         | Values                                                                                                            |
-| ---------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `mapType`                    | `map_type`             | `osm:standard`, `mapbox:...`, `stadia:...`, `iiif`, or an `https://...` tile URL; `zoomify` is replaced by `iiif` |
-| `mapAsImage`                 | `map_as_image`         | `true` when the image itself is the map                                                                           |
-| `mapAccessToken`             | `map_access_token`     | Mapbox/Stadia token from the storymap data, never the repository                                                  |
-| `mapBackgroundColor`         | `map_background_color` | CSS color                                                                                                         |
-| `mapCenterOffset`            | `map_center_offset`    | `{left, top}`                                                                                                     |
-| `mapSubdomains`              | `map_subdomains`       | Tile URL subdomains                                                                                               |
-| `iiifUrl`                    | `iiif.url`             | IIIF Image API `info.json` URL for image-map storymaps                                                            |
-| `fontCss`                    | `font_css`             | e.g. `stock:dancing-ledger`                                                                                       |
-| `callToAction`               | `call_to_action`       | boolean                                                                                                           |
-| `callToActionText`           | `call_to_action_text`  | string                                                                                                            |
-| `startAtSlide`               | `start_at_slide`       | 0-based slide index                                                                                               |
-| `language`                   | `language`             | IETF language tag                                                                                                 |
-| `calculateZoom`              | `calculate_zoom`       | boolean                                                                                                           |
-| `lessBounce`                 | `less_bounce`          | boolean                                                                                                           |
-| `lineFollowsPath`            | `line_follows_path`    | boolean                                                                                                           |
-| `showLines`                  | `show_lines`           | boolean                                                                                                           |
-| `showHistoryLine`            | `show_history_line`    | boolean                                                                                                           |
-| `lineColor`                  | `line_color`           | CSS color                                                                                                         |
-| `lineColorInactive`          | `line_color_inactive`  | CSS color                                                                                                         |
-| `lineWeight`                 | `line_weight`          | number (px)                                                                                                       |
-| `lineOpacity`                | `line_opacity`         | 0–1                                                                                                               |
-| `lineDash`                   | `line_dash`            | CSS dash pattern                                                                                                  |
-| `lineJoin`                   | `line_join`            | CSS line join                                                                                                     |
-| `useCustomMarkers`           | `use_custom_markers`   | boolean                                                                                                           |
+| Service property (storymap:) | StoryMap field                      | Values                                                                                                            |
+| ---------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `mapType`                    | `map_type`                          | `osm:standard`, `mapbox:...`, `stadia:...`, `iiif`, or an `https://...` tile URL; `zoomify` is replaced by `iiif` |
+| `mapAsImage`                 | `map_as_image`                      | `true` when the image itself is the map                                                                           |
+| `mapAccessToken`             | `map_access_token`                  | Mapbox/Stadia token from the storymap data, never the repository                                                  |
+| `mapBackgroundColor`         | `map_background_color`              | CSS color                                                                                                         |
+| `mapCenterOffset`            | `map_center_offset`                 | `{left, top}`                                                                                                     |
+| `mapSubdomains`              | `map_subdomains`                    | Tile URL subdomains                                                                                               |
+| `iiifUrl`                    | `iiif.url`                          | IIIF Image API `info.json` URL for image-map storymaps                                                            |
+| `fontCss`                    | `font_css`                          | e.g. `stock:dancing-ledger`                                                                                       |
+| `callToAction`               | `call_to_action`                    | boolean                                                                                                           |
+| `callToActionText`           | `call_to_action_text`               | string                                                                                                            |
+| `startAtSlide`               | `start_at_slide`                    | 0-based slide index                                                                                               |
+| `language`                   | `language`                          | IETF language tag                                                                                                 |
+| `calculateZoom`              | `calculate_zoom`                    | boolean                                                                                                           |
+| `lessBounce`                 | `less_bounce`                       | boolean                                                                                                           |
+| `lineFollowsPath`            | `line_follows_path`                 | boolean                                                                                                           |
+| `showLines`                  | `show_lines`                        | boolean                                                                                                           |
+| `showHistoryLine`            | `show_history_line`                 | boolean                                                                                                           |
+| `lineColor`                  | `line_color`                        | CSS color                                                                                                         |
+| `lineColorInactive`          | `line_color_inactive`               | CSS color                                                                                                         |
+| `lineWeight`                 | `line_weight`                       | number (px)                                                                                                       |
+| `lineOpacity`                | `line_opacity`                      | 0–1                                                                                                               |
+| `lineDash`                   | `line_dash`                         | CSS dash pattern                                                                                                  |
+| `lineJoin`                   | `line_join`                         | CSS line join                                                                                                     |
+| `useCustomMarkers`           | `use_custom_markers`                | boolean                                                                                                           |
+| `mapArea`                    | `map_area`                          | `"full"` (default) or `"left"`                                                                                    |
+| `overviewExtent`             | `overview_extent`                   | `[west, south, east, north]` lon/lat box for the minimap overview                                                 |
+| `keyboard`                   | `keyboard`                          | boolean: arrow keys navigate the story from anywhere                                                              |
+| `overlays`                   | `overlays`                          | array of stacked layers (see below)                                                                               |
+| `georeferencedLayers`        | `overlays[]` (georeference entries) | IIIF images placed from ground control points — see "Geo-referenced layers"                                       |
 
 ### Canvas level — direct properties
 
@@ -268,6 +284,90 @@ Canvas table above).
 Readers must use the prefixed term for the slide type (`storymap:type`): the
 bare `type` key of a Canvas is the IIIF class type (`"Canvas"`) and can never
 carry the StoryMap slide type.
+
+## Native IIIF vs. the StoryMap extension
+
+IIIF defines three approved Presentation API extensions — navPlace, Text
+Granularity and Georeference — and **no vocabulary for a basemap or a tile
+layer stack**. Everything the viewer draws under and over the story (basemap
+type, layout, minimap bounds, stacked layers, keyboard navigation) therefore
+stays in the `storymap:` terms of the map configuration service, which is the
+JSON-LD-idiomatic place for extended configuration. What IIIF _does_ model
+natively is used wherever it exists:
+
+| Story                                  | Native IIIF                                                                                           | Used here                                                                     |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Slide location                         | `navPlace` Point                                                                                      | yes                                                                           |
+| Story extent                           | `navPlace` Polygon (an explicit navPlace use case)                                                    | yes — a canvas polygon becomes `map_bbox`                                     |
+| Image region stops                     | IIIF Image API Selector (`xywh=`) on the painting annotation target                                   | yes — the selector is read, `storymap:imageRegion` wins when both are present |
+| Raster layer placed on a map           | [Georeference Extension](https://iiif.io/api/extension/georef) (GCPs, `motivation: "georeferencing"`) | yes — see below                                                               |
+| Basemap, layer stack, layout, keyboard | —                                                                                                     | no; `storymap:` terms                                                         |
+
+### Geo-referenced layers
+
+`storymap:georeferencedLayers` carries the Georeference Extension payload: the
+IIIF Image API service to place, its pixel size and the annotation body with
+its ground control points (`properties.resourceCoords` ↔
+`geometry.coordinates`, WGS84). The viewer fits the points affinely and places
+the image, which OpenLayers reprojects onto the view exactly like the IIIF
+basemap:
+
+```json
+{
+    "service": [
+        {
+            "id": "https://example.org/storymap/<name>/map-config",
+            "type": "Service",
+            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "storymap:georeferencedLayers": [
+                {
+                    "url": "https://iiif.example.org/image1",
+                    "width": 5965,
+                    "height": 2514,
+                    "opacity": 0.8,
+                    "attribution": "Sheet 12, 1789",
+                    "body": {
+                        "type": "FeatureCollection",
+                        "transformation": { "type": "polynomial", "options": { "order": 1 } },
+                        "features": [
+                            {
+                                "type": "Feature",
+                                "properties": { "resourceCoords": [5085, 782] },
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [4.4885839, 51.9101828]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
+```
+
+The result is an `overlays[]` entry, so the usual presentation keys
+(`opacity`, `visible`, `attribution`, `className`, `blendMode`, `extent`) and
+`setOverlayVisible()` / `setOverlayOpacity()` work as for any other layer.
+Entries with fewer than three usable points are dropped while reading.
+
+**Limits.** The extension also allows second/third-order polynomials, thin
+plate splines and rotated or skewed sheets. OpenLayers places an image as an
+axis-aligned extent, so the viewer fits the affine (first-order) case only:
+anything else is reported in the console and skipped rather than drawn in the
+wrong place. For true warping, plug
+[Allmaps' `WarpedMapLayer`](https://www.npmjs.com/package/@allmaps/openlayers)
+(or any OpenLayers layer) into the `tile_source_factory` option and keep the
+georeference data on your side — see the "IIIF extensions" recipe in
+[docs/migration-from-knightlab.md](migration-from-knightlab.md). Image-space
+maps (`map_as_image`, zoomify) have no geographic view, so a placed sheet is
+skipped there as well.
+
+Because ground control points cannot be expressed in the legacy storymap
+format, this is a **manifest-only** feature: the converter has nothing to
+convert from, and `public/examples-iiif/georeferenced-layer.json` (plus its
+`-unsupported` counterpart, which shows the skip path) is hand-authored.
 
 ## Validator interop
 
@@ -453,6 +553,10 @@ photo, and a slide with a YouTube video — full manifest:
 | `map_center_offset`          | `service[0].storymap:mapCenterOffset`                               |
 | `map_popup`                  | _dropped_ (viewer setting)                                          |
 | `use_custom_markers`         | `service[0].storymap:useCustomMarkers`                              |
+| `map_area`                   | `service[0].storymap:mapArea`                                       |
+| `overview_extent`            | `service[0].storymap:overviewExtent`                                |
+| `keyboard`                   | `service[0].storymap:keyboard`                                      |
+| `overlays`                   | `service[0].storymap:overlays` (+ `storymap:georeferencedLayers`)   |
 | `zoom_distance`              | _dropped_ (viewer setting)                                          |
 | `calculate_zoom`             | `service[0].storymap:calculateZoom`                                 |
 | `less_bounce`                | `service[0].storymap:lessBounce`                                    |
@@ -497,6 +601,8 @@ photo, and a slide with a YouTube video — full manifest:
 | `media.caption`                | Canvas `storymap:mediaCaption`                             |
 | `media.credit`                 | Canvas `storymap:mediaCredit`                              |
 | `media.alt`                    | Canvas `storymap:mediaAlt`                                 |
+| `media.srcset`                 | Canvas `storymap:mediaSrcset`                              |
+| `media.sizes`                  | Canvas `storymap:mediaSizes`                               |
 | `location.region`              | Canvas `storymap:imageRegion` `[x, y, w, h]` (xywh)        |
 | `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`) |
 | `background`                   | Canvas `storymap:background` `{url, color}`                |
@@ -512,3 +618,9 @@ photo, and a slide with a YouTube video — full manifest:
 - AnnotationPage: `<canvas-id>/annotationpage/1`
 - Annotation: `<canvas-id>/annotation/1`
 - FeatureCollection / Feature: `<canvas-id>/navplace[.../feature/1]`
+
+Two fixtures in `public/examples-iiif/` are hand-authored and not overwritten
+by a full run: `georeferenced-layer.json` and
+`georeferenced-layer-unsupported.json`, which exercise the Georeference
+Extension payloads (the legacy format cannot express ground control points, so
+there is nothing to convert from).

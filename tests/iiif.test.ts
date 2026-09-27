@@ -1,6 +1,9 @@
 import { test, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { isPresentation3Manifest, manifestToStorymapData } from "../src/storymap/iiif";
-import type { StorymapData } from "../src/types";
+import { fitGeoreference } from "../src/map/georeference";
+import type { StorymapData, StorymapOverlayLayer } from "../src/types";
 
 const CONTEXTS = [
     "http://iiif.io/api/presentation/3/context.json",
@@ -313,4 +316,338 @@ test("maps requiredStatement to iiif.attribution", () => {
         items: [],
     });
     expect(data.iiif).toEqual({ url: "", attribution: "Courtesy of Example" });
+});
+
+test("maps the newer mapconfig terms to their storymap fields", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [
+            {
+                type: "Service",
+                profile: "mapconfig",
+                mapType: "osm",
+                mapArea: "left",
+                overviewExtent: [-0.6, 51.2, 0.4, 51.8],
+                keyboard: true,
+                overlays: [
+                    { map_type: "https://tiles.example.org/a/{z}/{x}/{y}.png", opacity: 0.5 },
+                    {
+                        map_type: "https://tiles.example.org/b/{z}/{x}/{y}.png",
+                        visible: false,
+                        className: "ol-layer historic",
+                        blendMode: "multiply",
+                        extent: [-0.4, 51.3, 0.2, 51.7],
+                        attribution: "Second sheet",
+                    },
+                    // dropped: no map_type (and no georeference)
+                    { opacity: 0.2 },
+                    "not an object",
+                ],
+            },
+        ],
+        items: [],
+    });
+
+    expect(data.map_area).toBe("left");
+    expect(data.overview_extent).toEqual([-0.6, 51.2, 0.4, 51.8]);
+    expect(data.keyboard).toBe(true);
+    expect(data.overlays).toEqual([
+        { map_type: "https://tiles.example.org/a/{z}/{x}/{y}.png", opacity: 0.5 },
+        {
+            map_type: "https://tiles.example.org/b/{z}/{x}/{y}.png",
+            visible: false,
+            className: "ol-layer historic",
+            blendMode: "multiply",
+            extent: [-0.4, 51.3, 0.2, 51.7],
+            attribution: "Second sheet",
+        },
+    ]);
+});
+
+test("ignores malformed mapconfig terms", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [
+            {
+                type: "Service",
+                profile: "mapconfig",
+                mapArea: "sideways",
+                overviewExtent: [1, 2, 3],
+                keyboard: "yes",
+                overlays: "not an array",
+            },
+        ],
+        items: [],
+    });
+
+    expect(data.map_area).toBeUndefined();
+    expect(data.overview_extent).toBeUndefined();
+    expect(data.keyboard).toBeUndefined();
+    expect(data.overlays).toBeUndefined();
+});
+
+test("maps mediaSrcset and mediaSizes to the slide media", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            {
+                type: "Canvas",
+                items: [
+                    {
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: { id: "https://example.org/i.jpg", type: "Image" },
+                                target: "https://example.org/canvas/1",
+                            },
+                        ],
+                    },
+                ],
+                "storymap:mediaSrcset": "https://example.org/i-480.jpg 480w",
+                "storymap:mediaSizes": "50vw",
+            },
+        ],
+    });
+
+    expect(data.slides[0].media).toEqual({
+        url: "https://example.org/i.jpg",
+        srcset: "https://example.org/i-480.jpg 480w",
+        sizes: "50vw",
+    });
+});
+
+test("reads an image region from an IIIF Image API Selector", () => {
+    const canvas = (target: unknown) => ({
+        type: "Canvas",
+        items: [
+            {
+                type: "AnnotationPage",
+                items: [
+                    {
+                        type: "Annotation",
+                        motivation: "painting",
+                        body: { id: "https://example.org/i.jpg", type: "Image" },
+                        target,
+                    },
+                ],
+            },
+        ],
+    });
+
+    const selector = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            canvas({
+                source: "https://example.org/canvas/1",
+                type: "SpecificResource",
+                selector: { type: "ImageApiSelector", value: "xywh=100,200,800,600" },
+            }),
+            canvas({
+                source: "https://example.org/canvas/2",
+                type: "SpecificResource",
+                selector: { type: "FragmentSelector", value: "#xywh=10,20,30,40" },
+            }),
+            // unsupported selector: ignored
+            canvas({
+                source: "https://example.org/canvas/3",
+                type: "SpecificResource",
+                selector: { type: "SvgSelector", value: "<svg><rect/></svg>" },
+            }),
+            // malformed value: ignored
+            canvas({
+                source: "https://example.org/canvas/4",
+                type: "SpecificResource",
+                selector: { type: "ImageApiSelector", value: "xywh=1,2,3" },
+            }),
+        ],
+    });
+
+    expect(selector.slides[0].location?.region).toEqual([100, 200, 800, 600]);
+    expect(selector.slides[1].location?.region).toEqual([10, 20, 30, 40]);
+    expect(selector.slides[2].location?.region).toBeUndefined();
+    expect(selector.slides[3].location?.region).toBeUndefined();
+});
+
+test("the extension term wins over an image API selector", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            {
+                type: "Canvas",
+                "storymap:imageRegion": [0, 0, 111, 222],
+                items: [
+                    {
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: { id: "https://example.org/i.jpg", type: "Image" },
+                                target: {
+                                    source: "https://example.org/canvas/1",
+                                    type: "SpecificResource",
+                                    selector: { type: "ImageApiSelector", value: "xywh=5,5,50,50" },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+
+    expect(data.slides[0].location?.region).toEqual([0, 0, 111, 222]);
+});
+
+test("maps a polygon navPlace to map_bbox", () => {
+    const polygon = (coordinates: number[][][]) => ({
+        type: "FeatureCollection",
+        features: [{ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates } }],
+    });
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            {
+                type: "Canvas",
+                navPlace: polygon([
+                    [
+                        [4.44, 51.895],
+                        [4.51, 51.895],
+                        [4.51, 51.925],
+                        [4.44, 51.895],
+                    ],
+                ]),
+            },
+            // a later canvas does not override the first polygon
+            {
+                type: "Canvas",
+                navPlace: polygon([
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [0, 0],
+                    ],
+                ]),
+            },
+        ],
+    });
+
+    expect(data.map_bbox).toEqual([4.44, 51.895, 4.51, 51.925]);
+    // polygons carry no marker position
+    expect(data.slides[0].location).toBeUndefined();
+});
+
+test("point navPlaces are unaffected by the polygon mapping", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            {
+                type: "Canvas",
+                navPlace: {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            properties: { name: "Rotterdam" },
+                            geometry: { type: "Point", coordinates: [4.4777, 51.9166] },
+                        },
+                    ],
+                },
+            },
+        ],
+    });
+
+    expect(data.map_bbox).toBeUndefined();
+    expect(data.slides[0].location?.lat).toBe(51.9166);
+    expect(data.slides[0].location?.lon).toBe(4.4777);
+    expect(data.slides[0].location?.name).toBe("Rotterdam");
+});
+
+test("maps georeferenced layers to overlays", () => {
+    const body = {
+        type: "FeatureCollection",
+        transformation: { type: "polynomial", options: { order: 1 } },
+        features: [
+            { properties: { resourceCoords: [0, 0] }, geometry: { coordinates: [4.45, 51.92] } },
+            {
+                properties: { resourceCoords: [2315, 0] },
+                geometry: { coordinates: [4.5, 51.92] },
+            },
+            {
+                properties: { resourceCoords: [0, 3000] },
+                geometry: { coordinates: [4.45, 51.9] },
+            },
+        ],
+    };
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [
+            {
+                type: "Service",
+                profile: "mapconfig",
+                mapType: "osm",
+                georeferencedLayers: [
+                    {
+                        id: "https://example.org/layer/1",
+                        url: "https://iiif.example.org/image1",
+                        width: 2315,
+                        height: 3000,
+                        opacity: 0.75,
+                        attribution: "Placed sheet",
+                        body,
+                    },
+                    // too few control points: dropped
+                    {
+                        url: "https://iiif.example.org/image2",
+                        width: 100,
+                        height: 100,
+                        body: { type: "FeatureCollection", features: body.features.slice(0, 2) },
+                    },
+                    // no image size: dropped
+                    { url: "https://iiif.example.org/image3", body },
+                ],
+            },
+        ],
+        items: [],
+    });
+
+    const entries = data.overlays as StorymapOverlayLayer[];
+    expect(entries).toHaveLength(1);
+    const entry = entries[0];
+    expect(entry.map_type).toBeUndefined();
+    expect(entry.opacity).toBe(0.75);
+    expect(entry.attribution).toBe("Placed sheet");
+    expect(entry.georeference?.url).toBe("https://iiif.example.org/image1");
+    expect(entry.georeference?.width).toBe(2315);
+    expect(entry.georeference?.body.transformation).toEqual({
+        type: "polynomial",
+        options: { order: 1 },
+    });
+});
+
+test("the shipped georeferenced-layer manifest maps as documented", () => {
+    const manifest = JSON.parse(
+        readFileSync(join(process.cwd(), "public/examples-iiif/georeferenced-layer.json"), "utf8"),
+    );
+    const data = manifestToStorymapData(manifest);
+
+    expect(data.slides).toHaveLength(2);
+    expect(data.map_bbox).toEqual([4.44, 51.895, 4.51, 51.925]);
+    expect(data.overview_extent).toEqual([4.3, 51.85, 4.6, 51.98]);
+    expect(data.map_area).toBe("full");
+    const entries = data.overlays as StorymapOverlayLayer[];
+    expect(entries).toHaveLength(1);
+    const georeference = entries[0].georeference;
+    expect(georeference?.url).toContain("iiif.io/api/image/3.0/example/reference");
+    const fit = fitGeoreference(georeference!.body, georeference!.width, georeference!.height);
+    expect(fit.kind).toBe("placed");
+    if (fit.kind === "placed") {
+        expect(fit.bbox[0]).toBeCloseTo(4.45, 3);
+        expect(fit.bbox[1]).toBeCloseTo(51.9, 3);
+        expect(fit.bbox[2]).toBeCloseTo(4.5, 3);
+        expect(fit.bbox[3]).toBeCloseTo(51.92, 3);
+    }
 });

@@ -6,11 +6,14 @@
 
 import type {
     StorymapData,
+    StorymapGeoreference,
+    StorymapOverlayLayer,
     StorymapSlide,
     StorymapSlideBackground,
     StorymapSlideLocation,
     StorymapSlideMedia,
 } from "../types";
+import { readGroundControlPoints } from "../map/georeference";
 
 const PRESENTATION_3_CONTEXT = "iiif.io/api/presentation/3/context.json";
 const MAPCONFIG_PROFILE = "mapconfig";
@@ -55,7 +58,7 @@ function asStringArray(value: unknown): string[] {
 }
 
 /**
- * Reads an IIIF xywh image region (`storymap:imageRegion`): an array of
+ * Reads a IIIF xywh image region (`storymap:imageRegion`): an array of
  * exactly 4 finite numbers ([x, y, w, h] in image pixels). Returns null
  * for anything else — invalid regions are ignored.
  */
@@ -63,6 +66,35 @@ function readImageRegion(value: unknown): [number, number, number, number] | nul
     if (!Array.isArray(value) || value.length !== 4) return null;
     if (!value.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
     return value as [number, number, number, number];
+}
+
+/**
+ * Reads an xywh region from a Web Annotation target, using the IIIF Image
+ * API Selector (`selector: {type: "ImageApiSelector", value: "xywh=0,0,…"}`)
+ * and the equivalent fragment selector. This is the interoperable spelling
+ * of `storymap:imageRegion`: an annotation targeted at a SpecificResource
+ * paints only that region of the image. Returns null for other selectors
+ * (SVG polygons, points) and for malformed values.
+ */
+function readTargetRegion(value: unknown): [number, number, number, number] | null {
+    const target = asRecord(value);
+    if (!target) return null;
+    const selectors = Array.isArray(target.selector) ? target.selector : [target.selector];
+    for (const entry of selectors) {
+        const selector = asRecord(entry);
+        if (!selector) continue;
+        const type = asString(selector.type);
+        if (type !== "ImageApiSelector" && type !== "FragmentSelector") continue;
+        const raw = asString(selector.value);
+        if (raw === null) continue;
+        const match = /xywh=(pixel:)?([^,]+),([^,]+),([^,]+),([^,]+)/.exec(raw);
+        if (!match) continue;
+        const parts = match.slice(2).map(Number);
+        if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) continue;
+        if (parts[0] < 0 || parts[1] < 0 || parts[2] <= 0 || parts[3] <= 0) continue;
+        return parts as [number, number, number, number];
+    }
+    return null;
 }
 
 /**
@@ -135,9 +167,13 @@ function readMapConfig(manifest: Record<string, unknown>): Record<string, unknow
 /**
  * Reads the slide media URL from the canvas's painting annotation body:
  * typed bodies contribute their `id`, TextualBody (HTML) content its `value`
- * - the legacy format stores both in `media.url`.
+ * - the legacy format stores both in `media.url`. Also returns the xywh
+ * region of an Image API Selector on the annotation target, if any.
  */
-function readPaintingBodyUrl(canvas: Record<string, unknown>): string | null {
+function readPainting(canvas: Record<string, unknown>): {
+    url: string;
+    region: [number, number, number, number] | null;
+} | null {
     const annotationPages = Array.isArray(canvas.items) ? canvas.items : [];
     for (const page of annotationPages) {
         const pageRecord = asRecord(page);
@@ -149,7 +185,9 @@ function readPaintingBodyUrl(canvas: Record<string, unknown>): string | null {
             const motivation = asString(annotationRecord.motivation);
             if (motivation !== null && motivation !== "painting") continue;
             const url = readBodyUrl(annotationRecord.body);
-            if (url !== null) return url;
+            if (url !== null) {
+                return { url, region: readTargetRegion(annotationRecord.target) };
+            }
         }
     }
     return null;
@@ -210,6 +248,48 @@ function readFeatureLocation(feature: unknown): StorymapSlideLocation | null {
     return location;
 }
 
+/**
+ * Reads a lon/lat bounding box from a navPlace FeatureCollection holding a
+ * Polygon or MultiPolygon. The navPlace extension lists "supplying a single
+ * geographic bounding box" as a use case, which is the interoperable way to
+ * state the extent of a story — the legacy format has no such field, so it
+ * becomes `map_bbox` (the map is constrained to the box). Returns null when
+ * the collection has no polygon.
+ */
+function readNavPlaceBbox(navPlace: unknown): [number, number, number, number] | null {
+    const collection = asRecord(navPlace);
+    if (!collection) return null;
+    const features = Array.isArray(collection.features) ? collection.features : [];
+    for (const feature of features) {
+        const featureRecord = asRecord(feature);
+        if (!featureRecord) continue;
+        const geometry = asRecord(featureRecord.geometry);
+        const type = geometry ? asString(geometry.type) : null;
+        if (type !== "Polygon" && type !== "MultiPolygon") continue;
+        const positions: number[][] = [];
+        collectPositions(geometry.coordinates, positions, 0);
+        const lons = positions.map((p) => p[0]).filter((n) => n !== undefined);
+        const lats = positions.map((p) => p[1]).filter((n) => n !== undefined);
+        if (lons.length === 0 || lats.length === 0) continue;
+        return [Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)];
+    }
+    return null;
+}
+
+/** Flattens arbitrarily nested GeoJSON coordinate arrays into positions. */
+function collectPositions(value: unknown, out: number[][], depth: number): void {
+    if (depth > 4 || !Array.isArray(value)) return;
+    if (value.length >= 2 && typeof value[0] === "number" && typeof value[1] === "number") {
+        const lon = asNumber(value[0]);
+        const lat = asNumber(value[1]);
+        if (lon !== null && lat !== null) out.push([lon, lat]);
+        return;
+    }
+    for (const entry of value) {
+        collectPositions(entry, out, depth + 1);
+    }
+}
+
 function readBackground(value: unknown): StorymapSlideBackground | string | null {
     const record = asRecord(value);
     if (record) {
@@ -242,17 +322,29 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
         if (text !== "") slide.text.text = text;
     }
 
-    // media: painting annotation body plus the caption/credit/alt extension terms
-    const mediaUrl = readPaintingBodyUrl(record);
+    // media: painting annotation body plus the caption/credit/alt/srcset/sizes
+    // extension terms
+    const painting = readPainting(record);
     const caption = asString(readTerm(record, "mediaCaption"));
     const credit = asString(readTerm(record, "mediaCredit"));
     const alt = asString(readTerm(record, "mediaAlt"));
-    if (mediaUrl !== null || caption !== null || credit !== null || alt !== null) {
+    const srcset = asString(readTerm(record, "mediaSrcset"));
+    const sizes = asString(readTerm(record, "mediaSizes"));
+    if (
+        painting !== null ||
+        caption !== null ||
+        credit !== null ||
+        alt !== null ||
+        srcset !== null ||
+        sizes !== null
+    ) {
         const media: StorymapSlideMedia = {};
-        if (mediaUrl !== null) media.url = mediaUrl;
+        if (painting !== null) media.url = painting.url;
         if (caption !== null) media.caption = caption;
         if (credit !== null) media.credit = credit;
         if (alt !== null) media.alt = alt;
+        if (srcset !== null) media.srcset = srcset;
+        if (sizes !== null) media.sizes = sizes;
         slide.media = media;
     }
 
@@ -260,9 +352,10 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     // aggregated in items order (both are allowed by the proposal)
     const location = readLocation(record.navPlace) ?? readFeatureLocation(manifestFeature);
     if (location !== null) slide.location = location;
-    // IIIF xywh region (StrollView-style image stops): [x, y, w, h] pixels;
-    // invalid regions are ignored
-    const region = readImageRegion(record[STORYMAP_PREFIX + "imageRegion"]);
+    // IIIF xywh region (StrollView-style image stops): [x, y, w, h] pixels.
+    // The extension term wins over the interoperable spelling — an Image API
+    // Selector on the painting annotation target
+    const region = readImageRegion(readTerm(record, "imageRegion")) ?? painting?.region ?? null;
     if (region !== null) {
         slide.location = { ...(slide.location ?? {}), region };
     }
@@ -320,6 +413,17 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
     for (let index = 0; index < items.length; index++) {
         const slide = canvasToSlide(items[index], manifestFeatures[index]);
         if (slide !== null) data.slides.push(slide);
+        // A polygon navPlace states the geographic extent of the story
+        // ("supplying a single geographic bounding box" in the navPlace
+        // extension), which the legacy format expresses as map_bbox. The
+        // first canvas carrying one wins; Point navPlaces are unaffected.
+        if (data.map_bbox === undefined) {
+            const canvas = asRecord(items[index]);
+            const bbox =
+                (canvas ? readNavPlaceBbox(canvas.navPlace) : null) ??
+                readNavPlaceBbox(record.navPlace);
+            if (bbox !== null) data.map_bbox = bbox;
+        }
     }
 
     return data;
@@ -402,4 +506,108 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
 
     const useCustomMarkers = asBoolean(readTerm(config, "useCustomMarkers"));
     if (useCustomMarkers !== null) data.use_custom_markers = useCustomMarkers;
+
+    // landscape map layout: "full" (default) or "left"
+    const mapArea = asString(readTerm(config, "mapArea"));
+    if (mapArea === "full" || mapArea === "left") data.map_area = mapArea;
+
+    const overviewExtent = readLonLatBox(readTerm(config, "overviewExtent"));
+    if (overviewExtent !== null) data.overview_extent = overviewExtent;
+
+    const keyboard = asBoolean(readTerm(config, "keyboard"));
+    if (keyboard !== null) data.keyboard = keyboard;
+
+    // stacked layers above the basemap: extension-term entries and
+    // georeferenced IIIF images (Georeference Extension) may be mixed
+    const overlays = [
+        ...readOverlays(readTerm(config, "overlays")),
+        ...readGeoreferencedLayers(readTerm(config, "georeferencedLayers")),
+    ];
+    if (overlays.length > 0) data.overlays = overlays;
+}
+
+/** Reads a `[west, south, east, north]` lon/lat box of four finite numbers. */
+function readLonLatBox(value: unknown): [number, number, number, number] | null {
+    if (!Array.isArray(value) || value.length !== 4) return null;
+    if (!value.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
+    const [west, south, east, north] = value as number[];
+    if (east <= west || north <= south) return null;
+    return [west, south, east, north];
+}
+
+/** Reads the shared presentation keys of an `overlays[]` entry. */
+function readOverlayPresentation(
+    record: Record<string, unknown>,
+    entry: StorymapOverlayLayer,
+): void {
+    const opacity = asNumber(record.opacity);
+    if (opacity !== null) entry.opacity = opacity;
+    const visible = asBoolean(record.visible);
+    if (visible !== null) entry.visible = visible;
+    const attribution = asString(record.attribution);
+    if (attribution !== null) entry.attribution = attribution;
+    const className = asString(record.className);
+    if (className !== null) entry.className = className;
+    const blendMode = asString(record.blendMode);
+    if (blendMode !== null) entry.blendMode = blendMode;
+    const extent = readLonLatBox(record.extent);
+    if (extent !== null) entry.extent = extent;
+}
+
+/**
+ * Reads `storymap:overlays`: stacked raster layers, each naming any
+ * `map_type` the tile layer factory accepts plus declarative presentation.
+ * Entries without a `map_type` are dropped here (the map skips them too).
+ */
+function readOverlays(value: unknown): StorymapOverlayLayer[] {
+    if (!Array.isArray(value)) return [];
+    const overlays: StorymapOverlayLayer[] = [];
+    for (const item of value) {
+        const record = asRecord(item);
+        if (!record) continue;
+        const mapType = asString(record.map_type);
+        if (mapType === null || mapType === "") continue;
+        const entry: StorymapOverlayLayer = { map_type: mapType };
+        readOverlayPresentation(record, entry);
+        overlays.push(entry);
+    }
+    return overlays;
+}
+
+/**
+ * Reads `storymap:georeferencedLayers`: IIIF images placed on the geographic
+ * map from a Georeference Extension annotation body (the standard model for
+ * a raster map layer — the navPlace/Georeference extensions are the only
+ * geospatial modeling IIIF defines; there is no basemap or tile-stack
+ * vocabulary, which is what the `mapconfig` service above is for).
+ *
+ * Each entry names the image to place (`url`, either an Image API service
+ * base or its info.json), its pixel size and the annotation `body` with its
+ * ground control points. Entries without three usable points are dropped;
+ * whether the points can be placed affinely is decided by the map.
+ */
+function readGeoreferencedLayers(value: unknown): StorymapOverlayLayer[] {
+    if (!Array.isArray(value)) return [];
+    const overlays: StorymapOverlayLayer[] = [];
+    for (const item of value) {
+        const record = asRecord(item);
+        if (!record) continue;
+        const url = asString(record.url);
+        if (url === null) continue;
+        const width = asNumber(record.width);
+        const height = asNumber(record.height);
+        if (width === null || height === null || width <= 0 || height <= 0) continue;
+        const body = asRecord(record.body);
+        if (!body || readGroundControlPoints(body) === null) continue;
+        const georeference: StorymapGeoreference = {
+            url,
+            width,
+            height,
+            body: body as unknown as StorymapGeoreference["body"],
+        };
+        const entry: StorymapOverlayLayer = { georeference };
+        readOverlayPresentation(record, entry);
+        overlays.push(entry);
+    }
+    return overlays;
 }

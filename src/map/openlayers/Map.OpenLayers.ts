@@ -26,7 +26,13 @@ import Map from "../Map";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
 import { padCroppedZoomifyTile } from "./zoomifyTiles";
 import type { LinePoint, ViewToOptions } from "../types";
-import type { LatLngLiteral, StorymapSlide, StorymapSlideLocation } from "../../types";
+import type {
+    LatLngLiteral,
+    StorymapOverlayLayer,
+    StorymapSlide,
+    StorymapSlideLocation,
+} from "../../types";
+import { fitGeoreference, resolveInfoJsonUrl } from "../georeference";
 import { consentManagerOf, consentMessage, type ConsentManager } from "../../storymap/Consent";
 
 /*	Map.OpenLayers
@@ -53,6 +59,12 @@ export default class OpenLayers extends Map {
     declare "_markers": OpenLayersMapMarker[];
     /** App-level stacked overlays (see the `overlays` option) */
     declare "_overlay_layers": TileLayer[];
+    /**
+     * The `overlays[]` entries that produced a layer, parallel to
+     * `_overlay_layers`: a malformed entry is skipped, so the two arrays
+     * can be shorter than the option list.
+     */
+    declare "_overlay_entries": StorymapOverlayLayer[];
     /** rAF handle of the running active-line draw animation */
     declare "_line_animation": number | null;
 
@@ -152,6 +164,7 @@ export default class OpenLayers extends Map {
 
         // Stacked raster overlays (base tiles 1.., below the route lines)
         this._overlay_layers = [];
+        this._overlay_entries = [];
         this._buildOverlays();
 
         // Native interactions (pan/zoom), no scroll zoom by default
@@ -242,12 +255,15 @@ export default class OpenLayers extends Map {
      * Overlays sit above the base tiles (z 1..n) and below the route lines
      * (z 10/11); every entry accepts any `map_type` value plus declarative
      * presentation, so hosts no longer capture and patch layer objects.
+     * An entry carrying a `georeference` places a IIIF image on the
+     * geographic map instead of stacking a tile source.
      */
     _buildOverlays(): void {
         for (const layer of this._overlay_layers) {
             this._map.removeLayer(layer);
         }
         this._overlay_layers = [];
+        this._overlay_entries = [];
         const consent = consentManagerOf(this.options);
         const tile_service = consentMessage("consent_service_tiles", "map tiles");
         if (this.options.consent_required && consent && !consent.isGranted(tile_service)) {
@@ -255,7 +271,20 @@ export default class OpenLayers extends Map {
         }
         const overlays = this.options.overlays ?? [];
         overlays.forEach((entry, i) => {
-            const layer = this._createTileLayer(entry.map_type);
+            let layer: TileLayer | null = null;
+            if (entry.georeference) {
+                layer = this._createGeoreferencedOverlay(entry);
+            } else if (entry.map_type) {
+                layer = this._createTileLayer(entry.map_type);
+            } else {
+                console.warn(
+                    "StoryMapJS: an overlays[] entry has neither map_type nor georeference and was skipped:",
+                    entry,
+                );
+            }
+            if (!layer) {
+                return;
+            }
             layer.setZIndex(1 + i);
             if (entry.opacity !== undefined) {
                 layer.setOpacity(entry.opacity);
@@ -278,9 +307,76 @@ export default class OpenLayers extends Map {
             }
             this._map.addLayer(layer);
             this._overlay_layers.push(layer);
+            this._overlay_entries.push(entry);
             this._paintOverlayBlend(entry);
         });
         this._syncOverlayAttributions();
+    }
+
+    /**
+     * Build a stacked overlay from a IIIF Georeference Extension payload
+     * (`overlays[].georeference`): the ground control points are fitted
+     * affinely and the image is placed as a geographic extent, which
+     * OpenLayers reprojects onto the view exactly like the IIIF basemap.
+     *
+     * The layer is returned empty and filled in asynchronously, mirroring
+     * the `iiif` basemap path — only the fit (pure, synchronous) decides
+     * whether a layer exists at all, so overlay indices stay stable.
+     */
+    _createGeoreferencedOverlay(entry: StorymapOverlayLayer): TileLayer | null {
+        const georeference = entry.georeference;
+        if (!georeference) {
+            return null;
+        }
+        // image-space views (iiif/zoomify) have no geographic space to
+        // place the sheet in
+        if (this._map.getView().getProjection().getCode() !== "EPSG:3857") {
+            console.warn(
+                "StoryMapJS: a georeferenced overlay was skipped because this map has no geographic view (image maps cannot place sheets).",
+            );
+            return null;
+        }
+        const fit = fitGeoreference(georeference.body, georeference.width, georeference.height);
+        if (fit.kind === "skipped") {
+            console.warn(
+                `StoryMapJS: georeferenced overlay ${georeference.url} was skipped: ${fit.reason}.`,
+            );
+            return null;
+        }
+        const layer = new TileLayer();
+        const info_url = resolveInfoJsonUrl(georeference.url);
+        fetch(info_url)
+            .then((r) => r.json())
+            .then((info: unknown) => {
+                const parsed = new IIIFInfo(
+                    info as ImageInformationResponse,
+                ).getTileSourceOptions();
+                const size = info as { width?: number; height?: number };
+                if (typeof size.width !== "number" || typeof size.height !== "number") {
+                    console.error("IIIF info.json is missing width/height:", info_url);
+                    layer.setVisible(false);
+                    return;
+                }
+                layer.setSource(
+                    new IIIF({
+                        ...(parsed ?? {}),
+                        projection: "EPSG:4326",
+                        // the fitted corner box: the affine placement of the
+                        // image in geographic coordinates
+                        extent: fit.bbox,
+                        size: [size.width, size.height],
+                        crossOrigin: "anonymous",
+                        attributions: entry.attribution ? [entry.attribution] : [],
+                    }),
+                );
+            })
+            .catch((err) => {
+                // the layer stays in place (indices must not shift) but
+                // renders nothing; the console carries the reason
+                console.error("IIIF info.json could not be loaded:", info_url, err?.stack || err);
+                layer.setVisible(false);
+            });
+        return layer;
     }
 
     /**
@@ -332,10 +428,9 @@ export default class OpenLayers extends Map {
 
     /** Refresh the attribution line with the visible overlays' credits. */
     _syncOverlayAttributions(): void {
-        const overlays = this.options.overlays ?? [];
         const parts: string[] = [];
         this._overlay_layers.forEach((layer, i) => {
-            const credit = overlays[i]?.attribution;
+            const credit = this._overlay_entries[i]?.attribution;
             if (credit && layer.getVisible()) {
                 parts.push(credit);
             }
@@ -348,14 +443,17 @@ export default class OpenLayers extends Map {
         return this._overlay_layers.length;
     }
 
-    /** Show or hide a stacked overlay by index (re-syncs attribution). */
+    /**
+     * Show or hide a stacked overlay by index (re-syncs attribution). The
+     * index counts built layers, i.e. it skips malformed entries.
+     */
     setOverlayVisible(index: number, visible: boolean): void {
         const layer = this._overlay_layers[index];
         if (!layer) {
             return;
         }
         layer.setVisible(visible);
-        const entry = (this.options.overlays ?? [])[index];
+        const entry = this._overlay_entries[index];
         if (entry && visible) {
             this._paintOverlayBlend(entry);
         }

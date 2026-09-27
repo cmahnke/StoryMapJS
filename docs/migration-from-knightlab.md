@@ -97,7 +97,7 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 
 | Removed                               | Replacement                                                                                                                                                                                                                  |
 | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — or paste the provider's `<iframe>` snippet into the slide text (sanitized, https-only); use another media source for those slides                                               |
+| `vine` media type (service shut down) | vine URLs fall back to the `website` iframe — or paste the provider's `<iframe>` snippet into the slide text (sanitized, https-only); use another media source for those slides                                              |
 | Juxtapose `frame/?uid=` embed URLs    | the `juxtapose.knightlab.com/frame/?uid=` host is dead — use the published format `https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=...` (note: this keeps a Knight Lab CDN dependency for those slides) |
 | Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                                                                                              |
 | Ricoh360/theta360 embeds (#391)       | service no longer available (won't fix) — paste the provider's `<iframe>` snippet into the slide text if the service returns                                                                                                 |
@@ -192,6 +192,14 @@ factory.
   (`schema/storymap.schema.json`); invalid documents are reported to the
   console at load time.
 - IIIF Presentation 3 manifests are accepted directly as storymap sources.
+  The map settings map onto `storymap:` terms of a map configuration service
+  (IIIF has no basemap or tile-layer vocabulary of its own), and the
+  geospatial parts use the native extensions where they exist: `navPlace`
+  Points for slide locations, a `navPlace` Polygon for the story extent
+  (`map_bbox`), an IIIF Image API Selector for `location.region`, and the
+  Georeference Extension for placed rasters. A georeferenced layer is
+  manifest-only (the legacy format cannot express ground control points); see
+  [docs/storymap-as-iiif-manifest.md](storymap-as-iiif-manifest.md#geo-referenced-layers).
 - The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
   Python authoring server are gone — this is a viewer-only library.
 

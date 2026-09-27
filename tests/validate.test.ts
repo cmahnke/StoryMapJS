@@ -67,3 +67,56 @@ test("accepts null string fields (loose real-world data)", () => {
     };
     expect(validateStorymap(data)).toEqual([]);
 });
+
+test("accepts the map_area, overlays, overview_extent and keyboard options", () => {
+    const data: Record<string, unknown> = {
+        storymap: {
+            map_type: "osm",
+            map_area: "left",
+            overview_extent: [-0.6, 51.2, 0.4, 51.8],
+            keyboard: true,
+            overlays: [
+                { map_type: "https://tiles.example.org/a/{z}/{x}/{y}.png", opacity: 0.5 },
+                {
+                    map_type: "https://tiles.example.org/b/{z}/{x}/{y}.png",
+                    visible: false,
+                    className: "ol-layer historic",
+                    blendMode: "multiply",
+                    extent: [-0.4, 51.3, 0.2, 51.7],
+                    attribution: "Second sheet",
+                },
+            ],
+            slides: [
+                {
+                    location: { lat: 51.5, lon: -0.12, region: [0, 0, 800, 600] },
+                    media: {
+                        url: "https://example.com/i.jpg",
+                        alt: "A map",
+                        srcset: "https://example.com/i-480.jpg 480w",
+                        sizes: "50vw",
+                    },
+                },
+            ],
+        },
+    };
+    expect(validateStorymap(data)).toEqual([]);
+});
+
+test("rejects malformed overlays, map_area and overview_extent", () => {
+    const data: Record<string, unknown> = {
+        storymap: {
+            map_area: "sideways",
+            overview_extent: [1, 2, 3],
+            overlays: [
+                { opacity: 0.5 }, // no map_type
+                { map_type: "osm", opacity: 4 }, // out of range
+                { map_type: "osm", extent: [1, 2, 3] }, // not four numbers
+            ],
+            slides: [],
+        },
+    };
+    const errors = validateStorymap(data);
+    expect(errors.some((e) => e.path.includes("map_area"))).toBe(true);
+    expect(errors.some((e) => e.path.includes("overview_extent"))).toBe(true);
+    expect(errors.filter((e) => e.path.includes("overlays")).length).toBe(3);
+});

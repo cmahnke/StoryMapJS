@@ -252,8 +252,12 @@ export interface AnimationHandle {
  * layer objects for blend modes, clips or stacking tweaks.
  */
 export interface StorymapOverlayLayer {
-    /** Any `map_type` value the tile layer factory accepts */
-    map_type: string;
+    /**
+     * Any `map_type` value the tile layer factory accepts. Required unless
+     * the entry carries a `georeference` (a placed IIIF image instead of
+     * a tile source).
+     */
+    map_type?: string;
     /** Layer opacity 0..1 (default 1) */
     opacity?: number;
     /** Initial visibility (default true) */
@@ -272,6 +276,52 @@ export interface StorymapOverlayLayer {
     blendMode?: string;
     /** Clip box `[west, south, east, north]` in lon/lat (mercator maps) */
     extent?: [number, number, number, number];
+    /**
+     * IIIF Georeference Extension placement instead of a tile source. The
+     * ground control points are fitted affinely and the image is placed on
+     * the geographic map, so this is the manifest-side equivalent of a
+     * georeferenced raster overlay.
+     */
+    georeference?: StorymapGeoreference;
+}
+
+/**
+ * A IIIF Georeference Extension annotation body plus the image it places
+ * (`overlays[].georeference`). The `body` is the annotation payload of
+ * `iiif.io/api/extension/georef` verbatim: a GeoJSON FeatureCollection of
+ * ground control points pairing `properties.resourceCoords` (image pixels)
+ * with `geometry.coordinates` (WGS84 lon/lat), optionally carrying a
+ * `transformation` hint.
+ *
+ * The viewer fits the affine (first-order polynomial) case and places the
+ * image with OpenLayers' reprojection, which requires an axis-aligned
+ * placement; rotated or skewed sheets, higher-order polynomials and thin
+ * plate splines are reported and skipped — see the "Geo-referenced layers"
+ * section of docs/storymap-as-iiif-manifest.md.
+ */
+export interface StorymapGeoreference {
+    /** IIIF Image API service base (or a full-size image URL) to place */
+    url: string;
+    /** Image width in pixels (the resourceCoords space) */
+    width: number;
+    /** Image height in pixels */
+    height: number;
+    /** Georeference annotation body: the GCP FeatureCollection */
+    body: StorymapGeoreferenceBody;
+}
+
+export interface StorymapGeoreferenceBody {
+    type?: string;
+    /** `polynomial` with `order: 1`, or absent; other values are skipped */
+    transformation?: { type?: string; options?: { order?: number } };
+    features: StorymapGroundControlPoint[];
+}
+
+/** One ground control point: an image pixel paired with a WGS84 position */
+export interface StorymapGroundControlPoint {
+    type?: string;
+    properties?: { resourceCoords?: [number, number] };
+    geometry?: { type?: string; coordinates?: number[] };
 }
 
 /** OpenLayers passthrough options (see StorymapOptions.map_options) */

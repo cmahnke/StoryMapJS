@@ -53,6 +53,22 @@ Viewer-only restructure of the repository:
 - IIIF: per-slide image regions (location.region as IIIF xywh in image
   pixels) fit the view on navigation for image-map stories, encoded in
   manifests as storymap:imageRegion
+- Storymap JSON: schema entries for map_area, overlays (with per-layer
+  opacity, visibility, attribution, className, blendMode and lon/lat extent),
+  overview_extent and keyboard — plus the slide fields location.region and
+  media.alt/srcset/sizes, and a fix for overlays and overview_extent being
+  silently dropped when they came from the data file instead of the options
+- IIIF manifests: the same options as storymap:mapArea, storymap:overlays,
+  storymap:overviewExtent and storymap:keyboard terms on the map
+  configuration service, storymap:mediaSrcset / storymap:mediaSizes on the
+  canvas, and the native geospatial vocabulary where IIIF has it — a navPlace
+  Polygon as the story extent (map_bbox), an IIIF Image API Selector as
+  location.region
+- IIIF manifests: storymap:georeferencedLayers places a IIIF image on the
+  geographic map from a Georeference Extension annotation body (affine
+  placement of its ground control points); placements needing a
+  non-affine transform or a rotated sheet are reported and skipped, so
+  warped layers stay a tile_source_factory/Allmaps concern
 - Map providers: tile_source_factory option injects custom OpenLayers tile
   layers/sources (e.g. WMS) for the base map, overlays and minimap, with
   recipes in the migration guide

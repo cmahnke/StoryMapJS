@@ -212,6 +212,10 @@ class StoryMapBase {
             map_background_color: "#d9d9d9",
             map_area: "full", // "left" limits the map to the visible half (landscape)
             map_bbox: null,
+            // options the map also declares: updateData only copies keys
+            // that already exist here, so storymap JSON could not reach them
+            overview_extent: null,
+            overlays: [],
             consent_required: false,
             zoomify: undefined,
             text_color: "",

@@ -4,6 +4,12 @@
 //
 // Usage: node scripts/convert-to-iiif.mjs [files...]
 // With no arguments, converts all public/examples/*.json fixtures.
+//
+// Every fixture in public/examples-iiif/ is generated here except
+// georeferenced-layer.json and georeferenced-layer-unsupported.json, which
+// are hand-authored: a georeferenced layer is a manifest-only feature
+// (storymap JSON cannot express ground control points), so there is nothing
+// to convert from.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -201,7 +207,31 @@ function buildMapConfig(storymap, legacy, isZoomify) {
     if (storymap.use_custom_markers !== undefined) {
         config["storymap:useCustomMarkers"] = storymap.use_custom_markers;
     }
+    if (storymap.map_area !== undefined) {
+        config["storymap:mapArea"] = storymap.map_area;
+    }
+    if (isLonLatBox(storymap.overview_extent)) {
+        config["storymap:overviewExtent"] = storymap.overview_extent;
+    }
+    if (storymap.keyboard !== undefined) {
+        config["storymap:keyboard"] = storymap.keyboard;
+    }
+    if (Array.isArray(storymap.overlays) && storymap.overlays.length > 0) {
+        // entries without a map_type are dropped on the way back in
+        config["storymap:overlays"] = storymap.overlays.filter(
+            (entry) => entry && present(entry.map_type),
+        );
+    }
     return config;
+}
+
+/** A `[west, south, east, north]` box of four finite numbers. */
+function isLonLatBox(value) {
+    return (
+        Array.isArray(value) &&
+        value.length === 4 &&
+        value.every((n) => typeof n === "number" && Number.isFinite(n))
+    );
 }
 
 function buildCanvas(manifestId, index, slide, isImageMap) {
@@ -307,6 +337,12 @@ function buildCanvasTerms(slide) {
     }
     if (present(slide.media?.alt)) {
         terms["storymap:mediaAlt"] = slide.media.alt;
+    }
+    if (present(slide.media?.srcset)) {
+        terms["storymap:mediaSrcset"] = slide.media.srcset;
+    }
+    if (present(slide.media?.sizes)) {
+        terms["storymap:mediaSizes"] = slide.media.sizes;
     }
     if (
         Array.isArray(slide.location?.region) &&
