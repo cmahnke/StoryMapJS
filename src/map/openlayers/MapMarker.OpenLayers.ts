@@ -3,6 +3,7 @@ import { fromLonLat } from "ol/proj";
 import type { Map as OlMap } from "ol";
 import MapMarker from "../MapMarker";
 import { clearTimer } from "../../core/Util";
+import { sanitizeSlideText } from "../../media/EmbedUtil";
 import type { LatLngLiteral, MapMarkerData, StorymapOptions } from "../../types";
 
 /*	MapMarker.OpenLayers
@@ -12,25 +13,78 @@ import type { LatLngLiteral, MapMarkerData, StorymapOptions } from "../../types"
 	existing .vco-mapmarker styles apply unchanged.
 ================================================= */
 
+/** The resolved marker presentation: `marker.*` over `location.*`. */
+interface MarkerPresentation {
+    icon?: string;
+    iconSize?: number[];
+    image?: string;
+    label?: string;
+    popup: boolean;
+    audioBadge: boolean;
+    useCustomMarker?: boolean;
+}
+
 export default class OpenLayersMapMarker extends MapMarker {
     declare "_overlay": Overlay;
     declare "_onMarkerClickBound": ((e: Event) => void) | null;
+    /** marker.popup: the active marker opens its card when clicked. */
+    declare "_popup_enabled": boolean;
+    /** marker.audioBadge: flag a slide that has narration or audio media. */
+    declare "_audio_badge": boolean;
+    /**
+     * The popup card while it is open. `declare` fields are undefined until
+     * assigned, so every read below is a truthiness check, never `=== null`,
+     * and there is no constructor to initialise them: `MapMarker`'s own
+     * constructor already runs `_initLayout()` → `_createMarker()`, which
+     * assigns the flags, and initialising afterwards would wipe them.
+     */
+    declare "_popup_el": HTMLElement | null;
+    /** Escape-to-close, detached in dispose(). */
+    declare "_onPopupKeyBound": ((e: KeyboardEvent) => void) | null;
+    /** Mirrors `active()`, as a flag rather than a method reference. */
+    declare "_is_active": boolean;
 
     /*	Create Marker
     ================================================== */
+    /**
+     * The merged marker presentation: `marker.*` wins, `location.*` is the
+     * legacy spelling and still works (docs/plans/iiif-media-tours.md §2).
+     * `location` also stays the carrier of geography, so lat/lon are read
+     * from it alone — presentation never moves a marker.
+     */
+    _presentation(d?: MapMarkerData): MarkerPresentation {
+        const location = (d?.location ?? {}) as Record<string, unknown>;
+        const marker = (d?.marker ?? {}) as Record<string, unknown>;
+        return {
+            icon: (marker.icon as string | undefined) ?? (location.icon as string | undefined),
+            iconSize:
+                (marker.iconSize as number[] | undefined) ??
+                (location.iconSize as number[] | undefined),
+            image: (marker.image as string | undefined) ?? (location.image as string | undefined),
+            // in a manifest the label arrives as the navPlace property `name`
+            label: (marker.label as string | undefined) ?? (location.name as string | undefined),
+            popup: Boolean(marker.popup ?? location.popup),
+            audioBadge: Boolean(marker.audioBadge ?? location.audioBadge),
+            useCustomMarker: location.use_custom_marker as boolean | undefined,
+        };
+    }
+
     _createMarker(d?: MapMarkerData, o?: StorymapOptions): void {
         const location = d?.location;
         if (location && typeof location.lat == "number" && typeof location.lon == "number") {
             this.data.real_marker = true;
-            const use_custom_marker = o?.use_custom_markers || location.use_custom_marker;
-            if (use_custom_marker && location.icon) {
+            const presentation = this._presentation(d);
+            this._popup_enabled = presentation.popup;
+            this._audio_badge = presentation.audioBadge;
+            const use_custom_marker = o?.use_custom_markers || presentation.useCustomMarker;
+            if (use_custom_marker && presentation.icon) {
                 this._custom_icon = {
-                    url: location.icon,
-                    size: location.iconSize || [48, 48],
-                    anchor: this._customIconAnchor(location.iconSize),
+                    url: presentation.icon,
+                    size: presentation.iconSize || [48, 48],
+                    anchor: this._customIconAnchor(presentation.iconSize),
                 };
-            } else if (use_custom_marker && location.image) {
-                this._custom_image_icon = location.image;
+            } else if (use_custom_marker && presentation.image) {
+                this._custom_image_icon = presentation.image;
             }
 
             this._marker = this._createMarkerElement(d as MapMarkerData, o);
@@ -38,9 +92,22 @@ export default class OpenLayersMapMarker extends MapMarker {
             // had no other handle
             this._onMarkerClickBound = (e: Event) => {
                 e.stopPropagation();
+                // the active marker's card toggles instead of navigating:
+                // the slide is already showing, and a popup that also moved
+                // the story would be impossible to dismiss
+                if (this._popup_enabled && this._is_active) {
+                    this._togglePopup();
+                    return;
+                }
                 this._onMarkerClick(e);
             };
             this._marker.addEventListener("click", this._onMarkerClickBound);
+            // Escape closes the card; the listener is on the document and is
+            // detached in dispose(), so a torn-down map leaves nothing behind
+            this._onPopupKeyBound = (e: KeyboardEvent) => {
+                if (e.key === "Escape") this._closePopup();
+            };
+            document.addEventListener("keydown", this._onPopupKeyBound);
         }
     }
 
@@ -129,8 +196,119 @@ export default class OpenLayersMapMarker extends MapMarker {
      * element. Called by the map's dispose(); the marker must not be used
      * afterwards.
      */
+    /*  Marker popup and audio badge
+    ================================================== */
+
+    /**
+     * Toggle the popup card for the *active* marker. Inactive markers keep
+     * their original behaviour — a click navigates — so a popup never
+     * swallows navigation on a map full of pins.
+     *
+     * The card is a DOM element parented to the marker element and positioned
+     * with CSS, which is how it survives a move to the vector renderer
+     * (docs/plans/issue-159-vector-markers.md): only the anchor is the
+     * marker's, and that is `latLon()`.
+     */
+    _togglePopup(): void {
+        if (!this._popup_enabled) return;
+        if (this._popup_el) {
+            this._closePopup();
+            return;
+        }
+        const el = this._createPopupElement();
+        if (el === null) return;
+        this._marker.appendChild(el);
+        this._popup_el = el;
+        this._marker.classList.add("vco-mapmarker-popup-open");
+    }
+
+    _closePopup(): void {
+        if (!this._popup_el) return;
+        this._popup_el.parentNode?.removeChild(this._popup_el);
+        this._popup_el = null;
+        this._marker?.classList?.remove("vco-mapmarker-popup-open");
+    }
+
+    get popupOpen(): boolean {
+        return Boolean(this._popup_el);
+    }
+
+    /**
+     * Headline, a sanitized excerpt, the media thumb and an audio control.
+     * Every piece of text goes through `sanitizeSlideText` — a slide's text
+     * is untrusted input and a marker card is no different (the stored-XSS
+     * audit made that lesson once; a label is attacker-controlled text like
+     * any other).
+     */
+    _createPopupElement(): HTMLElement | null {
+        const data = this.data as unknown as {
+            text?: { headline?: string; text?: string };
+            media?: { thumb?: string | null; url?: string | null; caption?: string | null };
+        };
+        const card = document.createElement("div");
+        card.className = "vco-marker-popup";
+        // a dialog-ish card, not a modal: no focus trap, Escape closes
+        card.setAttribute("role", "group");
+        card.setAttribute("aria-label", data.text?.headline ?? "Slide details");
+
+        const close = document.createElement("button");
+        close.type = "button";
+        close.className = "vco-marker-popup-close";
+        close.setAttribute("aria-label", "Close");
+        close.textContent = "\u00d7";
+        close.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this._closePopup();
+        });
+        card.appendChild(close);
+
+        if (data.media?.thumb) {
+            const img = document.createElement("img");
+            img.className = "vco-marker-popup-thumb";
+            img.src = data.media.thumb;
+            img.alt = data.media.caption ?? "";
+            img.loading = "lazy";
+            card.appendChild(img);
+        }
+
+        const body = document.createElement("div");
+        body.className = "vco-marker-popup-body";
+        if (data.text?.headline) {
+            const h = document.createElement("h3");
+            h.className = "vco-marker-popup-headline";
+            h.appendChild(sanitizeSlideText(data.text.headline));
+            body.appendChild(h);
+        }
+        if (data.text?.text) {
+            const p = document.createElement("p");
+            p.className = "vco-marker-popup-excerpt";
+            p.appendChild(sanitizeSlideText(data.text.text));
+            body.appendChild(p);
+        }
+        card.appendChild(body);
+        return card;
+    }
+
+    /**
+     * A small indicator on markers whose slide has narration or audio media
+     * (the Micrio affordance). Recomputed on activation, because a slide's
+     * media may only be known once it is resolved.
+     */
+    _updateAudioBadge(): void {
+        if (!this._audio_badge) return;
+        const media = (this.data as unknown as { media?: { mediatype?: { type?: string } } }).media;
+        const kind = media?.mediatype?.type;
+        const audible = kind === "audio" || kind === "video" || !!this.data.narration;
+        this._marker.classList.toggle("vco-mapmarker-has-audio", audible);
+    }
+
     dispose(): void {
         const marker = this._marker as unknown as HTMLElement | null;
+        this._closePopup();
+        if (this._onPopupKeyBound) {
+            document.removeEventListener("keydown", this._onPopupKeyBound);
+            this._onPopupKeyBound = null;
+        }
         if (this._onMarkerClickBound) {
             marker?.removeEventListener?.("click", this._onMarkerClickBound);
             this._onMarkerClickBound = null;
@@ -145,6 +323,13 @@ export default class OpenLayersMapMarker extends MapMarker {
     }
 
     _active(a: boolean): void {
+        this._is_active = a;
+        if (!a) {
+            // navigating away closes the card: a popup belongs to its stop
+            this._closePopup();
+        } else {
+            this._updateAudioBadge();
+        }
         if (this.data.media && this.data.media.mediatype) {
             this.media_icon_class = "vco-mapmarker-icon vco-icon-" + this.data.media.mediatype.type;
         } else {

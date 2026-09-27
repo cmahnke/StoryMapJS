@@ -144,3 +144,99 @@ $map-icon-width: 38px;
         // top: 6px;
     }
 }
+
+/*  Marker popup and audio badge (docs/plans/iiif-media-tours.md §2)
+================================================== */
+// A card anchored to the marker element: it is a DOM child, so it travels
+// with the pin and needs no positioning maths. 44px tap targets and a
+// visible focus ring, like the rest of the map furniture.
+.vco-mapmarker-popup-open {
+    z-index: 1100; // above the active pin's 1000
+}
+
+.vco-marker-popup {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    width: max-content;
+    max-width: 260px;
+    padding: 10px 12px;
+    border: 1px solid rgb(0 0 0 / 20%);
+    border-radius: 4px;
+    background: #fff;
+    color: #222;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 25%);
+    cursor: default;
+    pointer-events: auto; // the pin's overlay sets stopEvent: false
+
+    .vco-marker-popup-close {
+        flex: 0 0 auto;
+        min-width: 28px;
+        min-height: 28px;
+        margin: -4px -4px 0 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+
+        &:focus-visible {
+            outline: 2px solid #1a6fb5;
+            outline-offset: 1px;
+        }
+    }
+
+    .vco-marker-popup-thumb {
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
+        border-radius: 2px;
+        object-fit: cover;
+    }
+
+    .vco-marker-popup-body {
+        min-width: 0;
+    }
+
+    .vco-marker-popup-headline {
+        margin: 0 0 4px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .vco-marker-popup-excerpt {
+        margin: 0;
+    }
+
+    // a long card is capped and scrolls rather than growing off-screen
+    p,
+    .vco-marker-popup-excerpt {
+        max-height: 8em;
+        overflow-y: auto;
+    }
+}
+
+// A slide with narration or audio media: a small dot on the pin, so a tour's
+// audible stops are visible without reading the card.
+.vco-mapmarker-has-audio {
+    &::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 8px;
+        height: 8px;
+        border: 1px solid #fff;
+        border-radius: 50%;
+        background: #d24d4d;
+    }
+}

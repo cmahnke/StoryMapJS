@@ -1,4 +1,10 @@
 {
+    "be": ["messages.consent_service_narration"],
+    "bg": ["messages.consent_service_narration"],
+    "cs": ["messages.consent_service_narration"],
+    "de": ["messages.consent_service_narration"],
+    "el": ["messages.consent_service_narration"],
+    "es": ["messages.consent_service_narration"],
     "et": [
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
@@ -7,9 +13,13 @@
         "messages.consent_deny",
         "messages.consent_message",
         "messages.consent_service_fonts",
+        "messages.consent_service_narration",
         "messages.consent_service_tiles",
         "messages.error"
     ],
+    "fr": ["messages.consent_service_narration"],
+    "he": ["messages.consent_service_narration"],
+    "hu": ["messages.consent_service_narration"],
     "is": [
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
@@ -18,9 +28,14 @@
         "messages.consent_deny",
         "messages.consent_message",
         "messages.consent_service_fonts",
+        "messages.consent_service_narration",
         "messages.consent_service_tiles",
         "messages.error"
     ],
+    "it": ["messages.consent_service_narration"],
+    "jp": ["messages.consent_service_narration"],
+    "ko": ["messages.consent_service_narration"],
+    "nl": ["messages.consent_service_narration"],
     "nn": [
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
@@ -29,9 +44,15 @@
         "messages.consent_deny",
         "messages.consent_message",
         "messages.consent_service_fonts",
+        "messages.consent_service_narration",
         "messages.consent_service_tiles",
         "messages.error"
     ],
+    "no": ["messages.consent_service_narration"],
+    "pl": ["messages.consent_service_narration"],
+    "pt": ["messages.consent_service_narration"],
+    "ru": ["messages.consent_service_narration"],
+    "sk": ["messages.consent_service_narration"],
     "sr": [
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
@@ -41,9 +62,13 @@
         "messages.consent_deny",
         "messages.consent_message",
         "messages.consent_service_fonts",
+        "messages.consent_service_narration",
         "messages.consent_service_tiles",
         "messages.error"
     ],
+    "sv": ["messages.consent_service_narration"],
+    "tr": ["messages.consent_service_narration"],
+    "uk": ["messages.consent_service_narration"],
     "ur": [
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
@@ -52,7 +77,10 @@
         "messages.consent_deny",
         "messages.consent_message",
         "messages.consent_service_fonts",
+        "messages.consent_service_narration",
         "messages.consent_service_tiles",
         "messages.error"
-    ]
+    ],
+    "zh-cn": ["messages.consent_service_narration"],
+    "zh-tw": ["messages.consent_service_narration"]
 }

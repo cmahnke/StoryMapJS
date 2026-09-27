@@ -7,6 +7,7 @@ import {
     consentManagerOf,
     fontService,
     mediaService,
+    narrationService,
     tileService,
     type ConsentService,
 } from "./Consent";
@@ -36,7 +37,13 @@ import Animate from "../animation/tween";
 import type { Map as OlMap } from "ol";
 import type OlLayer from "ol/layer/Layer";
 import type OpenLayersMapMarker from "../map/openlayers/MapMarker.OpenLayers";
-import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
+import type {
+    AnimationHandle,
+    StorymapData,
+    StorymapDataWrapper,
+    StorymapOptions,
+    StorymapSlide,
+} from "../types";
 
 /** Map height in pixels while the menubar has collapsed the map (portrait only). */
 const COLLAPSED_MAP_HEIGHT = 1;
@@ -136,6 +143,18 @@ class StoryMapBase {
     declare "_autoplay_timer": ReturnType<typeof setTimeout> | null;
     declare "_transition_timer": ReturnType<typeof setTimeout> | null;
     declare "_autoplay_stopped": boolean;
+    /** The narration player: one <audio> for the whole story, reused. */
+    declare "_narration_el": HTMLAudioElement | null;
+    /** Guards a stale play() from a slide change that already moved on. */
+    declare "_narration_token": number;
+    /** Whether narration consent was granted (asked once per story). */
+    declare "_narration_allowed": boolean;
+    /** True once the visitor has clicked/keyed: unmuted audio needs this. */
+    declare "_user_gestured": boolean;
+    /** The advance armed for the current slide (media-ended or the timer). */
+    declare "_autoplay_advance": (() => void) | null;
+    /** A narration that was skipped for want of a gesture, to retry later. */
+    declare "_replayNarrationAfterGesture": boolean;
     declare "_hash_initialized": boolean;
     declare "_collapsed": boolean;
     /** the data source was a IIIF Presentation manifest (legacy zoomify options are ignored) */
@@ -281,6 +300,7 @@ class StoryMapBase {
             keyboard: false,
             nocache: false,
             autoplay: 0,
+            autoplay_media: false,
             show_progress: false,
             marker_labels: false,
             text_align: "left",
@@ -352,6 +372,12 @@ class StoryMapBase {
         this._autoplay_timer = null;
         this._transition_timer = null;
         this._autoplay_stopped = false;
+        this._narration_el = null;
+        this._narration_token = 0;
+        this._narration_allowed = true;
+        this._user_gestured = false;
+        this._replayNarrationAfterGesture = false;
+        this._autoplay_advance = null;
         this._hash_initialized = false;
         this._collapsed = false;
 
@@ -675,6 +701,7 @@ class StoryMapBase {
             this.fire("change", { current_slide: this.current_slide }, this);
         }
         this._syncHash();
+        this._playNarration(this.data.slides?.[this.current_slide]);
         this._scheduleAutoplay();
         this._updateProgress();
     }
@@ -865,6 +892,11 @@ class StoryMapBase {
         // is awaiting; settle it before the children go away
         consentManagerOf(this.options)?.dispose();
 
+        this._stopNarration();
+        if (this._narration_el) {
+            this._narration_el.src = "";
+            this._narration_el = null;
+        }
         this._storyslider?.dispose?.();
         this._menubar?.dispose?.();
         this._map?.dispose?.();
@@ -1311,6 +1343,15 @@ class StoryMapBase {
             // never disagree about a service's name
             services.push(mediaService(match.type, match.name));
         }
+        // Slide narration is its own service: the recording plays through a
+        // dedicated audio element, not through Media, so nothing else asks
+        // for it — without this the GDPR mode would have a hole.
+        const has_narration = (this.data.slides ?? []).some(
+            (slide) => !!(slide.narration as { url?: string } | null)?.url,
+        );
+        if (has_narration && !seen.has("narration")) {
+            services.push(narrationService());
+        }
         // external web fonts (same-origin themes never ask). Compared by
         // origin, not by a prefix test on the resolved URL: resolveFontCssUrl
         // has already turned a relative path into an absolute one, so testing
@@ -1324,9 +1365,94 @@ class StoryMapBase {
 
     /*  Autoplay (issue #380) and hash bookmarks (issue #146)
     ================================================== */
+    /*  Narration (docs/plans/iiif-media-tours.md §2)
+    ================================================== */
+
+    /**
+     * Play the current slide's narration, if it has one.
+     *
+     * One `<audio>` element is reused for the whole story rather than a
+     * player per slide, so switching slides cannot leave a recording playing
+     * behind. Two things gate it:
+     *
+     * - **browser autoplay policy**: unmuted audio only plays after a user
+     *   gesture, so before the first interaction the element is left paused
+     *   and nothing is reported as broken. Re-arm on the first interaction.
+     * - **consent**: the `media:narration` service is requested at start-up
+     *   (see `_startConsentAsk`); a denied or unanswered service means no
+     *   playback, and the story still works.
+     */
+    _playNarration(slide: StorymapSlide | undefined, allow_without_gesture = false) {
+        const url = (slide?.narration as { url?: string } | null)?.url;
+        this._stopNarration();
+        if (!url || this._disposed || !this._narration_allowed) return;
+        if (!allow_without_gesture && !this._has_user_gesture()) {
+            this._replayNarrationAfterGesture = true;
+            return;
+        }
+        const el = this._narrationElement();
+        el.src = url;
+        el.currentTime = 0;
+        const token = ++this._narration_token;
+        // a rejected play() (policy, network) must not surface as an
+        // unhandled rejection
+        void el.play()?.catch?.(() => {
+            if (token === this._narration_token) this._replayNarrationAfterGesture = true;
+        });
+    }
+
+    _narrationElement(): HTMLAudioElement {
+        if (this._narration_el === null) {
+            this._narration_el = document.createElement("audio");
+            this._narration_el.className = "vco-media-item vco-narration";
+            this._narration_el.preload = "none";
+            this._narration_el.setAttribute("aria-hidden", "true");
+        }
+        return this._narration_el;
+    }
+
+    _stopNarration() {
+        this._narration_token++;
+        const el = this._narration_el;
+        if (!el) return;
+        el.pause();
+        el.removeAttribute("src");
+    }
+
+    /** A gesture has happened, so unmuted audio is allowed from now on. */
+    _note_user_gesture_for_narration() {
+        if (this._disposed) return;
+        this._narration_allowed = this._narration_allowed && true;
+        if (this._replayNarrationAfterGesture) {
+            this._replayNarrationAfterGesture = false;
+            this._playNarration(this.data.slides?.[this.current_slide], true);
+        }
+    }
+
+    _has_user_gesture(): boolean {
+        return this._user_gestured;
+    }
+
     _startAutoplay() {
         this._stopAutoplay();
         this._autoplay_stopped = false;
+        // a denied media:narration service means no narration for this story
+        const manager = consentManagerOf(this.options);
+        if (manager && this.options.consent_required) {
+            this._narration_allowed = !manager.isDenied(narrationService().key);
+        }
+        // browsers only allow unmuted audio after a user gesture; the first
+        // interaction arms narration for the rest of the story
+        if (!this._user_gestured) {
+            const on_gesture = () => {
+                this._user_gestured = true;
+                this._note_user_gesture_for_narration();
+                this._el.container.removeEventListener("pointerdown", on_gesture);
+                this._el.container.removeEventListener("keydown", on_gesture);
+            };
+            this._el.container.addEventListener("pointerdown", on_gesture, { once: true });
+            this._el.container.addEventListener("keydown", on_gesture, { once: true });
+        }
         // prefers-reduced-motion: no autoplay (WCAG 2.2.2)
         if (this.options.autoplay > 0 && !prefersReducedMotion()) {
             // any user interaction stops autoplay permanently
@@ -1341,17 +1467,39 @@ class StoryMapBase {
         }
     }
 
+    /**
+     * Arm autoplay for the current slide.
+     *
+     * With `autoplay_media` on and a slide whose media is playable audio or
+     * video, the advance waits for that media to end instead of using the
+     * `autoplay` millisecond timer. The timer is **kept as a fallback** in
+     * that case too: a media element that never fires `ended` (a stalled
+     * fetch, a codec the browser cannot play, or a slide whose media was
+     * never loaded because the visitor skipped past it) would otherwise stop
+     * the story dead. So both are armed, whichever fires first advances, and
+     * the other is cleared.
+     */
     _scheduleAutoplay() {
         this._stopAutoplay();
-        if (this.options.autoplay > 0 && !this._autoplay_stopped) {
-            this._autoplay_timer = setTimeout(() => {
-                this._autoplay_timer = null;
-                if (this.current_slide + 1 < this.data.slides.length) {
-                    this.goTo(this.current_slide + 1);
-                    this._scheduleAutoplay();
-                }
-            }, this.options.autoplay);
+        if (!(this.options.autoplay > 0) || this._autoplay_stopped) return;
+
+        const advance = () => {
+            this._stopAutoplay();
+            if (this.current_slide + 1 < this.data.slides.length) {
+                this.goTo(this.current_slide + 1);
+                this._scheduleAutoplay();
+            }
+        };
+        this._autoplay_advance = advance;
+
+        if (this.options.autoplay_media) {
+            const slide = this._storyslider?._slides?.[this.current_slide];
+            if (slide?.hasPlayableMedia?.()) {
+                slide.onMediaEnded(advance);
+            }
         }
+
+        this._autoplay_timer = setTimeout(advance, this.options.autoplay);
     }
 
     _stopAutoplay() {
@@ -1359,6 +1507,7 @@ class StoryMapBase {
             clearTimeout(this._autoplay_timer);
             this._autoplay_timer = null;
         }
+        this._autoplay_advance = null;
     }
 
     /** Keep the URL hash in sync with the current slide (#slide-N). */

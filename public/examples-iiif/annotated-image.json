@@ -1,0 +1,188 @@
+{
+    "@context": [
+        "http://iiif.io/api/presentation/3/context.json",
+        "http://iiif.io/api/extension/navplace/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/annotated-image",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "Annotation-driven tour"
+        ]
+    },
+    "summary": {
+        "none": [
+            "One canvas as an image map, four tour stops: every commenting, tagging, classifying or describing annotation with a fragment target becomes a slide that fits the region it points at."
+        ]
+    },
+    "requiredStatement": {
+        "label": {
+            "none": [
+                "Attribution"
+            ]
+        },
+        "value": {
+            "none": [
+                "The Laocoön and His Sons, IIIF Image API example reference"
+            ]
+        }
+    },
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/annotated-image/map-config",
+            "type": "Service",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
+            "storymap:mapType": "iiif",
+            "storymap:mapAsImage": true,
+            "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json"
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/annotated-image/canvas/1",
+            "type": "Canvas",
+            "height": 3000,
+            "width": 2315,
+            "label": {
+                "none": [
+                    "The sculpture"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "The whole panel, before any detail."
+                ]
+            },
+            "storymap:type": "overview",
+            "items": [
+                {
+                    "id": "https://example.org/storymap/annotated-image/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/annotated-image/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/annotated-image/canvas/1"
+                        }
+                    ]
+                },
+                {
+                    "id": "https://example.org/storymap/annotated-image/canvas/1/annotationpage/2",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/annotated-image/canvas/1/annotation/101",
+                            "type": "Annotation",
+                            "motivation": "commenting",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/plain",
+                                "value": "First paragraph of the stop.\n\nSecond paragraph, separated by a blank line."
+                            },
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": "https://example.org/storymap/annotated-image/canvas/1",
+                                "selector": {
+                                    "type": "FragmentSelector",
+                                    "value": "xywh=700,300,900,900"
+                                }
+                            }
+                        },
+                        {
+                            "id": "https://example.org/storymap/annotated-image/canvas/1/annotation/102",
+                            "type": "Annotation",
+                            "motivation": "describing",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/html",
+                                "value": "<p>Lower group, with the <em>inscription</em> below.</p>"
+                            },
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": "https://example.org/storymap/annotated-image/canvas/1",
+                                "selector": {
+                                    "type": "FragmentSelector",
+                                    "value": "xywh=120,1500,1100,900"
+                                }
+                            },
+                            "label": {
+                                "none": [
+                                    "The lower group"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "https://example.org/storymap/annotated-image/canvas/1/annotation/103",
+                            "type": "Annotation",
+                            "motivation": "commenting",
+                            "body": {
+                                "id": "https://example.org/audio/inscription.mp3",
+                                "type": "Sound",
+                                "format": "audio/mpeg",
+                                "label": {
+                                    "none": [
+                                        "Reading of the inscription"
+                                    ]
+                                }
+                            },
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": "https://example.org/storymap/annotated-image/canvas/1",
+                                "selector": {
+                                    "type": "FragmentSelector",
+                                    "value": "xywh=150,2200,700,700"
+                                }
+                            }
+                        },
+                        {
+                            "id": "https://example.org/storymap/annotated-image/canvas/1/annotation/104",
+                            "type": "Annotation",
+                            "motivation": "tagging",
+                            "body": {
+                                "type": "TextualBody",
+                                "format": "text/plain",
+                                "value": "A pin in the middle of the group."
+                            },
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": "https://example.org/storymap/annotated-image/canvas/1",
+                                "selector": {
+                                    "type": "PointSelector",
+                                    "x": 1150,
+                                    "y": 1500
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -28,6 +28,11 @@ const LOCATION_PROPERTIES = [
     "iconSize",
     "image",
     "use_custom_marker",
+    // marker presentation with no IIIF vocabulary of its own: a GeoJSON
+    // foreign member needs no registration, which is why these live here
+    // rather than in a storymap: term (docs/plans/iiif-media-tours.md §2)
+    "popup",
+    "audioBadge",
 ] as const;
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -69,32 +74,168 @@ function readImageRegion(value: unknown): [number, number, number, number] | nul
 }
 
 /**
- * Reads an xywh region from a Web Annotation target, using the IIIF Image
- * API Selector (`selector: {type: "ImageApiSelector", value: "xywh=0,0,…"}`)
- * and the equivalent fragment selector. This is the interoperable spelling
- * of `storymap:imageRegion`: an annotation targeted at a SpecificResource
- * paints only that region of the image. Returns null for other selectors
- * (SVG polygons, points) and for malformed values.
+ * A selector, normalized. Every field is optional and the object is a
+ * *superset* carrier: an annotation may carry a region, a point, a quote and a
+ * time range at once, and we keep what we understand instead of stopping at
+ * the first hit.
+ *
+ * - `region`: xywh image pixels. From an Image API Selector / FragmentSelector
+ *   (`xywh=`), or synthesized from a `point` when the canvas size is known.
+ * - `point`: x/y image pixels, from a `PointSelector`.
+ * - `quote`: a `TextQuoteSelector`. Preserved, **not resolved** — a canvas
+ *   carries no transcript, so matching the quoted text needs one the tour
+ *   supplies. See docs/iiif-authoring.md.
+ * - `time`: start/end in seconds, from a `TimeState` or `start`/`end` on a
+ *   SpecificResource, for time-anchored stops and narration.
+ * - `svg`: an `SvgSelector`'s shape markup. Preserved for round-tripping; the
+ *   viewer fits `region`, so a non-rectangular selection is not highlighted
+ *   with its true outline yet.
  */
-function readTargetRegion(value: unknown): [number, number, number, number] | null {
-    const target = asRecord(value);
-    if (!target) return null;
-    const selectors = Array.isArray(target.selector) ? target.selector : [target.selector];
-    for (const entry of selectors) {
-        const selector = asRecord(entry);
-        if (!selector) continue;
-        const type = asString(selector.type);
-        if (type !== "ImageApiSelector" && type !== "FragmentSelector") continue;
+export interface ReadSelector {
+    region: [number, number, number, number] | null;
+    point: { x: number; y: number } | null;
+    quote: { exact: string; prefix?: string; suffix?: string } | null;
+    time: { start?: number; end?: number } | null;
+    svg: string | null;
+}
+
+const EMPTY_SELECTOR: ReadSelector = {
+    region: null,
+    point: null,
+    quote: null,
+    time: null,
+    svg: null,
+};
+
+function isEmptySelector(sel: ReadSelector): boolean {
+    return (
+        sel.region === null &&
+        sel.point === null &&
+        sel.quote === null &&
+        sel.time === null &&
+        sel.svg === null
+    );
+}
+
+/** A `PointSelector` is a pin, which the viewer cannot fit, so we synthesize
+ *  a square of 5% of the canvas's smaller side, centred on the point and
+ *  clamped to the canvas. Stated once, here: the annotation-driven stops in
+ *  docs/plans/iiif-media-tours.md consume this rather than re-deriving it. */
+const POINT_SQUARE_FRACTION = 0.05;
+
+function pointToRegion(
+    point: { x: number; y: number },
+    width: number | null,
+    height: number | null,
+): [number, number, number, number] | null {
+    if (width === null || height === null) return null;
+    if (!(width > 0) || !(height > 0)) return null;
+    const side = Math.max(1, Math.round(Math.min(width, height) * POINT_SQUARE_FRACTION));
+    const x = Math.max(0, Math.min(width - side, Math.round(point.x - side / 2)));
+    const y = Math.max(0, Math.min(height - side, Math.round(point.y - side / 2)));
+    return [x, y, side, side];
+}
+
+/** One selector entry, plus one level of `refinedBy`. */
+function readSelectorEntry(entry: unknown, out: ReadSelector, depth = 0): void {
+    const selector = asRecord(entry);
+    if (!selector) return;
+    const type = asString(selector.type);
+
+    if (type === "ImageApiSelector" || type === "FragmentSelector") {
         const raw = asString(selector.value);
-        if (raw === null) continue;
-        const match = /xywh=(pixel:)?([^,]+),([^,]+),([^,]+),([^,]+)/.exec(raw);
-        if (!match) continue;
-        const parts = match.slice(2).map(Number);
-        if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) continue;
-        if (parts[0] < 0 || parts[1] < 0 || parts[2] <= 0 || parts[3] <= 0) continue;
-        return parts as [number, number, number, number];
+        if (raw !== null && out.region === null) {
+            const match = /xywh=(pixel:)?([^,]+),([^,]+),([^,]+),([^,]+)/.exec(raw);
+            if (match) {
+                const parts = match.slice(2).map(Number);
+                if (parts.length === 4 && parts.every((n) => Number.isFinite(n))) {
+                    if (parts[0] >= 0 && parts[1] >= 0 && parts[2] > 0 && parts[3] > 0) {
+                        out.region = parts as [number, number, number, number];
+                    }
+                }
+            }
+        }
+    } else if (type === "PointSelector") {
+        const x = asNumber(selector.x);
+        const y = asNumber(selector.y);
+        if (x !== null && y !== null && out.point === null) {
+            out.point = { x, y };
+        }
+    } else if (type === "TextQuoteSelector") {
+        const exact = asString(selector.exact);
+        if (exact !== null && out.quote === null) {
+            const prefix = asString(selector.prefix);
+            const suffix = asString(selector.suffix);
+            out.quote = {
+                exact,
+                ...(prefix !== null ? { prefix } : {}),
+                ...(suffix !== null ? { suffix } : {}),
+            };
+        }
+    } else if (type === "SvgSelector") {
+        const value = asString(selector.value);
+        if (value !== null && out.svg === null) out.svg = value;
+    } else if (type === "TimeState" || type === "oa:TimeState") {
+        const state = asRecord(selector);
+        const start = asNumber(state?.start);
+        const end = asNumber(state?.end);
+        if ((start !== null || end !== null) && out.time === null) {
+            out.time = { ...(start !== null ? { start } : {}), ...(end !== null ? { end } : {}) };
+        }
     }
-    return null;
+
+    if (depth < 1) {
+        const refined = Array.isArray(selector.refinedBy)
+            ? selector.refinedBy
+            : [selector.refinedBy];
+        for (const nested of refined) readSelectorEntry(nested, out, depth + 1);
+    }
+}
+
+/**
+ * Reads a Web Annotation target (a string fragment, a SpecificResource, or
+ * either carrying `selector`/`state` arrays) into a normalized
+ * {@link ReadSelector}. `width`/`height` are the canvas size in pixels, used
+ * only to synthesize a region from a point selector; pass null when unknown.
+ */
+export function readSelector(
+    target: unknown,
+    width: number | null = null,
+    height: number | null = null,
+): ReadSelector {
+    const out: ReadSelector = { ...EMPTY_SELECTOR };
+
+    // A bare string target may carry the fragment: "…/canvas/2#xywh=10,20,30,40"
+    const asText = asString(target);
+    if (asText !== null) {
+        readSelectorEntry({ type: "FragmentSelector", value: asText }, out);
+    }
+
+    const record = asRecord(target);
+    if (record) {
+        const selectors = Array.isArray(record.selector) ? record.selector : [record.selector];
+        for (const entry of selectors) readSelectorEntry(entry, out);
+        const states = Array.isArray(record.state) ? record.state : [record.state];
+        for (const entry of states) readSelectorEntry(entry, out);
+    }
+
+    // A SpecificResource may carry the time range directly.
+    if (record && out.time === null) {
+        const start = asNumber(record.start);
+        const end = asNumber(record.end);
+        if (start !== null || end !== null) {
+            out.time = {
+                ...(start !== null ? { start } : {}),
+                ...(end !== null ? { end } : {}),
+            };
+        }
+    }
+
+    if (out.region === null && out.point !== null) {
+        out.region = pointToRegion(out.point, width, height);
+    }
+
+    return isEmptySelector(out) ? { ...EMPTY_SELECTOR } : out;
 }
 
 /**
@@ -165,15 +306,100 @@ function readMapConfig(manifest: Record<string, unknown>): Record<string, unknow
 }
 
 /**
- * Reads the slide media URL from the canvas's painting annotation body:
- * typed bodies contribute their `id`, TextualBody (HTML) content its `value`
- * - the legacy format stores both in `media.url`. Also returns the xywh
- * region of an Image API Selector on the annotation target, if any.
+ * What a painting annotation tells us about a slide's media.
+ *
+ * This is the **shared body record** the annotation-driven stops in
+ * docs/plans/iiif-media-tours.md read: `type` is how a `Sound` body is told
+ * from an `Image` or a `TextualBody`. Anything else that needs a field from
+ * the body belongs on this record rather than in a second reader.
  */
-function readPainting(canvas: Record<string, unknown>): {
+export interface PaintingBody {
     url: string;
     region: [number, number, number, number] | null;
-} | null {
+    /** Body class: `Image`, `Sound`, `Video`, `Text`, `Dataset`, … */
+    type: string | null;
+    format: string | null;
+    /** `body.label` — the interoperable caption. */
+    label: string | null;
+    /** `body.accessibilitySummary` — the interoperable alt text. */
+    accessibilitySummary: string | null;
+    /** `body.requiredStatement` values, in order, joined for the credit. */
+    credit: string | null;
+    thumbnail: string | null;
+    /** `duration` in seconds, and an explicit `start`/`end` range. */
+    duration: number | null;
+    start: number | null;
+    end: number | null;
+    /**
+     * A WebVTT subtitle file, from a `TextualBody` body with
+     * `format: "text/vtt"` and an `id`. IIIF has no subtitle term, so this is
+     * the one standard shape we opportunistically accept; `media.subtitles`
+     * in storymap JSON is the documented route.
+     */
+    subtitles: string | null;
+}
+
+/** Credit from `body.requiredStatement` (0..n, each a label/value pair) or
+ *  `body.provider`, which is where a manifest records who made the media. */
+function readBodyCredit(body: unknown): string | null {
+    const record = asRecord(body);
+    if (!record) return null;
+    const statements = Array.isArray(record.requiredStatement)
+        ? record.requiredStatement
+        : record.requiredStatement !== undefined
+          ? [record.requiredStatement]
+          : [];
+    for (const entry of statements) {
+        const value = flattenLanguageMap(asRecord(entry)?.value);
+        if (value !== "") return value;
+    }
+    const provider = asRecord(record.provider);
+    const providerLabel = provider === null ? "" : flattenLanguageMap(provider.label);
+    if (providerLabel !== "") return providerLabel;
+    return null;
+}
+
+/** A `TextualBody` carrying WebVTT is the closest standard spelling of a
+ *  subtitle track, so accept it alongside `media.subtitles`. */
+function readBodySubtitles(body: unknown): string | null {
+    const entries = Array.isArray(body) ? body : [body];
+    for (const entry of entries) {
+        const record = asRecord(entry);
+        if (!record) continue;
+        const format = asString(record.format);
+        const id = asString(record.id);
+        if (format !== null && /^text\/vtt$/i.test(format) && id !== null) return id;
+    }
+    return null;
+}
+
+/** Picks the first body of a `body` array that yields a URL. */
+function readFirstTypedBody(body: unknown): Record<string, unknown> | null {
+    if (Array.isArray(body)) {
+        for (const entry of body) {
+            const found = readFirstTypedBody(entry);
+            if (found !== null) return found;
+        }
+        return null;
+    }
+    const record = asRecord(body);
+    if (!record) return null;
+    const url = asString(record.id) ?? asString(record.value);
+    return url === null ? null : record;
+}
+
+/**
+ * Reads the slide media URL from the canvas's painting annotation body:
+ * typed bodies contribute their `id`, TextualBody (HTML) content its `value`
+ * - the legacy format stores both in `media.url`. Also returns the region of
+ * a selector on the annotation target, and the body fields listed on
+ * {@link PaintingBody}.
+ */
+function readPainting(
+    canvas: Record<string, unknown>,
+    width: number | null = null,
+    height: number | null = null,
+): PaintingBody | null {
     const annotationPages = Array.isArray(canvas.items) ? canvas.items : [];
     for (const page of annotationPages) {
         const pageRecord = asRecord(page);
@@ -184,29 +410,24 @@ function readPainting(canvas: Record<string, unknown>): {
             if (!annotationRecord) continue;
             const motivation = asString(annotationRecord.motivation);
             if (motivation !== null && motivation !== "painting") continue;
-            const url = readBodyUrl(annotationRecord.body);
-            if (url !== null) {
-                return { url, region: readTargetRegion(annotationRecord.target) };
-            }
+            const body = readFirstTypedBody(annotationRecord.body);
+            if (body === null) continue;
+            return {
+                url: asString(body.id) ?? asString(body.value) ?? "",
+                region: readSelector(annotationRecord.target, width, height).region,
+                type: asString(body.type),
+                format: asString(body.format),
+                label: flattenLanguageMap(body.label) || null,
+                accessibilitySummary: flattenLanguageMap(body.accessibilitySummary) || null,
+                credit: readBodyCredit(body),
+                thumbnail: asString(asRecord(body.thumbnail)?.id) ?? null,
+                duration: asNumber(body.duration),
+                start: asNumber(body.start),
+                end: asNumber(body.end),
+                subtitles: readBodySubtitles(annotationRecord.body),
+            };
         }
     }
-    return null;
-}
-
-function readBodyUrl(body: unknown): string | null {
-    if (Array.isArray(body)) {
-        for (const entry of body) {
-            const url = readBodyUrl(entry);
-            if (url !== null) return url;
-        }
-        return null;
-    }
-    const record = asRecord(body);
-    if (!record) return null;
-    const id = asString(record.id);
-    if (id !== null) return id;
-    const value = asString(record.value);
-    if (value !== null) return value;
     return null;
 }
 
@@ -323,11 +544,14 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     }
 
     // media: painting annotation body plus the caption/credit/alt/srcset/sizes
-    // extension terms
-    const painting = readPainting(record);
-    const caption = asString(readTerm(record, "mediaCaption"));
-    const credit = asString(readTerm(record, "mediaCredit"));
-    const alt = asString(readTerm(record, "mediaAlt"));
+    // extension terms. The extension terms keep winning for now; the
+    // standard properties are read as fallbacks. Dropping the terms and
+    // inverting the precedence is docs/plans/iiif-interop.md §2, which is a
+    // separate, breaking change.
+    const painting = readPainting(record, asNumber(record.width), asNumber(record.height));
+    const caption = asString(readTerm(record, "mediaCaption")) ?? painting?.label ?? null;
+    const credit = asString(readTerm(record, "mediaCredit")) ?? painting?.credit ?? null;
+    const alt = asString(readTerm(record, "mediaAlt")) ?? painting?.accessibilitySummary ?? null;
     const srcset = asString(readTerm(record, "mediaSrcset"));
     const sizes = asString(readTerm(record, "mediaSizes"));
     if (
@@ -345,6 +569,8 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
         if (alt !== null) media.alt = alt;
         if (srcset !== null) media.srcset = srcset;
         if (sizes !== null) media.sizes = sizes;
+        if (painting?.thumbnail != null) media.thumb = painting.thumbnail;
+        if (painting?.subtitles != null) media.subtitles = painting.subtitles;
         slide.media = media;
     }
 
@@ -372,6 +598,166 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     if (background !== null) slide.background = background;
 
     return slide;
+}
+
+/**
+ * Motivations that turn an annotation into a tour stop. `painting` is the
+ * canvas's image and is handled separately; everything here is commentary
+ * about it, which is what a guided tour is made of.
+ */
+const STOP_MOTIVATIONS = new Set(["commenting", "tagging", "classifying", "describing"]);
+
+/** Escapes the five characters that would otherwise be markup, so a
+ *  `text/plain` annotation body cannot inject HTML. The renderer sanitizes
+ *  slide text as well; this keeps the stored value honest on its own. */
+function escapeText(value: string): string {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+/**
+ * A `text/plain` body becomes one paragraph per blank-line-separated block,
+ * escaped. A `text/html` body is passed through as markup — the slide text
+ * pipeline (`sanitizeSlideText`, via `media/types/Text.ts`) sanitizes whatever
+ * it is given, which is the same path a storymap JSON `text.text` takes.
+ */
+function annotationTextToSlideText(format: string | null, value: string): string | null {
+    if (value.trim() === "") return null;
+    const is_html = format !== null && /^text\/html/i.test(format);
+    if (is_html) return value;
+    const blocks = value
+        .split(/\n\s*\n/)
+        .map((block) => block.trim())
+        .filter((block) => block !== "");
+    if (blocks.length === 0) return null;
+    return blocks.map((block) => `<p>${escapeText(block)}</p>`).join("");
+}
+
+/** True for a body that is a media resource rather than text. */
+function isMediaBody(body: Record<string, unknown>): boolean {
+    const id = asString(body.id);
+    if (id === null) return false;
+    const type = asString(body.type);
+    if (type !== null) {
+        return ["Image", "Sound", "Video", "Dataset", "Model"].includes(type);
+    }
+    // An untyped body with an id is a media resource by P3 convention.
+    return true;
+}
+
+/**
+ * One annotation → one tour stop, or null when it is not a stop.
+ *
+ * A stop needs somewhere to go: the target has to resolve to a region, either
+ * from an `xywh` fragment / Image API Selector or from a `PointSelector`
+ * (synthesized into a square by `readSelector`, which needs the canvas size).
+ * An annotation targeting the whole canvas is not a stop — the canvas slide
+ * already covers it.
+ *
+ * The body may be one resource or an array. A `TextualBody` contributes the
+ * slide text, a typed media body (typically a `Sound`) contributes
+ * `media.url`, and both contribute caption/credit/alt.
+ */
+function readAnnotationStop(
+    annotation: unknown,
+    width: number | null,
+    height: number | null,
+): StorymapSlide | null {
+    const record = asRecord(annotation);
+    if (!record) return null;
+
+    const motivations = Array.isArray(record.motivation) ? record.motivation : [record.motivation];
+    const is_stop = motivations.some((m) => {
+        const value = asString(m);
+        return value !== null && STOP_MOTIVATIONS.has(value);
+    });
+    if (!is_stop) return null;
+
+    const selector = readSelector(record.target, width, height);
+    if (selector.region === null) return null;
+
+    const bodies = Array.isArray(record.body) ? record.body : [record.body];
+    let text: string | null = null;
+    let media: StorymapSlideMedia | null = null;
+
+    for (const entry of bodies) {
+        const body = asRecord(entry);
+        if (!body) continue;
+        if (isMediaBody(body)) {
+            if (media === null) {
+                const url = asString(body.id);
+                if (url !== null) {
+                    media = {
+                        url,
+                        ...(flattenLanguageMap(body.label) !== ""
+                            ? { caption: flattenLanguageMap(body.label) }
+                            : {}),
+                        ...(readBodyCredit(body) !== null ? { credit: readBodyCredit(body) } : {}),
+                        ...(flattenLanguageMap(body.accessibilitySummary) !== ""
+                            ? { alt: flattenLanguageMap(body.accessibilitySummary) }
+                            : {}),
+                        ...(asString(asRecord(body.thumbnail)?.id) !== null
+                            ? { thumb: asString(asRecord(body.thumbnail)?.id) as string }
+                            : {}),
+                    };
+                }
+            }
+            continue;
+        }
+        if (text === null) {
+            const value = asString(body.value);
+            if (value !== null) {
+                text = annotationTextToSlideText(asString(body.format), value);
+            }
+        }
+    }
+
+    // An annotation carrying nothing but a target is still a usable stop: it
+    // focuses the image on a region.
+    if (text === null && media === null) return null;
+
+    // The annotation's own label is the stop's headline, which is what the
+    // slider and the marker label show. A body `label` is the media caption and
+    // is handled above.
+    const headline = flattenLanguageMap(record.label);
+
+    const slide: StorymapSlide = { location: { region: selector.region } };
+    if (text !== null || headline !== "") {
+        slide.text = {
+            ...(text !== null ? { text } : {}),
+            ...(headline !== "" ? { headline } : {}),
+        };
+    }
+    if (media !== null) slide.media = media;
+    return slide;
+}
+
+/**
+ * Annotation-driven tour stops for one canvas, in annotation page order.
+ * Appended after the canvas's own slide, so the story reads "here is the
+ * whole picture, then here is each detail".
+ */
+export function readCommentingAnnotations(canvas: unknown): StorymapSlide[] {
+    const record = asRecord(canvas);
+    if (!record) return [];
+    const width = asNumber(record.width);
+    const height = asNumber(record.height);
+
+    const stops: StorymapSlide[] = [];
+    const annotationPages = Array.isArray(record.items) ? record.items : [];
+    for (const page of annotationPages) {
+        const annotations = asRecord(page);
+        if (!annotations || !Array.isArray(annotations.items)) continue;
+        for (const annotation of annotations.items) {
+            const stop = readAnnotationStop(annotation, width, height);
+            if (stop !== null) stops.push(stop);
+        }
+    }
+    return stops;
 }
 
 /**
@@ -411,8 +797,15 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
             ? manifestNavPlace.features
             : [];
     for (let index = 0; index < items.length; index++) {
+        // The canvas index, not the output-slide index: annotation stops
+        // appended below shift the slide array, and the manifest-level
+        // navPlace features line up with canvases.
         const slide = canvasToSlide(items[index], manifestFeatures[index]);
         if (slide !== null) data.slides.push(slide);
+        // Annotation-driven tour stops, in annotation page order.
+        for (const stop of readCommentingAnnotations(items[index])) {
+            data.slides.push(stop);
+        }
         // A polygon navPlace states the geographic extent of the story
         // ("supplying a single geographic bounding box" in the navPlace
         // extension), which the legacy format expresses as map_bbox. The

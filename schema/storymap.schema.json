@@ -259,6 +259,11 @@
                     "type": "number",
                     "description": "Milliseconds per slide; 0 (the default) disables autoplay"
                 },
+                "autoplay_media": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "When autoplaying, wait for the slide media to end before advancing; the autoplay timer stays as the fallback."
+                },
                 "trackResize": {
                     "type": "boolean"
                 },
@@ -398,6 +403,11 @@
                         "sizes": {
                             "type": "string"
                         },
+                        "subtitles": {
+                            "type": ["string", "null"],
+                            "format": "uri",
+                            "description": "WebVTT subtitle file for an audio or video slide, rendered as a <track kind=\"subtitles\">."
+                        },
                         "mediatype": {
                             "type": ["object", "null"]
                         }
@@ -421,6 +431,26 @@
                             "description": "Horizontal alignment of this slide's text block"
                         }
                     }
+                },
+                "marker": {
+                    "type": ["object", "null"],
+                    "description": "Per-slide marker presentation. location.icon/iconSize/image/use_custom_marker and location.name remain supported as legacy spellings; marker.* wins when present. In a IIIF manifest these arrive in the navPlace Feature properties instead.",
+                    "properties": {
+                        "icon": { "type": "string", "format": "uri" },
+                        "iconSize": { "type": "array", "items": { "type": "number" } },
+                        "image": { "type": "string", "format": "uri" },
+                        "label": { "type": "string" },
+                        "popup": { "type": "boolean" },
+                        "audioBadge": { "type": "boolean" }
+                    }
+                },
+                "narration": {
+                    "type": ["object", "null"],
+                    "description": "Spoken narration for this slide, played through a dedicated audio element. In a IIIF manifest this is a Sound body on the stop annotation.",
+                    "properties": {
+                        "url": { "type": "string", "format": "uri" }
+                    },
+                    "required": ["url"]
                 },
                 "background": {
                     "type": ["object", "string"],

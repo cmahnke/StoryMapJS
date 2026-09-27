@@ -285,6 +285,45 @@ Readers must use the prefixed term for the slide type (`storymap:type`): the
 bare `type` key of a Canvas is the IIIF class type (`"Canvas"`) and can never
 carry the StoryMap slide type.
 
+## Annotation-driven tour stops
+
+A Canvas annotation whose `motivation` is `commenting`, `tagging`,
+`classifying` or `describing` and whose target resolves to a region becomes
+one slide, appended after that Canvas's own slide. This is the shape Storiiies
+and Micrio use for a guided tour of one image, and it is the subject of
+[docs/iiif-authoring.md](iiif-authoring.md).
+
+- **Target** — `xywh=` fragment / Image API Selector, or a `PointSelector`
+  (synthesized into a square of 5% of the Canvas's smaller side, centred and
+  clamped). A `TextQuoteSelector`, `TimeState` or `SvgSelector` is preserved
+  but not resolved or drawn. A bare string target's `#xywh=` counts. An
+  annotation aimed at the whole Canvas is **not** a stop.
+- **Body** — a `TextualBody` supplies the slide text (`text/plain` escaped and
+  split per blank-line block, `text/html` kept as markup); a body with an
+  `id` (e.g. `type: "Sound"`) supplies `media.url`, whose extension picks the
+  player. An annotation with a region but no body is not a stop.
+- **Region stops are honoured in image mode** only — the same rule as a
+  `storymap:imageRegion` region. A geographic map ignores them.
+- `navPlace` may not appear on an Annotation (the extension forbids it), so
+  all stops on a Canvas share that Canvas's location and marker presentation.
+
+## What the body record carries
+
+The painting annotation's body is read into one shared record, and the standard
+properties are used as **fallbacks** under the extension terms (dropping the
+terms and inverting that precedence is [docs/plans/iiif-interop.md](plans/iiif-interop.md)
+§2, a separate breaking change):
+
+| Body property                                   | Slide media field                |
+| ----------------------------------------------- | -------------------------------- |
+| `label`                                         | `caption`                        |
+| `requiredStatement[]` (or `provider`)           | `credit`                         |
+| `accessibilitySummary`                          | `alt`                            |
+| `thumbnail`                                     | `thumb`                          |
+| `type`, `format`                                | player selection (`MediaType()`) |
+| `duration`, `start`, `end`                      | time-anchored stops              |
+| a sibling `TextualBody` with `format: text/vtt` | `subtitles`                      |
+
 ## Native IIIF vs. the StoryMap extension
 
 IIIF defines three approved Presentation API extensions — navPlace, Text

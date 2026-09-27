@@ -43,6 +43,47 @@ export interface StorymapSlideMedia {
     credit?: string | null;
     thumb?: string | null;
     mediatype?: MediaTypeMatch | null;
+    /**
+     * WebVTT subtitle file for an audio or video slide, rendered as a
+     * `<track kind="subtitles">`. IIIF has no subtitle term, so this stays a
+     * storymap-JSON field; the authoring guide notes the
+     * `TextualBody` + `format: text/vtt` shape we also accept.
+     */
+    subtitles?: string | null;
+    [key: string]: unknown;
+}
+
+/**
+ * Optional spoken narration for one slide, played through a dedicated audio
+ * element rather than the slide's media frame — a tour stop usually has a
+ * picture and a recording, not one media item. In a IIIF manifest it is a
+ * `Sound` body on the stop's annotation, not a term.
+ */
+/**
+ * Per-slide marker presentation, consolidated. `location.*` keeps working as
+ * the legacy spelling and `marker.*` wins when present — see
+ * docs/plans/iiif-media-tours.md §2.
+ *
+ * In a IIIF manifest none of this is a `storymap:` term: it all arrives in the
+ * `navPlace` Feature's `properties` bag (`icon`, `iconSize`, `image`, `name`,
+ * `popup`, `audioBadge`), which is a GeoJSON foreign-member bag and so needs
+ * no vocabulary registration.
+ */
+export interface StorymapSlideMarker {
+    icon?: string;
+    iconSize?: number[];
+    image?: string;
+    /** The marker label; in a manifest this is `properties.name`. */
+    label?: string;
+    /** Show the popup card when this (active) marker is clicked. */
+    popup?: boolean;
+    /** Mark slides that carry narration or audio media with a small badge. */
+    audioBadge?: boolean;
+    [key: string]: unknown;
+}
+
+export interface StorymapSlideNarration {
+    url: string;
     [key: string]: unknown;
 }
 
@@ -65,6 +106,8 @@ export interface StorymapSlide {
     group?: string;
     location?: StorymapSlideLocation | null;
     media?: StorymapSlideMedia | null;
+    marker?: StorymapSlideMarker | null;
+    narration?: StorymapSlideNarration | null;
     text?: StorymapSlideText | null;
     background?: StorymapSlideBackground | string | null;
     uniqueid?: string | null;
@@ -132,6 +175,13 @@ export interface StorymapOptions {
     nocache: boolean;
     /** Advance slides automatically every N milliseconds; 0 disables (issue #380) */
     autoplay: number;
+    /**
+     * With autoplay on, wait for the current slide's audio or video to end
+     * before advancing instead of using the `autoplay` millisecond timer,
+     * which stays as the fallback. Slides without playable media keep the
+     * timer, so a mixed story never stalls.
+     */
+    autoplay_media: boolean;
     /** Show a progress bar in the menubar (issue #247) */
     show_progress: boolean;
     /** Show the slide headline as a label on the active map marker (issue #243) */

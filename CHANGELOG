@@ -5,6 +5,47 @@ disabled type check that had been hiding them, and a dependency swap.
 
 Added
 -----
+- **Annotation-driven tour stops.** A IIIF manifest whose commenting,
+  tagging, classifying or describing annotations carry a fragment target
+  becomes one slide per annotation, each fitting the region it points at —
+  the Storiiies/Micrio shape. `text/plain` bodies become one paragraph per
+  block (escaped), `text/html` keeps its markup, and a `Sound` body becomes
+  the slide's media. A `PointSelector` becomes a square of 5% of the
+  canvas's smaller side, centred and clamped. New `docs/iiif-authoring.md`
+  (published as `authoring.html`) and a four-stop example,
+  `public/examples-iiif/annotated-image.json`
+- A normalized selector reader: `FragmentSelector`/`ImageApiSelector`
+  (`xywh=`, including `xywh=pixel:`), `PointSelector`, `TextQuoteSelector`,
+  `TimeState` and `SvgSelector` are all read, one level of `refinedBy` is
+  followed, and a string target's `#xywh=` fragment counts. Quote and SVG
+  selectors are preserved but not yet resolved or drawn — the guide says so
+- The painting body's standard fields are read as fallbacks under the
+  extension terms: `body.label` (caption), `body.requiredStatement` /
+  `body.provider` (credit), `body.accessibilitySummary` (alt),
+  `body.thumbnail` (thumb), and a `TextualBody` with `format: text/vtt`
+  (subtitles)
+- `media.subtitles`: a WebVTT file rendered as a `<track kind="subtitles">`
+  on the audio or video element
+- Per-slide `narration: {url}`, played through one reused audio element
+  rather than the slide's media frame, so switching slides cannot leave a
+  recording playing. Gated by browser autoplay policy (it starts after the
+  first gesture) and by a new `media:narration` consent service, so the GDPR
+  mode has no hole for it
+- `autoplay_media`: with autoplay on, a slide whose media is audio or video
+  advances when it ends instead of on the millisecond timer. The timer stays
+  armed as a fallback, so a media element that never fires `ended` cannot
+  stall the story
+- Per-slide `marker: { icon, iconSize, image, label, popup, audioBadge }`,
+  with `location.*` kept as the legacy spelling and `marker.*` winning. No
+  new `storymap:` term: in a manifest all of it arrives in the `navPlace`
+  Feature `properties` bag, which is a GeoJSON foreign-member bag and needs
+  no vocabulary registration
+- `marker.popup`: the active marker's card toggles on click, with a sanitized
+  headline and excerpt, the media thumb and a real close button. Escape and
+  navigating away both close it, and the marker releases it (and its keydown
+  listener) in `dispose()`. Inactive markers still navigate on click
+- `marker.audioBadge`: a dot on markers whose slide has narration or audio
+  media
 - Browser coverage for the surfaces jsdom cannot reach, and for the changes
   that came with replacing the map engine: `imageready` against a real
   asynchronously-attached IIIF source, `dispose()` proving no tile requests
@@ -52,6 +93,10 @@ Added
 
 Fixed
 -----
+- A slide with body text and no headline rendered a literal "headline" as an
+  `<h2>`: `Text`'s constructor seeded its data with the placeholder strings
+  "headline"/"text", which `mergeData` only overwrites when the key is
+  present. The empty strings its render guards already expect
 - `e2e/known-issues/issue-288` tested neither half of what it claimed: without
   `hasTouch` the browser still reports `pointer: fine`, so `Browser.touch` and
   `Browser.mobile` were false and the desktop branch rendered, and the click

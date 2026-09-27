@@ -272,6 +272,27 @@ class SlideBase {
         return this.has.background;
     }
 
+    /**
+     * True when this slide's media is a timed, playable one (audio or video).
+     * `autoplay_media` waits for such a slide's media to end instead of using
+     * its timer; everything else keeps the timer.
+     */
+    hasPlayableMedia(): boolean {
+        const kind = this.options.media_type as string | undefined;
+        return kind === "audio" || kind === "video";
+    }
+
+    /**
+     * Call `fn` when this slide's media finishes playing. A slide with no
+     * media — or media that cannot end — never calls it, which is why
+     * `autoplay_media` keeps its timer as a fallback rather than waiting on
+     * an event that may not arrive.
+     */
+    onMediaEnded(fn: () => void): void {
+        if (!this.hasPlayableMedia() || !this._media?.on) return;
+        this._media.on("media_ended", fn);
+    }
+
     scrollToTop() {
         this._el.container.scrollTop = 0;
     }

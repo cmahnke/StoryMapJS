@@ -35,11 +35,14 @@ class TextBase {
             start_btn: {} as HTMLElement,
         };
 
-        // Data
+        // Data. The placeholders were the literal strings "headline" and
+        // "text", which mergeData only overwrites when the key is present — so
+        // a slide with body text and no headline rendered an <h2>headline</h2>.
+        // The renderer guards both on `!== ""`, so empty is the real default.
         this.data = {
             uniqueid: "",
-            headline: "headline",
-            text: "text",
+            headline: "",
+            text: "",
         };
 
         // Options

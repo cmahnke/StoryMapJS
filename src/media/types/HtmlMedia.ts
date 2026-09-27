@@ -29,6 +29,7 @@ function mimeSubtype(ext: string, spec: HtmlMediaSpec): string {
 export class HtmlMediaBase extends Media {
     declare "player_element": HTMLMediaElement | null;
     declare "_onCanPlay": (() => void) | null;
+    declare "_onEnded": (() => void) | null;
     declare "_onSourceError": (() => void) | null;
 
     /**
@@ -56,6 +57,7 @@ export class HtmlMediaBase extends Media {
 
         // Media Loaded Event. The references are kept so dispose() can detach
         // them: an inline arrow function has no other handle.
+        this._onEnded = null;
         this._onCanPlay = () => {
             this.onLoaded();
         };
@@ -76,6 +78,24 @@ export class HtmlMediaBase extends Media {
         if (media_type) {
             source_item.type = media_type;
         }
+        // Subtitles: a WebVTT track, opt-in via media.subtitles. The element
+        // is created before the fallback text node so the fallback stays last.
+        if (spec.kind === "video" || spec.kind === "audio") {
+            const subtitles = (this.data as { subtitles?: string | null }).subtitles;
+            if (typeof subtitles === "string" && subtitles !== "") {
+                const track = Dom.create(
+                    "track",
+                    "vco-media-track",
+                    media_item,
+                ) as HTMLTrackElement;
+                track.kind = "subtitles";
+                track.srclang = "en";
+                track.label = "Subtitles";
+                track.src = subtitles;
+                track.default = true;
+            }
+        }
+
         // append as a text node: re-serializing innerHTML would replace the
         // source element and drop its error listener, leaving the loading
         // message on screen forever
@@ -84,6 +104,14 @@ export class HtmlMediaBase extends Media {
                 `Your browser doesn't support HTML5 ${spec.kind} with ` + source_item.type,
             ),
         );
+
+        // `ended` is what autoplay_media waits for instead of its timer; the
+        // reference is kept so dispose() can detach it, like the two above
+        this._onEnded = () => {
+            this.fire("media_ended", this.data);
+        };
+        media_item.addEventListener("ended", this._onEnded);
+
         this.player_element = media_item;
     }
 
@@ -106,6 +134,10 @@ export class HtmlMediaBase extends Media {
         if (this._onCanPlay) {
             this.player_element?.removeEventListener("canplay", this._onCanPlay);
             this._onCanPlay = null;
+        }
+        if (this._onEnded) {
+            this.player_element?.removeEventListener("ended", this._onEnded);
+            this._onEnded = null;
         }
         if (this._onSourceError) {
             this._el.source_item?.removeEventListener("error", this._onSourceError);

@@ -139,6 +139,7 @@ const DOCS: DocEntry[] = [
         out: "iiif.html",
         title: "StoryMap data as IIIF manifests",
     },
+    { md: "docs/iiif-authoring.md", out: "authoring.html", title: "Authoring IIIF stories" },
 ];
 
 const NAV = /* html */ `
@@ -169,6 +170,7 @@ const NAV = /* html */ `
                 <li><a class="button" href="./readme.html">README</a></li>
                 <li><a class="button" href="./migration.html">Migration guide</a></li>
                 <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="./authoring.html">Authoring</a></li>
                 <li><a class="button" href="./api/index.html">API docs</a></li>
                 <li><a class="button" href="../index.html#help">Help</a></li>
             </ul>
@@ -232,6 +234,12 @@ function rewriteLinks(html: string): string {
             // .md filename and 404 on the published site
             .replace(/href="[^"]*?storymap-as-iiif-manifest\.md/g, 'href="./iiif.html')
             .replace(/href="[^"]*?migration-from-knightlab\.md/g, 'href="./migration.html')
+            .replace(/href="[^"]*?iiif-authoring\.md/g, 'href="./authoring.html"')
+            // a plan file has no published page; keep the reference readable
+            .replace(
+                /href="[^"]*?plans\/[a-z0-9-]+\.md/g,
+                'href="https://github.com/cmahnke/StoryMapJS/tree/main/docs/plans/',
+            )
             .replace(/href="\.\.\/public\//g, 'href="../')
             .replace(/href="\.\/docs\//g, 'href="./')
     );

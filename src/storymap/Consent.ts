@@ -92,6 +92,19 @@ export function fontService(): ConsentService {
 }
 
 /**
+ * Slide narration: the recording that plays at a tour stop. It is not a media
+ * embed, but it is the same kind of third-party fetch, so it is gated the same
+ * way — through the `Media` class it bypasses, narration would otherwise be a
+ * hole in the GDPR mode.
+ */
+export function narrationService(): ConsentService {
+    return {
+        key: MEDIA_KEY_PREFIX + "narration",
+        label: consentMessage("consent_service_narration", "narration"),
+    };
+}
+
+/**
  * A media embed from an external service.
  *
  * `type` is the MediaType slug (the stable identity); `name` is its display
