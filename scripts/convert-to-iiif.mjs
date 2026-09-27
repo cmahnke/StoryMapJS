@@ -291,6 +291,9 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
         // applies no format constraint at all, so the storymap value is
         // carried verbatim ("Aug 23" and "1790-2010" both pass) (§2.5)
         ...(typeof slide.date === "string" && slide.date !== "" ? { navDate: slide.date } : {}),
+        // P3 paints a canvas background with an Annotation referenced from the
+        // canvas `background` property (§2.6)
+        ...buildBackground(canvasId, slide.background),
         items: [
             {
                 id: `${canvasId}/annotationpage/1`,
@@ -327,6 +330,41 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
         canvas.navPlace = navPlace;
     }
     return canvas;
+}
+
+/**
+ * A slide background as P3's canvas `background`: a painting Annotation whose
+ * body is the image and/or the colour to paint behind the slide (§2.6). A
+ * bare-string background is a colour, as it has always been in storymap-JSON.
+ *
+ * `background.opacity` is deliberately not carried across. IIIF has no
+ * vocabulary for it — Presentation 3 has a `Color` body but nothing to fade a
+ * background with, and 4.0's `backgroundColor` is a plain hex value — and the
+ * viewer never rendered it, so a term for it would be dead vocabulary.
+ */
+function buildBackground(canvasId, background) {
+    if (!background) return {};
+    const object = typeof background === "object" ? background : {};
+    const url = typeof background === "string" ? null : object.url;
+    const color = typeof background === "string" ? background : object.color;
+    const bodies = [];
+    if (present(url)) {
+        const { type, format } = classifyMediaUrl(url);
+        bodies.push({ id: url, type, ...(format ? { format } : {}) });
+    }
+    if (present(color)) {
+        bodies.push({ type: "Color", value: color });
+    }
+    if (bodies.length === 0) return {};
+    return {
+        background: {
+            id: `${canvasId}/background`,
+            type: "Annotation",
+            motivation: "painting",
+            body: bodies.length === 1 ? bodies[0] : bodies,
+            target: canvasId,
+        },
+    };
 }
 
 /**
@@ -390,20 +428,6 @@ function buildCanvasTerms(slide) {
     const terms = {};
     if (slide.type === "overview") {
         terms["storymap:type"] = "overview";
-    }
-    if (slide.background && typeof slide.background === "object") {
-        const background = {};
-        if (present(slide.background.url)) {
-            background.url = slide.background.url;
-        }
-        if (present(slide.background.color)) {
-            background.color = slide.background.color;
-        }
-        if (Object.keys(background).length > 0) {
-            terms["storymap:background"] = background;
-        }
-    } else if (present(slide.background)) {
-        terms["storymap:background"] = { color: slide.background };
     }
     if (present(slide.media?.srcset)) {
         terms["storymap:mediaSrcset"] = slide.media.srcset;

@@ -413,12 +413,30 @@ still flattens one for leniency, since other producers emit it.
 
 ### 2.6 `background` → the canvas background annotation
 
-P3 expresses a canvas background as an Annotation with `motivation:
-"painting"` whose body is the image or colour resource, referenced from the
-canvas `background` property. Read it into `slide.background` (`{url}` or
-`{color}`) and drop the manifest-side term. The storymap-JSON `background`
-field stays. Test: a background annotation and the old term yield the same
-slide background.
+**Done** (commit 3). P3 expresses a canvas background as an Annotation with
+`motivation: "painting"` whose body is the image or colour resource, referenced
+from the canvas `background` property. Read it into `slide.background` and drop
+the manifest-side term. The storymap-JSON `background` field stays. Test: a
+background annotation and the old term yield the same slide background.
+
+Two things the validator could not settle, and one it caught:
+
+- **The validator is no help here.** It accepts the background annotation in
+  every shape tried — a bare `Color` body, a body array, `opacity` on the
+  annotation, two separate annotations, even an untyped string. So the spec,
+  not the validator, decides: one painting annotation, an `Image` body for the
+  url and a `Color` body for the colour, both when both are set.
+- **`opacity` is dropped, not given a term.** The reader already accepted
+  `background.opacity` and never rendered it, and IIIF has no vocabulary for
+  it — Presentation 3 has a `Color` body but nothing to fade a background with,
+  and 4.0's `backgroundColor` is a plain hex value. A term for a field the
+  viewer ignores would be dead vocabulary, which §0's "none is dead" rules out.
+  `slide.background` round-tripping without its opacity is the one expected
+  difference.
+- **The result is always the object form.** The bare-string
+  `slide.background` means a _colour_ — that is what the converter has always
+  done with it — so returning a url-only background as a bare string would read
+  back as a colour on the next trip. A test caught exactly that.
 
 ### 2.7 `mediaCaption` / `mediaCredit` / `mediaAlt` → body properties
 

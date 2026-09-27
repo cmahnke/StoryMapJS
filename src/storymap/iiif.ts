@@ -646,21 +646,43 @@ function collectPositions(value: unknown, out: number[][], depth: number): void 
     }
 }
 
-function readBackground(value: unknown): StorymapSlideBackground | string | null {
-    const record = asRecord(value);
-    if (record) {
-        const background: StorymapSlideBackground = {};
-        const url = asString(record.url);
-        const color = asString(record.color);
-        if (url !== null) background.url = url;
-        if (color !== null) background.color = color;
-        // slide background opacity is accepted but never read by the viewer
-        return Object.keys(background).length > 0 ? background : null;
+/**
+ * A canvas's P3 `background` annotation into a slide background (§2.6).
+ *
+ * The annotation is a painting annotation whose body is the image and/or the
+ * colour; an image body contributes `url` and a `Color` body contributes
+ * `color`.
+ *
+ * The result is always the object form. The bare-string form of
+ * `slide.background` means a *colour* — that is what the converter has always
+ * done with it — so returning a url as a bare string would read back as a
+ * colour on the next trip.
+ *
+ * `opacity` is not read. IIIF has no vocabulary for a background opacity and
+ * the viewer never rendered one, so nothing is lost by leaving it out.
+ */
+function readBackground(annotation: unknown): StorymapSlideBackground | string | null {
+    const record = asRecord(annotation);
+    if (!record) return null;
+    const bodies = Array.isArray(record.body) ? record.body : [record.body];
+    let url: string | null = null;
+    let color: string | null = null;
+    for (const entry of bodies) {
+        const body = asRecord(entry);
+        if (!body) continue;
+        if (url === null && isMediaBody(body)) {
+            url = asString(body.id);
+        }
+        if (color === null) {
+            const type = asString(body.type);
+            const value = asString(body.value);
+            if (value !== null && (type === "Color" || type === null)) color = value;
+        }
     }
-    if (typeof value === "string" && value !== "") {
-        return value;
-    }
-    return null;
+    const background: StorymapSlideBackground = {};
+    if (url !== null) background.url = url;
+    if (color !== null) background.color = color;
+    return Object.keys(background).length > 0 ? background : null;
 }
 
 function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide | null {
@@ -731,7 +753,9 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     const dateRecord = asRecord(navDate);
     if (dateString !== null && dateString !== "") slide.date = dateString;
     else if (dateRecord !== null) slide.date = dateRecord;
-    const background = readBackground(readTerm(record, "background"));
+    // background: the canvas's standard `background` painting annotation. The
+    // storymap:background term is gone (§2.6).
+    const background = readBackground(record.background);
     if (background !== null) slide.background = background;
 
     return slide;

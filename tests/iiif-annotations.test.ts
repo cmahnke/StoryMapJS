@@ -478,6 +478,57 @@ describe("manifestToStorymapData with annotation stops", () => {
         expect(data.slides[0].media?.credit).toBe("A credit");
     });
 
+    it("reads a slide background from the canvas's background annotation", () => {
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        // an image and a colour together is one annotation with a body pair
+        canvas.background = {
+            id: "https://example.org/canvas/1/background",
+            type: "Annotation",
+            motivation: "painting",
+            body: [
+                { id: "https://example.org/bg.jpg", type: "Image", format: "image/jpeg" },
+                { type: "Color", value: "#cdbfe3" },
+            ],
+            target: "https://example.org/canvas/1",
+        };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].background).toEqual({
+            url: "https://example.org/bg.jpg",
+            color: "#cdbfe3",
+        });
+    });
+
+    it("reads a colour-only background", () => {
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.background = {
+            type: "Annotation",
+            motivation: "painting",
+            body: { type: "Color", value: "#000000" },
+            target: "https://example.org/canvas/1",
+        };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].background).toEqual({ color: "#000000" });
+    });
+
+    it("ignores a storymap:background term left over from before §2.6", () => {
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas["storymap:background"] = { url: "https://example.org/old.jpg" };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].background).toBeUndefined();
+    });
+
     it("reads a slide's date from the canvas's navDate", () => {
         const manifest = manifestWith([]);
         const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<

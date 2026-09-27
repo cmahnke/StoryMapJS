@@ -89,7 +89,6 @@ what the fixtures reference. Content:
         "overlays": "storymap:overlays",
         "georeferencedLayers": "storymap:georeferencedLayers",
         "type": { "@id": "storymap:type", "@type": "@id" },
-        "background": "storymap:background",
         "mediaSrcset": "storymap:mediaSrcset",
         "mediaSizes": "storymap:mediaSizes",
         "imageRegion": "storymap:imageRegion"
@@ -127,7 +126,7 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 | `height`, `width`      | —                       | Nominal `1080 × 1080` for non-image slides; actual image dimensions for image-map slides                     |
 | `items`                | `slide.media`           | AnnotationPage with the painting annotation, see below — which also carries the caption, credit and alt text |
 | `storymap:type`        | `slide.type`            | `"overview"` marks the map overview slide                                                                    |
-| `storymap:background`  | `slide.background`      | `{url, color}` — only present keys                                                                           |
+| `background`           | `slide.background`      | A painting annotation whose body is an `Image` (the url) and/or a `Color` (the colour)                       |
 | `storymap:mediaSrcset` | `slide.media.srcset`    | Responsive image candidates, passed through to the `img` element                                             |
 | `storymap:mediaSizes`  | `slide.media.sizes`     | The `sizes` companion of `mediaSrcset`                                                                       |
 | `storymap:imageRegion` | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides                          |
@@ -270,8 +269,9 @@ properties):
 ### Canvas level — direct properties
 
 Canvas objects are open for extension terms, so slide-specific StoryMap data is
-carried directly on the Canvas: `storymap:type` and `storymap:background` (see
-the Canvas table above). A slide's date is the standard `navDate`. The media caption, credit and alt
+carried directly on the Canvas: only `storymap:type` (see the Canvas table
+above). A slide's date is the standard `navDate` and its background is the
+standard `background` annotation. The media caption, credit and alt
 text are **not** terms any more: they are the painting annotation's own `label`,
 `requiredStatement` and `accessibilitySummary`, which is where Presentation 3
 defines them. A manifest written against the old terms still loads — the strings
@@ -620,34 +620,34 @@ photo, and a slide with a YouTube video — full manifest:
 | `start_at_slide`             | `service[0].storymap:startAtSlide`                                  |
 | _(root) `width`, `height`_   | _dropped_ (viewer embed size)                                       |
 
-| Legacy field (slide)           | IIIF path                                                  |
-| ------------------------------ | ---------------------------------------------------------- |
-| `type: "overview"`             | Canvas `storymap:type: "overview"`                         |
-| `date`                         | Canvas `navDate`                                           |
-| `text.headline`                | Canvas `label` (language map)                              |
-| `text.text`                    | Canvas `summary` (language map)                            |
-| `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`           |
-| `location.zoom`                | Canvas `navPlace` Feature `properties.zoom`                |
-| `location.line`                | Canvas `navPlace` Feature `properties.line`                |
-| `location.name`                | Canvas `navPlace` Feature `properties.name`                |
-| `location.icon`                | Canvas `navPlace` Feature `properties.icon`                |
-| `location.iconSize`            | Canvas `navPlace` Feature `properties.iconSize`            |
-| `location.image`               | Canvas `navPlace` Feature `properties.image`               |
-| `location.use_custom_marker`   | Canvas `navPlace` Feature `properties.use_custom_marker`   |
-| `media.url` (image)            | Annotation body `{type: "Image", format: ...}`             |
-| `media.url` (video service)    | Annotation body `{type: "Video"}`                          |
-| `media.url` (audio service)    | Annotation body `{type: "Sound"}`                          |
-| `media.url` (web page)         | Annotation body `{type: "Text", format: "text/html"}`      |
-| `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`        |
-| `media.caption`                | Painting annotation `label`                                |
-| `media.credit`                 | Painting annotation `requiredStatement` (`{label, value}`) |
-| `media.alt`                    | Painting annotation `accessibilitySummary`                 |
-| `media.srcset`                 | Canvas `storymap:mediaSrcset`                              |
-| `media.sizes`                  | Canvas `storymap:mediaSizes`                               |
-| `location.region`              | Canvas `storymap:imageRegion` `[x, y, w, h]` (xywh)        |
-| `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`) |
-| `background`                   | Canvas `storymap:background` `{url, color}`                |
-| `uniqueid`                     | _dropped_ (canvas `id`s are the canonical identifiers)     |
+| Legacy field (slide)           | IIIF path                                                    |
+| ------------------------------ | ------------------------------------------------------------ |
+| `type: "overview"`             | Canvas `storymap:type: "overview"`                           |
+| `date`                         | Canvas `navDate`                                             |
+| `text.headline`                | Canvas `label` (language map)                                |
+| `text.text`                    | Canvas `summary` (language map)                              |
+| `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`             |
+| `location.zoom`                | Canvas `navPlace` Feature `properties.zoom`                  |
+| `location.line`                | Canvas `navPlace` Feature `properties.line`                  |
+| `location.name`                | Canvas `navPlace` Feature `properties.name`                  |
+| `location.icon`                | Canvas `navPlace` Feature `properties.icon`                  |
+| `location.iconSize`            | Canvas `navPlace` Feature `properties.iconSize`              |
+| `location.image`               | Canvas `navPlace` Feature `properties.image`                 |
+| `location.use_custom_marker`   | Canvas `navPlace` Feature `properties.use_custom_marker`     |
+| `media.url` (image)            | Annotation body `{type: "Image", format: ...}`               |
+| `media.url` (video service)    | Annotation body `{type: "Video"}`                            |
+| `media.url` (audio service)    | Annotation body `{type: "Sound"}`                            |
+| `media.url` (web page)         | Annotation body `{type: "Text", format: "text/html"}`        |
+| `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`          |
+| `media.caption`                | Painting annotation `label`                                  |
+| `media.credit`                 | Painting annotation `requiredStatement` (`{label, value}`)   |
+| `media.alt`                    | Painting annotation `accessibilitySummary`                   |
+| `media.srcset`                 | Canvas `storymap:mediaSrcset`                                |
+| `media.sizes`                  | Canvas `storymap:mediaSizes`                                 |
+| `location.region`              | Canvas `storymap:imageRegion` `[x, y, w, h]` (xywh)          |
+| `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`)   |
+| `background`                   | Canvas `background` painting annotation (Image + Color body) |
+| `uniqueid`                     | _dropped_ (canvas `id`s are the canonical identifiers)       |
 
 ## Conversion
 

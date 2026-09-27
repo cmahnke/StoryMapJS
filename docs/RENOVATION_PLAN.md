@@ -308,8 +308,8 @@ thresholds, `goTo` firing `change` immediately instead of post-animation,
   `storymap:iiifUrl`, `storymap:originalZoomify`.
 - **Canvas** ↔ slide (order = slide order; nominal 1080×1080 for non-image
   canvases, real dimensions for IIIF image canvases). Canvas-level
-  `storymap:` terms: `type` ("overview"), `group`, `background`
-  {url, color, opacity}. The date is the standard `navDate`. The media caption, credit and alt text are the
+  `storymap:` terms: `type` ("overview"), `group`. The date is the standard
+  `navDate`; the background is the standard `background` painting annotation. The media caption, credit and alt text are the
   painting annotation's own `label` / `requiredStatement` /
   `accessibilitySummary`, not terms.
 - **Locations** via the official **navPlace** extension: canvas-level

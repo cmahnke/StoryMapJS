@@ -60,6 +60,13 @@ const manifest = {
             ],
             "storymap:type": "overview",
             navDate: "Sep 1",
+            background: {
+                id: "https://example.org/storymap/storm/canvas/1/background",
+                type: "Annotation",
+                motivation: "painting",
+                body: { id: "https://example.org/bg.jpg", type: "Image", format: "image/jpeg" },
+                target: "https://example.org/storymap/storm/canvas/1",
+            },
         },
         {
             id: "https://example.org/storymap/storm/canvas/2",
@@ -90,7 +97,13 @@ const manifest = {
                     ],
                 },
             ],
-            "storymap:background": { url: "https://example.org/bg.jpg", opacity: 25 },
+            background: {
+                id: "https://example.org/storymap/storm/canvas/2/background",
+                type: "Annotation",
+                motivation: "painting",
+                body: { id: "https://example.org/bg.jpg", type: "Image", format: "image/jpeg" },
+                target: "https://example.org/storymap/storm/canvas/2",
+            },
             navPlace: {
                 type: "FeatureCollection",
                 features: [

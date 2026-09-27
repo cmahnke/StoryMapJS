@@ -162,6 +162,23 @@
             "height": 1080,
             "width": 1080,
             "navDate": "2013",
+            "background": {
+                "id": "https://example.org/storymap/president/canvas/3/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": [
+                    {
+                        "id": "http://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg",
+                        "type": "Text",
+                        "format": "text/html"
+                    },
+                    {
+                        "type": "Color",
+                        "value": "#cdbfe3"
+                    }
+                ],
+                "target": "https://example.org/storymap/president/canvas/3"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/3/annotationpage/1",
@@ -206,10 +223,6 @@
                 "none": [
                     "The President arrives in Stockholm, Sweden. The President holds a bilateral meeting with Prime Minister Reinfeldt of Sweden. The President and Prime Minister Reinfeldt hold a press conference. The President tours an Energy Expo event. The President attends an official dinner with Nordic Leaders."
                 ]
-            },
-            "storymap:background": {
-                "url": "http://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg",
-                "color": "#cdbfe3"
             },
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/3/navplace",
@@ -392,6 +405,23 @@
             "height": 1080,
             "width": 1080,
             "navDate": "2013",
+            "background": {
+                "id": "https://example.org/storymap/president/canvas/6/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": [
+                    {
+                        "id": "http://gorod94.com/images/st-petersburg-sightseeing-08.jpg",
+                        "type": "Image",
+                        "format": "image/jpeg"
+                    },
+                    {
+                        "type": "Color",
+                        "value": "#cdbfe3"
+                    }
+                ],
+                "target": "https://example.org/storymap/president/canvas/6"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/6/annotationpage/1",
@@ -436,10 +466,6 @@
                 "none": [
                     "The President holds a bilateral meeting with President Xi of China. The President participates in G-20 Working Session Two. The President holds a press conference. The President departs Saint Petersburg, Russia. The President arrives at the White House."
                 ]
-            },
-            "storymap:background": {
-                "url": "http://gorod94.com/images/st-petersburg-sightseeing-08.jpg",
-                "color": "#cdbfe3"
             },
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/6/navplace",
@@ -1151,6 +1177,23 @@
             "height": 1080,
             "width": 1080,
             "navDate": "2013",
+            "background": {
+                "id": "https://example.org/storymap/president/canvas/16/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": [
+                    {
+                        "id": "http://s.wsj.net/public/resources/images/OB-YZ561_Obama2_E_20130920154351.jpg",
+                        "type": "Image",
+                        "format": "image/jpeg"
+                    },
+                    {
+                        "type": "Color",
+                        "value": "#cdbfe3"
+                    }
+                ],
+                "target": "https://example.org/storymap/president/canvas/16"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/president/canvas/16/annotationpage/1",
@@ -1196,10 +1239,6 @@
                 "none": [
                     " The President departs Joint Base Andrews. The President arrives Kansas City, Missouri. The President delivers remarks at the Ford Stamping Plant. The President departs Kansas City, Missouri en route Washington, DC."
                 ]
-            },
-            "storymap:background": {
-                "url": "http://s.wsj.net/public/resources/images/OB-YZ561_Obama2_E_20130920154351.jpg",
-                "color": "#cdbfe3"
             },
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/16/navplace",

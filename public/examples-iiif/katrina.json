@@ -86,6 +86,17 @@
             "height": 1080,
             "width": 1080,
             "navDate": "Aug 23",
+            "background": {
+                "id": "https://example.org/storymap/katrina/canvas/2/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": {
+                    "id": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "target": "https://example.org/storymap/katrina/canvas/2"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/2/annotationpage/1",
@@ -132,9 +143,6 @@
                     "<ul><li>Tropical Depression Twelve formed a category 1 hurricane over the Bahamas at 5:00 p.m. EDT on August 23, 2005.</li></ul>"
                 ]
             },
-            "storymap:background": {
-                "url": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg"
-            },
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -164,6 +172,17 @@
             "height": 1080,
             "width": 1080,
             "navDate": "Aug 26",
+            "background": {
+                "id": "https://example.org/storymap/katrina/canvas/3/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": {
+                    "id": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "target": "https://example.org/storymap/katrina/canvas/3"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/3/annotationpage/1",
@@ -209,9 +228,6 @@
                     "<ul><li>At 1:00 AM EDT, maximum sustained winds had decreased to 70 mph (110 km/h) and Katrina was again downgraded to a tropical storm.</li><li> At 5:00 AM EDT, the eye of Hurricane Katrina was located just offshore of southwestern Florida over the Gulf of Mexico about 50 miles north-northeast of Key West, Florida.</li><li> Maximum sustained winds had again increased to 75 mph (121 km/h) and Katrina was upgraded again to a Category 1 hurricane. </li><li>In the early afternoon, the National Hurricane Center officially shifts the possible track of Katrina from the Florida Panhandle to the Mississippi/Louisiana coast.</li></ul>"
                 ]
             },
-            "storymap:background": {
-                "url": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg"
-            },
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -241,6 +257,17 @@
             "height": 1080,
             "width": 1080,
             "navDate": "Aug 27",
+            "background": {
+                "id": "https://example.org/storymap/katrina/canvas/4/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": {
+                    "id": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "target": "https://example.org/storymap/katrina/canvas/4"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/4/annotationpage/1",
@@ -287,9 +314,6 @@
                     "<ul><li>By 5:00 AM EDT, Hurricane Katrina reached Category 3 intensity.</li><li>Tolls were suspended on the Lake Pontchartrain Causeway as well as the Crescent City Connection, to speed up the evacuation process.</li><li> At 5:00 PM EDT, New Orleans Mayor Ray Nagin announced a state of emergency and a called for a voluntary evacuation. Nagin said the city would open the Superdome as a shelter of last resort for evacuees with special needs. </li><li>The Louisiana National Guard had delivered three truckloads of water and seven truckloads of MRE's to the Superdome, enough to supply 15,000 people for three days.</li></ul>"
                 ]
             },
-            "storymap:background": {
-                "url": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg"
-            },
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -319,6 +343,17 @@
             "height": 1080,
             "width": 1080,
             "navDate": "Aug 28",
+            "background": {
+                "id": "https://example.org/storymap/katrina/canvas/5/background",
+                "type": "Annotation",
+                "motivation": "painting",
+                "body": {
+                    "id": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "target": "https://example.org/storymap/katrina/canvas/5"
+            },
             "items": [
                 {
                     "id": "https://example.org/storymap/katrina/canvas/5/annotationpage/1",
@@ -363,9 +398,6 @@
                 "none": [
                     "<ul><li>Just after midnight, at 12:40 AM CDT, Hurricane Katrina reached Category 4 intensity with 145 mph (233 km/h) winds. </li><li>By 7:00 AM CDT, it was a Category 5 storm, with maximum sustained winds of 175 mph (282 km/h), gusts up to 190 mph (310 km/h) and a central pressure of 902 mbar. </li><li>At 12:00 PM CDT, the Louisiana Superdome was opened for those residents that were unable to obtain safe transport out of the city. 20,000 people entered the Dome. </li><li>4444 Army National Guard and 932 Air National Guard are deployed (5,376 total). </li><ul>"
                 ]
-            },
-            "storymap:background": {
-                "url": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg"
             },
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/5/navplace",
