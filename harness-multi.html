@@ -28,6 +28,7 @@
         <div id="sm-b" class="sm-host"></div>
         <script type="module">
             import { StoryMap } from "./src/main.ts";
+            import { recordEvents, tileFactoryFrom } from "./harness-support.js";
 
             window.__smErrors = [];
             window.__smReady = false;
@@ -43,6 +44,14 @@
                 a: parseOptions(params.get("aopts")),
                 b: parseOptions(params.get("bopts")),
             };
+
+            // a tile source is a function, so it cannot ride in the JSON options
+            // param: tests define window.__tileSourceFactory in an init script
+            for (const [name, opts] of Object.entries(options)) {
+                const factory = tileFactoryFrom(window);
+                if (factory) opts.tile_source_factory = factory;
+                options[name] = opts;
+            }
 
             function parseOptions(raw) {
                 if (!raw) return {};
@@ -69,8 +78,12 @@
             try {
                 const dataA = shared ?? (await load("a"));
                 window.__smA = new StoryMap("sm-a", dataA, options.a, {});
+                // ?record=imageready,loaded; the A/B suffix keeps the two
+                // viewers' events apart
+                recordEvents(window.__smA, params.get("record"), window, "A");
                 const dataB = shared ?? (await load("b"));
                 window.__smB = new StoryMap("sm-b", dataB, options.b, {});
+                recordEvents(window.__smB, params.get("record"), window, "B");
             } catch (err) {
                 window.__smErrors.push("harness-multi: " + (err?.message ?? err));
             }

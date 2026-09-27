@@ -24,6 +24,7 @@
         <div id="storymap-embed"></div>
         <script type="module">
             import { StoryMap } from "./src/main.ts";
+            import { recordEvents, tileFactoryFrom } from "./harness-support.js";
 
             window.__smErrors = [];
             window.__smReady = false;
@@ -45,6 +46,12 @@
                     window.__smErrors.push("harness: bad options param: " + e);
                 }
             }
+            // a tile source is a function, so it cannot ride in the JSON options
+            // param: tests define window.__tileSourceFactory in an init script
+            const factory = tileFactoryFrom(window);
+            if (factory) {
+                optionsOverride.tile_source_factory = factory;
+            }
 
             const dataUrl = remoteUrl ?? base + name + ".json";
 
@@ -53,7 +60,12 @@
                     return r.json();
                 })
                 .then((data) => {
-                    window.__sm = new StoryMap("storymap-embed", data, optionsOverride, {});
+                    const sm = new StoryMap("storymap-embed", data, optionsOverride, {});
+                    window.__sm = sm;
+                    // opt-in: ?record=imageready,loaded collects events into
+                    // window.__events. Attaching here (not in the constructor
+                    // options) is why the listener map exists at all.
+                    recordEvents(sm, params.get("record"), window);
                     window.__smReady = true;
                 })
                 .catch((err) => {
