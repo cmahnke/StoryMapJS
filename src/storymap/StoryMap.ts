@@ -2,7 +2,14 @@ import { mergeData, slideTransitionDuration, updateData, prefersReducedMotion } 
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
-import { ConsentManager, consentManagerOf, consentMessage } from "./Consent";
+import {
+    ConsentManager,
+    consentManagerOf,
+    fontService,
+    mediaService,
+    tileService,
+    type ConsentService,
+} from "./Consent";
 import Dom from "../dom/Dom";
 import { easeInOutQuint, easeOutStrong } from "../animation/easings";
 import { setLanguage, isRtl } from "../language/Language";
@@ -516,11 +523,7 @@ class StoryMapBase {
             // external font CSS is an external service — ask first
             const host = new URL(font.startsWith("//") ? "https:" + font : font).host;
             const container = this._el.map ?? (this._el.container as HTMLElement);
-            const allowed = await manager.request(
-                consentMessage("consent_service_fonts", "web fonts"),
-                host,
-                container,
-            );
+            const allowed = await manager.request(fontService(), host, container);
             if (!allowed) {
                 return;
             }
@@ -727,10 +730,9 @@ class StoryMapBase {
 
     /**
      * Release everything the viewer attached to the page: window/document
-     * listeners, timers, the resize observer, running Web Animations and the
-     * OpenLayers map. Use this when tearing a storymap down (SPA route
-     * change, modal close) — the instance is unusable afterwards, and
-     * calling `dispose()` twice is a no-op.
+     * listeners, timers, the resize observer, running Web Animations, the
+     * slider, the menubar, the map and the map markers. Use this when tearing
+     * a storymap down (SPA route change, modal close).
      *
      * The map container's child nodes are left in place; remove the element
      * itself if it should disappear.
@@ -774,6 +776,10 @@ class StoryMapBase {
         for (const el of [this._el?.container, this._el?.map]) {
             el?.getAnimations?.().forEach((a) => a.cancel());
         }
+
+        // an unanswered consent panel holds a promise that Media.loadMedia()
+        // is awaiting; settle it before the children go away
+        consentManagerOf(this.options)?.dispose();
 
         this._storyslider?.dispose?.();
         this._map?.dispose?.();
@@ -1144,12 +1150,9 @@ class StoryMapBase {
         if (!manager || !this.options.consent_required) {
             return;
         }
-        const services: Array<{ key: string; label: string }> = [];
-        // map tiles (the ask name the map code uses)
-        services.push({
-            key: consentMessage("consent_service_tiles", "map tiles"),
-            label: consentMessage("consent_service_tiles", "map tiles"),
-        });
+        const services: ConsentService[] = [];
+        // map tiles — the same service the map's layer code keys off
+        services.push(tileService());
         // media services with a real URL in the slides (a storymap is allowed
         // to have no slides at all)
         const seen = new Set<string>();
@@ -1159,7 +1162,9 @@ class StoryMapBase {
             const match = MediaType({ url } as never) as { type: string; name: string } | false;
             if (!match || seen.has(match.type)) continue;
             seen.add(match.type);
-            services.push({ key: match.type, label: match.name });
+            // same registry the per-slide panel uses, so the two dialogs can
+            // never disagree about a service's name
+            services.push(mediaService(match.type, match.name));
         }
         // external web fonts (same-origin themes never ask). Compared by
         // origin, not by a prefix test on the resolved URL: resolveFontCssUrl
@@ -1167,10 +1172,7 @@ class StoryMapBase {
         // that for "http" made every relative font_css look external.
         const font = resolveFontCssUrl(this.options.font_css || "stock:default");
         if (isExternalUrl(font)) {
-            services.push({
-                key: consentMessage("consent_service_fonts", "web fonts"),
-                label: consentMessage("consent_service_fonts", "web fonts"),
-            });
+            services.push(fontService());
         }
         manager.requestAll(services, this._el.container);
     }

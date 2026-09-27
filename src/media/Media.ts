@@ -5,7 +5,7 @@ import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { MediaState, StorymapSlideMedia } from "../types";
 import { Language } from "../language/Language";
-import { consentManagerOf, consentMessage } from "../storymap/Consent";
+import { consentManagerOf, consentMessage, mediaService } from "../storymap/Consent";
 import { validateWebURL, sanitizeSlideText } from "./EmbedUtil";
 import { loadJS } from "../core/Load";
 /*	VCO.Media
@@ -191,8 +191,14 @@ export class MediaBase {
             const manager = consentManagerOf(this.options);
             if (this.options.consent_required && manager && this.options.media_type) {
                 // GDPR consent mode: ask before loading anything from this
-                // external service
-                const service = this.options.media_type as string;
+                // external service. media_type is the stable identity (the
+                // MediaType slug) and media_name is the display name — using
+                // the slug as the label made this panel ask "Load content from
+                // youtube?" where the start-of-story dialog said "YouTube".
+                const service = mediaService(
+                    this.options.media_type,
+                    (this.options.media_name as string | undefined) ?? "",
+                );
                 let host = "";
                 try {
                     host = new URL((this.data as { url?: string })?.url ?? "").host;
@@ -234,9 +240,14 @@ export class MediaBase {
         const target = (this._el.content_container ?? this._el.container) as HTMLElement;
         const blocked = document.createElement("div");
         blocked.className = "vco-consent-blocked";
+        // the display name, not the slug — see loadMedia()
+        const service_name =
+            (this.options.media_name as string | undefined) ||
+            (this.options.media_type as string | undefined) ||
+            "";
         blocked.textContent = (
             consentMessage("consent_blocked", "Content from {service} is blocked.") as string
-        ).replace("{service}", (this.options.media_type as string) ?? "");
+        ).replace("{service}", service_name);
         target.append(blocked);
         this.onLoaded(true);
     }
@@ -328,6 +339,7 @@ export class MediaBase {
         container.removeChild(this._el.container);
         this.onRemove();
     }
+
 
     // Update Display
     updateDisplay(w?: number, h?: number, l?: string) {

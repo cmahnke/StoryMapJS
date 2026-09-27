@@ -6,7 +6,6 @@
         "loading": "Loading",
         "wikipedia": "From Wikipedia, the free encyclopedia",
         "start": "Start Exploring",
-        "consent_title": "External content",
         "consent_message": "Load content from {service}?",
         "consent_allow": "Allow",
         "consent_deny": "Deny",

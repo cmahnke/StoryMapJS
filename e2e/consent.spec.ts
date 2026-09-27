@@ -111,9 +111,11 @@ test("decisions persist in localStorage across reloads", async ({ page }) => {
     await page.waitForTimeout(4500);
     await clickVisibleButton(page, "allow"); // map tiles
 
-    // the decision is stored, not in a cookie
+    // the decision is stored under the stable, namespaced key — not the
+    // label and not a cookie
     const stored = await page.evaluate(() => window.localStorage.getItem("storymapjs-consent"));
-    expect(stored).toContain("map tiles");
+    expect(stored).toContain("map:tiles");
+    expect(stored).not.toContain("map tiles");
     const cookie = await page.context().cookies();
     expect(cookie.find((c) => c.name === "storymapjs-consent")).toBeUndefined();
 

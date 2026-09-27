@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { ConsentManager } from "../src/storymap/Consent";
+import {
+    ConsentManager,
+    fontService,
+    mediaService,
+    tileService,
+    type ConsentService,
+} from "../src/storymap/Consent";
 
 /**
  * Start-of-story consent: one dialog lists every external service with
@@ -13,10 +19,10 @@ describe("start-of-story consent dialog", () => {
         document.body.innerHTML = "";
     });
 
-    const SERVICES = [
-        { key: "map tiles", label: "map tiles" },
-        { key: "youtube", label: "YouTube" },
-        { key: "web fonts", label: "web fonts" },
+    const SERVICES: ConsentService[] = [
+        tileService(),
+        mediaService("youtube", "YouTube"),
+        fontService(),
     ];
 
     function open(): { manager: ConsentManager; container: HTMLElement } {
@@ -76,14 +82,14 @@ describe("start-of-story consent dialog", () => {
         (rows[1].querySelector(".vco-consent-deny") as HTMLElement).click();
         // one service remains unanswered: the dialog stays
         expect(container.querySelector(".vco-consent-start")).not.toBeNull();
-        expect(manager.isGranted("map tiles")).toBe(true);
-        expect(manager.isDenied("youtube")).toBe(true);
-        expect(manager.isGranted("web fonts")).toBe(false);
+        expect(manager.isGranted(tileService().key)).toBe(true);
+        expect(manager.isDenied(mediaService("youtube", "YouTube").key)).toBe(true);
+        expect(manager.isGranted(fontService().key)).toBe(false);
 
         // answering the last one closes the dialog
         (rows[2].querySelector(".vco-consent-allow") as HTMLElement).click();
         expect(container.querySelector(".vco-consent-start")).toBeNull();
-        expect(manager.isGranted("web fonts")).toBe(true);
+        expect(manager.isGranted(fontService().key)).toBe(true);
     });
 
     it("resolves pending slide asks when the service is allowed", async () => {
@@ -91,7 +97,11 @@ describe("start-of-story consent dialog", () => {
         // a slide ask pending in parallel
         const slideAsk = document.createElement("div");
         document.body.appendChild(slideAsk);
-        const promise = manager.request("youtube", "youtube.com", slideAsk);
+        const promise = manager.request(
+            mediaService("youtube", "YouTube"),
+            "youtube.com",
+            slideAsk,
+        );
 
         // allow all resolves it
         (
@@ -107,7 +117,7 @@ describe("start-of-story consent dialog", () => {
             // simulate stored grants via a request + allow
             const c = document.createElement("div");
             document.body.appendChild(c);
-            void seeded.request(s.key, "", c).then(() => {});
+            void seeded.request(s, "", c).then(() => {});
             (c.querySelector(".vco-consent-allow") as HTMLElement).click();
         }
         // a fresh manager with the same services: nothing unanswered

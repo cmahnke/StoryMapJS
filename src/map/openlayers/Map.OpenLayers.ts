@@ -34,7 +34,12 @@ import type {
     StorymapSlideLocation,
 } from "../../types";
 import { fitGeoreference, resolveInfoJsonUrl } from "../georeference";
-import { consentManagerOf, tileServiceName, type ConsentManager } from "../../storymap/Consent";
+import {
+    consentManagerOf,
+    tileService,
+    type ConsentManager,
+    type ConsentService,
+} from "../../storymap/Consent";
 import { sanitizeSlideText } from "../../media/EmbedUtil";
 
 /*	Map.OpenLayers
@@ -138,11 +143,11 @@ export default class OpenLayers extends Map {
         // Tile Layer — GDPR consent mode defers it until the visitor allows
         // map tiles (the consent bar renders over the map)
         const consent = consentManagerOf(this.options);
-        const tile_service = tileServiceName();
+        const tile_service = tileService();
         if (this.options.consent_required && consent) {
-            if (consent.isGranted(tile_service)) {
+            if (consent.isGranted(tile_service.key)) {
                 this._addTileLayer();
-            } else if (!consent.isDenied(tile_service)) {
+            } else if (!consent.isDenied(tile_service.key)) {
                 void this._requestTileConsent(consent, tile_service);
             }
             // denied → the map renders with background color and markers only
@@ -356,7 +361,7 @@ export default class OpenLayers extends Map {
     /**
      * Ask for tile consent, then attach the layers if allowed.
      */
-    async _requestTileConsent(consent: ConsentManager, tile_service: string) {
+    async _requestTileConsent(consent: ConsentManager, tile_service: ConsentService) {
         if (await consent.request(tile_service, "", this._el.map)) {
             this._onTilesAllowed();
         }
@@ -1877,7 +1882,7 @@ export default class OpenLayers extends Map {
         if (!this.options.consent_required || !consent) {
             return true;
         }
-        return consent.isGranted(tileServiceName());
+        return consent.isGranted(tileService().key);
     }
 
     /** A slide's {lat, lon} when both are real numbers, else null. */

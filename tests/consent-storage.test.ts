@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ConsentManager } from "../src/storymap/Consent";
+import {
+    ConsentManager,
+    mediaService,
+    tileService,
+    type ConsentService,
+} from "../src/storymap/Consent";
 
 /**
  * Consent decisions persist in localStorage (no cookies): the state
@@ -17,22 +22,24 @@ describe("consent localStorage persistence", () => {
     });
 
     it("persists decisions across manager instances", async () => {
+        const youtube = mediaService("youtube", "YouTube");
         const first = new ConsentManager();
-        expect(await awaitDecision(first, "YouTube", () => true)).toBe(true);
-        expect(first.isGranted("YouTube")).toBe(true);
+        expect(await awaitDecision(first, youtube, () => true)).toBe(true);
+        expect(first.isGranted(youtube.key)).toBe(true);
 
         // a fresh manager (e.g. after a reload) restores the decision
         const second = new ConsentManager();
-        expect(second.isGranted("YouTube")).toBe(true);
-        expect(second.isDenied("map tiles")).toBe(false);
+        expect(second.isGranted(youtube.key)).toBe(true);
+        expect(second.isDenied(tileService().key)).toBe(false);
     });
 
     it("persists denied services and restores them", async () => {
+        const tiles = tileService();
         const first = new ConsentManager();
-        expect(await awaitDecision(first, "map tiles", () => false)).toBe(false);
+        expect(await awaitDecision(first, tiles, () => false)).toBe(false);
         const second = new ConsentManager();
-        expect(second.isDenied("map tiles")).toBe(true);
-        expect(second.isGranted("map tiles")).toBe(false);
+        expect(second.isDenied(tiles.key)).toBe(true);
+        expect(second.isGranted(tiles.key)).toBe(false);
     });
 
     it("ignores malformed stored data", () => {
@@ -54,14 +61,16 @@ describe("consent localStorage persistence", () => {
         });
         expect(() => new ConsentManager()).not.toThrow();
         const manager = new ConsentManager();
-        await expect(awaitDecision(manager, "YouTube", () => true)).resolves.toBe(true);
+        await expect(
+            awaitDecision(manager, mediaService("youtube", "YouTube"), () => true),
+        ).resolves.toBe(true);
     });
 });
 
 /** Drive one consent ask through the DOM and answer it. */
 async function awaitDecision(
     manager: ConsentManager,
-    service: string,
+    service: ConsentService,
     answer: () => boolean,
 ): Promise<boolean> {
     const container = document.createElement("div");
