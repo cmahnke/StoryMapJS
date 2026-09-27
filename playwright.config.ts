@@ -1,12 +1,34 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
-// Characterization suite: runs against the current webpack dev server.
-// After the Vite migration the same specs must pass against the new dev/preview server.
+// Characterization suite: runs against the preview server built from source.
+//
+// By default this runs on Chromium only, which is what `npm run test:e2e` and
+// the main CI job do. `E2E_ALL_BROWSERS=1` (npm run test:e2e:all) adds Firefox
+// and WebKit for a separate, non-blocking CI job. The engine was replaced
+// wholesale (Leaflet -> OpenLayers) and the teardown work leans on the Web
+// Animations API, so engine-specific divergence in getAnimations(),
+// scrollBy({behavior}) and OL canvas setup is only visible across engines.
+//
+// Workers stay at 1 even for the matrix: a full run is ~6 minutes on Chromium,
+// and at 3 engines that is acceptable for a non-blocking job, while more
+// workers proved flaky (a canvas-initialisation race under load).
+const ALL_BROWSERS = process.env.E2E_ALL_BROWSERS === "1";
+
+const chromium = { name: "chromium", use: { ...devices["Desktop Chrome"] } };
+const projects = ALL_BROWSERS
+    ? [
+          chromium,
+          { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+          { name: "webkit", use: { ...devices["Desktop Safari"] } },
+      ]
+    : [chromium];
+
 export default defineConfig({
     testDir: "./e2e",
     timeout: 60_000,
     retries: 0,
     workers: 1,
+    projects,
     use: {
         baseURL: "http://localhost:8200",
         viewport: { width: 1280, height: 800 },

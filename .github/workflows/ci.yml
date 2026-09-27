@@ -48,6 +48,7 @@ jobs:
                   test -f dist/index.html
                   test -f dist/demo.html
                   test -f dist/harness.html
+                  test -f dist/harness-multi.html
                   test -f dist/embed/index.html
 
             - name: Install Playwright browsers
@@ -55,3 +56,28 @@ jobs:
 
             - name: E2E tests (playwright)
               run: npm run test:e2e
+
+    e2e-matrix:
+        # Chromium/Firefox/WebKit. Deliberately NOT blocking: the suite has
+        # never run on anything but Chromium, so this surfaces pre-existing
+        # engine-specific failures that have nothing to do with the change
+        # under review. Flip `continue-on-error` to false once the known ones
+        # are fixed and the engines stay green.
+        runs-on: ubuntu-latest
+        continue-on-error: true
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install Playwright browsers
+              run: npx playwright install --with-deps chromium firefox webkit
+
+            - name: E2E tests (chromium + firefox + webkit)
+              run: npm run test:e2e:all

@@ -5,6 +5,17 @@ disabled type check that had been hiding them, and a dependency swap.
 
 Added
 -----
+- Browser coverage for the surfaces jsdom cannot reach, and for the changes
+  that came with replacing the map engine: `imageready` against a real
+  asynchronously-attached IIIF source, `dispose()` proving no tile requests
+  happen after teardown, `addTo()`/`removeFrom()` re-measuring a moved map,
+  the `isImageSpace()` contract, runtime option and language changes,
+  per-viewer consent, `tile_source_factory`, and network-level proof that
+  imagery actually reaches the map (the fixture sweep only checked that a
+  container existed, so a grey map used to pass everything)
+- `npm run test:e2e:all` runs the whole suite on Chromium, Firefox and WebKit
+  (`E2E_ALL_BROWSERS=1`). Chromium-only stays the default, so the main CI job is
+  unaffected; a separate, currently non-blocking CI job runs the matrix
 - A typed OpenLayers surface: all OL types (`Map`, `View`, `Layer`,
   `Source`, ...) plus the StoryMapJS extension types are re-exported, so a
   consumer can build and type its own layers without depending on `ol`
@@ -41,6 +52,27 @@ Added
 
 Fixed
 -----
+- `e2e/known-issues/issue-288` tested neither half of what it claimed: without
+  `hasTouch` the browser still reports `pointer: fine`, so `Browser.touch` and
+  `Browser.mobile` were false and the desktop branch rendered, and the click
+  landed on `.vco-slidenav-next`, which is `display: none` on mobile. It now
+  enables touch, asserts the mobile branch is the one under test, checks the
+  `touch-action: pan-y` rule the fix is actually about, and drives a real
+  touch drag (via CDP) to show a vertical swipe scrolls the page past the
+  storymap
+- `e2e/known-issues/issue-452` reported a `zoom` declaration that exists in no
+  stylesheet. OpenLayers ships `.ol-viewport canvas { all: unset }`, and Firefox
+  and WebKit enumerate `zoom` as a *declared* property once `all` has reset it
+  while Chromium does not. It now asserts against the stylesheet's source text
+- The touch-scrollbar assertion in `e2e/scroll-hint` compared
+  `getComputedStyle().scrollbarWidth` against `"thin"`/`"auto"`, which is not
+  comparable across engines: Chromium computes `auto`, Firefox computes `none`
+  for the same declaration. The declaration is now checked in the stylesheet
+  source, and the runtime half is skipped where Playwright does not report
+  touch (WebKit)
+- A new georeferenced-IIIF fixture (`issue-iiif-geo`), because the negative
+  `isImageSpace()` case could not be reached from the existing ones: the
+  document sets `map_as_image`, and the document wins over a constructor option
 - The consent registry keyed its stored decisions on a *localized* label, so
   the same service hashed differently in German than in English and renaming a
   label orphaned every saved decision. Keys are now stable and namespaced

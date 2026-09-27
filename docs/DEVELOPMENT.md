@@ -240,3 +240,63 @@ Three legacy zoomify fixtures (`courbet`, `jansteen`, `seurat`) are skipped in
 the generic sweep because they need the real image-pyramid assets; zoomify
 rendering itself is covered by
 `e2e/known-issues/issue-zoomify-rendering.spec.ts`.
+
+### What the jsdom tests cannot cover
+
+`tests/` runs under jsdom, which has no layout, no renderer and no network. That
+leaves three classes of risk with unit coverage only, all of them the result of
+replacing Leaflet with OpenLayers and of adding a real teardown path:
+
+- **async source attachment** — `imageready` exists because a real IIIF source
+  attaches after `loaded` fires. `e2e/imageready.spec.ts` holds the
+  `info.json` response back to make the ordering observable, which a fake
+  engine cannot do.
+- **layout and the viewport** — `addTo()`/`removeFrom()` re-anchor the OL
+  target and re-measure a viewport (`e2e/map-move.spec.ts`), and
+  `isImageSpace()` decides whether coordinates are pixels or lat/lon
+  (`e2e/image-space.spec.ts`).
+- **the render loop and the network** — `e2e/dispose.spec.ts` proves no tile
+  requests happen after teardown, and `e2e/consent-multi.spec.ts` proves one
+  external script is injected per URL for the whole page.
+
+`e2e/imagery-network.spec.ts` covers the other gap: the fixture sweep only
+checks that a container exists and nothing threw, so a map rendering grey
+instead of the real basemap used to pass everything. It asserts the expected
+tile/imagery requests were made and the source reached `ready`, at the network
+level — no screenshot baselines, which are renderer- and font-dependent and
+would be noisy against third-party image services.
+
+### Harness affordances
+
+`harness.html` and `harness-multi.html` load every spec, so anything added to
+them is opt-in:
+
+- `?record=imageready,loaded` — collect those events into `window.__events`
+  as `{ type, viewer, payload }`, with OpenLayers' object graphs reduced so the
+  result survives `JSON.stringify`. The harness subscribes _after_ the
+  constructor, so a spec cannot see an event fired during construction.
+- `window.__tileSourceFactory` — a `tile_source_factory` is a function, so it
+  cannot ride in the `?options={json}` param; a spec installs it with
+  `page.addInitScript`.
+
+### Browsers
+
+`npm run test:e2e` runs Chromium only, which is what the main CI job does.
+`npm run test:e2e:all` sets `E2E_ALL_BROWSERS=1` and adds Firefox and WebKit;
+a separate, currently non-blocking CI job runs it.
+
+The matrix earned its keep immediately. Three of its findings were false
+positives rather than product bugs, and each is a trap worth knowing about:
+
+- **`.ol-viewport canvas { all: unset }` makes Firefox and WebKit enumerate
+  `zoom` as a declared CSSOM property.** `issue-452` used to walk
+  `document.styleSheets` for a `zoom` declaration and failed on two engines for
+  a declaration that exists nowhere. It now reads the stylesheet's source text.
+- **Engines serialize `scrollbar-width` differently.** Chromium computes
+  `auto`; Firefox computes `none` for the same declaration on an
+  `overflow: hidden auto` box. Compare the declaration, not the computed value.
+- **Playwright's `hasTouch` does not report touch uniformly.** It sets
+  `ontouchstart`/`maxTouchPoints` in Chromium and Firefox but not WebKit, and
+  `Browser.touch` reads exactly those — so the touch branch is legitimately
+  absent on WebKit. It does set `pointer: coarse` everywhere, which is what
+  `Browser.mobile` reads.
