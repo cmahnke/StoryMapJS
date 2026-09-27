@@ -559,6 +559,79 @@ describe("manifestToStorymapData with annotation stops", () => {
         );
     });
 
+    it("reads text in the language the viewer is configured for", () => {
+        // §3.4: a language map used to be flattened by concatenating every
+        // language, which lost which language each string was in
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.label = { en: ["Headline"], de: ["Schlagzeile"], none: ["Headline"] };
+        canvas.summary = { en: ["Body"], de: ["Rumpf"] };
+        const data = manifestToStorymapData(manifest);
+        // no language configured: `none` wins for the headline, and being
+        // language-neutral it is not a language to report
+        expect(data.slides[0].text?.headline).toBe("Headline");
+        // the body has no `none`, so it falls back to its first language, and
+        // that is the slide's language
+        expect(data.slides[0].text?.text).toBe("Body");
+        expect(data.slides[0].language).toBe("en");
+    });
+
+    it("picks the configured language and reports it on the slide", () => {
+        const manifest = manifestWith([]);
+        manifest.service = [{ type: "Service", profile: "mapconfig", language: "de" }];
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.label = { en: ["Headline"], de: ["Schlagzeile"] };
+        canvas.summary = { en: ["Body"], de: ["Rumpf"] };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].text?.headline).toBe("Schlagzeile");
+        expect(data.slides[0].text?.text).toBe("Rumpf");
+        // so a host can offer a language switch
+        expect(data.slides[0].language).toBe("de");
+    });
+
+    it("falls back from a regional tag to its base language", () => {
+        const manifest = manifestWith([]);
+        manifest.service = [{ type: "Service", profile: "mapconfig", language: "de-AT" }];
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.label = { en: ["Headline"], de: ["Schlagzeile"] };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].text?.headline).toBe("Schlagzeile");
+        expect(data.slides[0].language).toBe("de");
+    });
+
+    it("falls back to the first language when the configured one is missing", () => {
+        const manifest = manifestWith([]);
+        manifest.service = [{ type: "Service", profile: "mapconfig", language: "fr" }];
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.label = { en: ["Headline"], de: ["Schlagzeile"] };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].text?.headline).toBe("Headline");
+        expect(data.slides[0].language).toBe("en");
+    });
+
+    it("concatenates the values of one language, not of every language", () => {
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.label = { en: ["Part one", "part two"] };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].text?.headline).toBe("Part one part two");
+    });
+
     it("reads a slide's date from the canvas's navDate", () => {
         const manifest = manifestWith([]);
         const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<

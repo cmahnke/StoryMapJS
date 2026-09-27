@@ -110,6 +110,15 @@ export interface StorymapSlide {
     type?: string;
     date?: string | Record<string, unknown> | null;
     group?: string;
+    /**
+     * The language tag this slide's text was read in (§3.4 of
+     * docs/plans/iiif-interop.md). A IIIF manifest states its text as a
+     * language map; the reader picks the viewer's configured language and
+     * reports which one it used, so a host can offer a language switch.
+     * Absent for language-neutral (`none`) text, and for a single-language
+     * storymap.
+     */
+    language?: string;
     location?: StorymapSlideLocation | null;
     media?: StorymapSlideMedia | null;
     marker?: StorymapSlideMarker | null;

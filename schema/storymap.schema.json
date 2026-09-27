@@ -374,6 +374,10 @@
                 "group": {
                     "type": "string"
                 },
+                "language": {
+                    "type": "string",
+                    "description": "The language tag this slide's text is in. A IIIF manifest states text as a language map; the reader picks the viewer's configured language and reports which one it used, so a host can offer a language switch. Absent for language-neutral (none) text."
+                },
                 "location": {
                     "type": "object",
                     "properties": {

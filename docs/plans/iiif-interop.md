@@ -651,11 +651,23 @@ slides.
   Standardise on `name` for the label even though the navPlace extension's own
   example uses `label`, because `name` is what the reader already copies and
   changing it would break the 7 properties already in the fixtures.
-- **Language maps.** `flattenLanguageMap` (`:106`) concatenates every language
-  and loses which is which. Keep the map, pick the language the viewer is
-  already configured for (the `storymap:language` option, which stays), and
-  expose the active language on the slide so a host can offer a language
-  switch. This is the single highest-value change for a multilingual tour.
+- **DONE (commit 9): language maps.** `flattenLanguageMap` concatenated every
+  language and lost which is which — for a bilingual tour, a headline of
+  "Hallo Hello". `pickLanguageMap` now chooses: the configured language, then
+  its base subtag (`de-AT` → `de`), then `none`, then the first key. The
+  configured language is the `storymap:language` option, which stays, and it is
+  read before the canvases so the canvas loop can pass it down. The language
+  actually used is exposed as `slide.language`, so a host can offer a language
+  switch; `none` is language-neutral and is not reported, but a neutral headline
+  with an `en` body still reports `en`, since that is what the slide is in.
+  This is the single highest-value change for a multilingual tour.
+
+    The converter keeps writing `{none: […]}`, because a storymap states its text
+    as one plain string and has no language to declare — so `slide.language` only
+    appears for a genuinely multilingual manifest and the fixtures are untouched.
+    All 1046 label/summary maps in the fixture set are single-key, so no round
+    trip changed.
+
 - **`structures` / `Range`.** Two distinct jobs, both of which the ecosystem
   expects (Annona Range Storyboard, TimelineJS `group`):
     1. a Range with a `label` and no `start` → the **group** for its member

@@ -69,6 +69,53 @@ function asStringArray(value: unknown): string[] {
  * for anything else — invalid regions are ignored.
  */
 /**
+ * A language map reduced to one string in the language the viewer is using,
+ * together with the language that was actually chosen (§3.4).
+ *
+ * `flattenLanguageMap` used to concatenate *every* language, which loses which
+ * language each string was in — for a bilingual tour that produced a headline
+ * of "Hallo Hello" and no way to tell a host what the viewer had picked. The
+ * choice is: the configured language, then its base subtag (`de-AT` → `de`),
+ * then the language-neutral `none`, then the first key present.
+ *
+ * `language` is null for `none`, which is genuinely language-neutral and not a
+ * language a host could offer in a switch.
+ */
+export function pickLanguageMap(
+    value: unknown,
+    preferred: string | null = null,
+): { value: string; language: string | null } {
+    if (typeof value === "string") return { value, language: null };
+    const record = asRecord(value);
+    if (!record) return { value: "", language: null };
+    // a TextualBody carries its text in `value`; that is a single string, not
+    // a language map, so it keeps flattenLanguageMap's shape
+    const textual = record.value;
+    if (typeof textual === "string") return { value: textual, language: null };
+    if (Array.isArray(textual)) {
+        return { value: asStringArray(textual).join(" ").trim(), language: null };
+    }
+
+    const keys = Object.keys(record);
+    if (keys.length === 0) return { value: "", language: null };
+    const join = (key: string): string => asStringArray(record[key]).join(" ").trim();
+
+    if (preferred !== null && preferred !== "") {
+        for (const key of keys) {
+            if (key.toLowerCase() === preferred.toLowerCase()) {
+                return { value: join(key), language: key };
+            }
+        }
+        const base = preferred.split("-")[0].toLowerCase();
+        for (const key of keys) {
+            if (key.toLowerCase() === base) return { value: join(key), language: key };
+        }
+    }
+    if ("none" in record) return { value: join("none"), language: null };
+    return { value: join(keys[0]), language: keys[0] };
+}
+
+/**
  * A selector, normalized. Every field is optional and the object is a
  * *superset* carrier: an annotation may carry a region, a point, a quote and a
  * time range at once, and we keep what we understand instead of stopping at
@@ -816,20 +863,31 @@ function readBackground(annotation: unknown): StorymapSlideBackground | string |
     return Object.keys(background).length > 0 ? background : null;
 }
 
-function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide | null {
+function canvasToSlide(
+    canvas: unknown,
+    manifestFeature: unknown,
+    preferredLanguage: string | null = null,
+): StorymapSlide | null {
     const record = asRecord(canvas);
     if (!record) return null;
 
     const slide: StorymapSlide = {};
 
-    // text: Canvas label → headline, Canvas summary → body text
-    const headline = flattenLanguageMap(record.label);
-    const text = flattenLanguageMap(record.summary);
+    // text: Canvas label → headline, Canvas summary → body text, both in the
+    // language the viewer is configured for (§3.4)
+    const label = pickLanguageMap(record.label, preferredLanguage);
+    const summary = pickLanguageMap(record.summary, preferredLanguage);
+    const headline = label.value;
+    const text = summary.value;
     if (headline !== "" || text !== "") {
         slide.text = {};
         if (headline !== "") slide.text.headline = headline;
         if (text !== "") slide.text.text = text;
     }
+    // Which language this slide's text came from, so a host can offer a
+    // language switch. `none` is language-neutral, so it is not reported.
+    const language = label.language ?? summary.language;
+    if (language !== null) slide.language = language;
 
     // media: the painting annotation's body, with its label /
     // requiredStatement / accessibilitySummary as caption, credit and alt
@@ -1156,7 +1214,11 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         // appended below shift the slide array, and the manifest-level
         // navPlace features line up with canvases.
         const canvasId = asString(asRecord(items[index])?.id);
-        const slide = canvasToSlide(items[index], manifestFeatures[index]);
+        const slide = canvasToSlide(
+            items[index],
+            manifestFeatures[index],
+            asString(data.language) ?? null,
+        );
         if (slide !== null) {
             slide.uniqueid = canvasId ?? manifestId ?? "";
             data.slides.push(slide);
