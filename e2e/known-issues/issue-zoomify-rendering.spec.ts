@@ -23,31 +23,27 @@ interface RenderedTile {
 
 interface HarnessWindow {
     __sm?: {
+        map?: {
+            getView(): {
+                getProjection(): unknown;
+                setResolution(res: number): void;
+                setCenter(center: [number, number]): void;
+            };
+        };
+        getBaseLayer(): {
+            getSource(): { getTileGrid(): { getResolutions(): number[] } };
+            getRenderer(): { renderedTiles: RenderedTile[] } | null;
+        } | null;
+        getMinimap(): {
+            getView(): {
+                getResolution(): number;
+                getResolutions(): number[] | null;
+                calculateExtent(size: number[]): number[];
+            };
+            getSize(): number[] | undefined;
+        } | null;
         _map?: {
-            _map?: {
-                getView(): {
-                    getProjection(): unknown;
-                    setResolution(res: number): void;
-                    setCenter(center: [number, number]): void;
-                };
-            };
-            _tile_layer?: {
-                getSource(): {
-                    getTileGrid(): { getResolutions(): number[] };
-                };
-                getRenderer(): { renderedTiles: RenderedTile[] } | null;
-            };
             _zoomifyPyramid(): { extent: number[] } | null;
-            _mini_map?: {
-                getOverviewMap(): {
-                    getView(): {
-                        getResolution(): number;
-                        getResolutions(): number[] | null;
-                        calculateExtent(size: number[]): number[];
-                    };
-                    getSize(): number[] | undefined;
-                };
-            };
         };
     };
 }
@@ -58,8 +54,8 @@ test("zoomify edge tiles are padded, not stretched", async ({ page }) => {
 
     const tiles = await page.evaluate(async () => {
         const sm = (window as unknown as HarnessWindow).__sm;
-        const map = sm?._map?._map;
-        const layer = sm?._map?._tile_layer;
+        const map = sm?.map;
+        const layer = sm?.getBaseLayer() ?? undefined;
         if (!map || !layer) return null;
         const source = layer.getSource();
         const view = map.getView();
@@ -120,7 +116,7 @@ test("zoomify minimap shows the whole image", async ({ page }) => {
 
     const minimap = await page.evaluate(() => {
         const sm = (window as unknown as HarnessWindow).__sm;
-        const mini = sm?._map?._mini_map?.getOverviewMap();
+        const mini = sm?.getMinimap() ?? undefined;
         const pyramid = sm?._map?._zoomifyPyramid();
         if (!mini || !pyramid) return null;
         const view = mini.getView();

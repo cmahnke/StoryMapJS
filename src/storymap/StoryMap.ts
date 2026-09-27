@@ -14,6 +14,8 @@ import StorySlider from "../slider/StorySlider";
 import { Browser } from "../core/Browser";
 import Animate from "../animation/tween";
 import type { Map as OlMap } from "ol";
+import type OlLayer from "ol/layer/Layer";
+import type OpenLayersMapMarker from "../map/openlayers/MapMarker.OpenLayers";
 import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
 
 /** Map height in pixels while the menubar has collapsed the map (portrait only). */
@@ -619,12 +621,18 @@ class StoryMapBase {
      * options only take effect on the next navigation or require re-creating
      * the StoryMap.
      */
+    /**
+     * Sugar over {@link setMapOptions} — `setMapOption(name, value)` is the
+     * same call as `setMapOptions({ [name]: value })`.
+     */
     setMapOption(name: string, value: unknown) {
         this.setMapOptions({ [name]: value } as Partial<StorymapOptions>);
     }
 
     /**
      * Show or hide a stacked overlay by index (see the `overlays` option).
+     * Prefer `getOverlayLayer(index).setVisible(v)` on the layer itself; this
+     * wrapper also re-syncs the attribution line and the overlay blend mode.
      */
     setOverlayVisible(index: number, visible: boolean): void {
         this._map.setOverlayVisible(index, visible);
@@ -632,6 +640,7 @@ class StoryMapBase {
 
     /**
      * Set a stacked overlay's opacity by index (see the `overlays` option).
+     * Alias: `getOverlayLayer(index)?.setOpacity(opacity)`.
      */
     setOverlayOpacity(index: number, opacity: number): void {
         this._map.setOverlayOpacity(index, opacity);
@@ -651,6 +660,70 @@ class StoryMapBase {
             this._applyTextColors();
             this.updateDisplay();
         }
+    }
+
+    /*	OpenLayers accessors
+	The map itself is public (`storymap.map`, the raw `ol/Map`). These hand
+	out the objects the viewer keeps private, so a consumer never has to reach
+	through an underscore field. `getBaseLayer()` returns `null` while the
+	base layer is deferred awaiting tile consent.
+	================================================= */
+
+    /** The base tile layer, or `null` when deferred (tile consent not granted). */
+    getBaseLayer(): OlLayer | null {
+        return this._map ? this._map.getBaseLayer() : null;
+    }
+
+    /** The stacked `overlays[]` layers, in `overlays[]` order. */
+    getOverlayLayers(): OlLayer[] {
+        return this._map ? this._map.getOverlayLayers() : [];
+    }
+
+    /** One stacked overlay layer by its `overlays[]` index, or `null`. */
+    getOverlayLayer(index: number): OlLayer | null {
+        return this._map ? this._map.getOverlayLayer(index) : null;
+    }
+
+    /** The minimap's OpenLayers map (the `OverviewMap` control's inner map). */
+    getMinimap(): OlMap | null {
+        return this._map ? this._map.getMinimap() : null;
+    }
+
+    /** The full (inactive) route line layer. */
+    getLine(): OlLayer | null {
+        return this._map ? this._map.getLine() : null;
+    }
+
+    /** The highlighted route line drawn up to the current slide. */
+    getLineActive(): OlLayer | null {
+        return this._map ? this._map.getLineActive() : null;
+    }
+
+    /** The map markers, indexed by slide. */
+    getMarkers(): OpenLayersMapMarker[] {
+        return this._map ? this._map.getMarkers() : [];
+    }
+
+    /** One map marker by slide index, or `null`. */
+    getMarker(index: number): OpenLayersMapMarker | null {
+        return this._map ? this._map.getMarker(index) : null;
+    }
+
+    /**
+     * Rebuild the minimap (`OverviewMap` control). The constructor already
+     * builds it; this is for hosts that recreate it after a `map_type` swap
+     * or a deferred tile-consent grant.
+     */
+    createMiniMap(): void {
+        this._map.createMiniMap();
+    }
+
+    /**
+     * Append attribution fragments and refresh the credit line (e.g. for a
+     * custom layer added through `tile_source_factory`).
+     */
+    setExtraAttributions(parts: string[]): void {
+        this._map.setExtraAttributions(parts);
     }
 
     /**

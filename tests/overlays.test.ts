@@ -23,11 +23,12 @@ function vcoMap(storymap: StoryMap): VcoMap {
     return (storymap as unknown as { _map: VcoMap })._map;
 }
 
+/** The base + overlay layers via the public accessors (no `_map` reach). */
 function layersOf(storymap: StoryMap): LayerProbe[] {
-    const inner = (
-        storymap as unknown as { _map: { _map: { getLayers(): { getArray(): LayerProbe[] } } } }
-    )._map._map;
-    return inner.getLayers().getArray();
+    return [
+        ...(storymap.getBaseLayer() ? [storymap.getBaseLayer() as LayerProbe] : []),
+        ...(storymap.getOverlayLayers() as LayerProbe[]),
+    ];
 }
 
 describe("stacked overlays", () => {

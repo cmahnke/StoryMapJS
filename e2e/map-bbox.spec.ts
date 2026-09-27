@@ -17,12 +17,10 @@ test("map_bbox constrains the view", async ({ page }) => {
         const v = (
             window as unknown as {
                 __sm?: {
-                    _map?: {
-                        _map?: { getView(): { get(prop: string): unknown; getCenter(): number[] } };
-                    };
+                    map?: { getView(): { get(prop: string): unknown; getCenter(): number[] } };
                 };
             }
-        ).__sm?._map?._map?.getView();
+        ).__sm?.map?.getView();
         return {
             extent: v?.get("extent") ? Array.from(v.get("extent") as number[]) : null,
             center: v?.getCenter(),
@@ -39,14 +37,12 @@ test("map_bbox constrains the view", async ({ page }) => {
         const v = (
             window as unknown as {
                 __sm?: {
-                    _map?: {
-                        _map?: {
-                            getView(): { setZoom(z: number): void; setCenter(c: number[]): void };
-                        };
+                    map?: {
+                        getView(): { setZoom(z: number): void; setCenter(c: number[]): void };
                     };
                 };
             }
-        ).__sm?._map?._map?.getView();
+        ).__sm?.map?.getView();
         v?.setZoom(12);
         v?.setCenter([10_000_000, 9_000_000]); // far outside
     });
@@ -54,9 +50,9 @@ test("map_bbox constrains the view", async ({ page }) => {
     const after = await page.evaluate(() => {
         const v = (
             window as unknown as {
-                __sm?: { _map?: { _map?: { getView(): { getCenter(): number[] } } } };
+                __sm?: { map?: { getView(): { getCenter(): number[] } } };
             }
-        ).__sm?._map?._map?.getView();
+        ).__sm?.map?.getView();
         return v?.getCenter() ?? [];
     });
     const [minX, minY, maxX, maxY] = view.extent ?? [];

@@ -19,16 +19,14 @@ test("issue #107/#271: map_overview_center centers the overview", async ({ page 
     const markerX = await page.evaluate(() => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: {
-                    _markers: { data: { location?: { lon?: number } }; _marker: HTMLElement }[];
-                    _map?: { getPixelFromCoordinate(c: number[]): number[] };
-                };
+                getMarkers(): {
+                    data: { location?: { lon?: number } };
+                    _marker: HTMLElement;
+                }[];
             };
         };
-        const map = sm.__sm?._map;
-        if (!map) return null;
-        const paris = map._markers.find((m) => m.data.location?.lon === 2.35);
-        if (!paris || !map._map) return null;
+        const paris = sm.__sm?.getMarkers().find((m) => m.data.location?.lon === 2.35);
+        if (!paris) return null;
         const el = paris._marker.getBoundingClientRect();
         return Math.round(el.x + el.width / 2);
     });

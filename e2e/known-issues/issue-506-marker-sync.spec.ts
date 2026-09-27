@@ -17,26 +17,24 @@ test("issue #506: markers track the map while panning", async ({ page }) => {
     const result = await page.evaluate(async () => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: {
-                    _markers: {
-                        data: { real_marker: boolean };
-                        _marker: HTMLElement;
-                        _overlay?: { getPosition(): number[] | undefined };
-                    }[];
-                    _map: {
-                        getPixelFromCoordinate(c: number[]): number[];
-                        getView(): {
-                            setCenter(c: number[]): void;
-                            getCenter(): number[];
-                            getResolution(): number | undefined;
-                        };
-                        getSize(): number[];
+                getMarkers(): {
+                    data: { real_marker: boolean };
+                    _marker: HTMLElement;
+                    _overlay?: { getPosition(): number[] | undefined };
+                }[];
+                map: {
+                    getPixelFromCoordinate(c: number[]): number[];
+                    getView(): {
+                        setCenter(c: number[]): void;
+                        getCenter(): number[];
+                        getResolution(): number | undefined;
                     };
+                    getSize(): number[];
                 };
             };
         };
-        const map = sm.__sm?._map;
-        const marker = map?._markers?.find((m) => m.data.real_marker && m._marker);
+        const map = sm.__sm?.map;
+        const marker = sm.__sm?.getMarkers().find((m) => m.data.real_marker && m._marker);
         const overlay = marker?._overlay;
         if (!map || !marker || !overlay) return null;
 
@@ -47,15 +45,15 @@ test("issue #506: markers track the map while panning", async ({ page }) => {
         };
 
         const pos = overlay.getPosition()!;
-        const proj0 = map._map.getPixelFromCoordinate(pos);
+        const proj0 = map.getPixelFromCoordinate(pos);
         const dom0 = markerRect();
 
-        const center = map._map.getView().getCenter();
-        const resolution = map._map.getView().getResolution() ?? 1;
-        map._map.getView().setCenter([center[0] - 360 * resolution, center[1]]);
+        const center = map.getView().getCenter();
+        const resolution = map.getView().getResolution() ?? 1;
+        map.getView().setCenter([center[0] - 360 * resolution, center[1]]);
         await new Promise((r) => setTimeout(r, 300));
 
-        const proj1 = map._map.getPixelFromCoordinate(pos);
+        const proj1 = map.getPixelFromCoordinate(pos);
         const dom1 = markerRect();
 
         return {

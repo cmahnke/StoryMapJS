@@ -16,18 +16,17 @@ test("the line retracts when navigating back", async ({ page }) => {
             const coords = (
                 window as unknown as {
                     __sm?: {
-                        _map?: {
-                            _line_active?: {
-                                getSource?(): {
-                                    getFeatures?(): {
-                                        getGeometry?(): { getCoordinates?(): number[][] };
-                                    }[];
-                                };
+                        getLineActive?(): {
+                            getSource?(): {
+                                getFeatures?(): {
+                                    getGeometry?(): { getCoordinates?(): number[][] };
+                                }[];
                             };
-                        };
+                        } | null;
                     };
                 }
-            ).__sm?._map?._line_active
+            ).__sm
+                ?.getLineActive?.()
                 ?.getSource?.()
                 .getFeatures?.()[0]
                 ?.getGeometry?.()

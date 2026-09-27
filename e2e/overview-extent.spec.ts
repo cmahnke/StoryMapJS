@@ -18,13 +18,11 @@ test("overview_extent constrains the minimap overview", async ({ page }) => {
 
     const center = await page.evaluate(() => {
         const sm = (window as unknown as { __sm?: unknown }).__sm as {
-            _map?: {
-                _mini_map?: {
-                    getOverviewMap(): { getView(): { getCenter(): number[] | undefined } };
-                };
-            };
+            getMinimap(): {
+                getView(): { getCenter(): number[] | undefined };
+            } | null;
         };
-        return sm?._map?._mini_map?.getOverviewMap().getView().getCenter();
+        return sm?.getMinimap()?.getView().getCenter();
     });
     // fromLonLat([5, 50])..fromLonLat([6, 51]) ≈ [556597, 6446275, 667916, 6621293]
     expect(center?.[0]).toBeGreaterThanOrEqual(556597);

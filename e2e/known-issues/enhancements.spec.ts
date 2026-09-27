@@ -18,10 +18,10 @@ test.fixme("issue #412: connections between markers follow real routes", async (
     const vertices = await page.evaluate(() => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: { _line_active?: { getSource(): { getFeatures(): unknown[] } } };
+                getLineActive(): { getSource(): { getFeatures(): unknown[] } } | null;
             };
         };
-        const features = sm.__sm?._map?._line_active?.getSource().getFeatures() ?? [];
+        const features = sm.__sm?.getLineActive()?.getSource().getFeatures() ?? [];
         return features.length;
     });
     expect(vertices).toBeGreaterThan(0);

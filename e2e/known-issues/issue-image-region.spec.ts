@@ -15,18 +15,16 @@ test("the view fits each slide region on navigation", async ({ page }) => {
         page.evaluate(() => {
             const sm = window as unknown as {
                 __sm?: {
-                    _map?: {
-                        _map?: {
-                            getView(): { calculateExtent?(size: number[]): number[] };
-                            getSize(): number[];
-                        };
+                    map?: {
+                        getView(): { calculateExtent?(size: number[]): number[] };
+                        getSize(): number[];
                     };
                 };
             };
-            const map = sm.__sm?._map;
-            const view = map?._map?.getView();
+            const map = sm.__sm?.map;
+            const view = map?.getView();
             if (!map || !view) return null;
-            return view.calculateExtent?.(map._map!.getSize()) ?? null;
+            return view.calculateExtent?.(map.getSize()) ?? null;
         });
 
     // head region [800, 100, 700, 700]
@@ -60,9 +58,9 @@ test("region-less slides keep the default fit", async ({ page }) => {
     // the overview slide has no region: it fits the whole image
     const zoom = await page.evaluate(() => {
         const sm = window as unknown as {
-            __sm?: { _map?: { _map?: { getView(): { getZoom(): number } } } };
+            __sm?: { map?: { getView(): { getZoom(): number } } };
         };
-        return sm.__sm?._map?._map?.getView().getZoom() ?? null;
+        return sm.__sm?.map?.getView().getZoom() ?? null;
     });
     expect(zoom).not.toBeNull();
 });

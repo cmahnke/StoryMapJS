@@ -130,6 +130,21 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
 - `src/map/openlayers/Map.OpenLayers.ts` implements the Map contract
   (tile layers by `map_type`, markers as HTML overlays, path lines,
   overview fitting, mini map via `ol/control/OverviewMap`).
+- **The raw `ol/Map` is public** (`storymap.map`), and the engine's
+  internals are handed out through accessors instead of underscore
+  fields: `getBaseLayer()`, `getOverlayLayers()` / `getOverlayLayer(i)`,
+  `getMinimap()`, `getLine()` / `getLineActive()`, `getMarker(n)` /
+  `getMarkers()`, `createMiniMap()`, `setExtraAttributions()`. Layer order
+  in `map.getLayers()` is _not_ the `overlays[]` order (creation order is
+  `[base, line, line_active, overlay0…]`, zIndex is a separate axis), so
+  `getOverlayLayers()` is the only correct index → layer mapping.
+  `ol` types (`OlMap`, `OlView`, `OlLayer`, …) are re-exported from
+  `src/main.ts` so consumers can type the map without depending on `ol`.
+- `tile_source_factory` may return any `ol/layer/Layer` (used as-is — this
+  is what lets a third-party layer such as an Allmaps `WarpedMapLayer`
+  render), a bare `Source` (wrapped in a `TileLayer`), or `null` to fall
+  through to the default `map_type` handling. It is consulted for the base
+  layer, overlays, the minimap and runtime `map_type` switches.
 - `map_type` accepts keyword types (`osm`, `osm:<style>`, `stadia:*`,
   `ch-watercolor`, `iiif`, `zoomify`, `mapbox://styles/<user>/<style>`),
   absolute `https://` tile templates /

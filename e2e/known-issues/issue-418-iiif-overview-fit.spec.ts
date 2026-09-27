@@ -14,32 +14,30 @@ test("issue #418: the iiif overview view fits the whole image", async ({ page })
     const fit = await page.evaluate(async () => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: {
-                    _map?: {
-                        getView(): {
-                            getZoom(): number;
-                            getCenter(): number[];
-                            calculateExtent?(size: number[]): number[];
-                        };
-                        getSize(): number[];
+                map?: {
+                    getView(): {
+                        getZoom(): number;
+                        getCenter(): number[];
+                        calculateExtent?(size: number[]): number[];
                     };
-                    options: {
-                        iiif: { url: string };
-                        map_center_offset: { left: number; top: number };
-                    };
+                    getSize(): number[];
+                };
+                options: {
+                    iiif: { url: string };
+                    map_center_offset: { left: number; top: number };
                 };
             };
         };
-        const map = sm.__sm?._map;
-        const view = map?._map?.getView();
+        const map = sm.__sm?.map;
+        const view = map?.getView();
         if (!map || !view) return null;
-        const info = (await fetch(map.options.iiif.url).then((r) => r.json())) as {
+        const info = (await fetch(sm.__sm!.options.iiif.url).then((r) => r.json())) as {
             width: number;
             height: number;
         };
-        const size = map._map!.getSize();
+        const size = map.getSize();
         const resolution = Math.max(info.width / size[0], info.height / size[1]);
-        const offset = map.options.map_center_offset;
+        const offset = sm.__sm!.options.map_center_offset;
         return {
             width: info.width,
             height: info.height,

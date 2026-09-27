@@ -15,14 +15,12 @@ interface HarnessWindow {
         options?: {
             map_center_offset?: { left: number; top: number } | null;
         };
-        _map?: {
-            _map?: {
-                getView(): {
-                    getCenter(): number[];
-                    setZoom(z: number): void;
-                    setCenter(c: number[]): void;
-                    get(prop: string): unknown;
-                };
+        map?: {
+            getView(): {
+                getCenter(): number[];
+                setZoom(z: number): void;
+                setCenter(c: number[]): void;
+                get(prop: string): unknown;
             };
         };
     };
@@ -95,7 +93,7 @@ test("map_area left with map_bbox composes the active marker in the map area", a
             const r = el.getBoundingClientRect();
             return Math.round(r.x - mapRect.x);
         });
-        const v = sm?._map?._map?.getView();
+        const v = sm?.map?.getView();
         const extent = v?.get("extent");
         return {
             // the view center stays within the bbox (projected corners)
@@ -123,14 +121,14 @@ test("map_bbox clamps the view center in both map areas", async ({ page }) => {
         await page.waitForTimeout(2500);
 
         await page.evaluate(() => {
-            const v = (window as unknown as HarnessWindow).__sm!._map!._map!.getView();
+            const v = (window as unknown as HarnessWindow).__sm!.map!.getView();
             v.setZoom(12);
             v.setCenter([10_000_000, 9_000_000]); // far outside
         });
         await page.waitForTimeout(800);
 
         const view = await page.evaluate(() => {
-            const v = (window as unknown as HarnessWindow).__sm!._map!._map!.getView();
+            const v = (window as unknown as HarnessWindow).__sm!.map!.getView();
             const extent = v.get("extent");
             return {
                 center: v.getCenter(),

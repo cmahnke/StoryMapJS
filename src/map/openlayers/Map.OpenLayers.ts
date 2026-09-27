@@ -3,6 +3,7 @@ import View from "ol/View";
 import type { Control } from "ol/control";
 import type { Interaction } from "ol/interaction";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import Layer from "ol/layer/Layer";
 import VectorTileLayer from "ol/layer/VectorTile";
 import { XYZ, OSM, IIIF } from "ol/source";
 import VectorSource from "ol/source/Vector";
@@ -186,6 +187,57 @@ export default class OpenLayers extends Map {
     setExtraAttributions(parts: string[]): void {
         this._extra_attributions = [...parts];
         this._updateAttribution();
+    }
+
+    /*	Public accessors
+	Consumers get the raw OpenLayers map via `storymap.map`; these hand out
+	the internal objects the viewer keeps private (base/overlay/minimap layers,
+	the route lines, the markers) so nothing has to be reached for through an
+	underscore field. Layer order in `map.getLayers()` is NOT the overlay
+	order (creation order is [base, line, line_active, overlay0…] and zIndex is
+	a separate axis), so `getOverlayLayers()` is the only correct way to map an
+	`overlays[]` index onto a layer.
+	================================================= */
+
+    /** The base tile layer (the one created for `map_type`), if consent has not deferred it. */
+    getBaseLayer(): Layer | null {
+        return this._tile_layer ?? null;
+    }
+
+    /** The stacked `overlays[]` layers, in `overlays[]` order. */
+    getOverlayLayers(): Layer[] {
+        return [...this._overlay_layers];
+    }
+
+    /** One stacked overlay layer by its `overlays[]` index, or `null`. */
+    getOverlayLayer(index: number): Layer | null {
+        return this._overlay_layers[index] ?? null;
+    }
+
+    /** The minimap's OpenLayers map (the `OverviewMap` control's inner map). */
+    getMinimap(): OlMap | null {
+        const overview = this._mini_map?.getOverviewMap?.() ?? null;
+        return overview ?? null;
+    }
+
+    /** The full (inactive) route line layer. */
+    getLine(): Layer | null {
+        return this._line ?? null;
+    }
+
+    /** The highlighted route line layer drawn up to the current slide. */
+    getLineActive(): Layer | null {
+        return this._line_active ?? null;
+    }
+
+    /** The markers, in slide order (the index matches the slide index). */
+    getMarkers(): OpenLayersMapMarker[] {
+        return [...this._markers];
+    }
+
+    /** One marker by slide index, or `null`. */
+    getMarker(index: number): OpenLayersMapMarker | null {
+        return this._markers[index] ?? null;
     }
 
     /**
@@ -464,7 +516,10 @@ export default class OpenLayers extends Map {
         this.setExtraAttributions(parts);
     }
 
-    /** Number of stacked overlay layers (see the `overlays` option). */
+    /**
+     * Number of stacked overlay layers (see the `overlays` option). Alias:
+     * `getOverlayLayers().length`.
+     */
     getOverlayCount(): number {
         return this._overlay_layers.length;
     }
@@ -472,6 +527,10 @@ export default class OpenLayers extends Map {
     /**
      * Show or hide a stacked overlay by index (re-syncs attribution). The
      * index counts built layers, i.e. it skips malformed entries.
+     *
+     * Prefer `getOverlayLayer(index).setVisible(v)` on the layer itself; this
+     * wrapper exists because it also re-syncs the attribution line and the
+     * overlay blend mode, which a bare `setVisible()` does not.
      */
     setOverlayVisible(index: number, visible: boolean): void {
         const layer = this._overlay_layers[index];
@@ -487,6 +546,9 @@ export default class OpenLayers extends Map {
     }
 
     /** Set a stacked overlay's opacity by index. */
+    /**
+     * Alias: `getOverlayLayer(index)?.setOpacity(opacity)`.
+     */
     setOverlayOpacity(index: number, opacity: number): void {
         this._overlay_layers[index]?.setOpacity(opacity);
     }
@@ -610,14 +672,16 @@ export default class OpenLayers extends Map {
                 createDefault: () => this._createDefaultTileLayer(map_type),
             });
             if (custom) {
-                // layers (TileLayer and siblings exposing getSource) pass
-                // through; a bare Source is wrapped in a TileLayer
+                // any ol/layer/Layer passes through as-is — including
+                // subclasses without a getSource (e.g. an Allmaps
+                // WarpedMapLayer), which must not be wrapped; a bare Source is
+                // wrapped in a TileLayer
                 if (
-                    typeof (custom as unknown as { getSource?: unknown }).getSource === "function"
+                    custom instanceof Layer ||
+                    typeof (custom as { getSource?: unknown }).getSource === "function"
                 ) {
                     return custom as TileLayer;
                 }
-                // any tile-capable Source satisfies the TileLayer generic
                 return new TileLayer({ source: custom as unknown as XYZ });
             }
         }

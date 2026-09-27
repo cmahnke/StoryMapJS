@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { Tile as TileLayer } from "ol/layer";
+import Layer from "ol/layer/Layer";
 import { OSM, XYZ } from "ol/source";
 import { StoryMap } from "../src/storymap/StoryMap";
 import type { StorymapDataWrapper } from "../src/types";
@@ -8,11 +9,12 @@ type LayerProbe = {
     getSource(): { constructor: { name: string } } | null;
 };
 
+/** The base + overlay layers via the public accessors (no `_map` reach). */
 function layersOf(storymap: StoryMap): LayerProbe[] {
-    const inner = (
-        storymap as unknown as { _map: { _map: { getLayers(): { getArray(): LayerProbe[] } } } }
-    )._map._map;
-    return inner.getLayers().getArray();
+    return [
+        ...(storymap.getBaseLayer() ? [storymap.getBaseLayer() as LayerProbe] : []),
+        ...(storymap.getOverlayLayers() as LayerProbe[]),
+    ];
 }
 
 function container(id: string): void {
@@ -103,5 +105,31 @@ describe("known issue #473: tile_source_factory", () => {
             (layer as unknown as TileLayer).getSource?.(),
         );
         expect(sources.some((source) => source instanceof OSM)).toBe(true);
+    });
+
+    it("passes a factory-returned ol/layer/Layer through unwrapped", () => {
+        container("sm-473-layer");
+        // A Layer subclass without getSource — the shape an Allmaps
+        // WarpedMapLayer has. It must be used as-is, not wrapped in a
+        // TileLayer (which would demand a source and drop the custom render).
+        class CustomLayer extends Layer {
+            declare "marker": string;
+            getZIndex(): number {
+                return 42;
+            }
+        }
+        const custom = new CustomLayer({ zIndex: 42 });
+        const storymap = new StoryMap("sm-473-layer", data("wms:warped"), {
+            tile_source_factory: (map_type) => (map_type === "wms:warped" ? custom : undefined),
+        });
+        expect(storymap.getBaseLayer()).toBe(custom);
+        // a bare Source is still auto-wrapped (unchanged behavior)
+        container("sm-473-source-wrap");
+        const source = new XYZ({ url: "https://tiles.example.com/{z}/{x}/{y}.png" });
+        const wrappedStorymap = new StoryMap("sm-473-source-wrap", data("custom:x"), {
+            tile_source_factory: () => source,
+        });
+        expect(wrappedStorymap.getBaseLayer()).not.toBe(source);
+        expect((wrappedStorymap.getBaseLayer() as TileLayer).getSource()).toBe(source);
     });
 });

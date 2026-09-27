@@ -42,25 +42,21 @@ test("issue #465/#355: the minimap view is fitted to the image extent", async ({
     const minimap = await page.evaluate(async () => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: {
-                    _mini_map?: {
-                        getOverviewMap(): {
-                            getView(): { getCenter(): number[]; getZoom(): number };
-                        };
-                    };
-                    options: {
-                        iiif: { url: string };
-                    };
+                getMinimap(): {
+                    getView(): { getCenter(): number[]; getZoom(): number };
+                } | null;
+                options: {
+                    iiif: { url: string };
                 };
             };
         };
-        const mini = sm.__sm?._map?._mini_map;
+        const mini = sm.__sm?.getMinimap();
         if (!mini) return null;
-        const info = (await fetch(sm.__sm!._map!.options.iiif.url).then((r) => r.json())) as {
+        const info = (await fetch(sm.__sm!.options.iiif.url).then((r) => r.json())) as {
             width: number;
             height: number;
         };
-        const center = mini.getOverviewMap().getView().getCenter();
+        const center = mini.getView().getCenter();
         return { center, width: info.width, height: info.height };
     });
 
@@ -80,14 +76,11 @@ test("issue #369: the minimap tracks the main map extent (by design)", async ({ 
     const extentBefore = await page.evaluate(() => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: {
-                    _mini_map?: { getOverviewMap(): { getView(): { getCenter(): number[] } } };
-                    _map?: { getView(): { getCenter(): number[] } };
-                };
+                getMinimap(): { getView(): { getCenter(): number[] } } | null;
+                map: { getView(): { getCenter(): number[] } };
             };
         };
-        const mini = sm.__sm?._map?._mini_map;
-        return mini?.getOverviewMap().getView().getCenter();
+        return sm.__sm?.getMinimap()?.getView().getCenter();
     });
 
     // expand via a marker navigation (which zooms in), the minimap view changes
@@ -99,14 +92,11 @@ test("issue #369: the minimap tracks the main map extent (by design)", async ({ 
     const extentAfter = await page.evaluate(() => {
         const sm = window as unknown as {
             __sm?: {
-                _map?: {
-                    _mini_map?: { getOverviewMap(): { getView(): { getCenter(): number[] } } };
-                    _map?: { getView(): { getCenter(): number[] } };
-                };
+                getMinimap(): { getView(): { getCenter(): number[] } } | null;
+                map: { getView(): { getCenter(): number[] } };
             };
         };
-        const mini = sm.__sm?._map?._mini_map;
-        return mini?.getOverviewMap().getView().getCenter();
+        return sm.__sm?.getMinimap()?.getView().getCenter();
     });
 
     expect(extentBefore).not.toBeNull();

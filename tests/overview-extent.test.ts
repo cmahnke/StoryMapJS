@@ -10,17 +10,9 @@ type OverviewView = {
 };
 
 function overviewView(storymap: StoryMap): OverviewView {
-    const vcoMap = (
-        storymap as unknown as {
-            _map: {
-                _createMiniMap(): void;
-                _mini_map: { getOverviewMap(): { getView(): OverviewView } } | null;
-            };
-        }
-    )._map;
     // jsdom never fires tile loadend, so build the minimap directly
-    vcoMap._createMiniMap();
-    return vcoMap._mini_map?.getOverviewMap().getView() as OverviewView;
+    storymap.createMiniMap();
+    return storymap.getMinimap()?.getView() as OverviewView;
 }
 
 describe("overview_extent", () => {

@@ -81,8 +81,15 @@ class MapMarkerBase {
 
     /*	Public
 	================================================== */
+
+    /**
+     * @deprecated No-op since 0.9.x upstream (the original marker defined an
+     * empty body too). Markers are never individually hidden; use CSS on
+     * `.vco-mapmarker`, or `active(false)` to dim one.
+     */
     show(): void {}
 
+    /** @deprecated See {@link show} — no-op since 0.9.x upstream. */
     hide(): void {}
 
     addTo(m: unknown): void {

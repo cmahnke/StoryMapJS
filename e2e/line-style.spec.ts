@@ -11,38 +11,24 @@ test("route lines are dashed like the original from the start", async ({ page })
     await waitForStoryMap(page);
 
     const lines = await page.evaluate(() => {
+        type StyledLine = {
+            getStyle(): {
+                getStroke?(): { getLineDash?(): number[]; getLineJoin?(): string };
+            };
+        };
         const sm = (
             window as unknown as {
                 __sm?: {
-                    _map?: {
-                        _line?: {
-                            getStyle(): {
-                                getStroke?(): { getLineDash?(): number[]; getLineJoin?(): string };
-                            };
-                        };
-                        _line_active?: {
-                            getStyle(): {
-                                getStroke?(): { getLineDash?(): number[]; getLineJoin?(): string };
-                            };
-                        };
-                    };
+                    getLine(): StyledLine | null;
+                    getLineActive(): StyledLine | null;
                 };
             }
-        ).__sm?._map;
-        const read = (
-            l:
-                | {
-                      getStyle(): {
-                          getStroke?(): { getLineDash?(): number[]; getLineJoin?(): string };
-                      };
-                  }
-                | null
-                | undefined,
-        ) => {
+        ).__sm;
+        const read = (l: StyledLine | null | undefined) => {
             const stroke = l?.getStyle()?.getStroke?.();
             return { dash: stroke?.getLineDash?.(), join: stroke?.getLineJoin?.() };
         };
-        return { inactive: read(sm?._line), active: read(sm?._line_active) };
+        return { inactive: read(sm?.getLine()), active: read(sm?.getLineActive()) };
     });
 
     expect(lines.inactive.dash).toEqual([5, 5]);

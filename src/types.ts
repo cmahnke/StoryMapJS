@@ -1,5 +1,6 @@
 // Shared types for the StoryMapJS codebase.
 import type { Tile as TileLayer } from "ol/layer";
+import type Layer from "ol/layer/Layer";
 import type Source from "ol/source/Source";
 
 // ---------- Storymap data (exchange format) ----------
@@ -86,11 +87,16 @@ export interface StorymapDataWrapper {
  * Custom tile layer/source factory (see
  * `StorymapOptions.tile_source_factory`). `createDefault` runs the
  * built-in `map_type` handling, so a factory can decorate or delegate.
+ *
+ * May return any `ol/layer/Layer` (used as-is — this is what lets a
+ * third-party layer such as an Allmaps `WarpedMapLayer` render), a bare
+ * `Source` (wrapped in a `TileLayer`), or `null`/`undefined` to fall
+ * through to the default `map_type` handling.
  */
 export type TileSourceFactory = (
     map_type: string,
     context: { options: StorymapOptions; createDefault: () => TileLayer },
-) => TileLayer | Source | null | undefined;
+) => Layer | TileLayer | Source | null | undefined;
 
 export interface StorymapOptions {
     width: number;

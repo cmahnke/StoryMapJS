@@ -7,11 +7,12 @@ type LayerProbe = {
     getSource(): { getFeatures?: () => unknown[] } | null;
 };
 
+/** The base + overlay layers via the public accessors (no `_map` reach). */
 function layersOf(storymap: StoryMap): LayerProbe[] {
-    const inner = (
-        storymap as unknown as { _map: { _map: { getLayers(): { getArray(): LayerProbe[] } } } }
-    )._map._map;
-    return inner.getLayers().getArray();
+    return [
+        ...(storymap.getBaseLayer() ? [storymap.getBaseLayer() as LayerProbe] : []),
+        ...(storymap.getOverlayLayers() as LayerProbe[]),
+    ];
 }
 
 function tileZIndexes(probes: LayerProbe[]): (number | undefined)[] {
@@ -85,24 +86,18 @@ describe("tile layer switches", () => {
 
     it("appends extra attributions without touching the base credit", () => {
         const { storymap, root } = storymapWithAttribution("sm-layers-extra");
-        const vcoMap = (
-            storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } }
-        )._map;
-        vcoMap.setExtraAttributions(["Historic overlay, public domain"]);
+        storymap.setExtraAttributions(["Historic overlay, public domain"]);
         expect(attribution(root)).toContain("OpenStreetMap");
         expect(attribution(root)).toContain("Historic overlay, public domain");
-        vcoMap.setExtraAttributions([]);
+        storymap.setExtraAttributions([]);
         expect(attribution(root)).not.toContain("Historic overlay");
     });
 
     it("collapses duplicate extra attributions", () => {
         const { storymap, root } = storymapWithAttribution("sm-layers-dedupe-extra");
-        const vcoMap = (
-            storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } }
-        )._map;
-        vcoMap.setExtraAttributions(["Gallica", "Gallica"]);
+        storymap.setExtraAttributions(["Gallica", "Gallica"]);
         expect((attribution(root).match(/Gallica/g) ?? []).length).toBe(1);
-        vcoMap.setExtraAttributions([]);
+        storymap.setExtraAttributions([]);
         expect(attribution(root)).not.toContain("Gallica");
     });
 

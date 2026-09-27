@@ -12,9 +12,9 @@ test("issue #134: show_lines: false hides the connecting lines", async ({ page }
 
     const lineVisible = await page.evaluate(() => {
         const sm = window as unknown as {
-            __sm?: { _map?: { _line?: { getVisible(): boolean } } };
+            __sm?: { getLine(): { getVisible(): boolean } | null };
         };
-        return sm.__sm?._map?._line ? sm.__sm._map._line.getVisible() : null;
+        return sm.__sm?.getLine() ? sm.__sm!.getLine()!.getVisible() : null;
     });
     expect(lineVisible).toBe(false);
 
@@ -33,9 +33,9 @@ test("issue #134: lines are shown by default", async ({ page }) => {
 
     const lineVisible = await page.evaluate(() => {
         const sm = window as unknown as {
-            __sm?: { _map?: { _line?: { getVisible(): boolean } } };
+            __sm?: { getLine(): { getVisible(): boolean } | null };
         };
-        return sm.__sm?._map?._line ? sm.__sm._map._line.getVisible() : null;
+        return sm.__sm?.getLine() ? sm.__sm!.getLine()!.getVisible() : null;
     });
     expect(lineVisible).toBe(true);
 });

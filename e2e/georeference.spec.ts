@@ -24,10 +24,10 @@ async function openManifest(
         const inner = (
             window as unknown as {
                 __sm?: {
-                    _map?: { _map?: { getLayers(): { getArray(): { getZIndex(): number }[] } } };
+                    map?: { getLayers(): { getArray(): { getZIndex(): number }[] } };
                 };
             }
-        ).__sm?._map?._map;
+        ).__sm?.map;
         return (inner?.getLayers().getArray() ?? []).map((layer) => layer.getZIndex());
     });
     return { pageErrors, logs, zIndexes };
@@ -48,14 +48,12 @@ test("a georeferenced manifest places the sheet on the map", async ({ page }) =>
         const overlays = (
             window as unknown as {
                 __sm?: {
-                    _map?: {
-                        _overlay_layers?: {
-                            getSource(): { getTileGrid(): { getExtent(): number[] } };
-                        }[];
-                    };
+                    getOverlayLayers(): {
+                        getSource(): { getTileGrid(): { getExtent(): number[] } };
+                    }[];
                 };
             }
-        ).__sm?._map?._overlay_layers;
+        ).__sm?.getOverlayLayers();
         return overlays?.[0]?.getSource().getTileGrid().getExtent() ?? null;
     });
     expect(placed).not.toBeNull();

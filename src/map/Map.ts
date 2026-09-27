@@ -316,18 +316,28 @@ class MapBase {
         }
     }
 
+    /**
+     * Alias over the OpenLayers view: `storymap.map.getView().animate({center})`
+     * (remember `ol/proj` does not apply in image mode — see `isImageSpace()`).
+     */
     panTo(loc: LatLngLiteral, animate?: boolean): void {
         this._panTo(loc, animate);
     }
 
+    /** Alias over the OpenLayers view: `storymap.map.getView().animate({zoom})`. */
     zoomTo(z: number, animate?: boolean): void {
         this._zoomTo(z, animate);
     }
 
+    /**
+     * Alias over the OpenLayers view: `storymap.map.getView().animate(...)`,
+     * or `.fit(extent, {size})` for a region stop (`location.region`).
+     */
     viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {
         this._viewTo(loc, opts);
     }
 
+    /** Alias over the OpenLayers view: `view.getZoomForResolution(resolution)`. */
     getBoundsZoom(
         m1: LatLngLiteral,
         m2: LatLngLiteral,
@@ -337,14 +347,26 @@ class MapBase {
         return this._getBoundsZoom(m1, m2, inside, padding);
     }
 
+    /**
+     * Alias over the OpenLayers view: `view.fit(extent, {size})` over all
+     * marker positions. Also reachable from the menubar's overview button.
+     */
     markerOverview(): void {
         this._markerOverview();
     }
 
+    /**
+     * The viewer's own marker zoom ladder — no OpenLayers equivalent (it also
+     * writes the computed zoom onto the current markers).
+     */
     calculateMarkerZooms(): void {
         this._calculateMarkerZooms();
     }
 
+    /**
+     * The minimap is built with the constructor; reach it with `getMinimap()`
+     * (an OpenLayers `OverviewMap` control) rather than re-creating it.
+     */
     createMiniMap(): void {
         this._createMiniMap();
     }
@@ -400,8 +422,19 @@ class MapBase {
 
     /*	Adding, Hiding, Showing etc
 	================================================== */
+
+    /**
+     * @deprecated No-op since 0.9.x upstream (the original Leaflet engine
+     * defined an empty body too) and shadowed by the `DomMixed` mixin. To
+     * hide the map, toggle the OpenLayers target:
+     * `storymap.map.getTargetElement().style.display = "none"`.
+     */
     show(): void {}
 
+    /**
+     * @deprecated See {@link show} — no-op since 0.9.x upstream. Use
+     * `storymap.map.getTargetElement().style.display = "none"`.
+     */
     hide(): void {}
 
     /*	Adding and Removing Markers
