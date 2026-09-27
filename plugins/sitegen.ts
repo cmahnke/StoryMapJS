@@ -210,25 +210,31 @@ const FOOTER = /* html */ `
 // relative markdown links (docs/*.md, schema/, public/) resolve against the
 // generated page's location; map the common cases to sensible targets
 function rewriteLinks(html: string): string {
-    return html
-        .replace(
-            /href="[^"]*?DEVELOPMENT\.md"/g,
-            'href="https://github.com/cmahnke/StoryMapJS/blob/main/docs/DEVELOPMENT.md"',
-        )
-        .replace(
-            /href="[^"]*?KNOWN_ISSUES\.md"/g,
-            'href="https://github.com/cmahnke/StoryMapJS/blob/main/docs/KNOWN_ISSUES.md"',
-        )
-        .replace(
-            /href="[^"]*?CHANGELOG"/g,
-            'href="https://github.com/cmahnke/StoryMapJS/blob/main/CHANGELOG"',
-        )
-        .replace(
-            /href="\.\.\/schema\//g,
-            'href="https://github.com/cmahnke/StoryMapJS/tree/main/schema/',
-        )
-        .replace(/href="\.\.\/public\//g, 'href="../')
-        .replace(/href="\.\/docs\//g, 'href="./');
+    return (
+        html
+            .replace(
+                /href="[^"]*?DEVELOPMENT\.md"/g,
+                'href="https://github.com/cmahnke/StoryMapJS/blob/main/docs/DEVELOPMENT.md"',
+            )
+            .replace(
+                /href="[^"]*?KNOWN_ISSUES\.md"/g,
+                'href="https://github.com/cmahnke/StoryMapJS/blob/main/docs/KNOWN_ISSUES.md"',
+            )
+            .replace(
+                /href="[^"]*?CHANGELOG"/g,
+                'href="https://github.com/cmahnke/StoryMapJS/blob/main/CHANGELOG"',
+            )
+            .replace(
+                /href="\.\.\/schema\//g,
+                'href="https://github.com/cmahnke/StoryMapJS/tree/main/schema/',
+            )
+            // the two cross-references between docs, which otherwise leak the
+            // .md filename and 404 on the published site
+            .replace(/href="[^"]*?storymap-as-iiif-manifest\.md/g, 'href="./iiif.html')
+            .replace(/href="[^"]*?migration-from-knightlab\.md/g, 'href="./migration.html')
+            .replace(/href="\.\.\/public\//g, 'href="../')
+            .replace(/href="\.\/docs\//g, 'href="./')
+    );
 }
 
 export function buildDocs(root: string = process.cwd()): void {

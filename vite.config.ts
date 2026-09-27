@@ -17,6 +17,8 @@ import { sitegen } from "./plugins/sitegen";
 // `npm run build` runs lib then pages (see package.json).
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const req = createRequire(import.meta.url);
+/** Kept in step with StoryMap.version, which is defined from it at build time. */
+const pkg = req("./package.json") as { version: string };
 
 /**
  * Swallow style imports in the JS graph: the widget stylesheet is compiled
@@ -107,6 +109,9 @@ function widgetCssLinks(): Plugin {
 export default defineConfig(({ mode }) => {
     if (mode === "lib") {
         return {
+            // the library's public `version` field is read from the package
+            // manifest so it cannot drift out of date
+            define: { __STORYMAP_VERSION__: JSON.stringify(pkg.version) },
             plugins: [
                 sitegen(),
                 dropStyleImports(),

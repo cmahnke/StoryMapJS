@@ -4,6 +4,10 @@ Complete plan for the second renovation wave, executed on top of the
 restructure (see `RESTRUCTURE_PLAN.md`: backend removal, webpack → Vite,
 JavaScript → TypeScript, Leaflet → OpenLayers, Zoomify → IIIF Image API).
 
+> **Execution record.** Written before the current tree existed; where it
+> names files or counts that have since changed, follow `DEVELOPMENT.md`.
+> `REUSABILITY_PLAN.md` is the later wave.
+
 This wave tightens all quality gates to their strictest configuration,
 completes the type system, modernizes the language and styling pipeline,
 replaces vendored libraries with npm dependencies where possible, and adds

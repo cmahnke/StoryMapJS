@@ -18,7 +18,8 @@ const EXAMPLES: ExampleEntry[] = [
     { id: "katrina", title: "Hurricane Katrina", kind: "Map" },
     { id: "population", title: "US Population Shifts", kind: "Map" },
     { id: "marktwain", title: "Mark Twain's Travels", kind: "Map" },
-    { id: "seurat", title: "A Sunday on La Grande Jatte", kind: "Gigapixel" },
+    // a legacy Zoomify pyramid, not IIIF — labelled accordingly
+    { id: "seurat", title: "A Sunday on La Grande Jatte", kind: "Large image (legacy)" },
     { id: "iiif-wellcome", title: "Wellcome Collection (IIIF)", kind: "IIIF" },
     { id: "president", title: "A Month in the Life of President Obama", kind: "Map" },
     // remote showcase examples, rendered by the embed player

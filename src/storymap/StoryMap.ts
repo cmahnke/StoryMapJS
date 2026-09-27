@@ -79,7 +79,7 @@ export function isExternalUrl(url: string): boolean {
  *
  * @example
  * ```ts
- * import { StoryMap } from "storymapjs";
+ * import { StoryMap } from "@projektemacher/storymapjs";
  * // from an inline data object
  * const map = new StoryMap("embed", { storymap: { ... } }, { start_at_slide: 2 });
  * // or straight from a source file (storymap JSON or IIIF manifest)
@@ -164,7 +164,10 @@ class StoryMapBase {
         }
 
         // Version
-        this.version = "0.1.16";
+        // build-time constant from package.json (see vite.config.ts); the
+        // typeof guard keeps a dev-server run without the define working
+        this.version =
+            typeof __STORYMAP_VERSION__ === "string" ? __STORYMAP_VERSION__ : "0.0.0-dev";
 
         // Ready
         this.ready = false;
@@ -521,10 +524,12 @@ class StoryMapBase {
     /*	Navigation
 	================================================== */
     /**
-     * Navigate to a slide by index.
+     * Navigate to a slide by index. Out-of-range indices are ignored, as is
+     * the current index.
      *
      * @param n - Zero-based slide index; the map animates to the slide's
-     *   marker (or the overview when `n` is 0 for storymaps with one).
+     *   marker. The overview is selected by the slide's own
+     *   `type: "overview"`, not by its index.
      */
     goTo(n: number) {
         // out-of-range indices are ignored: they would desync the slider and

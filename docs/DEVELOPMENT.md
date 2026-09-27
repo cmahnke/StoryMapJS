@@ -1,16 +1,24 @@
 # Developing StoryMapJS
 
 StoryMapJS is a viewer-only JavaScript library. It renders published StoryMap
-JSON into a web page, consumed either as an ES module, a CommonJS module, or
-a script tag exposing the global `KLStoryMap`.
+JSON into a web page and ships as an **ES module only** — there is no
+CommonJS/UMD bundle and no global (`KLStoryMap`/`VCO`) is defined:
+
+```ts
+import { StoryMap } from "@projektemacher/storymapjs";
+import "@projektemacher/storymapjs/css/storymap.css";
+```
 
 ## Stack
 
-- **TypeScript** (strict mode, target ES2022)
+- **TypeScript** (strict mode, target ES2022, `strictNullChecks` included)
 - **Vite** — all builds (library ESM + `.d.ts` via `unplugin-dts`, demo pages,
   site assets) plus dev server and preview
 - **OpenLayers** (`ol`) — maps, markers, and IIIF Image API imagery
 - **SASS** (`sass`) with themes in `src/scss/fonts/*`
+- **Easing** — `d3-ease` (polynomial/exponential) and `bezier-easing`
+  (cubic-bezier sampling), both in `src/animation/easings.ts`, which is the
+  single source of the viewer's animation curves
 - **Fonts** — bundled from npm (`@fontsource/*`), no runtime CDN font requests
 - **Vitest** — unit tests (jsdom)
 - **Playwright** — browser e2e tests over all example fixtures
@@ -19,25 +27,30 @@ a script tag exposing the global `KLStoryMap`.
 ## Layout
 
 ```
-index.html            dev/demo entry (football example)
-arya.html             demo page loading a remote published storymap
+index.html            dev/demo entry + the project landing page
+demo.html             minimal single-example page
 harness.html          example harness used by the e2e suite (?example=<name>)
 public/               static assets copied verbatim to dist/
   examples/           storymap JSON fixtures (validated in CI)
   embed/              the embed page
   css/icons/          icon font binaries
 src/
-  main.ts             library entry (exports + KLStoryMap global)
+  main.ts             library entry (ESM exports, no global)
   storymap/           StoryMap class, data validation
   map/                Map base + OpenLayers implementation
   media/              media types (image, video, wikipedia, ...)
   slider/             StorySlider, Slide, navigation
-  ui/ core/ dom/ animation/ language/ library/
+  ui/ core/ dom/ animation/ language/ site/
+  animation/         easing curves and the Web Animations API tween
   scss/               styles (entry: VCO.StoryMap.scss, theme per font.*.scss)
 schema/
   storymap.schema.json  JSON Schema for storymap data
 scripts/
   validate-storymap.mjs  CLI validator (also runs on load in the browser)
+  validate-iiif.mjs      validates public/examples-iiif/ with the official IIIF validator
+  convert-to-iiif.mjs    legacy JSON -> Presentation 3 manifest
+  check-locales.mjs      reports which locales are missing which UI strings
+  serve-root.mjs
 e2e/                  Playwright specs
 tests/                Vitest unit specs
 tasks/
@@ -58,14 +71,18 @@ npm run test:e2e           # playwright over all examples + embed page (builds f
 npm run typecheck          # tsc --noEmit
 npm run lint               # eslint + stylelint
 npm run validate           # validate storymap JSON fixtures against the schema
+npm run validate:iiif      # validate the IIIF manifest fixtures
+npm run check:locales      # report translation gaps between en.json and the rest
+npm run docs:api           # typedoc -> public/docs/api (deployed by pages.yml)
+npm run format:check       # prettier --check .
 ```
 
 `dist/` layout (consumers depend on these paths):
 
 ```
-dist/js/storymap.js        UMD bundle defining the global KLStoryMap
-dist/js/storymap.es.js     ES module bundle
-dist/css/storymap.css      full stylesheet (all themes)
+dist/js/storymap.js        ES module bundle (the only JS entry)
+dist/js/storymap.d.ts      bundled type declarations
+dist/css/storymap.css      widget styles + the OpenLayers stylesheet
 dist/css/fonts/font.*.css  font theme stylesheets + binaries (files/)
 dist/css/icons/            icon font binaries
 dist/embed/index.html      embed page (?url=<published.json>)
@@ -99,9 +116,14 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
 - Font themes (`src/scss/fonts/font.*.scss`) declare `@font-face` rules via
   the `@fontsource-utils/scss` `faces()` mixin with `pkg:` imports; binaries
   are emitted to `dist/css/fonts/files/` by `plugins/sitegen.ts` (via `public/`).
-- Vendored libraries replaced by npm packages: `morpheus` (animation).
-  `src/core/Load.ts` remains a typed vendored copy of rgrove/lazyload (not
-  published on npm).
+- Animation runs on the Web Animations API (`src/animation/tween.ts`), which
+  replaced the `morpheus` dependency. The sampled easing functions from
+  `src/animation/easings.ts` are passed through as a CSS `linear()` easing so
+  the curves are unchanged.
+- `src/core/Load.ts` is a small typed loader (script, stylesheet, JSONP) built
+  on `document.createElement`. It is not a copy of rgrove/lazyload.
+- Locales are imported statically. The viewer resolves its labels while it is
+  being constructed, so an async locale would silently render in English.
 
 ## OpenLayers notes
 
@@ -109,7 +131,8 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
   (tile layers by `map_type`, markers as HTML overlays, path lines,
   overview fitting, mini map via `ol/control/OverviewMap`).
 - `map_type` accepts keyword types (`osm`, `osm:<style>`, `stadia:*`,
-  `ch-watercolor`, `iiif`, `zoomify`), absolute `https://` tile templates /
+  `ch-watercolor`, `iiif`, `zoomify`, `mapbox://styles/<user>/<style>`),
+  absolute `https://` tile templates /
   style JSON URLs, and relative templates (`./tiles/{z}/{x}/{y}.png`) for
   same-origin tiles on subpaths/Electron. `setMapOption("map_type", ...)`
   rebuilds main + minimap layers together (see `_refreshMiniMapLayer`).
@@ -125,6 +148,11 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
 ## Tests
 
 The Playwright suite covers every fixture in `public/examples/` (rendering,
-slide navigation, no uncaught exceptions), the IIIF path, and the embed page
-via the `KLStoryMap` global. Four legacy zoomify fixtures are skipped since
-zoomify support was replaced by IIIF.
+slide navigation, no uncaught exceptions), the IIIF path, the embed page, and
+the known-issue regressions in `e2e/known-issues/` (a `test.fixme()` marks a
+target behavior that is not implemented yet).
+
+Three legacy zoomify fixtures (`courbet`, `jansteen`, `seurat`) are skipped in
+the generic sweep because they need the real image-pyramid assets; zoomify
+rendering itself is covered by
+`e2e/known-issues/issue-zoomify-rendering.spec.ts`.

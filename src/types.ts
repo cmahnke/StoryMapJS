@@ -194,7 +194,9 @@ export interface StorymapOptions {
     /**
      * Ask for permission before loading anything from external services
      * (media embeds, map tiles, external font CSS) — GDPR consent mode.
-     * Grants are remembered per service in a cookie for 90 days.
+     * Decisions are remembered per service in `localStorage` under
+     * `storymapjs-consent` with no expiry: clearing site data is what makes
+     * the viewer ask again.
      */
     consent_required: boolean;
     /** Slide text color override, sets --vco-color-text (issue #177) */
@@ -204,8 +206,9 @@ export interface StorymapOptions {
     /** Show the great-circle route distance in the menubar (issue #341) */
     show_distance: boolean;
     /**
-     * Raw OpenLayers map configuration. `controls` and `interactions` replace
-     * the StoryMapJS defaults, `view` is merged over the computed default view
+     * Raw OpenLayers map configuration. `controls` replaces the StoryMapJS
+     * defaults, `interactions` are *added to* the viewer's own pan/zoom
+     * interactions, and `view` is merged over the computed default view
      * and `element` (an HTMLElement or DOM id) replaces the auto-created map
      * container div.
      */

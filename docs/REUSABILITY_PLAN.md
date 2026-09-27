@@ -3,6 +3,11 @@
 Complete plan for the third wave on top of the restructure
 (`RESTRUCTURE_PLAN.md`) and the renovation (`RENOVATION_PLAN.md`):
 
+> **Execution record.** This describes the third wave as planned; it is kept
+> for context, not as current state. The authoritative issue-by-issue
+> results live in `KNOWN_ISSUES.md` (60 of 109 verified fixed), and the
+> current test counts are in section 6 below.
+
 1. **Reusability** — make the viewer embeddable as a library: resize handling,
    a source-file constructor, OpenLayers option passthrough, runtime map
    options, an ESM-only distribution, JSDoc on the public API and a migration
@@ -141,48 +146,65 @@ option-level reproduction (e.g. `show_lines`, `start_at_slide`, `font_css`).
 | n/a / other   | registry-only, no test                                              |
 
 One spec file per issue id (`issue-<id>*.spec.ts`), shared helpers in
-`helpers.ts`; `enhancements.spec.ts` bundles the pure feature requests
-(#472 keyboard, #380 autoplay, #247 progress indicator, #243 place-name
-labels, #412 routed lines).
+`helpers.ts`. The pure feature requests each got their own spec as they
+landed (#472 keyboard, #380 autoplay, #247 progress indicator, #243
+place-name labels); `enhancements.spec.ts` now holds only #412, which is the
+one still not implemented.
 
-### 5.5 Results (see `KNOWN_ISSUES.md` for the full 109-row table)
+### 5.5 Results
 
-| Verdict           | Count |
-| ----------------- | ----- |
-| fixed             | 28    |
-| still applies     | 6     |
-| partially applies | 10    |
-| not implemented   | 22    |
-| cannot reproduce  | 8     |
-| by design         | 1     |
-| cosmetic          | 1     |
-| n/a               | 33    |
+**Superseded — see `KNOWN_ISSUES.md` for the authoritative table.** The
+counts below were the state when this wave was planned. The audit has since
+been worked through, and every issue this section listed as "still applying"
+is now fixed with a passing regression test:
 
-Still applying (expected failures, ready to flip green):
+| Verdict           | Planned | Now |
+| ----------------- | ------- | --- |
+| fixed             | 28      | 60  |
+| still applies     | 6       | 0   |
+| partially applies | 10      | 3   |
+| not implemented   | 22      | 2   |
+| cannot reproduce  | 8       | 8   |
+| by design         | 1       | 1   |
+| cosmetic          | 1       | 1   |
+| n/a               | 33      | 32  |
 
-- **#480** YouTube Shorts URL id extraction.
-- **#451** webp missing from the image matcher.
-- **#286** empty `<h3 class="vco-headline-date">` rendered for every slide.
-- **#381/#144** dateline-crossing marker fit spreads markers across map copies.
-- **#465/#355** the image-mode minimap is never fitted (bounds are empty at
-  minimap creation time).
+Items that used to be listed here as still applying, and their regression
+specs:
+
+- **#480** YouTube Shorts URL id extraction — `e2e/known-issues/issue-480-youtube-shorts.spec.ts`
+- **#451** webp missing from the image matcher — `e2e/known-issues/issue-451-webp.spec.ts`
+- **#286** empty `<h3 class="vco-headline-date">` for every slide — `e2e/known-issues/issue-286-empty-date.spec.ts`
+- **#381/#144** dateline-crossing marker fit — `e2e/known-issues/issue-381-dateline.spec.ts`
+- **#465/#355** image-mode minimap never fitted — `e2e/known-issues/issue-418-iiif-overview-fit.spec.ts`
 
 Audit-driven fixes that landed immediately (official options being ignored):
 
-- `start_at_slide` read before the options merge (#305).
+- `start_at_slide` read before the constructor options merge (#305) — the
+  _data_-supplied value was a second instance of the same bug and was fixed
+  later; see `e2e/known-issues/issue-305-start-at-slide.spec.ts`.
 - `show_lines` ignored at line creation (#134).
 - `use_custom_markers` missing from the option defaults (#405) — data-level
   values could never merge.
+
+Note: the `test.fail()` convention this document describes for "still
+applies" verdicts is no longer used — with the audit complete there are no
+expected failures, only two `test.fixme()` entries for the enhancements that
+are genuinely not implemented.
 
 ---
 
 ## 6. Verification
 
-| Gate                      | Result                                              |
-| ------------------------- | --------------------------------------------------- |
-| `npm run lint`            | 0 errors (ESLint + Stylelint)                       |
-| `npm run typecheck`       | 0 errors (strict, no `any`)                         |
-| Prettier                  | clean                                               |
-| `npm test` (Vitest/jsdom) | 34/34 (incl. `tests/issue-368-*.test.ts`)           |
-| `npx playwright test`     | 51 passed / 24 skipped (fixmes + zoomify-era skips) |
-| `npm run validate`        | all fixtures valid (incl. 12 `issue-*`)             |
+Refreshed as of the code-audit pass:
+
+| Gate                      | Result                                                   |
+| ------------------------- | -------------------------------------------------------- |
+| `npm run lint`            | 0 errors (ESLint + Stylelint)                            |
+| `npm run typecheck`       | 0 errors (strict, `strictNullChecks` included)           |
+| `npm run format:check`    | clean                                                    |
+| `npm test` (Vitest/jsdom) | 183 passed across 24 files                               |
+| `npm run test:e2e`        | 162 passed / 30 skipped (fixmes + 3 zoomify-era skips)   |
+| `npm run validate`        | 48/48 fixtures valid (incl. the `issue-*` ones)          |
+| `npm run validate:iiif`   | 49/49 manifests pass the official IIIF validator         |
+| `npm run check:locales`   | reports 28 of 29 locales missing 8-10 strings (expected) |

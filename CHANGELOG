@@ -1,10 +1,81 @@
-1.0.0 (unreleased)
+0.10.8 (unreleased)
 ------------------------
-Viewer-only restructure of the repository:
+Code audit: one regression, a set of latent bugs, seven stored-XSS sinks, a
+disabled type check that had been hiding them, and a dependency swap.
+
+Fixed
+-----
+- Image media never called onLoaded(): the call had drifted into a dead
+  position after a `return` in _altText(), so every image slide kept a
+  permanent "Loading Image" overlay painted over it and never rendered its
+  credit or caption
+- Consent-denied media threw a TypeError on desktop: updateMediaDisplay()
+  dereferenced `content_item.style` on the empty placeholder
+- Map.goTo() fired its change event twice for a slide with no location
+- start_at_slide supplied by the storymap *data* was ignored: the field was
+  read before the data merge and the slider's opening goTo() fires before the
+  change listener is attached
+- The menubar collapse toggle was a no-op: the portrait branch it only
+  appears in unconditionally overwrote the map height it asked for
+- map_type "stadia" with no style resolved to a non-Stadia style name, so
+  every tile 404'd; setMapOption("map_bbox") rebuilt the View without the
+  deliberate constraints
+- The start-of-story consent dialog listed services the visitor had already
+  answered, and left answered rows greyed out rather than removing them
+  (two consent e2e tests were failing because of this)
+- The YouTube IFrame API poll retried forever; Vimeo's embed URL used &amp;
+  separators that are not decoded in a URL property; the horizontal swipe
+  constraint clamp was inverted; slide positions were computed from the
+  previous width; goToId() with an unknown id jumped to slide 0
+- 7 of the 18 media types had no icon glyph, so their error boxes were blank
+- he.json carried a UTF-8 BOM that made it unparseable by standard JSON tools
+
+Security
+--------
+- The slide-text sanitizer was a denylist that copied every attribute
+  verbatim. `style` came through untouched, which allowed a pasted
+  full-viewport opaque overlay over the map and controls (chrome spoofing and
+  clickjacking from one attribute). It is now an allowlist; `target` is always
+  forced to `_blank`, `id`/`name` are dropped, `srcset` is validated per
+  candidate, and rebuilt embeds are sandboxed with a no-referrer policy
+- Seven innerHTML sinks that bypassed the sanitizer are routed through it:
+  media credit, media caption, the navigation headline, the call-to-action
+  text, the Juxtapose iframe, and the map attribution line
+- media and image link hrefs are protocol-checked, so a `javascript:` href in
+  the storymap JSON is no longer a click-through XSS
+- a crafted `stock:` font name resolved to an arbitrary same-origin file
+- the schema validator did not implement `anyOf`, so map_bbox,
+  map_overview_center and the zoomify block were accepted completely
+  unvalidated; `format` and `maxLength` are now honoured
+
+Changed
+-------
+- strictNullChecks is enabled. The `{} as HTMLElement` placeholders it was
+  masking are now honestly nullable, which is what the consent-denied crash
+  came from
+- morpheus (an inlined UMD build that shipped no types) is replaced by a
+  ~130 line Web Animations API wrapper with the same call signature: one
+  dependency and one hand-maintained .d.ts removed, -5 kB raw and no
+  measurable change over the wire. morpheus gzipped well, so most of the raw
+  saving is offset by the new code; the win here is the dependency and the
+  type stub, not the bytes
+- npm run check:locales reports which locales are missing which strings.
+  28 of 29 are missing 8-10, mostly the per-service consent labels
+- Docs corrected: DEVELOPMENT.md described a CommonJS/UMD build with a
+  KLStoryMap global (it is ESM-only), the CHANGELOG claimed consent labels
+  were fully translated and that zoomify was removed (both false), and
+  README/index.html said slide text is rendered raw (it is sanitized)
+
+0.10.0 - 0.10.7 (2026-09-22 to 2026-09-25)
+------------------------
+Released as eight patches without individual changelog entries; this is the
+consolidated list. Viewer-only restructure of the repository:
 - Removed the editor Flask backend, CDN staging and all legacy build artifacts
 - Replaced webpack with Vite (dev/build/preview), default Vite project layout
 - Converted the source to strict TypeScript (target ES2022, noImplicitAny, no explicit any)
-- Replaced Leaflet with OpenLayers; IIIF Image API replaces Zoomify (breaking: map_type "zoomify" is gone, use "iiif")
+- Replaced Leaflet with OpenLayers. IIIF Image API ("map_type": "iiif") is the
+  recommended image basemap; the legacy Zoomify pyramid ("map_type": "zoomify")
+  is retained as a deprecated basemap and warns when it loads
 - Converted Less to SASS with zero deprecation warnings (@use only, no @import, no vendor prefixes, no postcss-scss)
 - Fonts bundled via @fontsource + @fontsource-utils/scss mixins (woff2, latin subsets); no runtime font CDN requests
 - New exchange format: IIIF Presentation API 3.0 manifests (docs/storymap-as-iiif-manifest.md) with navPlace geo +
@@ -31,8 +102,9 @@ Viewer-only restructure of the repository:
   instead of a 90-day cookie; a start-of-story dialog lists the external
   services the story uses (map tiles, media services, external fonts) and
   offers allow all, decline all or a decision per service, with per-service
-  panels as the fallback for services discovered later; all consent labels
-  translated in every bundled locale
+  panels as the fallback for services discovered later. Only en.json
+  translates every label: the other 28 bundled locales are each missing the
+  per-service consent strings and fall back to English (npm run check:locales)
 - Mobile gestures: iOS swipe navigation fixed — signed gesture deltas (a
   rightward swipe on the left half no longer counts as "next"), touchcancel
   handled without leaking touchmove/mouseleave listeners (swipes used to stop
@@ -166,16 +238,3 @@ Viewer-only restructure of the repository:
 * PR #302 Media fixes including pause of video types when navigating away from slide
 * PR #303 Adds custom map marker upload in editor
 * PR #312 Adds Greek translation to StoryMap editor
-
-## 1.0.0 (unreleased)
-
-Viewer-only restructure of the repository:
-- Removed the editor Flask backend, staging and legacy build artifacts
-- Replaced webpack with Vite (dev/build/preview), default project layout
-- Converted the source to strict TypeScript (target ES2022)
-- Replaced Leaflet with OpenLayers; IIIF Image API replaces Zoomify (breaking)
-- Converted Less to SASS; fonts bundled from npm (@fontsource) instead of runtime CDN requests
-- Added a JSON Schema for storymap data, runtime validation with console reporting, and a CLI validator
-- Added ESLint + Stylelint and GitHub Actions for linting/tests and release packaging
-- Playwright e2e suite over all examples, Vitest for units
-- Dropped code paths for pre-2022 browsers (legacy vendor prefixes, IE/old-engine fallbacks)

@@ -1,5 +1,13 @@
 # Geo-referenced IIIF layers + IIIF extension APIs
 
+> **Partly superseded.** Georeferencing shipped, but not as the `iiif.bounds`
+> option this document proposed: the shipped design is a
+> `storymap:georeferencedLayers` manifest extension (see
+> `src/map/georeference.ts`, `docs/storymap-as-iiif-manifest.md` and
+> `e2e/georeference.spec.ts`). Non-affine and rotated sheets are reported and
+> skipped; they remain a `tile_source_factory` concern. The statement below
+> that there is no georeferencing support is out of date.
+
 Goal: (1) use IIIF image endpoints carrying geo information as map layers
 (affine placement on the geographic map, plus a path to full GCP warping),
 and (2) expose all required OpenLayers APIs so viewer consumers can

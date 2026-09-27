@@ -123,8 +123,15 @@ images, lists, emphasis and spans in your slides, e.g.:
 
 The `vco-note` span renders as a small grey note, like the built-in credits.
 
-**Caution:** the text is rendered raw — it is not sanitized. Only load
-storymaps from sources you trust.
+**Caution:** the text is sanitized, but sanitizing is a mitigation rather
+than a guarantee. Prose and media formatting survive (`class`, `alt`, `width`,
+table attributes, and so on), scripts and other executable tags are dropped
+with their contents, event-handler attributes are stripped, every URL
+attribute is checked to be `http(s)`, and `<iframe>` embeds are rebuilt into
+a sandboxed, `no-referrer` element. `style`, `id` and `name` are _not_ allowed,
+and a link's `target` is always forced to `_blank`. The same sanitizer covers
+media credit, media caption, the navigation headline and the map attribution
+line. Still: only load storymaps from sources you trust.
 
 ## GDPR consent for external services
 
@@ -149,8 +156,14 @@ service has a stored decision; per-service panels still appear for services
 discovered later (e.g. a preloaded slide).
 
 Decisions are stored in `localStorage` under `storymapjs-consent` and have no
-expiry — clearing site data asks again. All of the consent labels are
-translated in every bundled locale.
+expiry — clearing site data asks again.
+
+The consent labels are **not** fully translated. `src/language/locale/en.json`
+defines every string; the other 28 bundled locales are each missing 8-10 of
+them (the per-service consent prompts and the fullscreen button labels),
+which fall back to English at runtime. Run `npm run check:locales` to see the
+current state — it reports the gap per locale and is expected to be runnable
+without failing.
 
 ## Troubleshooting
 

@@ -2,11 +2,11 @@
 
 ## Project Structure & Module Organization
 
-StoryMapJS is a viewer-only TypeScript library. Library modules live under `src/` in domain folders (`core`, `map`, `media`, `slider`, `storymap`, `ui`, `dom`, `animation`, `language`, `library`); styles are SASS in `src/scss`; the embed page and demo fixtures are in `public/`. Vite (`vite.config.ts`, `--mode lib` then `--mode pages`) bundles the library (ESM `dist/js/storymap.js` plus bundled `dist/js/storymap.d.ts` via unplugin-dts), the widget CSS in `dist/css`, and the demo pages; site assets (font themes, docs, site chrome) generate into `public/` via the `plugins/sitegen.ts` Vite plugin, shared with the Vite dev server. The JSON Schema for storymap data lives in `schema/` and the CLI validator in `scripts/`.
+StoryMapJS is a viewer-only TypeScript library. Library modules live under `src/` in domain folders (`core`, `map`, `media`, `slider`, `storymap`, `ui`, `dom`, `animation`, `language`, `site`); styles are SASS in `src/scss`; the embed page and demo fixtures are in `public/`. Vite (`vite.config.ts`, `--mode lib` then `--mode pages`) bundles the library (ESM `dist/js/storymap.js` plus bundled `dist/js/storymap.d.ts` via unplugin-dts), the widget CSS in `dist/css`, and the demo pages; site assets (font themes, docs, site chrome) generate into `public/` via the `plugins/sitegen.ts` Vite plugin, shared with the Vite dev server. The JSON Schema for storymap data lives in `schema/` and the CLI validator in `scripts/`.
 
 ## Build, Test, and Development Commands
 
-Run `npm install` once (Node >= 22). Use `npm run dev` for a live dev server with HMR. `npm run build` generates production bundles, demo pages and font CSS, and `npm run preview` serves the built `dist/`. Quality gates: `npm run lint` (ESLint + Stylelint), `npm run typecheck`, `npm run validate` (storymap JSON schema), `npm test` (Vitest), `npm run test:e2e` (Playwright over all examples + embed page).
+Run `npm install` once (Node >= 22). Use `npm run dev` for a live dev server with HMR. `npm run build` generates production bundles, demo pages and font CSS, and `npm run preview` serves the built `dist/`. Quality gates: `npm run lint` (ESLint + Stylelint), `npm run typecheck` (strict, `strictNullChecks` included), `npm run validate` (storymap JSON schema), `npm run validate:iiif` (IIIF manifests), `npm run check:locales` (translation gaps), `npm run format:check` (Prettier), `npm test` (Vitest), `npm run test:e2e` (Playwright over all examples + embed page).
 
 ## Coding Style & Naming Conventions
 
@@ -26,4 +26,4 @@ Never commit real keys. Map credentials (Mapbox/Stadia tokens) come from storyma
 
 ## CI
 
-GitHub Actions runs lint, typecheck, validation, unit tests, build and e2e on every push/PR (`.github/workflows/ci.yml`), and attaches a built `dist/` zip to GitHub Releases on `v*` tags (`.github/workflows/package.yml`).
+GitHub Actions runs lint, typecheck, validation, unit tests, build and e2e on every push/PR (`.github/workflows/ci.yml`), attaches a built `dist/` zip to GitHub Releases on `v*` tags (`.github/workflows/package.yml`), and deploys the site plus the TypeDoc API reference to GitHub Pages (`.github/workflows/pages.yml`). `chore(deps)` is automated by `.github/dependabot.yml`.

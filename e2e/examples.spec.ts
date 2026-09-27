@@ -2,8 +2,10 @@ import { test, expect, type Page } from "@playwright/test";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
-// Examples that use map_type "zoomify" - removed in favor of IIIF during the
-// migration, so their specs are skipped there. Recorded here as the baseline.
+// Examples that use map_type "zoomify". Zoomify is still supported (as a
+// deprecated image-pyramid basemap), but these three need the real pyramid
+// assets, so they are skipped in the generic sweep. Zoomify *rendering* is
+// covered by e2e/known-issues/issue-zoomify-rendering.spec.ts.
 // (gameofthrones and ironmaiden were removed over copyright concerns.)
 const ZOOMIFY_EXAMPLES = new Set(["courbet", "jansteen", "seurat"]);
 
@@ -20,7 +22,7 @@ async function collectPageErrors(page: Page): Promise<string[]> {
 for (const name of exampleNames) {
     test(`example: ${name}`, async ({ page }) => {
         const pageErrors = await collectPageErrors(page);
-        test.skip(ZOOMIFY_EXAMPLES.has(name), "zoomify removed in favor of IIIF");
+        test.skip(ZOOMIFY_EXAMPLES.has(name), "needs the real zoomify pyramid assets");
         // known-issue reproduction fixtures are exercised by e2e/known-issues/
         test.skip(name.startsWith("issue-"), "covered by the known-issues suite");
 

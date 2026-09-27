@@ -10,7 +10,9 @@
             "type": "object",
             "required": ["slides"],
             "properties": {
-                "language": { "type": "string" },
+                "language": {
+                    "type": "string"
+                },
                 "map_type": {
                     "type": "string",
                     "description": "Basemap type: osm:<style>, osm (classic raster), mapbox://styles/<user>/<style>, stadia:<style>, stamen:<style> (deprecated, remapped), tile URL template or style JSON URL (absolute https://... or relative ./tiles/{z}/{x}/{y}.png, /tiles/{z}/...), iiif, ch-watercolor, zoomify (legacy image pyramid, needs the zoomify options)."
@@ -20,21 +22,43 @@
                         {
                             "type": "object",
                             "properties": {
-                                "path": { "type": "string" },
-                                "width": { "type": "number" },
-                                "height": { "type": "number" },
-                                "tolerance": { "type": "number" },
-                                "attribution": { "type": "string" }
+                                "path": {
+                                    "type": "string"
+                                },
+                                "width": {
+                                    "type": "number"
+                                },
+                                "height": {
+                                    "type": "number"
+                                },
+                                "tolerance": {
+                                    "type": "number"
+                                },
+                                "attribution": {
+                                    "type": "string"
+                                }
                             }
                         },
-                        { "type": "boolean" }
+                        {
+                            "type": "boolean"
+                        }
                     ]
                 },
-                "map_as_image": { "type": "boolean" },
-                "map_mini": { "type": "boolean" },
-                "map_subdomains": { "type": "string" },
-                "map_access_token": { "type": "string" },
-                "map_background_color": { "type": "string" },
+                "map_as_image": {
+                    "type": "boolean"
+                },
+                "map_mini": {
+                    "type": "boolean"
+                },
+                "map_subdomains": {
+                    "type": "string"
+                },
+                "map_access_token": {
+                    "type": "string"
+                },
+                "map_background_color": {
+                    "type": "string"
+                },
                 "map_options": {
                     "type": "object",
                     "description": "OpenLayers passthrough options (view, controls, interactions); element replaces the map container"
@@ -43,11 +67,15 @@
                     "anyOf": [
                         {
                             "type": "array",
-                            "items": { "type": "number" },
+                            "items": {
+                                "type": "number"
+                            },
                             "minItems": 4,
                             "maxItems": 4
                         },
-                        { "type": "null" }
+                        {
+                            "type": "null"
+                        }
                     ]
                 },
                 "map_area": {
@@ -55,10 +83,19 @@
                     "enum": ["full", "left"]
                 },
                 "overview_extent": {
-                    "type": "array",
-                    "items": { "type": "number" },
-                    "minItems": 4,
-                    "maxItems": 4,
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "minItems": 4,
+                            "maxItems": 4
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "description": "Constrain the minimap overview to this lon/lat bounding box [west, south, east, north]; null (default) leaves it unconstrained"
                 },
                 "keyboard": {
@@ -76,17 +113,29 @@
                                 "type": "string",
                                 "description": "Any map_type the tile layer factory accepts"
                             },
-                            "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
-                            "visible": { "type": "boolean" },
-                            "attribution": { "type": "string" },
+                            "opacity": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "visible": {
+                                "type": "boolean"
+                            },
+                            "attribution": {
+                                "type": "string"
+                            },
                             "className": {
                                 "type": "string",
                                 "description": "CSS class of the layer container, isolating it from the shared ol-layer canvas (e.g. for blend modes)"
                             },
-                            "blendMode": { "type": "string" },
+                            "blendMode": {
+                                "type": "string"
+                            },
                             "extent": {
                                 "type": "array",
-                                "items": { "type": "number" },
+                                "items": {
+                                    "type": "number"
+                                },
                                 "minItems": 4,
                                 "maxItems": 4,
                                 "description": "Clip the layer to this lon/lat bounding box [west, south, east, north] (mercator maps)"
@@ -94,28 +143,64 @@
                         }
                     }
                 },
-                "consent_required": { "type": "boolean" },
+                "consent_required": {
+                    "type": "boolean"
+                },
                 "map_center_offset": {
                     "type": "object",
                     "properties": {
-                        "left": { "type": "number" },
-                        "top": { "type": "number" }
+                        "left": {
+                            "type": "number"
+                        },
+                        "top": {
+                            "type": "number"
+                        }
                     }
                 },
-                "map_popup": { "type": "boolean" },
-                "use_custom_markers": { "type": "boolean" },
-                "zoom_distance": { "type": "number" },
-                "calculate_zoom": { "type": "boolean" },
-                "less_bounce": { "type": "boolean" },
-                "line_follows_path": { "type": "boolean" },
-                "show_lines": { "type": "boolean" },
-                "show_history_line": { "type": "boolean" },
-                "line_color": { "type": "string" },
-                "line_color_inactive": { "type": "string" },
-                "line_weight": { "type": "number" },
-                "line_opacity": { "type": "number", "minimum": 0, "maximum": 1 },
-                "line_dash": { "type": "string" },
-                "line_join": { "type": "string" },
+                "map_popup": {
+                    "type": "boolean"
+                },
+                "use_custom_markers": {
+                    "type": "boolean"
+                },
+                "zoom_distance": {
+                    "type": "number"
+                },
+                "calculate_zoom": {
+                    "type": "boolean"
+                },
+                "less_bounce": {
+                    "type": "boolean"
+                },
+                "line_follows_path": {
+                    "type": "boolean"
+                },
+                "show_lines": {
+                    "type": "boolean"
+                },
+                "show_history_line": {
+                    "type": "boolean"
+                },
+                "line_color": {
+                    "type": "string"
+                },
+                "line_color_inactive": {
+                    "type": "string"
+                },
+                "line_weight": {
+                    "type": "number"
+                },
+                "line_opacity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "line_dash": {
+                    "type": "string"
+                },
+                "line_join": {
+                    "type": "string"
+                },
                 "iiif": {
                     "type": "object",
                     "required": ["url"],
@@ -124,47 +209,103 @@
                             "type": "string",
                             "description": "URL of the IIIF Image API info.json document"
                         },
-                        "attribution": { "type": "string" }
+                        "attribution": {
+                            "type": "string"
+                        }
                     }
                 },
-                "font_css": { "type": "string" },
-                "call_to_action": { "type": "boolean" },
-                "call_to_action_text": { "type": "string" },
-                "fullscreen": { "type": "boolean" },
-                "show_overview": { "type": "boolean" },
-                "show_back_to_start": { "type": "boolean" },
-                "show_progress": { "type": "boolean" },
-                "show_distance": { "type": "boolean" },
-                "marker_labels": { "type": "boolean" },
-                "text_align": { "type": "string" },
-                "text_color": { "type": "string" },
-                "text_background_color": { "type": "string" },
-                "nocache": { "type": "boolean" },
+                "font_css": {
+                    "type": "string"
+                },
+                "call_to_action": {
+                    "type": "boolean"
+                },
+                "call_to_action_text": {
+                    "type": "string"
+                },
+                "fullscreen": {
+                    "type": "boolean"
+                },
+                "show_overview": {
+                    "type": "boolean"
+                },
+                "show_back_to_start": {
+                    "type": "boolean"
+                },
+                "show_progress": {
+                    "type": "boolean"
+                },
+                "show_distance": {
+                    "type": "boolean"
+                },
+                "marker_labels": {
+                    "type": "boolean"
+                },
+                "text_align": {
+                    "type": "string",
+                    "enum": ["left", "center", "right"],
+                    "description": "Default horizontal alignment for slide text"
+                },
+                "text_color": {
+                    "type": "string"
+                },
+                "text_background_color": {
+                    "type": "string"
+                },
+                "nocache": {
+                    "type": "boolean"
+                },
                 "autoplay": {
                     "type": "number",
-                    "description": "Seconds per slide; 0 disables autoplay"
+                    "description": "Milliseconds per slide; 0 (the default) disables autoplay"
                 },
-                "trackResize": { "type": "boolean" },
-                "dragging": { "type": "boolean" },
-                "duration": { "type": "number" },
+                "trackResize": {
+                    "type": "boolean"
+                },
+                "dragging": {
+                    "type": "boolean"
+                },
+                "duration": {
+                    "type": "number"
+                },
                 "map_overview_center": {
                     "anyOf": [
                         {
                             "type": "object",
                             "properties": {
-                                "lat": { "type": "number" },
-                                "lon": { "type": "number" }
+                                "lat": {
+                                    "type": "number"
+                                },
+                                "lon": {
+                                    "type": "number"
+                                }
                             }
                         },
-                        { "type": "null" }
+                        {
+                            "type": "null"
+                        }
                     ]
                 },
-                "api_key_flickr": { "type": "string" },
-                "attribution": { "type": "string" },
-                "start_at_slide": { "type": "integer", "minimum": 0 },
+                "api_key_flickr": {
+                    "type": "string"
+                },
+                "attribution": {
+                    "type": "string"
+                },
+                "start_at_slide": {
+                    "type": "integer",
+                    "minimum": 0
+                },
                 "slides": {
                     "type": "array",
-                    "items": { "$ref": "#/$defs/slide" }
+                    "items": {
+                        "$ref": "#/$defs/slide"
+                    }
+                },
+                "layout": {
+                    "type": "string",
+                    "enum": ["landscape", "portrait"],
+                    "description": "Force a layout instead of deriving it from the container width. \"portrait\" is what the viewer picks at or below skinny_size."
                 }
             }
         }
@@ -177,8 +318,12 @@
                     "type": "string",
                     "description": "'overview' marks the map overview slide"
                 },
-                "date": { "type": ["string", "object", "null"] },
-                "group": { "type": "string" },
+                "date": {
+                    "type": ["string", "object", "null"]
+                },
+                "group": {
+                    "type": "string"
+                },
                 "location": {
                     "type": "object",
                     "properties": {
@@ -192,54 +337,110 @@
                         },
                         "region": {
                             "type": "array",
-                            "items": { "type": "number" },
+                            "items": {
+                                "type": "number"
+                            },
                             "minItems": 4,
                             "maxItems": 4,
                             "description": "Image region [x, y, w, h] in image pixels (IIIF xywh convention) for image maps; the view fits the region on navigation"
                         },
-                        "zoom": { "type": "number" },
-                        "line": { "type": "boolean" },
-                        "name": { "type": "string" },
-                        "icon": { "type": "string", "format": "uri" },
+                        "zoom": {
+                            "type": "number"
+                        },
+                        "line": {
+                            "type": "boolean"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "icon": {
+                            "type": "string",
+                            "format": "uri"
+                        },
                         "iconSize": {
                             "type": "array",
-                            "items": { "type": "number" },
+                            "items": {
+                                "type": "number"
+                            },
                             "minItems": 1,
                             "maxItems": 2
                         },
-                        "image": { "type": "string", "format": "uri" },
-                        "use_custom_marker": { "type": "boolean" }
+                        "image": {
+                            "type": "string",
+                            "format": "uri"
+                        },
+                        "use_custom_marker": {
+                            "type": "boolean"
+                        }
                     }
                 },
                 "media": {
                     "type": "object",
                     "properties": {
-                        "url": { "type": ["string", "null"] },
-                        "caption": { "type": ["string", "null"] },
-                        "credit": { "type": ["string", "null"] },
-                        "thumb": { "type": "string" },
-                        "alt": { "type": "string" },
-                        "srcset": { "type": "string" },
-                        "sizes": { "type": "string" },
-                        "mediatype": { "type": ["object", "null"] }
+                        "url": {
+                            "type": ["string", "null"]
+                        },
+                        "caption": {
+                            "type": ["string", "null"]
+                        },
+                        "credit": {
+                            "type": ["string", "null"]
+                        },
+                        "thumb": {
+                            "type": "string"
+                        },
+                        "alt": {
+                            "type": "string"
+                        },
+                        "srcset": {
+                            "type": "string"
+                        },
+                        "sizes": {
+                            "type": "string"
+                        },
+                        "mediatype": {
+                            "type": ["object", "null"]
+                        }
                     }
                 },
                 "text": {
                     "type": "object",
                     "properties": {
-                        "headline": { "type": "string" },
-                        "text": { "type": "string" },
-                        "date": { "type": ["string", "object", "null"] }
+                        "headline": {
+                            "type": "string"
+                        },
+                        "text": {
+                            "type": "string"
+                        },
+                        "date": {
+                            "type": ["string", "object", "null"]
+                        },
+                        "text_align": {
+                            "type": "string",
+                            "enum": ["left", "center", "right"],
+                            "description": "Horizontal alignment of this slide's text block"
+                        }
                     }
                 },
                 "background": {
                     "type": ["object", "string"],
                     "properties": {
-                        "url": { "type": ["string", "null"], "format": "uri" },
-                        "color": { "type": ["string", "null"] }
+                        "url": {
+                            "type": ["string", "null"],
+                            "format": "uri"
+                        },
+                        "color": {
+                            "type": ["string", "null"]
+                        },
+                        "opacity": {
+                            "type": "number",
+                            "description": "Background image opacity, 0-1"
+                        }
                     }
                 },
-                "uniqueid": { "type": "string" }
+                "uniqueid": {
+                    "type": "string"
+                }
             }
         }
     }

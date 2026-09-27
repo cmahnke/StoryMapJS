@@ -342,8 +342,11 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                         Yes — the slide <code>text</code> renders as HTML: links,
                                         images, lists and <code>vco-note</code> spans all work. Text
                                         without a <code>&lt;p&gt;</code>
-                                        tag is wrapped in one automatically. The markup is rendered
-                                        raw, so only load storymaps from sources you trust.
+                                        tag is wrapped in one automatically. The markup is sanitized
+                                        first: formatting survives, scripts and event handlers are
+                                        dropped, URLs are checked to be web URLs, and pasted
+                                        <code>&lt;iframe&gt;</code> embeds are rebuilt sandboxed.
+                                        Still, only load storymaps from sources you trust.
                                     </p>
                                 </div>
                             </li>

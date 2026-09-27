@@ -7,6 +7,11 @@ TypeScript library** built with **Vite**, styled with **SASS**, mapping with
 a full quality-gate toolchain (ESLint, Stylelint, tsc, Vitest, Playwright,
 JSON Schema validation, GitHub Actions).
 
+> **Execution record.** Written before the current tree existed. Where it
+> names files, folders or build steps that have since been replaced, follow
+> `DEVELOPMENT.md` and `AGENTS.md` instead. `RENOVATION_PLAN.md` and
+> `REUSABILITY_PLAN.md` are the later waves.
+
 Working branch: `refactor/vite-typescript` — one commit per phase, tree green
 at every commit.
 
