@@ -20,7 +20,7 @@
             "id": "https://example.org/storymap/georeferenced-layer-unsupported/config",
             "type": "StoryMapMapConfiguration",
             "profile": "mapconfig",
-            "storymap:mapType": "osm"
+            "storymap:basemap": "osm"
         }
     ],
     "items": [

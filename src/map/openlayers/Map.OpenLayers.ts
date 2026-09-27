@@ -30,6 +30,7 @@ import type { LinePoint, ViewToOptions } from "../types";
 import type {
     LatLngLiteral,
     StorymapOverlayLayer,
+    StorymapTilejson,
     StorymapSlide,
     StorymapSlideLocation,
 } from "../../types";
@@ -100,6 +101,16 @@ export default class OpenLayers extends Map {
         // space maps use raw pixel coordinates.
         const bbox_extent = this._bboxExtent();
 
+        // A TileJSON tile source states its own zoom ladder, its covered area
+        // and its default view, and all three are honoured here (§2.9). A
+        // keyword basemap has none of these, so the defaults stand.
+        const tilejson = this._tilejsonFor(this.options.map_type);
+        const tile_min_zoom = tilejson?.minzoom ?? 0;
+        const tile_max_zoom = tilejson?.maxzoom ?? MAX_ZOOM;
+        const tile_extent = tilejson?.bounds
+            ? fromLonLat(tilejson.bounds as [number, number, number, number])
+            : null;
+
         this._map = new OlMap({
             ...passthrough,
             target: this._el.map,
@@ -107,10 +118,19 @@ export default class OpenLayers extends Map {
             interactions: (user_map_options.interactions as Interaction[]) ?? [],
             view: new View({
                 projection: is_image_map ? "EPSG:4326" : "EPSG:3857",
-                center: [0, 0],
-                zoom: 0,
-                minZoom: 0,
-                maxZoom: is_image_map ? IMAGE_RESOLUTIONS.length - 1 : MAX_ZOOM,
+                ...(tilejson?.center
+                    ? {
+                          center: fromLonLat([tilejson.center[0], tilejson.center[1]]),
+                          zoom: tilejson.center[2],
+                      }
+                    : { center: [0, 0], zoom: 0 }),
+                minZoom: tile_min_zoom,
+                maxZoom: is_image_map ? IMAGE_RESOLUTIONS.length - 1 : tile_max_zoom,
+                // a tile source that only covers part of the world: keep the
+                // view inside what it actually has tiles for
+                ...(tile_extent && !is_image_map
+                    ? { extent: tile_extent, constrainOnlyCenter: true }
+                    : {}),
                 // image maps live outside the 4326 world: opt out of the
                 // global-projection constraints (they cap resolution at
                 // fit-the-world and clamp the center to [-90, 90]) and use
@@ -825,6 +845,67 @@ export default class OpenLayers extends Map {
         return this._marker_zooms[index] ?? super._markerZoom(index);
     }
 
+    /**
+     * The TileJSON metadata, but only when it is describing `url`.
+     *
+     * `tilejson` describes the map's tile source, so its `tiles` template is
+     * the one the map_type resolved to. When it names a different template it
+     * is not about this source, and neither the zoom ladder nor the initial
+     * view should be taken from it.
+     */
+    _tilejsonFor(url: string): StorymapTilejson | undefined {
+        const tilejson = this.options.tilejson;
+        if (tilejson === undefined) return undefined;
+        const tiles = Array.isArray(tilejson.tiles) ? tilejson.tiles[0] : tilejson.tiles;
+        return tiles === url ? tilejson : undefined;
+    }
+
+    /**
+     * An XYZ source for a URL template, honouring the TileJSON metadata of the
+     * map's own tile source if it is describing this template (§2.9).
+     *
+     * `minzoom`/`maxzoom` become the tile grid's zoom range, so OpenLayers asks
+     * for levels the service actually has and stops past the ones it does not.
+     * `scheme: "tms"` is the TMS row order, which is the same URL with the tile
+     * row counted from the bottom.
+     */
+    _xyzSource(url: string): XYZ {
+        const tilejson = this._tilejsonFor(url);
+        const options: Record<string, unknown> = {
+            url,
+            attributions: this._sourceAttributions(url),
+            crossOrigin: "anonymous",
+        };
+        if (tilejson !== undefined) {
+            if (tilejson.minzoom !== undefined || tilejson.maxzoom !== undefined) {
+                options.minZoom = tilejson.minzoom ?? 0;
+                options.maxZoom = tilejson.maxzoom ?? MAX_ZOOM;
+            }
+        }
+        const source = new XYZ(options as never);
+        if (tilejson?.scheme === "tms") {
+            // TMS numbers tile rows from the bottom of the pyramid; XYZ counts
+            // them from the top, so the row is flipped against the source's
+            // deepest zoom.
+            //
+            // This is assigned rather than passed as the `tileUrlFunction`
+            // constructor option, which this version of ol/source/XYZ does not
+            // read.
+            const deepest = tilejson.maxzoom ?? MAX_ZOOM;
+            source.tileUrlFunction = (tileCoord: number[] | undefined): string | undefined => {
+                if (tileCoord === undefined) return undefined;
+                // OpenLayers hands over [z, x, y]
+                const [z, x, y] = tileCoord;
+                return url
+                    .replace("{z}", String(z))
+                    .replace("{x}", String(x))
+                    .replace("{y}", String(2 ** deepest - 1 - y))
+                    .replace("{ratio}", "");
+            };
+        }
+        return source;
+    }
+
     _createDefaultTileLayer(map_type: string): TileLayer {
         const _map_type_arr = map_type.split(":");
 
@@ -943,13 +1024,7 @@ export default class OpenLayers extends Map {
                 if (!map_type.includes("{z}")) {
                     return this._createVectorStyleLayer(map_type);
                 }
-                return new TileLayer({
-                    source: new XYZ({
-                        url: map_type,
-                        attributions: this._sourceAttributions(map_type),
-                        crossOrigin: "anonymous",
-                    }),
-                });
+                return new TileLayer({ source: this._xyzSource(map_type) });
 
             case "ch-watercolor":
                 return new TileLayer({
@@ -1042,13 +1117,7 @@ export default class OpenLayers extends Map {
                 // {z} render as vector styles, anything else falls back to
                 // OSM.
                 if (map_type.includes("{z}")) {
-                    return new TileLayer({
-                        source: new XYZ({
-                            url: map_type,
-                            attributions: this._sourceAttributions(map_type),
-                            crossOrigin: "anonymous",
-                        }),
-                    });
+                    return new TileLayer({ source: this._xyzSource(map_type) });
                 }
                 if (map_type.includes("/") || map_type.endsWith(".json")) {
                     return this._createVectorStyleLayer(map_type);

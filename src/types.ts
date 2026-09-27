@@ -294,6 +294,7 @@ export interface StorymapOptions {
     show_history_line: boolean;
     use_custom_markers: boolean;
     iiif: { url: string; attribution: string };
+    tilejson?: StorymapTilejson;
     map_height: number;
     storyslider_height: number;
     slide_padding_lr: number;
@@ -322,6 +323,31 @@ export interface AnimationHandle {
 }
 
 // ---------- map ----------
+
+/**
+ * TileJSON 2.1 tile source metadata, from a manifest's map configuration
+ * service (§2.9 of docs/plans/iiif-interop.md).
+ *
+ * This is how a manifest states a tile source: `tiles` is the URL template and
+ * the rest is the standard metadata around it, where a keyword basemap
+ * (`osm`, `stadia`, `iiif`, …) has no such thing to say. `minzoom`,
+ * `maxzoom`, `bounds` and `scheme` constrain the source; `center` and `zoom`
+ * set the initial view.
+ */
+export interface StorymapTilejson {
+    /** URL template, e.g. `https://tiles.example.org/{z}/{x}/{y}.png` */
+    tiles: string | string[];
+    /** Lowest zoom level the source has tiles for */
+    minzoom?: number;
+    /** Highest zoom level the source has tiles for */
+    maxzoom?: number;
+    /** `[west, south, east, north]`, WGS84 lon/lat, of the covered area */
+    bounds?: [number, number, number, number];
+    /** `xyz` (default) or `tms`, which flips the tile row order */
+    scheme?: "xyz" | "tms";
+    /** `[lon, lat, zoom]` of the map's default view */
+    center?: [number, number, number];
+}
 
 /**
  * A stacked raster overlay above the base map (StorymapOptions.overlays).

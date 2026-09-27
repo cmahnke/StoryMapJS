@@ -950,7 +950,7 @@
             "type": "Service",
             "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:mapAsImage": true,
-            "storymap:mapType": "iiif",
+            "storymap:basemap": "iiif",
             "storymap:fontCss": "stock:opensans-gentiumbook"
         }
     ]

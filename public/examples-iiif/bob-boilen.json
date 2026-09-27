@@ -333,7 +333,9 @@
             "id": "https://example.org/storymap/bob-boilen/map-config",
             "type": "Service",
             "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
-            "storymap:mapType": "http://apps.npr.org/bob-boilens-wristbands-2012/img/tiles/{z}/{x}/{y}.jpg",
+            "tilejson": {
+                "tiles": "http://apps.npr.org/bob-boilens-wristbands-2012/img/tiles/{z}/{x}/{y}.jpg"
+            },
             "storymap:fontCss": "stock:dancing-ledger",
             "storymap:language": "en"
         }

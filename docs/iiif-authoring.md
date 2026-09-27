@@ -60,7 +60,7 @@ text, and the painting annotation's body the slide media. There is also one
 slide for a Canvas that has no painting at all.
 
 That `service` array on the body is also where the basemap comes from. With
-`storymap:mapType: "iiif"` the viewer takes the first painting body carrying an
+`storymap:basemap: "iiif"` the viewer takes the first painting body carrying an
 `ImageService3` as the image basemap and fetches its `info.json`, which is how
 `iiif.url` is resolved — so the basemap service is spelled the standard way and
 needs no mapconfig term.
@@ -76,7 +76,7 @@ Two things are required:
 
 1. The canvas must be presented as an image map — a
    [map configuration service](storymap-as-iiif-manifest.md#manifest--service)
-   with `storymap:mapType: "iiif"` and `storymap:mapAsImage: true`. Region
+   with `storymap:basemap: "iiif"` and `storymap:mapAsImage: true`. Region
    stops are honoured in image mode; a geographic map ignores them.
 2. The target must resolve to a region. An annotation aimed at the whole
    canvas is not a stop — the canvas slide already shows that.
@@ -87,7 +87,7 @@ Two things are required:
         "id": "https://example.org/story/1/map-config",
         "type": "Service",
         "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
-        "storymap:mapType": "iiif",
+        "storymap:basemap": "iiif",
         "storymap:mapAsImage": true
     }
 ]

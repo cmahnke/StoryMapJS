@@ -324,6 +324,7 @@ describe("context agreement", () => {
             "storymap:iiifUrl",
             "storymap:imageRegion",
             "storymap:georeferencedLayers",
+            "storymap:mapType",
         ];
         const offenders: string[] = [];
         for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {

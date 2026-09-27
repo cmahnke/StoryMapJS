@@ -138,7 +138,7 @@
             "id": "https://example.org/storymap/issue-272-facebook/map-config",
             "type": "Service",
             "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
-            "storymap:mapType": "osm",
+            "storymap:basemap": "osm",
             "storymap:mapAsImage": false,
             "storymap:callToAction": false
         }

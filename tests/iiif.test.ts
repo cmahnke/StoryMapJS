@@ -25,7 +25,7 @@ const manifest = {
             id: "https://example.org/storymap/storm/map-config",
             type: "Service",
             profile: "https://christianmahnke.de/iiif/storymap/mapconfig",
-            "storymap:mapType": "osm:standard",
+            "storymap:basemap": "osm:standard",
             "storymap:language": "en",
             "storymap:showLines": true,
             "storymap:lineColor": "#c0392b",
@@ -270,7 +270,7 @@ test("reads an image basemap's url from the body's Image API service", () => {
     // §2.4: an image basemap is a painting body carrying an ImageService3
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
-        service: [{ type: "Service", profile: "mapconfig", mapType: "iiif", mapAsImage: true }],
+        service: [{ type: "Service", profile: "mapconfig", basemap: "iiif", mapAsImage: true }],
         items: [
             {
                 id: "https://example.org/canvas/1",
@@ -315,7 +315,7 @@ test("does not mistake a slide image for an image basemap", () => {
     // easily be IIIF images, and only a basemap one is the map
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
-        service: [{ type: "Service", profile: "mapconfig", mapType: "stamen" }],
+        service: [{ type: "Service", profile: "mapconfig", basemap: "stamen" }],
         items: [
             {
                 id: "https://example.org/canvas/1",
@@ -357,7 +357,7 @@ test("accepts an info.json url used directly as the service id", () => {
     // producer leniency: some manifests put the description URL in service.id
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
-        service: [{ type: "Service", profile: "mapconfig", mapType: "iiif" }],
+        service: [{ type: "Service", profile: "mapconfig", basemap: "iiif" }],
         items: [
             {
                 id: "https://example.org/canvas/1",
@@ -401,7 +401,7 @@ test("maps the mapconfig service to storymap options fields", () => {
             {
                 type: "Service",
                 profile: "https://christianmahnke.de/iiif/storymap/mapconfig",
-                mapType: "https://tiles.example.org/{z}/{x}/{y}.png",
+                tilejson: { tiles: "https://tiles.example.org/{z}/{x}/{y}.png" },
                 mapAsImage: false,
                 mapAccessToken: "token",
                 mapBackgroundColor: "#000",
@@ -664,7 +664,7 @@ test("maps the newer mapconfig terms to their storymap fields", () => {
             {
                 type: "Service",
                 profile: "mapconfig",
-                mapType: "osm",
+                basemap: "osm",
                 mapArea: "left",
                 overviewExtent: [-0.6, 51.2, 0.4, 51.8],
                 keyboard: true,
@@ -989,7 +989,7 @@ test("maps georeferencing annotations to overlays", () => {
     });
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
-        service: [{ type: "Service", profile: "mapconfig", mapType: "osm" }],
+        service: [{ type: "Service", profile: "mapconfig", basemap: "osm" }],
         items: [
             canvas("https://example.org/canvas/1", [
                 painting("https://example.org/canvas/1"),
@@ -1160,7 +1160,7 @@ test("ignores a georeferencedLayers term left over from before §2.10", () => {
             {
                 type: "Service",
                 profile: "mapconfig",
-                mapType: "osm",
+                basemap: "osm",
                 georeferencedLayers: [
                     {
                         url: "https://iiif.example.org/image1",

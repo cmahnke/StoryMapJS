@@ -516,14 +516,39 @@ of them, and the reader already understood `pixel:`.
 
 ### 2.9 `mapType` → TileJSON 2.1 + a `basemap` keyword field
 
-`mapType` today carries two unrelated things: a tile URL template and a vendor
-keyword (`osm`, `stadia`, `mapbox://styles/…`, `iiif`, `zoomify`). Split them:
-TileJSON 2.1 `tiles` takes the template, with `minzoom`/`maxzoom`/`bounds`/
-`scheme` honoured where present and `center`/`zoom` feeding the initial view;
-a new **`storymap:basemap`** term carries the keyword. Delete `mapType`.
-`storymap:basemap` is the one name in this plan we choose rather than derive —
-it is a noun for the same job `mapType` did. Test: a mapconfig service using
-`tiles` + `center` + `zoom` and one using `basemap: "stadia"` both resolve.
+**Done** (commit 7). `mapType` today carries two unrelated things: a tile URL
+template and a vendor keyword (`osm`, `stadia`, `mapbox://styles/…`, `iiif`,
+`zoomify`). Split them: TileJSON 2.1 `tiles` takes the template, with
+`minzoom`/`maxzoom`/`bounds`/`scheme` honoured where present and
+`center`/`zoom` feeding the initial view; a new **`storymap:basemap`** term
+carries the keyword. `storymap:basemap` is the one name in this plan we choose
+rather than derive — it is a noun for the same job `mapType` did. Test: a
+mapconfig service using `tiles` + `center` + `zoom` and one using
+`basemap: "stadia"` both resolve.
+
+`tiles` becomes `map_type`, so everything that dispatches on a template — the
+`tile_source_factory` option, attribution, the minimap — keeps working with no
+change. `minzoom`/`maxzoom` go to the view _and_ the source's tile grid;
+`bounds` constrains the center only, for the same reason `map_bbox` does not
+pin the resolution; `center`'s third member is the zoom. A `basemap` keyword
+wins if both are present, since a keyword names a source the viewer configures
+itself and the TileJSON would then be describing something else.
+
+Three things the implementation turned up:
+
+- **Absolute templates never reach the branch that looked like it handled
+  them.** `_createDefaultTileLayer` has a `case "http"`/`case "https"` ahead of
+  its `default:` branch, and a `{z}` template splits on `":"` to `"https"` — so
+  the TileJSON-aware XYZ source had to go there too, or every absolute tile URL
+  in the fixture set would have kept the old behaviour.
+- **This version of `ol/source/XYZ` ignores the `tileUrlFunction` constructor
+  option.** Verified directly: `new XYZ({tileUrlFunction: fn}).getTileUrlFunction()`
+  is not `fn`. TMS therefore assigns the property after construction. (The
+  plan's `scheme` support is otherwise exactly as written.)
+- **`tilejson` had to be added to `StoryMap`'s defaults object.** `updateData`
+  only copies keys that already exist there, so without it a manifest's
+  TileJSON could never reach the map at all — the same trap the neighbouring
+  `overlays` and `overview_extent` entries note.
 
 ### 2.10 `georeferencedLayers` → georeferencing annotations
 

@@ -236,7 +236,7 @@
             "id": "https://example.org/storymap/issue-134-no-lines/map-config",
             "type": "Service",
             "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
-            "storymap:mapType": "osm",
+            "storymap:basemap": "osm",
             "storymap:mapAsImage": false,
             "storymap:callToAction": false,
             "storymap:showLines": false

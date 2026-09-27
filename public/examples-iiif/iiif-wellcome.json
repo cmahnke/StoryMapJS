@@ -77,7 +77,7 @@
             "id": "https://example.org/storymap/iiif-wellcome/map-config",
             "type": "Service",
             "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
-            "storymap:mapType": "iiif",
+            "storymap:basemap": "iiif",
             "storymap:mapAsImage": true
         }
     ],

@@ -299,7 +299,7 @@ thresholds, `goTo` firing `change` immediately instead of post-animation,
 - **Manifest-level settings** travel in an extension `service` entry
   (`type: "Service"`, mapconfig profile) — the Presentation 3 Manifest class
   has `additionalProperties: false`, so plain extension properties are only
-  valid on Canvas level. Terms: `storymap:mapType`, `storymap:mapAsImage`,
+  valid on Canvas level. Terms: `storymap:basemap` (a keyword; a tile service is TileJSON `tilejson`), `storymap:mapAsImage`,
   `storymap:mapAccessToken`, `storymap:mapBackgroundColor`,
   `storymap:mapCenterOffset`, `storymap:mapSubdomains`, `storymap:fontCss`,
   `storymap:callToAction(Text)`, `storymap:startAtSlide`,

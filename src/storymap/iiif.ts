@@ -7,6 +7,7 @@
 import type {
     StorymapData,
     StorymapGeoreference,
+    StorymapTilejson,
     StorymapOverlayLayer,
     StorymapSlide,
     StorymapSlideBackground,
@@ -444,6 +445,46 @@ function readImageServiceUrl(manifest: Record<string, unknown>): string | null {
         }
     }
     return null;
+}
+
+/**
+ * TileJSON 2.1 metadata from a manifest's map configuration service (§2.9).
+ *
+ * `tiles` is the only required member, and the value we need is the template,
+ * so anything without one is not a tile source. `minzoom`/`maxzoom` are
+ * clamped to sane numbers rather than rejected, because a service that
+ * advertises a maxzoom of 200 should not fail to load — the map caps it.
+ */
+function readTilejson(config: Record<string, unknown>): StorymapTilejson | null {
+    const record = asRecord(config.tilejson);
+    if (!record) return null;
+    const tiles = Array.isArray(record.tiles)
+        ? asStringArray(record.tiles).filter((t) => t !== "")
+        : asString(record.tiles);
+    if (Array.isArray(tiles) ? tiles.length === 0 : tiles === null) return null;
+    const template = tiles as string | string[];
+
+    const out: StorymapTilejson = { tiles: template };
+    const minzoom = asNumber(record.minzoom);
+    if (minzoom !== null && minzoom >= 0) out.minzoom = minzoom;
+    const maxzoom = asNumber(record.maxzoom);
+    if (maxzoom !== null && maxzoom >= 0) out.maxzoom = maxzoom;
+    const bounds = readLonLatBox(record.bounds);
+    if (bounds !== null) out.bounds = bounds;
+    const scheme = asString(record.scheme);
+    if (scheme === "xyz" || scheme === "tms") out.scheme = scheme;
+    // TileJSON's `center` is [lon, lat, zoom]; the third member is the zoom
+    const center = Array.isArray(record.center) ? record.center : null;
+    if (center && center.length >= 2) {
+        const lon = asNumber(center[0]);
+        const lat = asNumber(center[1]);
+        if (lon !== null && lat !== null && Math.abs(lon) <= 180 && Math.abs(lat) <= 90) {
+            const zoom = center.length > 2 ? asNumber(center[2]) : null;
+            if (zoom !== null) out.center = [lon, lat, zoom];
+            else out.center = [lon, lat, 0];
+        }
+    }
+    return out;
 }
 
 function readMapConfig(manifest: Record<string, unknown>): Record<string, unknown> | null {
@@ -1071,8 +1112,21 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
 
 /** Copies the mapconfig service terms onto the storymap data root (legacy keys). */
 function applyMapConfig(data: StorymapData, config: Record<string, unknown>): void {
-    const mapType = asString(readTerm(config, "mapType"));
-    if (mapType !== null && mapType !== "") data.map_type = mapType;
+    // The basemap is either a keyword or a tile source: `storymap:basemap`
+    // names one the viewer knows how to configure (osm, stadia, iiif, …) and
+    // TileJSON describes an arbitrary tile service. `mapType` used to carry
+    // both in one string, which is why a URL template and a vendor keyword
+    // were the same field (§2.9).
+    const basemap = asString(readTerm(config, "basemap"));
+    if (basemap !== null && basemap !== "") {
+        data.map_type = basemap;
+    } else {
+        const tilejson = readTilejson(config);
+        if (tilejson !== null) {
+            data.map_type = Array.isArray(tilejson.tiles) ? tilejson.tiles[0] : tilejson.tiles;
+            data.tilejson = tilejson;
+        }
+    }
 
     const mapAsImage = asBoolean(readTerm(config, "mapAsImage"));
     if (mapAsImage !== null) data.map_as_image = mapAsImage;

@@ -176,7 +176,15 @@ function buildMapConfig(storymap, legacy, isZoomify) {
         config["storymap:mapAsImage"] = true;
     }
     if (present(mapType)) {
-        config["storymap:mapType"] = mapType;
+        // A keyword basemap and a tile URL template are different kinds of
+        // thing, and `mapType` used to be both. A keyword the viewer knows how
+        // to configure is a `storymap:basemap`; anything with a {z} in it is
+        // TileJSON's `tiles`, which is where a tile service belongs (§2.9).
+        if (String(mapType).includes("{z}")) {
+            config.tilejson = { tiles: mapType };
+        } else {
+            config["storymap:basemap"] = mapType;
+        }
     }
     if (storymap.map_as_image !== undefined) {
         config["storymap:mapAsImage"] = storymap.map_as_image;

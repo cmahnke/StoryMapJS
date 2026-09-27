@@ -31,7 +31,7 @@
             "id": "https://example.org/storymap/georeferenced-layer/config",
             "type": "StoryMapMapConfiguration",
             "profile": "mapconfig",
-            "storymap:mapType": "osm",
+            "storymap:basemap": "osm",
             "storymap:mapArea": "full",
             "storymap:overviewExtent": [
                 4.3,

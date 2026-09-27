@@ -322,6 +322,9 @@ class StoryMapBase {
             // that already exist here, so storymap JSON could not reach them
             overview_extent: null,
             overlays: [],
+            // TileJSON 2.1 metadata for a tile-source basemap; a keyword
+            // basemap has none (interop §2.9)
+            tilejson: undefined,
             consent_required: false,
             zoomify: undefined,
             text_color: "",
