@@ -305,7 +305,8 @@ thresholds, `goTo` firing `change` immediately instead of post-animation,
   `storymap:callToAction(Text)`, `storymap:startAtSlide`,
   `storymap:calculateZoom`, `storymap:lessBounce`, `storymap:line*`,
   `storymap:showLines`, `storymap:showHistoryLine`, `storymap:useCustomMarkers`,
-  `storymap:iiifUrl`, `storymap:originalZoomify`.
+  `storymap:originalZoomify`. An image basemap's URL comes from the Image API
+  `service[]` on the painting body, not a term.
 - **Canvas** ↔ slide (order = slide order; nominal 1080×1080 for non-image
   canvases, real dimensions for IIIF image canvases). Canvas-level
   `storymap:` terms: `type` ("overview"), `group`. The date is the standard

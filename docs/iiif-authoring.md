@@ -59,6 +59,12 @@ One canvas is one slide: `label` becomes the headline, `summary` the body
 text, and the painting annotation's body the slide media. There is also one
 slide for a Canvas that has no painting at all.
 
+That `service` array on the body is also where the basemap comes from. With
+`storymap:mapType: "iiif"` the viewer takes the first painting body carrying an
+`ImageService3` as the image basemap and fetches its `info.json`, which is how
+`iiif.url` is resolved — so the basemap service is spelled the standard way and
+needs no mapconfig term.
+
 ## Guided tours: one image, many stops
 
 This is the Micrio/Storiiies shape and the reason the format exists here: a
@@ -82,8 +88,7 @@ Two things are required:
         "type": "Service",
         "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
         "storymap:mapType": "iiif",
-        "storymap:mapAsImage": true,
-        "storymap:iiifUrl": "https://example.org/image/info.json"
+        "storymap:mapAsImage": true
     }
 ]
 ```

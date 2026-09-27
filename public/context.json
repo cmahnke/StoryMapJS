@@ -8,10 +8,6 @@
         "mapBackgroundColor": "storymap:mapBackgroundColor",
         "mapCenterOffset": "storymap:mapCenterOffset",
         "mapSubdomains": "storymap:mapSubdomains",
-        "iiifUrl": {
-            "@id": "storymap:iiifUrl",
-            "@type": "@id"
-        },
         "fontCss": "storymap:fontCss",
         "callToAction": "storymap:callToAction",
         "callToActionText": "storymap:callToActionText",

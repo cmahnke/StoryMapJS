@@ -266,6 +266,134 @@ test("falls back to a manifest-level navPlace aggregation", () => {
     expect(data.slides[1].location?.zoom).toBe(6);
 });
 
+test("reads an image basemap's url from the body's Image API service", () => {
+    // §2.4: an image basemap is a painting body carrying an ImageService3
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [{ type: "Service", profile: "mapconfig", mapType: "iiif", mapAsImage: true }],
+        items: [
+            {
+                id: "https://example.org/canvas/1",
+                type: "Canvas",
+                height: 3000,
+                width: 2315,
+                items: [
+                    {
+                        id: "https://example.org/canvas/1/page/1",
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                id: "https://example.org/canvas/1/annotation/1",
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: {
+                                    id: "https://iiif.example.org/image/full/max/0/default.jpg",
+                                    type: "Image",
+                                    format: "image/jpeg",
+                                    service: [
+                                        {
+                                            id: "https://iiif.example.org/image",
+                                            type: "ImageService3",
+                                            profile: "level2",
+                                        },
+                                    ],
+                                },
+                                target: "https://example.org/canvas/1",
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+    expect(data.map_type).toBe("iiif");
+    expect(data.iiif).toEqual({ url: "https://iiif.example.org/image/info.json", attribution: "" });
+});
+
+test("does not mistake a slide image for an image basemap", () => {
+    // The gate is map_type "iiif": an ordinary storymap's slides can just as
+    // easily be IIIF images, and only a basemap one is the map
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [{ type: "Service", profile: "mapconfig", mapType: "stamen" }],
+        items: [
+            {
+                id: "https://example.org/canvas/1",
+                type: "Canvas",
+                height: 600,
+                width: 800,
+                items: [
+                    {
+                        id: "https://example.org/canvas/1/page/1",
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                id: "https://example.org/canvas/1/annotation/1",
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: {
+                                    id: "https://iiif.example.org/slide/full/max/0/default.jpg",
+                                    type: "Image",
+                                    service: [
+                                        {
+                                            id: "https://iiif.example.org/slide",
+                                            type: "ImageService3",
+                                        },
+                                    ],
+                                },
+                                target: "https://example.org/canvas/1",
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+    expect(data.map_type).toBe("stamen");
+    expect(data.iiif).toBeUndefined();
+});
+
+test("accepts an info.json url used directly as the service id", () => {
+    // producer leniency: some manifests put the description URL in service.id
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        service: [{ type: "Service", profile: "mapconfig", mapType: "iiif" }],
+        items: [
+            {
+                id: "https://example.org/canvas/1",
+                type: "Canvas",
+                height: 3000,
+                width: 2315,
+                items: [
+                    {
+                        id: "https://example.org/canvas/1/page/1",
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                id: "https://example.org/canvas/1/annotation/1",
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: {
+                                    id: "https://iiif.example.org/image/full/max/0/default.jpg",
+                                    type: "Image",
+                                    service: [
+                                        {
+                                            id: "https://iiif.example.org/image/info.json",
+                                            type: "ImageService3",
+                                        },
+                                    ],
+                                },
+                                target: "https://example.org/canvas/1",
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+    expect(data.iiif).toEqual({ url: "https://iiif.example.org/image/info.json", attribution: "" });
+});
+
 test("maps the mapconfig service to storymap options fields", () => {
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
@@ -279,7 +407,6 @@ test("maps the mapconfig service to storymap options fields", () => {
                 mapBackgroundColor: "#000",
                 mapCenterOffset: { left: -100, top: 20 },
                 mapSubdomains: "abc",
-                iiifUrl: "https://iiif.example.org/info.json",
                 fontCss: "stock:bitter",
                 callToAction: true,
                 callToActionText: "Explore",
@@ -306,7 +433,9 @@ test("maps the mapconfig service to storymap options fields", () => {
     expect(data.map_background_color).toBe("#000");
     expect(data.map_center_offset).toEqual({ left: -100, top: 20 });
     expect(data.map_subdomains).toBe("abc");
-    expect(data.iiif).toEqual({ url: "https://iiif.example.org/info.json", attribution: "" });
+    // iiif.url no longer comes from a mapconfig term, so a map_type that is
+    // not an image map leaves it unset
+    expect(data.iiif).toBeUndefined();
     expect(data.font_css).toBe("stock:bitter");
     expect(data.call_to_action).toBe(true);
     expect(data.call_to_action_text).toBe("Explore");

@@ -388,13 +388,25 @@ manifest's `id`.
 
 ### 2.4 `iiifUrl` → the body's Image API service
 
-An image basemap is a painting body carrying an `ImageService3` in
-`service[0]` (`id` + `profile`). Read the Image API base from there (falling
-back to stripping `/info.json` off `body.id`) into `data.iiif.url`, and delete
-`iiifUrl` from the mapconfig terms. Note `storymap:mapAsImage` is a _separate_
-term with no standard equivalent and stays; an image map becomes "an image
-service plus `mapAsImage: true`". Test: a manifest whose canvas body has an
-Image API service yields the same `data.iiif.url` as the old term did.
+**Done** (commit 4). An image basemap is a painting body carrying an
+`ImageService3` in `service[0]` (`id` + `profile`). Read the Image API base
+from there (falling back to stripping `/info.json` off `body.id`) into
+`data.iiif.url`, and delete `iiifUrl` from the mapconfig terms. Note
+`storymap:mapAsImage` is a _separate_ term with no standard equivalent and
+stays; an image map becomes "an image service plus `mapAsImage: true`". Test:
+a manifest whose canvas body has an Image API service yields the same
+`data.iiif.url` as the old term did.
+
+One decision the plan did not spell out: the service is only consulted when
+`map_type` is `"iiif"`. Without that gate, any storymap whose _slides_ happen
+to be IIIF images — which is most of the fixture set — would pick up a
+`data.iiif` that looks like a basemap. `map_type` is already what tells the
+map to use the basemap, so the gate is the honest one, and a test covers it.
+
+The hand-authored `annotated-image.json` already carried the `ImageService3` on
+its painting body, so the term was simply deleted from it. All eight
+`mapType: "iiif"` fixtures carry a service, so no shipped manifest loses its
+basemap.
 
 ### 2.5 `date` → `navDate`
 

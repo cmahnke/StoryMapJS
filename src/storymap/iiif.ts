@@ -406,6 +406,52 @@ function collectionToStorymapData(collection: Record<string, unknown>): Storymap
  * Finds the manifest-level map configuration service (profile containing
  * "mapconfig") and returns its properties, or null when absent.
  */
+/**
+ * The `info.json` URL of the image basemap, taken from the `ImageService3` a
+ * painting body carries (§2.4).
+ *
+ * `service[0].id` is the service base, so the description is that plus
+ * `/info.json`. A producer that put the description URL in `body.id` instead
+ * is handled by the fallback. `map_type: "iiif"` means every canvas paints the
+ * same basemap image, so the first one carrying a service is the basemap.
+ */
+function readImageServiceUrl(manifest: Record<string, unknown>): string | null {
+    const canvases = Array.isArray(manifest.items) ? manifest.items : [];
+    for (const canvas of canvases) {
+        const record = asRecord(canvas);
+        if (!record) continue;
+        const pages = Array.isArray(record.items) ? record.items : [];
+        for (const page of pages) {
+            const pageRecord = asRecord(page);
+            if (!pageRecord) continue;
+            const annotations = Array.isArray(pageRecord.items) ? pageRecord.items : [];
+            for (const annotation of annotations) {
+                const annotationRecord = asRecord(annotation);
+                if (!annotationRecord) continue;
+                const bodies = Array.isArray(annotationRecord.body)
+                    ? annotationRecord.body
+                    : [annotationRecord.body];
+                for (const entry of bodies) {
+                    const body = asRecord(entry);
+                    if (!body) continue;
+                    const services = Array.isArray(body.service) ? body.service : [];
+                    for (const service of services) {
+                        const serviceRecord = asRecord(service);
+                        if (!serviceRecord) continue;
+                        const id = asString(serviceRecord.id);
+                        if (id === null) continue;
+                        return id.endsWith("/info.json") ? id : `${id}/info.json`;
+                    }
+                    // A body that is itself the service description
+                    const bodyId = asString(body.id);
+                    if (bodyId !== null && bodyId.endsWith("/info.json")) return bodyId;
+                }
+            }
+        }
+    }
+    return null;
+}
+
 function readMapConfig(manifest: Record<string, unknown>): Record<string, unknown> | null {
     const services = Array.isArray(manifest.service) ? manifest.service : [manifest.service];
     for (const service of services) {
@@ -956,6 +1002,15 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         applyMapConfig(data, config);
     }
 
+    // An image basemap is a painting body carrying an Image API service in
+    // `service[]`; its base is where `iiif.url` comes from (§2.4). Gated on
+    // map_type "iiif" because an ordinary slide can just as easily be an IIIF
+    // image, and only the basemap one is the map.
+    if (data.map_type === "iiif") {
+        const imageService = readImageServiceUrl(record);
+        if (imageService !== null) data.iiif = { url: imageService, attribution: "" };
+    }
+
     // requiredStatement → iiif.attribution, label included (§2.1)
     const attribution = formatAttribution(readRequiredStatement(record.requiredStatement));
     if (attribution !== "") {
@@ -1030,9 +1085,6 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
 
     const mapSubdomains = asString(readTerm(config, "mapSubdomains"));
     if (mapSubdomains !== null) data.map_subdomains = mapSubdomains;
-
-    const iiifUrl = asString(readTerm(config, "iiifUrl"));
-    if (iiifUrl !== null) data.iiif = { url: iiifUrl, attribution: "" };
 
     const fontCss = asString(readTerm(config, "fontCss"));
     if (fontCss !== null) data.font_css = fontCss;

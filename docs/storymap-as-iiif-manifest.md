@@ -65,7 +65,6 @@ what the fixtures reference. Content:
         "mapBackgroundColor": "storymap:mapBackgroundColor",
         "mapCenterOffset": "storymap:mapCenterOffset",
         "mapSubdomains": "storymap:mapSubdomains",
-        "iiifUrl": { "@id": "storymap:iiifUrl", "@type": "@id" },
         "fontCss": "storymap:fontCss",
         "callToAction": "storymap:callToAction",
         "callToActionText": "storymap:callToActionText",
@@ -242,7 +241,7 @@ properties):
 | `mapBackgroundColor`         | `map_background_color`              | CSS color                                                                                                         |
 | `mapCenterOffset`            | `map_center_offset`                 | `{left, top}`                                                                                                     |
 | `mapSubdomains`              | `map_subdomains`                    | Tile URL subdomains                                                                                               |
-| `iiifUrl`                    | `iiif.url`                          | IIIF Image API `info.json` URL for image-map storymaps                                                            |
+| _(none)_                     | `iiif.url`                          | From the Image API `service[]` a painting body carries, plus `/info.json`; see below                              |
 | `fontCss`                    | `font_css`                          | e.g. `stock:dancing-ledger`                                                                                       |
 | `callToAction`               | `call_to_action`                    | boolean                                                                                                           |
 | `callToActionText`           | `call_to_action_text`               | string                                                                                                            |
@@ -581,44 +580,44 @@ photo, and a slide with a YouTube video — full manifest:
 
 ## Full mapping table
 
-| Legacy field (storymap root) | IIIF path                                                           |
-| ---------------------------- | ------------------------------------------------------------------- |
-| `slides`                     | `items[]` (Canvas per slide)                                        |
-| `language`                   | `service[0].storymap:language`                                      |
-| `map_type`                   | `service[0].storymap:mapType` (`zoomify` → `iiif`)                  |
-| `map_as_image`               | `service[0].storymap:mapAsImage`                                    |
-| `map_mini`                   | _dropped_ (viewer setting, not part of the exchange format)         |
-| `map_subdomains`             | `service[0].storymap:mapSubdomains`                                 |
-| `map_access_token`           | `service[0].storymap:mapAccessToken`                                |
-| `map_background_color`       | `service[0].storymap:mapBackgroundColor`                            |
-| `map_center_offset`          | `service[0].storymap:mapCenterOffset`                               |
-| `map_popup`                  | _dropped_ (viewer setting)                                          |
-| `use_custom_markers`         | `service[0].storymap:useCustomMarkers`                              |
-| `map_area`                   | `service[0].storymap:mapArea`                                       |
-| `overview_extent`            | `service[0].storymap:overviewExtent`                                |
-| `keyboard`                   | `service[0].storymap:keyboard`                                      |
-| `overlays`                   | `service[0].storymap:overlays` (+ `storymap:georeferencedLayers`)   |
-| `zoom_distance`              | _dropped_ (viewer setting)                                          |
-| `calculate_zoom`             | `service[0].storymap:calculateZoom`                                 |
-| `less_bounce`                | `service[0].storymap:lessBounce`                                    |
-| `line_follows_path`          | `service[0].storymap:lineFollowsPath`                               |
-| `show_lines`                 | `service[0].storymap:showLines`                                     |
-| `show_history_line`          | `service[0].storymap:showHistoryLine`                               |
-| `line_color`                 | `service[0].storymap:lineColor`                                     |
-| `line_color_inactive`        | `service[0].storymap:lineColorInactive`                             |
-| `line_weight`                | `service[0].storymap:lineWeight`                                    |
-| `line_opacity`               | `service[0].storymap:lineOpacity`                                   |
-| `line_dash`                  | `service[0].storymap:lineDash`                                      |
-| `line_join`                  | `service[0].storymap:lineJoin`                                      |
-| `iiif.url`                   | `service[0].storymap:iiifUrl` + canvas Image annotation `service[]` |
-| `iiif.attribution`           | `requiredStatement`                                                 |
-| `zoomify`                    | _dropped_ (zoomify is replaced by the IIIF reference image)         |
-| `font_css`                   | `service[0].storymap:fontCss`                                       |
-| `call_to_action`             | `service[0].storymap:callToAction`                                  |
-| `call_to_action_text`        | `service[0].storymap:callToActionText`                              |
-| `relative_date`              | _dropped_ (viewer setting)                                          |
-| `start_at_slide`             | `service[0].storymap:startAtSlide`                                  |
-| _(root) `width`, `height`_   | _dropped_ (viewer embed size)                                       |
+| Legacy field (storymap root) | IIIF path                                                         |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `slides`                     | `items[]` (Canvas per slide)                                      |
+| `language`                   | `service[0].storymap:language`                                    |
+| `map_type`                   | `service[0].storymap:mapType` (`zoomify` → `iiif`)                |
+| `map_as_image`               | `service[0].storymap:mapAsImage`                                  |
+| `map_mini`                   | _dropped_ (viewer setting, not part of the exchange format)       |
+| `map_subdomains`             | `service[0].storymap:mapSubdomains`                               |
+| `map_access_token`           | `service[0].storymap:mapAccessToken`                              |
+| `map_background_color`       | `service[0].storymap:mapBackgroundColor`                          |
+| `map_center_offset`          | `service[0].storymap:mapCenterOffset`                             |
+| `map_popup`                  | _dropped_ (viewer setting)                                        |
+| `use_custom_markers`         | `service[0].storymap:useCustomMarkers`                            |
+| `map_area`                   | `service[0].storymap:mapArea`                                     |
+| `overview_extent`            | `service[0].storymap:overviewExtent`                              |
+| `keyboard`                   | `service[0].storymap:keyboard`                                    |
+| `overlays`                   | `service[0].storymap:overlays` (+ `storymap:georeferencedLayers`) |
+| `zoom_distance`              | _dropped_ (viewer setting)                                        |
+| `calculate_zoom`             | `service[0].storymap:calculateZoom`                               |
+| `less_bounce`                | `service[0].storymap:lessBounce`                                  |
+| `line_follows_path`          | `service[0].storymap:lineFollowsPath`                             |
+| `show_lines`                 | `service[0].storymap:showLines`                                   |
+| `show_history_line`          | `service[0].storymap:showHistoryLine`                             |
+| `line_color`                 | `service[0].storymap:lineColor`                                   |
+| `line_color_inactive`        | `service[0].storymap:lineColorInactive`                           |
+| `line_weight`                | `service[0].storymap:lineWeight`                                  |
+| `line_opacity`               | `service[0].storymap:lineOpacity`                                 |
+| `line_dash`                  | `service[0].storymap:lineDash`                                    |
+| `line_join`                  | `service[0].storymap:lineJoin`                                    |
+| `iiif.url`                   | Canvas Image annotation `service[0].id` + `/info.json`            |
+| `iiif.attribution`           | `requiredStatement`                                               |
+| `zoomify`                    | _dropped_ (zoomify is replaced by the IIIF reference image)       |
+| `font_css`                   | `service[0].storymap:fontCss`                                     |
+| `call_to_action`             | `service[0].storymap:callToAction`                                |
+| `call_to_action_text`        | `service[0].storymap:callToActionText`                            |
+| `relative_date`              | _dropped_ (viewer setting)                                        |
+| `start_at_slide`             | `service[0].storymap:startAtSlide`                                |
+| _(root) `width`, `height`_   | _dropped_ (viewer embed size)                                     |
 
 | Legacy field (slide)           | IIIF path                                                    |
 | ------------------------------ | ------------------------------------------------------------ |

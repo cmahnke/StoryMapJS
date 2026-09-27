@@ -45,8 +45,7 @@
             "type": "Service",
             "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:mapType": "iiif",
-            "storymap:mapAsImage": true,
-            "storymap:iiifUrl": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json"
+            "storymap:mapAsImage": true
         }
     ],
     "items": [

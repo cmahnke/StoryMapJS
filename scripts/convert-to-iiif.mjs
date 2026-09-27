@@ -172,13 +172,9 @@ function buildMapConfig(storymap, legacy, isZoomify) {
         // pyramid definition is not carried (nothing reads it)
         mapType = "iiif";
         config["storymap:mapAsImage"] = true;
-        config["storymap:iiifUrl"] = LAOCOON_INFO;
     }
     if (present(mapType)) {
         config["storymap:mapType"] = mapType;
-    }
-    if (storymap.map_type === "iiif" && storymap.iiif?.url) {
-        config["storymap:iiifUrl"] = storymap.iiif.url;
     }
     if (storymap.map_as_image !== undefined) {
         config["storymap:mapAsImage"] = storymap.map_as_image;
