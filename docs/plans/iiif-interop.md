@@ -333,6 +333,22 @@ The 9: `iiifUrl`, `date` (manifest side), `background` (manifest side),
 `mediaCaption`, `mediaCredit`, `mediaAlt`, `imageRegion`,
 `georeferencedLayers`, `mapType`.
 
+**All nine are done** (commits 1–7, with §2.1–§2.3 landing earlier in
+`a412f238`). `public/context.json` went from 40 terms to 32: nine removed, one
+added (`basemap`). §3 is done too (commits 8–11).
+
+Two things §2 and §3 turned up that the plan did not anticipate, both recorded
+below where they happened: the official validator **rejects the Georeference
+Extension's own shapes** (§2.10), so `validate:iiif` now reports the two
+georeferenced fixtures as _not covered_ with that reason, rather than as
+failures or as passes; and the round-trip gate was **only comparing the source's
+root keys**, so three differences had already slipped past it (§3.2).
+
+§4 onward is untouched. §5.2 still has its recorded decision: read external
+annotation pages asynchronously, with a per-(id, type) fetch cache and
+imperative loaders behind the resolved event, rather than blocking
+`manifestToStorymapData` on a manifest graph walk.
+
 ### 2.1 `requiredStatement`: use the `label`, not just the `value`
 
 > **Done (0.10.8).** `readRequiredStatement()` reduces the statement to
@@ -899,7 +915,10 @@ autoplay/marker specs). **§2 legitimately edits `schema/`,
 `scripts/convert-to-iiif.mjs`, `public/context.json` and the fixtures, so for
 those commits the format gate becomes a _reviewed_ diff rather than an empty
 one, and `npm run validate:iiif` must stay at **50/50** throughout (the 50th
-is `annotated-image.json`, added by media-tours). §5, §6, §7 and
+is `annotated-image.json`, added by media-tours). **As shipped, it reads
+"50/50 passed, 2 not covered by the base schema"** — the two georeferenced
+manifests use a published extension the P3 3.0 base schema predates, which
+§2.10 explains. §5, §6, §7 and
 §8 hold the empty-diff line, as does the `group`/`uniqueid` documentation work
 in §3.
 
