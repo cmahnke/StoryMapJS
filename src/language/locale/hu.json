@@ -5,10 +5,17 @@
         "loading": "töltés",
         "wikipedia": "Wikipedia",
         "start": "Indítsd",
+        "error": "Betöltési hiba",
         "consent_start_title": "Külső tartalom",
         "consent_start_message": "Ez a történet külső szolgáltatásoktól tölt be tartalmat. Válassza ki, melyek engedélyezettek.",
         "consent_allow_all": "Mindet engedélyez",
-        "consent_decline_all": "Mindet elutasít"
+        "consent_decline_all": "Mindet elutasít",
+        "consent_message": "{service} tartalmát betölteni?",
+        "consent_allow": "Engedélyezés",
+        "consent_deny": "Elutasítás",
+        "consent_blocked": "{service} tartalma le van tiltva.",
+        "consent_service_tiles": "térképcsemlék",
+        "consent_service_fonts": "webes betűtípusok"
     },
     "buttons": {
         "map_overview": "teljes térkép",
@@ -16,7 +23,9 @@
         "backtostart": "vissza az elejére",
         "collapse_toggle": "összecsuk",
         "uncollapse_toggle": "kinyit",
-        "swipe_to_navigate": "Húzd el a navigációhoz<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Húzd el a navigációhoz<br><span class='vco-button'>OK</span>",
+        "fullscreen": "teljes képernyő",
+        "exit_fullscreen": "kilépés a teljes képernyőből"
     },
     "direction": "ltr"
 }

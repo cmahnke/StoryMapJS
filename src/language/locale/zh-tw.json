@@ -5,10 +5,17 @@
         "loading": "載入中",
         "wikipedia": "來自維基百科，自由的百科全書",
         "start": "探索",
+        "error": "載入錯誤",
         "consent_start_title": "外部內容",
         "consent_start_message": "本故事從外部服務載入內容。請選擇允許的服務。",
         "consent_allow_all": "全部允許",
-        "consent_decline_all": "全部拒絕"
+        "consent_decline_all": "全部拒絕",
+        "consent_message": "要載入來自{service}的內容嗎？",
+        "consent_allow": "允許",
+        "consent_deny": "拒絕",
+        "consent_blocked": "來自{service}的內容已被封鎖。",
+        "consent_service_tiles": "地圖圖磚",
+        "consent_service_fonts": "網路字型"
     },
     "buttons": {
         "map_overview": "地圖總覽",
@@ -16,7 +23,9 @@
         "backtostart": "回到首頁",
         "collapse_toggle": "隱藏地圖",
         "uncollapse_toggle": "顯示地圖",
-        "swipe_to_navigate": "左右滑動以瀏覽<br><span class='vco-button'>我知道了</span>"
+        "swipe_to_navigate": "左右滑動以瀏覽<br><span class='vco-button'>我知道了</span>",
+        "fullscreen": "全螢幕",
+        "exit_fullscreen": "結束全螢幕"
     },
     "direction": "ltr"
 }

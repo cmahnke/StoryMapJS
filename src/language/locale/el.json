@@ -5,10 +5,17 @@
         "loading": "Φόρτωση",
         "wikipedia": "Από την Wikipedia, την ελεύθερη εγκυκλοπαίδεια",
         "start": "Έναρξη περιήγησης",
+        "error": "Σφάλμα φόρτωσης",
         "consent_start_title": "Εξωτερικό περιεχόμενο",
         "consent_start_message": "Αυτή η ιστορία φορτώνει περιεχόμενο από εξωτερικές υπηρεσίες. Επιλέξτε ποιες επιτρέπονται.",
         "consent_allow_all": "Να επιτρέπονται όλα",
-        "consent_decline_all": "Να απορρίπτονται όλα"
+        "consent_decline_all": "Να απορρίπτονται όλα",
+        "consent_message": "Φόρτωση περιεχομένου από {service};",
+        "consent_allow": "Επίτρεψη",
+        "consent_deny": "Απόρριψη",
+        "consent_blocked": "Το περιεχόμενο από {service} είναι αποκλεισμένο.",
+        "consent_service_tiles": "πλακίδια χάρτη",
+        "consent_service_fonts": "διαδικτυακές γραμματοσειρές"
     },
     "buttons": {
         "map_overview": "Επισκόπηση χάρτη",
@@ -16,7 +23,9 @@
         "backtostart": "Επιστροφή στην αρχή",
         "collapse_toggle": "Απόκρυψη χάρτη",
         "uncollapse_toggle": "Εμφάνιση χάρτη",
-        "swipe_to_navigate": "Κτυπήστε ελαφρά για περιήγηση<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Κτυπήστε ελαφρά για περιήγηση<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Πλήρης οθόνη",
+        "exit_fullscreen": "Έξοδος από πλήρη οθόνη"
     },
     "direction": "ltr"
 }

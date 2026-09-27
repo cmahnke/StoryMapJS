@@ -14,13 +14,24 @@ describe("viewer chrome locales", () => {
         expect(de.buttons?.exit_fullscreen).toBe("Vollbild beenden");
     });
 
-    it("falls back to English for keys missing in German", async () => {
-        // German has no messages.error, and the per-service consent strings
-        // are English-only in 28 of the 29 bundled locales
+    it("translates the consent strings in German", () => {
+        // these were English-only in German until the locale gap was closed,
+        // which is what let the gap go unnoticed (see scripts/check-locales.mjs)
         const de = setLanguage("de");
-        expect(de.buttons?.fullscreen).toBeTruthy();
-        expect(de.messages?.error).toBe("Error loading");
-        expect(de.messages?.consent_allow).toBe("Allow");
+        expect(de.messages?.error).toBe("Fehler beim Laden");
+        expect(de.messages?.consent_allow).toBe("Erlauben");
+        expect(de.messages?.consent_service_tiles).toBe("Kartenkacheln");
+    });
+
+    it("falls back to English for keys missing in a locale that has gaps", async () => {
+        // Estonian is one of the five locales still awaiting a native speaker;
+        // the runtime merge means it shows English rather than breaking
+        const et = setLanguage("et");
+        expect(et.buttons?.fullscreen).toBeTruthy();
+        expect(et.messages?.error).toBe("Error loading");
+        expect(et.messages?.consent_allow).toBe("Allow");
+        // ...but the keys it does define stay Estonian
+        expect(et.messages?.loading).toBe("Laadib");
     });
 
     it("does not poison the shared English default across switches", async () => {

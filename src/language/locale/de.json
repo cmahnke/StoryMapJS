@@ -8,7 +8,14 @@
         "consent_start_title": "Externe Inhalte",
         "consent_start_message": "Diese Story lädt Inhalte von externen Diensten. Wählen Sie, welche erlaubt sind.",
         "consent_allow_all": "Alle erlauben",
-        "consent_decline_all": "Alle ablehnen"
+        "consent_decline_all": "Alle ablehnen",
+        "error": "Fehler beim Laden",
+        "consent_message": "Inhalte von {service} laden?",
+        "consent_allow": "Erlauben",
+        "consent_deny": "Ablehnen",
+        "consent_blocked": "Inhalte von {service} sind blockiert.",
+        "consent_service_tiles": "Kartenkacheln",
+        "consent_service_fonts": "Web-Schriften"
     },
     "buttons": {
         "map_overview": "Kartenübersicht",

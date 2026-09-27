@@ -5,10 +5,17 @@
         "loading": "Laddar",
         "wikipedia": "Från Wikipedia, den fria encyklopedin",
         "start": "Explore",
+        "error": "Fel vid inläsning",
         "consent_start_title": "Externt innehåll",
         "consent_start_message": "Den här historien laddar innehåll från externa tjänster. Välj vilka som är tillåtna.",
         "consent_allow_all": "Tillåt alla",
-        "consent_decline_all": "Neka alla"
+        "consent_decline_all": "Neka alla",
+        "consent_message": "Läsa innehåll från {service}?",
+        "consent_allow": "Tillåt",
+        "consent_deny": "Neka",
+        "consent_blocked": "Innehåll från {service} är blockerat.",
+        "consent_service_tiles": "kartbrickor",
+        "consent_service_fonts": "webbtypsnitt"
     },
     "buttons": {
         "map_overview": "Översiktskarta",
@@ -16,7 +23,9 @@
         "backtostart": "Tillbaka till början",
         "collapse_toggle": "Göm kartan",
         "uncollapse_toggle": "Visa kartan",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Helskärm",
+        "exit_fullscreen": "Lämna helskärm"
     },
     "direction": "ltr"
 }

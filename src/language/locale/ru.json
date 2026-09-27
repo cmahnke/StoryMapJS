@@ -5,10 +5,17 @@
         "loading": "Загрузка",
         "wikipedia": "Из Википедии, свободной энциклопедии",
         "start": "Начать просмотр",
+        "error": "Ошибка загрузки",
         "consent_start_title": "Внешний контент",
         "consent_start_message": "Эта история загружает контент из внешних сервисов. Выберите, какие разрешены.",
         "consent_allow_all": "Разрешить все",
-        "consent_decline_all": "Отклонить все"
+        "consent_decline_all": "Отклонить все",
+        "consent_message": "Загрузить содержимое из {service}?",
+        "consent_allow": "Разрешить",
+        "consent_deny": "Отклонить",
+        "consent_blocked": "Содержимое из {service} заблокировано.",
+        "consent_service_tiles": "тайлов карты",
+        "consent_service_fonts": "веб-шрифтов"
     },
     "buttons": {
         "map_overview": "Просмотр карты",
@@ -16,7 +23,9 @@
         "backtostart": "К началу",
         "collapse_toggle": "Скрыть карту",
         "uncollapse_toggle": "Показать карту",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Полный экран",
+        "exit_fullscreen": "Выйти из полноэкранного режима"
     },
     "direction": "ltr"
 }

@@ -5,10 +5,17 @@
         "loading": "Wczytuję",
         "wikipedia": "z Wikipedii, wolnej encyklopedii",
         "start": "Explore",
+        "error": "Błąd ładowania",
         "consent_start_title": "Treści zewnętrzne",
         "consent_start_message": "Ta historia pobiera treści z usług zewnętrznych. Wybierz, które są dozwolone.",
         "consent_allow_all": "Zezwól na wszystko",
-        "consent_decline_all": "Odrzuć wszystko"
+        "consent_decline_all": "Odrzuć wszystko",
+        "consent_message": "Wczytać zawartość z {service}?",
+        "consent_allow": "Zezwól",
+        "consent_deny": "Odrzuć",
+        "consent_blocked": "Zawartość z {service} jest zablokowana.",
+        "consent_service_tiles": "kafelków mapy",
+        "consent_service_fonts": "czcionek internetowych"
     },
     "buttons": {
         "map_overview": "Przeglądaj mapę",
@@ -16,7 +23,9 @@
         "backtostart": "Powrót",
         "collapse_toggle": "Ukryj mapę",
         "uncollapse_toggle": "Pokaż mapę",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Pełny ekran",
+        "exit_fullscreen": "Wyjdź z pełnego ekranu"
     },
     "direction": "ltr"
 }

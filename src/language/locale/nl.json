@@ -5,10 +5,17 @@
         "loading": "Laden",
         "wikipedia": "Van Wikipedia, de gratis encyclopedie",
         "start": "Start Exploring",
+        "error": "Laden mislukt",
         "consent_start_title": "Externe inhoud",
         "consent_start_message": "Deze story laadt inhoud van externe diensten. Kies welke zijn toegestaan.",
         "consent_allow_all": "Alles toestaan",
-        "consent_decline_all": "Alles weigeren"
+        "consent_decline_all": "Alles weigeren",
+        "consent_message": "Inhoud van {service} laden?",
+        "consent_allow": "Toestaan",
+        "consent_deny": "Weigeren",
+        "consent_blocked": "Inhoud van {service} is geblokkeerd.",
+        "consent_service_tiles": "kaarttegels",
+        "consent_service_fonts": "webletters"
     },
     "buttons": {
         "map_overview": "Kaart overzicht",
@@ -16,7 +23,9 @@
         "backtostart": "Terug naar begin",
         "collapse_toggle": "Verberg kaart",
         "uncollapse_toggle": "Toon kaart",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Volledig scherm",
+        "exit_fullscreen": "Volledig scherm afsluiten"
     },
     "direction": "ltr"
 }

@@ -1,0 +1,58 @@
+{
+    "et": [
+        "buttons.exit_fullscreen",
+        "buttons.fullscreen",
+        "messages.consent_allow",
+        "messages.consent_blocked",
+        "messages.consent_deny",
+        "messages.consent_message",
+        "messages.consent_service_fonts",
+        "messages.consent_service_tiles",
+        "messages.error"
+    ],
+    "is": [
+        "buttons.exit_fullscreen",
+        "buttons.fullscreen",
+        "messages.consent_allow",
+        "messages.consent_blocked",
+        "messages.consent_deny",
+        "messages.consent_message",
+        "messages.consent_service_fonts",
+        "messages.consent_service_tiles",
+        "messages.error"
+    ],
+    "nn": [
+        "buttons.exit_fullscreen",
+        "buttons.fullscreen",
+        "messages.consent_allow",
+        "messages.consent_blocked",
+        "messages.consent_deny",
+        "messages.consent_message",
+        "messages.consent_service_fonts",
+        "messages.consent_service_tiles",
+        "messages.error"
+    ],
+    "sr": [
+        "buttons.exit_fullscreen",
+        "buttons.fullscreen",
+        "buttons.overview",
+        "messages.consent_allow",
+        "messages.consent_blocked",
+        "messages.consent_deny",
+        "messages.consent_message",
+        "messages.consent_service_fonts",
+        "messages.consent_service_tiles",
+        "messages.error"
+    ],
+    "ur": [
+        "buttons.exit_fullscreen",
+        "buttons.fullscreen",
+        "messages.consent_allow",
+        "messages.consent_blocked",
+        "messages.consent_deny",
+        "messages.consent_message",
+        "messages.consent_service_fonts",
+        "messages.consent_service_tiles",
+        "messages.error"
+    ]
+}

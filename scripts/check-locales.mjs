@@ -4,16 +4,22 @@
 // src/language/Language.ts), so a locale missing a key is not an error — it
 // silently shows English. That is exactly why the gap was invisible: 27 of the
 // 29 bundled locales had no `consent_*` strings at all, and CI stayed green.
-// This script turns that into a visible report.
 //
-// Usage: node scripts/check-locales.mjs [--strict]
-//   --strict  exit non-zero when any locale is missing a key
-//            (the default; the flag exists to print the report without failing)
-import { readdirSync, readFileSync } from "node:fs";
+// The remaining gaps are recorded in .expected-gaps.json and are enforced:
+// a new missing key fails, and so does a key listed in the baseline that has
+// since been translated (which forces the baseline to shrink).
+//
+// Usage: node scripts/check-locales.mjs [--strict] [--write-baseline]
+//   --strict          exit non-zero on any gap outside the baseline
+//   --write-baseline  rewrite .expected-gaps.json from the current state
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const LOCALE_DIR = join(process.cwd(), "src/language/locale");
+const BASELINE_FILE = join(LOCALE_DIR, ".expected-gaps.json");
 const REFERENCE = "en";
+const STRICT = process.argv.includes("--strict");
+const WRITE_BASELINE = process.argv.includes("--write-baseline");
 
 /** All leaf key paths in a locale, e.g. "messages.consent_allow". */
 function keyPaths(object, prefix = "") {
@@ -37,7 +43,9 @@ function readLocale(file) {
 }
 
 const files = readdirSync(LOCALE_DIR)
-    .filter((f) => f.endsWith(".json"))
+    // dotfiles share the directory with the locale data (.expected-gaps.json),
+    // and are not locales
+    .filter((f) => f.endsWith(".json") && !f.startsWith("."))
     .sort();
 
 const reference = readLocale(join(LOCALE_DIR, `${REFERENCE}.json`));
@@ -89,9 +97,92 @@ for (const row of rows) {
     }
 }
 
-if (problems > 0) {
-    console.log(
-        `\n${problems} locale(s) differ from ${REFERENCE}.json. These strings fall back to` +
-            " English at runtime, so this is a translation gap, not a build break.",
-    );
+if (!WRITE_BASELINE && !STRICT) {
+    if (problems > 0) {
+        console.log(
+            `\n${problems} locale(s) differ from ${REFERENCE}.json. These strings fall back` +
+                " to English at runtime, so this is a translation gap, not a build break.",
+        );
+    }
+    process.exit(0);
 }
+
+// --- enforcement -------------------------------------------------------------
+
+const gaps = {};
+for (const row of rows) {
+    if (row.missing.length > 0) gaps[row.name] = row.missing.sort();
+}
+
+if (WRITE_BASELINE) {
+    writeFileSync(BASELINE_FILE, JSON.stringify(gaps, null, 4) + "\n", "utf8");
+    const count = Object.values(gaps).reduce((n, keys) => n + keys.length, 0);
+    console.log(
+        `wrote ${Object.keys(gaps).length} locales / ${count} expected gaps to .expected-gaps.json`,
+    );
+    process.exit(0);
+}
+
+let baseline = {};
+if (existsSync(BASELINE_FILE)) {
+    try {
+        baseline = JSON.parse(readFileSync(BASELINE_FILE, "utf8"));
+    } catch (err) {
+        console.error(`✗ .expected-gaps.json is not valid JSON — ${err.message}`);
+        process.exit(1);
+    }
+}
+
+const failures = [];
+
+// 1. A key the reference has that no locale listed, or a key a locale invented.
+for (const row of rows) {
+    if (row.extra.length > 0) {
+        failures.push(
+            `${row.name}: has key(s) not in ${REFERENCE}.json — ${row.extra.join(", ")}` +
+                " (typo, or the key was removed from en.json?)",
+        );
+    }
+}
+
+// 2. A key the baseline did not allow.
+for (const [name, missing] of Object.entries(gaps)) {
+    const allowed = new Set(baseline[name] ?? []);
+    const unexpected = missing.filter((key) => !allowed.has(key));
+    if (unexpected.length > 0) {
+        failures.push(
+            `${name}: newly missing ${unexpected.length} key(s) — ${unexpected.join(", ")}` +
+                "\n    translate it, or re-record with --write-baseline if leaving it English is intended",
+        );
+    }
+}
+
+// 3. A baseline entry that has since been filled in, so the baseline is stale.
+for (const [name, expected] of Object.entries(baseline)) {
+    if (expected.length === 0) continue;
+    const actual = new Set(gaps[name] ?? []);
+    const fixed = expected.filter((key) => !actual.has(key));
+    if (fixed.length > 0) {
+        failures.push(
+            `${name}: ${fixed.length} expected gap(s) are now translated — ${fixed.join(", ")}` +
+                "\n    shrink the baseline with --write-baseline",
+        );
+    }
+}
+
+// 4. A baseline entry for a locale that no longer exists.
+for (const name of Object.keys(baseline)) {
+    if (!rows.some((r) => r.name === name)) {
+        failures.push(`${name}: listed in .expected-gaps.json but no such locale is bundled`);
+    }
+}
+
+if (failures.length > 0) {
+    console.error(`\n✗ ${failures.length} locale problem(s):`);
+    for (const failure of failures) {
+        console.error(`  - ${failure}`);
+    }
+    process.exit(1);
+}
+
+console.log("\n✓ every locale gap matches the recorded baseline");

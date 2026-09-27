@@ -5,10 +5,17 @@
         "loading": "加载中",
         "wikipedia": "来自维基百科，自由的百科全书",
         "start": "Explore",
+        "error": "加载出错",
         "consent_start_title": "外部内容",
         "consent_start_message": "本故事从外部服务加载内容。请选择允许的服务。",
         "consent_allow_all": "全部允许",
-        "consent_decline_all": "全部拒绝"
+        "consent_decline_all": "全部拒绝",
+        "consent_message": "要加载来自{service}的内容吗？",
+        "consent_allow": "允许",
+        "consent_deny": "拒绝",
+        "consent_blocked": "来自{service}的内容已被屏蔽。",
+        "consent_service_tiles": "地图图块",
+        "consent_service_fonts": "网络字体"
     },
     "buttons": {
         "map_overview": "地图总览",
@@ -16,7 +23,9 @@
         "backtostart": "回到首页",
         "collapse_toggle": "隐藏地图",
         "uncollapse_toggle": "显示地图",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "全屏",
+        "exit_fullscreen": "退出全屏"
     },
     "direction": "ltr"
 }

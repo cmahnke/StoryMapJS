@@ -5,10 +5,17 @@
         "loading": "ローディング",
         "wikipedia": "フリー百科事典ウィキペディア（Wikipedia）から",
         "start": "Explore",
+        "error": "読み込みエラー",
         "consent_start_title": "外部コンテンツ",
         "consent_start_message": "このストーリーは外部サービスからコンテンツを読み込みます。許可するものを選択してください。",
         "consent_allow_all": "すべて許可",
-        "consent_decline_all": "すべて拒否"
+        "consent_decline_all": "すべて拒否",
+        "consent_message": "{service}のコンテンツを読み込みますか？",
+        "consent_allow": "許可",
+        "consent_deny": "拒否",
+        "consent_blocked": "{service}のコンテンツはブロックされています。",
+        "consent_service_tiles": "地図タイル",
+        "consent_service_fonts": "ウェブフォント"
     },
     "buttons": {
         "map_overview": "概観地図",
@@ -16,7 +23,9 @@
         "backtostart": "初めに戻る",
         "collapse_toggle": "地図を隠す",
         "uncollapse_toggle": "地図を表示",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "全画面",
+        "exit_fullscreen": "全画面を終了"
     },
     "direction": "ltr"
 }

@@ -6,10 +6,17 @@
         "loading": "טוען",
         "wikipedia": "מתוך ויקיפדיה, האנציקלופדיה החופשית",
         "start": "התחל במסע",
+        "error": "שגיאת טעינה",
         "consent_start_title": "תוכן חיצוני",
         "consent_start_message": "הסיפור הזה טוען תוכן משירותים חיצוניים. בחרו אילו מותרים.",
         "consent_allow_all": "אפשר הכול",
-        "consent_decline_all": "דחה הכול"
+        "consent_decline_all": "דחה הכול",
+        "consent_message": "לטעון תוכן מ-{service}?",
+        "consent_allow": "לאשר",
+        "consent_deny": "לדחות",
+        "consent_blocked": "התוכן מ-{service} חסום.",
+        "consent_service_tiles": "אריחי מפה",
+        "consent_service_fonts": "גופני רשת"
     },
     "buttons": {
         "map_overview": "המפה במלואה",
@@ -17,6 +24,8 @@
         "backtostart": "חזור להתחלה",
         "collapse_toggle": "הסתר מפה",
         "uncollapse_toggle": "הצג מפה",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "מסך מלא",
+        "exit_fullscreen": "יציאה ממסך מלא"
     }
 }

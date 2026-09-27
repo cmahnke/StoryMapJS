@@ -24,6 +24,9 @@ jobs:
             - name: Typecheck
               run: npm run typecheck
 
+            - name: Check locale coverage
+              run: npm run check:locales:strict
+
             - name: Validate storymap fixtures
               run: npm run validate
 

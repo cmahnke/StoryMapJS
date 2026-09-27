@@ -5,10 +5,17 @@
         "loading": "Laster inn",
         "wikipedia": "fra Wikipedia, den frie encyklopedi",
         "start": "Explore",
+        "error": "Feil under lasting",
         "consent_start_title": "Eksternt innhold",
         "consent_start_message": "Denne historien laster innhold fra eksterne tjenester. Velg hvilke som er tillatt.",
         "consent_allow_all": "Tillat alt",
-        "consent_decline_all": "Avslå alt"
+        "consent_decline_all": "Avslå alt",
+        "consent_message": "Last innhold fra {service}?",
+        "consent_allow": "Tillat",
+        "consent_deny": "Avslå",
+        "consent_blocked": "Innhold fra {service} er blokkert.",
+        "consent_service_tiles": "kartfliser",
+        "consent_service_fonts": "nettbaserte fonter"
     },
     "buttons": {
         "map_overview": "Se oversiktskart",
@@ -16,7 +23,9 @@
         "backtostart": "Til begynnelsen",
         "collapse_toggle": "Skjul kartet",
         "uncollapse_toggle": "Vis kartet",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Fullskjerm",
+        "exit_fullscreen": "Avslutt fullskjerm"
     },
     "direction": "ltr"
 }

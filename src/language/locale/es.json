@@ -5,10 +5,17 @@
         "loading": "cargando",
         "wikipedia": "de Wikipedia, la enciclopedia libre",
         "start": "Explore",
+        "error": "Error de carga",
         "consent_start_title": "Contenido externo",
         "consent_start_message": "Esta historia carga contenido de servicios externos. Elija cuáles se permiten.",
         "consent_allow_all": "Permitir todo",
-        "consent_decline_all": "Denegar todo"
+        "consent_decline_all": "Denegar todo",
+        "consent_message": "¿Cargar contenido de {service}?",
+        "consent_allow": "Permitir",
+        "consent_deny": "Denegar",
+        "consent_blocked": "El contenido de {service} está bloqueado.",
+        "consent_service_tiles": "teselas de mapa",
+        "consent_service_fonts": "fuentes web"
     },
     "buttons": {
         "map_overview": "vista general del mapa",
@@ -16,7 +23,9 @@
         "backtostart": "volver al comienzo",
         "collapse_toggle": "ocultar mapa",
         "uncollapse_toggle": "mostrar mapa",
-        "swipe_to_navigate": "Deslizar para navegar<br><span class='vco-button'>Entendido</span>"
+        "swipe_to_navigate": "Deslizar para navegar<br><span class='vco-button'>Entendido</span>",
+        "fullscreen": "pantalla completa",
+        "exit_fullscreen": "salir de pantalla completa"
     },
     "direction": "ltr"
 }

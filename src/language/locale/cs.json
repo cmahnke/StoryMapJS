@@ -5,10 +5,17 @@
         "loading": "Nahrávání",
         "wikipedia": "Z Wikipedie, svobodné encyklopedie",
         "start": "Prozkoumat",
+        "error": "Chyba při načítání",
         "consent_start_title": "Externí obsah",
         "consent_start_message": "Tento příběh načítá obsah z externích služeb. Zvolte, které jsou povoleny.",
         "consent_allow_all": "Povolit vše",
-        "consent_decline_all": "Odmítnout vše"
+        "consent_decline_all": "Odmítnout vše",
+        "consent_message": "Načíst obsah z {service}?",
+        "consent_allow": "Povolit",
+        "consent_deny": "Odmítnout",
+        "consent_blocked": "Obsah z {service} je zablokován.",
+        "consent_service_tiles": "mapových dlaždic",
+        "consent_service_fonts": "webových písem"
     },
     "buttons": {
         "map_overview": "Přehledová mapa",
@@ -16,7 +23,9 @@
         "backtostart": "Zpět na začátek",
         "collapse_toggle": "Skrýt mapu",
         "uncollapse_toggle": "Zobrazit mapu",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Celá obrazovka",
+        "exit_fullscreen": "Ukončit celou obrazovku"
     },
     "direction": "ltr"
 }

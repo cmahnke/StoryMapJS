@@ -5,10 +5,17 @@
         "loading": "불러오는중",
         "wikipedia": "위키피디아",
         "start": "시작하기",
+        "error": "불러오기 오류",
         "consent_start_title": "외부 콘텐츠",
         "consent_start_message": "이 스토리는 외부 서비스에서 콘텐츠를 불러옵니다. 허용할 서비스를 선택하세요.",
         "consent_allow_all": "모두 허용",
-        "consent_decline_all": "모두 거부"
+        "consent_decline_all": "모두 거부",
+        "consent_message": "{service}의 콘텐츠를 불러올까요?",
+        "consent_allow": "허용",
+        "consent_deny": "거부",
+        "consent_blocked": "{service}의 콘텐츠가 차단되었습니다.",
+        "consent_service_tiles": "지도 타일",
+        "consent_service_fonts": "웹 글꼴"
     },
     "buttons": {
         "map_overview": "지도 전체보기",
@@ -16,7 +23,9 @@
         "backtostart": "되돌아가기",
         "collapse_toggle": "숨기기",
         "uncollapse_toggle": "보이기",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "전체 화면",
+        "exit_fullscreen": "전체 화면 종료"
     },
     "direction": "ltr"
 }

@@ -5,10 +5,17 @@
         "loading": "Загрузка",
         "wikipedia": "Вікіпедыя",
         "start": "Start Exploring",
+        "error": "Памылка загрузкі",
         "consent_start_title": "Знешні кантэнт",
         "consent_start_message": "Гэтая гісторыя загружае кантэнт з знешніх сэрвісаў. Выберыце, якія дазволены.",
         "consent_allow_all": "Дазволіць усе",
-        "consent_decline_all": "Адхіліць усе"
+        "consent_decline_all": "Адхіліць усе",
+        "consent_message": "Загрузіць змесціва з {service}?",
+        "consent_allow": "Дазволіць",
+        "consent_deny": "Адмовіць",
+        "consent_blocked": "Змесціва з {service} заблакіравана.",
+        "consent_service_tiles": "тайлаў карты",
+        "consent_service_fonts": "веб-шрыфтаў"
     },
     "buttons": {
         "map_overview": "Прагляд мапы",
@@ -16,7 +23,9 @@
         "backtostart": "Вярнуцца ў пачатак",
         "collapse_toggle": "Схаваць мапу",
         "uncollapse_toggle": "Паказаць мапу",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Поўны экран",
+        "exit_fullscreen": "Выхад з поўнаэкранага рэжыму"
     },
     "direction": "ltr"
 }

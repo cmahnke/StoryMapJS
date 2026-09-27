@@ -5,10 +5,17 @@
         "loading": "Yükleniyor",
         "wikipedia": "Vikipedi, Özgür Ansiklopedi",
         "start": "Keşfet",
+        "error": "Yükleme hatası",
         "consent_start_title": "Dış içerik",
         "consent_start_message": "Bu hikâye harici hizmetlerden içerik yükler. Hangilerine izin verildiğini seçin.",
         "consent_allow_all": "Tümüne izin ver",
-        "consent_decline_all": "Tümünü reddet"
+        "consent_decline_all": "Tümünü reddet",
+        "consent_message": "{service} içeriği yüklensin mi?",
+        "consent_allow": "İzin ver",
+        "consent_deny": "Reddet",
+        "consent_blocked": "{service} içeriği engellendi.",
+        "consent_service_tiles": "harita karoları",
+        "consent_service_fonts": "web yazı tipleri"
     },
     "buttons": {
         "map_overview": "Genel harita",
@@ -16,7 +23,9 @@
         "backtostart": "Başlangıç menüsüne dön",
         "collapse_toggle": "Menüyü gizle",
         "uncollapse_toggle": "Menüyü göster",
-        "swipe_to_navigate": "Dokun ve kaydır<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Dokun ve kaydır<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Tam ekran",
+        "exit_fullscreen": "Tam ekrandan çık"
     },
     "direction": "ltr"
 }

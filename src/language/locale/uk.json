@@ -5,10 +5,17 @@
         "loading": "Завантаження",
         "wikipedia": "З Вікіпедії, вільної енциклопедії",
         "start": "Почати перегляд",
+        "error": "Помилка завантаження",
         "consent_start_title": "Зовнішній контент",
         "consent_start_message": "Ця історія завантажує контент із зовнішніх сервісів. Виберіть, які дозволені.",
         "consent_allow_all": "Дозволити всі",
-        "consent_decline_all": "Відхилити всі"
+        "consent_decline_all": "Відхилити всі",
+        "consent_message": "Завантажити вміст із {service}?",
+        "consent_allow": "Дозволити",
+        "consent_deny": "Відхилити",
+        "consent_blocked": "Вміст із {service} заблоковано.",
+        "consent_service_tiles": "тайлів карти",
+        "consent_service_fonts": "веб-шрифтів"
     },
     "buttons": {
         "map_overview": "Перегляд карти",
@@ -16,7 +23,9 @@
         "backtostart": "Повернутися до початку",
         "collapse_toggle": "Приховати карту",
         "uncollapse_toggle": "Показати карту",
-        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>"
+        "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
+        "fullscreen": "Повний екран",
+        "exit_fullscreen": "Вийти з повноекранного режиму"
     },
     "direction": "ltr"
 }
