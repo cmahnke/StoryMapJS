@@ -73,7 +73,7 @@ export default class OpenLayers extends Map {
     /*	Create the Map
 	================================================== */
     _createMap(): void {
-        const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
+        const is_image_map = this.isImageSpace();
 
         // Caller-supplied OpenLayers options: controls/interactions replace the
         // defaults, view merges over the computed default, other options pass through
@@ -718,6 +718,23 @@ export default class OpenLayers extends Map {
     }
 
     /**
+     * True when the map is a plain image in an `EPSG:4326` "image space"
+     * rather than a geographic map: a IIIF image presented as a picture of
+     * the world (`map_as_image`), not georeferenced.
+     *
+     * In this mode the view projection is `EPSG:4326` with degrees as
+     * resolution and the view is fitted to the image extent, so
+     * `getCenter()`/`getZoom()` are in degrees/pixels-per-degree — not
+     * mercator metres. Marker locations are pixel offsets into the image,
+     * not lat/lon. Georeferenced IIIF (`map_bbox` with `map_as_image`
+     * omitted) is a normal mercator map; use `isImageSpace()` rather than
+     * testing `map_type` to tell the two apart.
+     */
+    isImageSpace(): boolean {
+        return this.options.map_type === "iiif" && this.options.map_as_image === true;
+    }
+
+    /**
      * Stop the line animation, drop the minimap control and dispose the
      * OpenLayers map. Called by `StoryMap.dispose()`; the engine must not be
      * used afterwards.
@@ -1017,7 +1034,7 @@ export default class OpenLayers extends Map {
         this._tile_layer_mini = this._tilesAllowed()
             ? this._createTileLayer(this.options.map_type)
             : null;
-        const is_image_map = this.options.map_type === "iiif" && this.options.map_as_image;
+        const is_image_map = this.isImageSpace();
         // Legacy zoomify maps are mercator-based: the minimap fits the image's
         // mercator bounds with a free zoom so the whole image stays visible
         // at a downscaled (sharp) pyramid level
@@ -1139,7 +1156,7 @@ export default class OpenLayers extends Map {
             );
         }
 
-        if (this.options.map_type === "iiif" && this.options.map_as_image) {
+        if (this.isImageSpace()) {
             // in image mode there are no geo markers to fit, so show the
             // whole image instead (issues #465, #355)
             this._fitMiniMapToImage();
@@ -1291,8 +1308,7 @@ export default class OpenLayers extends Map {
     _bboxExtent(): number[] | null {
         const bbox = this.options.map_bbox as number[] | null | undefined;
         if (!bbox || bbox.length !== 4) return null;
-        const is_image_space = this.options.map_type === "iiif" && this.options.map_as_image;
-        if (is_image_space) return bbox;
+        if (this.isImageSpace()) return bbox;
         // NB: fromLonLat transforms a single [lon, lat] pair — transform the
         // two corners separately
         const min = fromLonLat([bbox[0], bbox[1]]);
@@ -1963,7 +1979,7 @@ export default class OpenLayers extends Map {
                     easing: this._easing,
                 });
             }
-        } else if (this.options.map_type === "iiif" && this.options.map_as_image) {
+        } else if (this.isImageSpace()) {
             const source = this._tile_layer?.getSource();
             if (!source) {
                 return;
@@ -2119,7 +2135,7 @@ export default class OpenLayers extends Map {
         } else if (this.bounds_array && this.bounds_array.length) {
             this._fitView(overview, this.bounds_array, 0, this._bboxExtent() !== null);
         }
-        if (this.options.map_type === "iiif" && this.options.map_as_image) {
+        if (this.isImageSpace()) {
             this._fitMiniMapToImage();
         }
     }
@@ -2190,7 +2206,7 @@ export default class OpenLayers extends Map {
                     // testing map_type alone handed it the image-pixel view
                     const is_image_map =
                         this.options.map_type === "iiif" &&
-                        this.options.map_as_image === true;
+                        this.isImageSpace();
                     const user_view = this.options.map_options?.view as
                         Record<string, unknown> | undefined;
                     this._map.setView(

@@ -19,6 +19,18 @@ describe("OpenLayers accessors", () => {
         (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
     });
 
+    function storymapWith(id: string, options: Record<string, unknown>): StoryMap {
+        const el = document.createElement("div");
+        el.id = id;
+        document.body.appendChild(el);
+        return new StoryMap(id, {
+            storymap: {
+                slides: [{ date: "", type: "overview", text: { headline: "Overview", text: "" } }],
+                ...options,
+            },
+        } as unknown as StorymapDataWrapper);
+    }
+
     function storymap(id: string): StoryMap {
         const el = document.createElement("div");
         el.id = id;
@@ -80,6 +92,27 @@ describe("OpenLayers accessors", () => {
         const base = sm.getBaseLayer();
         expect(base).not.toBeNull();
         expect(sm.map?.getLayers().getArray()).toContain(base);
+    });
+
+    it("distinguishes image space from a georeferenced IIIF map", () => {
+        // image space: the IIIF image *is* the map
+        const as_image = storymapWith("sm-acc-image-space", {
+            map_type: "iiif",
+            map_as_image: true,
+            iiif: { url: "https://example.com/iiif/image/info.json" },
+        });
+        expect(as_image.isImageSpace()).toBe(true);
+
+        // georeferenced: the same image type, but placed on the globe
+        const georeferenced = storymapWith("sm-acc-geo-iiif", {
+            map_type: "iiif",
+            map_bbox: [-5, 45, 10, 55],
+            iiif: { url: "https://example.com/iiif/image/info.json" },
+        });
+        expect(georeferenced.isImageSpace()).toBe(false);
+
+        // plain tile maps are never image space
+        expect(storymap("sm-acc-osm-space").isImageSpace()).toBe(false);
     });
 
     it("reports storymap.map as null before the map is built", () => {

@@ -713,6 +713,19 @@ class StoryMapBase {
     }
 
     /**
+     * True when the map shows a IIIF image as a picture of the world
+     * (`map_as_image`) rather than as a georeferenced map. In that mode the
+     * view is `EPSG:4326` image space: `map.getView().getCenter()` is in
+     * degrees, the resolution is in pixels per degree, and marker locations
+     * are pixel offsets into the image. Ask this instead of checking
+     * `map_type` — georeferenced IIIF (`map_bbox` without `map_as_image`)
+     * is an ordinary mercator map.
+     */
+    isImageSpace(): boolean {
+        return this._map ? this._map.isImageSpace() : false;
+    }
+
+    /**
      * Release everything the viewer attached to the page: window/document
      * listeners, timers, the resize observer, running Web Animations and the
      * OpenLayers map. Use this when tearing a storymap down (SPA route
