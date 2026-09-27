@@ -381,6 +381,34 @@ natively is used wherever it exists:
 | Raster layer placed on a map           | [Georeference Extension](https://iiif.io/api/extension/georef) (GCPs, `motivation: "georeferencing"`) | yes — see below                              |
 | Basemap, layer stack, layout, keyboard | —                                                                                                     | no; `storymap:` terms                        |
 
+### Groups and the slide order
+
+`structures` does two jobs. A Range with a `label` and no `start` is a **group**,
+and every canvas it contains gets that value as `slide.group`; nested Ranges are
+chapters inside it, and the outermost labelled Range is the group. And the order
+canvases appear in is the **slide order** — a Range is allowed to run them in a
+order the document does not, which is what a storyboard is for:
+
+```json
+{
+    "structures": [
+        {
+            "id": "https://example.org/storymap/<name>/range/1",
+            "type": "Range",
+            "label": { "none": ["Act I"] },
+            "items": [
+                "https://example.org/storymap/<name>/canvas/1",
+                "https://example.org/storymap/<name>/canvas/3"
+            ]
+        }
+    ]
+}
+```
+
+A canvas in no Range keeps its document position, after the ones a Range does
+mention. A Range with a `start` is a time segment of a canvas, not a group: it
+contributes order and nothing else.
+
 ### Institutional credit
 
 A manifest says who published it and under what licence, and all of it ends up
@@ -725,34 +753,39 @@ photo, and a slide with a YouTube video — full manifest:
 | `start_at_slide`             | `service[0].storymap:startAtSlide`                                      |
 | _(root) `width`, `height`_   | _dropped_ (viewer embed size)                                           |
 
-| Legacy field (slide)           | IIIF path                                                    |
-| ------------------------------ | ------------------------------------------------------------ |
-| `type: "overview"`             | Canvas `storymap:type: "overview"`                           |
-| `date`                         | Canvas `navDate`                                             |
-| `text.headline`                | Canvas `label` (language map)                                |
-| `text.text`                    | Canvas `summary` (language map)                              |
-| `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`             |
-| `location.zoom`                | Canvas `navPlace` Feature `properties.zoom`                  |
-| `location.line`                | Canvas `navPlace` Feature `properties.line`                  |
-| `location.name`                | Canvas `navPlace` Feature `properties.name`                  |
-| `location.icon`                | Canvas `navPlace` Feature `properties.icon`                  |
-| `location.iconSize`            | Canvas `navPlace` Feature `properties.iconSize`              |
-| `location.image`               | Canvas `navPlace` Feature `properties.image`                 |
-| `location.use_custom_marker`   | Canvas `navPlace` Feature `properties.use_custom_marker`     |
-| `media.url` (image)            | Annotation body `{type: "Image", format: ...}`               |
-| `media.url` (video service)    | Annotation body `{type: "Video"}`                            |
-| `media.url` (audio service)    | Annotation body `{type: "Sound"}`                            |
-| `media.url` (web page)         | Annotation body `{type: "Text", format: "text/html"}`        |
-| `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`          |
-| `media.caption`                | Painting annotation `label`                                  |
-| `media.credit`                 | Painting annotation `requiredStatement` (`{label, value}`)   |
-| `media.alt`                    | Painting annotation `accessibilitySummary`                   |
-| `media.srcset`                 | Canvas `storymap:mediaSrcset`                                |
-| `media.sizes`                  | Canvas `storymap:mediaSizes`                                 |
-| `location.region`              | Painting annotation target `ImageApiSelector` `xywh=pixel:`  |
-| `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`)   |
-| `background`                   | Canvas `background` painting annotation (Image + Color body) |
-| `uniqueid`                     | _dropped_ (canvas `id`s are the canonical identifiers)       |
+| Legacy field (slide)           | IIIF path                                                                   |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `type: "overview"`             | Canvas `storymap:type: "overview"`                                          |
+| `date`                         | Canvas `navDate`                                                            |
+| `text.headline`                | Canvas `label` (language map)                                               |
+| `text.text`                    | Canvas `summary` (language map)                                             |
+| `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`                            |
+| `location.zoom`                | Canvas `navPlace` Feature `properties.zoom`                                 |
+| `location.line`                | Canvas `navPlace` Feature `properties.line`                                 |
+| `location.name`                | Canvas `navPlace` Feature `properties.name`                                 |
+| `location.icon`                | Canvas `navPlace` Feature `properties.icon`                                 |
+| `location.iconSize`            | Canvas `navPlace` Feature `properties.iconSize`                             |
+| `location.image`               | Canvas `navPlace` Feature `properties.image`                                |
+| `location.use_custom_marker`   | Canvas `navPlace` Feature `properties.use_custom_marker`                    |
+| `media.url` (image)            | Annotation body `{type: "Image", format: ...}`                              |
+| `media.url` (video service)    | Annotation body `{type: "Video"}`                                           |
+| `media.url` (audio service)    | Annotation body `{type: "Sound"}`                                           |
+| `media.url` (web page)         | Annotation body `{type: "Text", format: "text/html"}`                       |
+| `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`                         |
+| `media.caption`                | Painting annotation `label`                                                 |
+| `media.credit`                 | Painting annotation `requiredStatement` (`{label, value}`)                  |
+| `media.alt`                    | Painting annotation `accessibilitySummary`                                  |
+| `media.srcset`                 | Canvas `storymap:mediaSrcset`                                               |
+| `media.sizes`                  | Canvas `storymap:mediaSizes`                                                |
+| `location.region`              | Painting annotation target `ImageApiSelector` `xywh=pixel:`                 |
+| `media.thumb`                  | Canvas `thumbnail[]` or the body `thumbnail[]`                              |
+| `background`                   | Canvas `background` painting annotation (Image + Color body)                |
+| `uniqueid`                     | Canvas `id`                                                                 |
+| `group`                        | A `structures` Range label; the Range order is the slide order              |
+| `language` (per slide)         | The language tag the slide's text was read in (§3.4)                        |
+| `logo`, `metadata`             | Read into `data.logo` / `data.metadata[]`                                   |
+| `tilejson`                     | `service[0].tilejson`                                                       |
+| `title`                        | Manifest `label` (a label is required, so the converter uses the file name) |
 
 ## Conversion
 

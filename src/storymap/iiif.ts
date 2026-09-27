@@ -780,6 +780,69 @@ function collectPositions(value: unknown, out: number[][], depth: number): void 
  * list collapses to once it has been through a few tools.
  */
 /**
+ * A manifest's `structures` as a slide order and a group per canvas (§3.5).
+ *
+ * Two jobs, both of which the ecosystem expects — Annona's range storyboard
+ * and TimelineJS's groups:
+ *
+ * 1. a Range with a `label` and **no `start`** is a *group* for its member
+ *    canvases, which is the first meaning the inert `slide.group` field ever
+ *    had. A Range with a `start` is a time segment of one canvas, not a group,
+ *    so it is skipped.
+ * 2. the order canvases appear in, which is the curated sequence. That is the
+ *    whole point of a storyboard: it may run the canvases in an order the
+ *    document does not.
+ *
+ * Nested Ranges are chapters inside the group, so the outermost labelled Range
+ * is the group a slide belongs to — `slide.group` is one string, and a
+ * "Part 1 / Chapter 2" pair is more use to a host as the part.
+ */
+function readStructures(value: unknown): {
+    order: string[];
+    groups: Map<string, string>;
+} {
+    const order: string[] = [];
+    const groups = new Map<string, string>();
+    const seen = new Set<string>();
+
+    const walk = (entries: unknown, group: string | null): void => {
+        for (const entry of Array.isArray(entries) ? entries : [entries]) {
+            // P3 lets a Range's `items` be a list of ids, of resource objects,
+            // or a mix; only the ids matter here
+            const bare = asString(entry);
+            if (bare !== null) {
+                if (!seen.has(bare)) {
+                    seen.add(bare);
+                    order.push(bare);
+                    if (group !== null) groups.set(bare, group);
+                }
+                continue;
+            }
+            const record = asRecord(entry);
+            if (!record) continue;
+            const isRange = asString(record.type) === "Range";
+            if (!isRange) {
+                // a canvas or annotation resource reference in items
+                const id = asString(record.id);
+                if (id !== null && !seen.has(id)) {
+                    seen.add(id);
+                    order.push(id);
+                    if (group !== null) groups.set(id, group);
+                }
+                continue;
+            }
+            const label = flattenLanguageMap(record.label);
+            const isGroup = label !== "" && record.start === undefined;
+            const nextGroup = isGroup ? (group ?? label) : group;
+            walk(record.items, nextGroup);
+        }
+    };
+
+    walk(value, null);
+    return { order, groups };
+}
+
+/**
  * An Agent as a credit fragment: its label, or its id when it has none. An
  * empty `label` produces a bare fragment, which is what a homepage-only Agent
  * wants (§3.2).
@@ -1209,7 +1272,30 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         manifestNavPlace && Array.isArray(manifestNavPlace.features)
             ? manifestNavPlace.features
             : [];
-    for (let index = 0; index < items.length; index++) {
+
+    // `structures` states the curated order and the groups (§3.5). A Range
+    // with a label and no `start` is a group; nested Ranges are chapters
+    // within it, and a Range whose items run in a different order than the
+    // canvases is a storyboard. Either way the order comes from here, not
+    // from the document.
+    const structures = readStructures(record.structures);
+    const order = new Map<string, number>();
+    for (const [position, canvasId] of structures.order.entries()) {
+        order.set(canvasId, position);
+    }
+    const indexes = items.map((_item, index) => index);
+    indexes.sort((a, b) => {
+        const ia = order.get(asString(asRecord(items[a])?.id) ?? "");
+        const ib = order.get(asString(asRecord(items[b])?.id) ?? "");
+        // a canvas no Range mentions keeps its document position, after the
+        // ones a Range does mention
+        if (ia === undefined && ib === undefined) return a - b;
+        if (ia === undefined) return 1;
+        if (ib === undefined) return -1;
+        return ia - ib;
+    });
+
+    for (const index of indexes) {
         // The canvas index, not the output-slide index: annotation stops
         // appended below shift the slide array, and the manifest-level
         // navPlace features line up with canvases.
@@ -1221,6 +1307,10 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         );
         if (slide !== null) {
             slide.uniqueid = canvasId ?? manifestId ?? "";
+            if (canvasId !== null) {
+                const group = structures.groups.get(canvasId);
+                if (group !== undefined) slide.group = group;
+            }
             data.slides.push(slide);
         }
         // Annotation-driven tour stops, in annotation page order. They share

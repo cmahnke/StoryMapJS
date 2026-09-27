@@ -394,6 +394,161 @@ test("accepts an info.json url used directly as the service id", () => {
     expect(data.iiif).toEqual({ url: "https://iiif.example.org/image/info.json", attribution: "" });
 });
 
+function canvasWith(id: string, headline: string) {
+    return {
+        id,
+        type: "Canvas",
+        width: 1080,
+        height: 1080,
+        label: { none: [headline] },
+        items: [
+            {
+                id: `${id}/page/1`,
+                type: "AnnotationPage",
+                items: [
+                    {
+                        id: `${id}/annotation/1`,
+                        type: "Annotation",
+                        motivation: "painting",
+                        body: { id: "https://example.org/i.jpg", type: "Image" },
+                        target: id,
+                    },
+                ],
+            },
+        ],
+    };
+}
+
+test("a Range's label becomes its canvases' slide group", () => {
+    // §3.5: this is the first meaning the inert slide.group field ever had
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["Grouped"] },
+        structures: [
+            {
+                id: "https://example.org/range/1",
+                type: "Range",
+                label: { none: ["Act I"] },
+                items: ["https://example.org/canvas/1", "https://example.org/canvas/3"],
+            },
+            {
+                id: "https://example.org/range/2",
+                type: "Range",
+                label: { none: ["Act II"] },
+                items: ["https://example.org/canvas/2"],
+            },
+        ],
+        items: [
+            canvasWith("https://example.org/canvas/1", "One"),
+            canvasWith("https://example.org/canvas/2", "Two"),
+            canvasWith("https://example.org/canvas/3", "Three"),
+        ],
+    });
+    // a grouped storymap reads as its groups, in order
+    expect(data.slides.map((s) => [s.text?.headline, s.group])).toEqual([
+        ["One", "Act I"],
+        ["Three", "Act I"],
+        ["Two", "Act II"],
+    ]);
+});
+
+test("a Range's order is the slide order, not the canvas order", () => {
+    // a storyboard is allowed to run the canvases in another order, and that
+    // is the one thing it is for
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["Reordered"] },
+        structures: [
+            {
+                type: "Range",
+                label: { none: ["Storyboard"] },
+                items: ["https://example.org/canvas/3", "https://example.org/canvas/1"],
+            },
+        ],
+        items: [
+            canvasWith("https://example.org/canvas/1", "One"),
+            canvasWith("https://example.org/canvas/2", "Two"),
+            canvasWith("https://example.org/canvas/3", "Three"),
+        ],
+    });
+    // canvas 3 first, then 1; canvas 2 is in no Range and keeps its place after
+    expect(data.slides.map((s) => s.text?.headline)).toEqual(["Three", "One", "Two"]);
+});
+
+test("a Range with a start is a time segment, not a group", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["Timed"] },
+        structures: [
+            {
+                type: "Range",
+                label: { none: ["Part 1"] },
+                start: { type: "PointInTime", value: "00:00:00" },
+                items: ["https://example.org/canvas/1"],
+            },
+        ],
+        items: [canvasWith("https://example.org/canvas/1", "One")],
+    });
+    expect(data.slides[0].group).toBeUndefined();
+});
+
+test("a nested Range is a chapter inside the outermost group", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["Nested"] },
+        structures: [
+            {
+                type: "Range",
+                label: { none: ["Act I"] },
+                items: [
+                    {
+                        type: "Range",
+                        label: { none: ["Chapter 1"] },
+                        items: ["https://example.org/canvas/1"],
+                    },
+                    {
+                        type: "Range",
+                        label: { none: ["Chapter 2"] },
+                        items: ["https://example.org/canvas/2"],
+                    },
+                ],
+            },
+        ],
+        items: [
+            canvasWith("https://example.org/canvas/1", "One"),
+            canvasWith("https://example.org/canvas/2", "Two"),
+        ],
+    });
+    // slide.group is one string, and the part is more use to a host than the
+    // chapter
+    expect(data.slides.map((s) => s.group)).toEqual(["Act I", "Act I"]);
+});
+
+test("no structures leaves the canvas order alone", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["Plain"] },
+        items: [
+            canvasWith("https://example.org/canvas/1", "One"),
+            canvasWith("https://example.org/canvas/2", "Two"),
+        ],
+    });
+    expect(data.slides.map((s) => [s.text?.headline, s.group])).toEqual([
+        ["One", undefined],
+        ["Two", undefined],
+    ]);
+});
+
 test("reads institutional credit onto the one credit line", () => {
     // §3.2: everything the manifest says about who published it and under
     // what licence lands on the string the viewer actually renders

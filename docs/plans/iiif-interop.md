@@ -668,14 +668,30 @@ slides.
     All 1046 label/summary maps in the fixture set are single-key, so no round
     trip changed.
 
-- **`structures` / `Range`.** Two distinct jobs, both of which the ecosystem
-  expects (Annona Range Storyboard, TimelineJS `group`):
+- **DONE (commit 10): `structures` / `Range`.** Two distinct jobs, both of
+  which the ecosystem expects (Annona Range Storyboard, TimelineJS `group`):
     1. a Range with a `label` and no `start` → the **group** for its member
        canvases, into `slide.group` — finally giving that inert field meaning;
     2. a Range whose `items` order **differs from canvas order** → the curated
        **slide sequence**, which is what a storyboard is.
        Nested Ranges are chapters. Test: a manifest whose Range reorders canvases
        produces slides in Range order, and a flat Range sets `group`.
+
+    Two decisions the one-liner left open. **A Range with a `start` is not a
+    group** — a `start` makes it a time segment of a canvas, so it contributes
+    order and nothing else. And **a nested Range's label is a chapter, not the
+    group**: `slide.group` is one string, and the outer part is more use to a
+    host than the chapter, so the outermost labelled Range wins.
+
+    A canvas in no Range keeps its document position, after the ones a Range does
+    mention, so a partial structure adds an order without demanding a complete
+    one. The converter writes one Range per group in first-appearance order, which
+    means a grouped storymap reads back as its groups rather than as its original
+    interleaving — no fixture in the set uses `group`, so nothing shifted.
+
+    One trap: P3 lets a Range's `items` be ids, resource objects, or a mix. The
+    reader accepts all three; the first version only understood objects, and every
+    group silently came back empty.
 
 ---
 

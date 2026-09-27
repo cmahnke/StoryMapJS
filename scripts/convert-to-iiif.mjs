@@ -93,6 +93,10 @@ export function storymapToManifest(name, legacy) {
     const manifestId = `https://example.org/storymap/${name}`;
     const attribution = storymap.iiif?.attribution || storymap.zoomify?.attribution || "";
 
+    const canvases = slides.map((slide, i) =>
+        buildCanvas(manifestId, i, slide, isImageMap, i === 0 ? storymap.overlays : null),
+    );
+
     const manifest = {
         "@context": CONTEXTS,
         id: manifestId,
@@ -110,9 +114,11 @@ export function storymapToManifest(name, legacy) {
                 value: languageMap("StoryMapJS"),
             },
         ],
-        items: slides.map((slide, i) =>
-            buildCanvas(manifestId, i, slide, isImageMap, i === 0 ? storymap.overlays : null),
-        ),
+        items: canvases,
+        // `structures` carries the groups (§3.5). A storymap states a slide's
+        // group as a plain string; P3 states it as a Range over the canvases it
+        // contains, and the reader turns that back into `slide.group`.
+        ...buildStructures(manifestId, slides, canvases),
     };
 
     // A map bbox has no extension term: the interoperable spelling is a
@@ -389,6 +395,38 @@ function buildGeoreferencing(canvasId, overlays) {
             body: georeference.body,
         };
     });
+}
+
+/**
+ * A storymap's `slide.group` values as P3 `structures`: one Range per group,
+ * over the canvases it contains (§3.5).
+ *
+ * Groups come out in first-appearance order, and the slides keep their order
+ * within a group — which is what makes a grouped storymap's slide order the
+ * concatenation of its groups, rather than the original interleaving. No group
+ * anywhere means no `structures` at all.
+ */
+function buildStructures(manifestId, slides, canvases) {
+    const groups = [];
+    const byGroup = new Map();
+    slides.forEach((slide, i) => {
+        const group = slide.group;
+        if (!present(group)) return;
+        if (!byGroup.has(group)) {
+            byGroup.set(group, []);
+            groups.push(group);
+        }
+        byGroup.get(group).push(canvases[i].id);
+    });
+    if (groups.length === 0) return {};
+    return {
+        structures: groups.map((group, i) => ({
+            id: `${manifestId}/range/${i + 1}`,
+            type: "Range",
+            label: languageMap(group),
+            items: byGroup.get(group),
+        })),
+    };
 }
 
 /**
