@@ -138,11 +138,19 @@ Twitter or SoundCloud, map tiles, and external font CSS):
     }
 
 Each service asks with an Allow/Deny panel; answering one panel resolves every
-pending panel of the same service. If a decision was already stored in the
-cookie, the panel is skipped entirely. Denied services show a placeholder
+pending panel of the same service. Denied services show a placeholder
 instead of the media, and the map renders without tiles until they are
-allowed. Decisions are stored in a cookie (`storymapjs-consent`) for 90
-days — clearing cookies asks again.
+allowed.
+
+Before the story loads, one dialog lists every external service it uses (map
+tiles, media services, external fonts) with three choices: **Allow all**,
+**Decline all**, or a decision per service. The dialog is skipped once every
+service has a stored decision; per-service panels still appear for services
+discovered later (e.g. a preloaded slide).
+
+Decisions are stored in `localStorage` under `storymapjs-consent` and have no
+expiry — clearing site data asks again. All of the consent labels are
+translated in every bundled locale.
 
 ## Troubleshooting
 

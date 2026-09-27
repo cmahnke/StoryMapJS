@@ -27,6 +27,39 @@ Viewer-only restructure of the repository:
 - Attribution refresh on basemap switch (+setExtraAttributions); identical
   credits collapse to one entry; route lines pinned above rebuilt tile
   layers; font_css resolves page-relative; slide colors accept any CSS color
+- Consent: decisions persist in localStorage (storymapjs-consent, no expiry)
+  instead of a 90-day cookie; a start-of-story dialog lists the external
+  services the story uses (map tiles, media services, external fonts) and
+  offers allow all, decline all or a decision per service, with per-service
+  panels as the fallback for services discovered later; all consent labels
+  translated in every bundled locale
+- Mobile gestures: iOS swipe navigation fixed — signed gesture deltas (a
+  rightward swipe on the left half no longer counts as "next"), touchcancel
+  handled without leaking touchmove/mouseleave listeners (swipes used to stop
+  working after the first slide), touchend reads changedTouches, and
+  touch-action: pan-y on the slider keeps vertical page scrolling
+- Accessibility: image alt text end-to-end (schema, IIIF storymap:mediaAlt,
+  caption-as-plain-text fallback), aria-live slide announcements, real <button>
+  menubar actions with :focus-visible styling, keyboard-operable slider nav
+  arrows (role/tabindex/Enter/Space), prefers-reduced-motion honored
+  (instant slide changes, no autoplay), embed page allows pinch-zoom
+- Image performance: offscreen slide images are lazy-loaded and
+  async-decoded (upgraded to eager when their slide becomes active), IIIF
+  image URLs request container-matched widths, optional srcset/sizes pass
+  through for plain images
+- Fonts: non-latin subsets (cyrillic, greek, hebrew, vietnamese) shipped
+  from the installed Fontsource packages where a family provides them, plus a
+  new stock:cairo theme with arabic coverage
+- IIIF: per-slide image regions (location.region as IIIF xywh in image
+  pixels) fit the view on navigation for image-map stories, encoded in
+  manifests as storymap:imageRegion
+- Map providers: tile_source_factory option injects custom OpenLayers tile
+  layers/sources (e.g. WMS) for the base map, overlays and minimap, with
+  recipes in the migration guide
+- Embed: &autoplay=<ms> URL parameter for automatic slide playback
+- Upstream audit: docs/KNOWN_ISSUES.md reconciled with the implementation
+  (60 of 109 triaged issues verified fixed, one-by-one verdicts and
+  regression specs for each)
 
 0.9.5 (2025-11-05)
 * Implement basic Audio and Video media types

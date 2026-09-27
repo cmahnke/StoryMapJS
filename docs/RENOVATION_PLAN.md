@@ -275,6 +275,11 @@ Documented as intentional (unchanged): legacy momentum bounds/swipe
 thresholds, `goTo` firing `change` immediately instead of post-animation,
 `skinny_size` default quirk.
 
+> Superseded: the swipe gesture detection was rewritten afterwards (signed
+> deltas, `touchcancel` handling, `changedTouches` on touchend) to fix iOS
+> swipes failing after the first slide — see the CHANGELOG entry "Mobile
+> gestures".
+
 **Commit:** `fix: null-safety in offset handling, IIIF source races, unique id generation and swipe direction check`
 
 ---

@@ -370,10 +370,13 @@ new StoryMap("mapdiv", "my-storymap.json");</code></pre>
                                         Yes, but set
                                         <code>consent_required: true</code> to ask for permission
                                         before anything is loaded from external services (media
-                                        embeds, map tiles, external fonts). Each service asks once
-                                        per page load with an Allow/Deny panel; denied services show
-                                        a placeholder instead. Decisions are stored in a cookie for
-                                        90 days — clearing cookies asks again.
+                                        embeds, map tiles, external fonts). One dialog lists every
+                                        service the story uses and offers
+                                        <strong>allow all</strong>, <strong>decline all</strong> or
+                                        a decision per service; services discovered later still ask
+                                        on their slide. Denied services show a placeholder instead.
+                                        Decisions are stored in your browser's local storage —
+                                        clearing site data asks again.
                                     </p>
                                 </div>
                             </li>
