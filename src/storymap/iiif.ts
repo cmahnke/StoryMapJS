@@ -67,12 +67,6 @@ function asStringArray(value: unknown): string[] {
  * exactly 4 finite numbers ([x, y, w, h] in image pixels). Returns null
  * for anything else — invalid regions are ignored.
  */
-function readImageRegion(value: unknown): [number, number, number, number] | null {
-    if (!Array.isArray(value) || value.length !== 4) return null;
-    if (!value.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
-    return value as [number, number, number, number];
-}
-
 /**
  * A selector, normalized. Every field is optional and the object is a
  * *superset* carrier: an annotation may carry a region, a point, a quote and a
@@ -783,7 +777,9 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     // IIIF xywh region (StrollView-style image stops): [x, y, w, h] pixels.
     // The extension term wins over the interoperable spelling — an Image API
     // Selector on the painting annotation target
-    const region = readImageRegion(readTerm(record, "imageRegion")) ?? painting?.region ?? null;
+    // region: the painting annotation's target selector, the only source since
+    // the storymap:imageRegion term went (§2.8)
+    const region = painting?.region ?? null;
     if (region !== null) {
         slide.location = { ...(slide.location ?? {}), region };
     }

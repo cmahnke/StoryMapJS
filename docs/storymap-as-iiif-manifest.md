@@ -89,8 +89,7 @@ what the fixtures reference. Content:
         "georeferencedLayers": "storymap:georeferencedLayers",
         "type": { "@id": "storymap:type", "@type": "@id" },
         "mediaSrcset": "storymap:mediaSrcset",
-        "mediaSizes": "storymap:mediaSizes",
-        "imageRegion": "storymap:imageRegion"
+        "mediaSizes": "storymap:mediaSizes"
     }
 }
 ```
@@ -128,7 +127,7 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 | `background`           | `slide.background`      | A painting annotation whose body is an `Image` (the url) and/or a `Color` (the colour)                       |
 | `storymap:mediaSrcset` | `slide.media.srcset`    | Responsive image candidates, passed through to the `img` element                                             |
 | `storymap:mediaSizes`  | `slide.media.sizes`     | The `sizes` companion of `mediaSrcset`                                                                       |
-| `storymap:imageRegion` | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides                          |
+| _(target selector)_    | `slide.location.region` | `ImageApiSelector` `xywh=pixel:x,y,w,h`; image stops on image-map slides                                     |
 | `navDate`              | `slide.date`            | Plain string, verbatim; the official validator applies no format rule at all, so a human date is fine        |
 | `navPlace`             | `slide.location`        | See below                                                                                                    |
 
@@ -298,7 +297,7 @@ and Micrio use for a guided tour of one image, and it is the subject of
   `id` (e.g. `type: "Sound"`) supplies `media.url`, whose extension picks the
   player. An annotation with a region but no body is not a stop.
 - **Region stops are honoured in image mode** only — the same rule as a
-  `storymap:imageRegion` region. A geographic map ignores them.
+  `xywh=pixel:` region. A geographic map ignores them.
 - `navPlace` may not appear on an Annotation (the extension forbids it), so
   all stops on a Canvas share that Canvas's location and marker presentation.
 
@@ -329,13 +328,13 @@ stays in the `storymap:` terms of the map configuration service, which is the
 JSON-LD-idiomatic place for extended configuration. What IIIF _does_ model
 natively is used wherever it exists:
 
-| Story                                  | Native IIIF                                                                                           | Used here                                                                     |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Slide location                         | `navPlace` Point                                                                                      | yes                                                                           |
-| Story extent                           | `navPlace` Polygon (an explicit navPlace use case)                                                    | yes — a canvas polygon becomes `map_bbox`                                     |
-| Image region stops                     | IIIF Image API Selector (`xywh=`) on the painting annotation target                                   | yes — the selector is read, `storymap:imageRegion` wins when both are present |
-| Raster layer placed on a map           | [Georeference Extension](https://iiif.io/api/extension/georef) (GCPs, `motivation: "georeferencing"`) | yes — see below                                                               |
-| Basemap, layer stack, layout, keyboard | —                                                                                                     | no; `storymap:` terms                                                         |
+| Story                                  | Native IIIF                                                                                           | Used here                                    |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Slide location                         | `navPlace` Point                                                                                      | yes                                          |
+| Story extent                           | `navPlace` Polygon (an explicit navPlace use case)                                                    | yes — a canvas polygon becomes `map_bbox`    |
+| Image region stops                     | `ImageApiSelector` `xywh=pixel:` on the painting annotation target                                    | yes — the selector is the only source (§2.8) |
+| Raster layer placed on a map           | [Georeference Extension](https://iiif.io/api/extension/georef) (GCPs, `motivation: "georeferencing"`) | yes — see below                              |
+| Basemap, layer stack, layout, keyboard | —                                                                                                     | no; `storymap:` terms                        |
 
 ### Geo-referenced layers
 
@@ -643,7 +642,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `media.alt`                    | Painting annotation `accessibilitySummary`                   |
 | `media.srcset`                 | Canvas `storymap:mediaSrcset`                                |
 | `media.sizes`                  | Canvas `storymap:mediaSizes`                                 |
-| `location.region`              | Canvas `storymap:imageRegion` `[x, y, w, h]` (xywh)          |
+| `location.region`              | Painting annotation target `ImageApiSelector` `xywh=pixel:`  |
 | `media.thumb`                  | _dropped_ (thumbnails may be added via Canvas `thumbnail`)   |
 | `background`                   | Canvas `background` painting annotation (Image + Color body) |
 | `uniqueid`                     | _dropped_ (canvas `id`s are the canonical identifiers)       |

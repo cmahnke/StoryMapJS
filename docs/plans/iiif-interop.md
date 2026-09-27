@@ -497,11 +497,22 @@ prevent, so anything a consumer needs goes in this list, not in a second
 
 ### 2.8 `imageRegion` → the Image API Selector
 
-The extension term is standing in for a selector we already read
-(`readSelector()`) and currently _loses_ to it in precedence order — the
-converter prefers the term. Invert the precedence, delete the term, and let the
-painting annotation's `target.selector` be the only source. Test: the fixtures
-that carry a region on the target keep fitting the same region.
+**Done** (commit 5). The extension term was standing in for a selector we
+already read (`readSelector()`) and currently _lost_ to it in precedence order
+— the converter preferred the term. Inverted the precedence, deleted the term,
+and the painting annotation's `target.selector` is now the only source. Test:
+the fixtures that carry a region on the target keep fitting the same region.
+
+The target becomes a `SpecificResource` whose `selector` is an
+`ImageApiSelector`, and the prefix is `xywh=pixel:` rather than a bare `xywh=`
+because the field is documented in image pixels — the prefix then says so
+itself instead of implying the canvas size, which matters for a non-image map
+where the canvas is a nominal 1080×1080 and the region's image is something
+else entirely. `pixel:` is one of the three prefixes Media Fragments 1.0
+actually defines (`pixel:`, `percent:`, and the default); `image:` is not one
+of them, and the reader already understood `pixel:`.
+
+`readImageRegion` went with the term: nothing read it any more.
 
 ### 2.9 `mapType` → TileJSON 2.1 + a `basemap` keyword field
 

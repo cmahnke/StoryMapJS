@@ -809,7 +809,7 @@ test("reads an image region from an IIIF Image API Selector", () => {
     expect(selector.slides[3].location?.region).toBeUndefined();
 });
 
-test("the extension term wins over an image API selector", () => {
+test("an image API selector wins over an imageRegion term left over from §2.8", () => {
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
         items: [
@@ -837,7 +837,43 @@ test("the extension term wins over an image API selector", () => {
         ],
     });
 
-    expect(data.slides[0].location?.region).toEqual([0, 0, 111, 222]);
+    // The term is no longer read at all, so the selector is the only source
+    expect(data.slides[0].location?.region).toEqual([5, 5, 50, 50]);
+});
+
+test("reads a region from a pixel= selector", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            {
+                type: "Canvas",
+                width: 2315,
+                height: 3000,
+                items: [
+                    {
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: { id: "https://example.org/i.jpg", type: "Image" },
+                                target: {
+                                    source: "https://example.org/canvas/1",
+                                    type: "SpecificResource",
+                                    selector: {
+                                        type: "ImageApiSelector",
+                                        value: "xywh=pixel:800,100,700,700",
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+
+    expect(data.slides[0].location?.region).toEqual([800, 100, 700, 700]);
 });
 
 test("maps a polygon navPlace to map_bbox", () => {

@@ -35,7 +35,6 @@
             "@type": "@id"
         },
         "mediaSrcset": "storymap:mediaSrcset",
-        "mediaSizes": "storymap:mediaSizes",
-        "imageRegion": "storymap:imageRegion"
+        "mediaSizes": "storymap:mediaSizes"
     }
 }

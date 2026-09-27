@@ -305,7 +305,7 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
                         // the resource being painted (§2.7)
                         ...buildAnnotationPresentation(slide),
                         body: buildBody(slide, isImageMap),
-                        target: canvasId,
+                        target: buildRegionTarget(canvasId, slide.location?.region) ?? canvasId,
                     },
                 ],
             },
@@ -431,15 +431,28 @@ function buildCanvasTerms(slide) {
     if (present(slide.media?.sizes)) {
         terms["storymap:mediaSizes"] = slide.media.sizes;
     }
-    if (
-        Array.isArray(slide.location?.region) &&
-        slide.location.region.length === 4 &&
-        slide.location.region.every((n) => typeof n === "number" && Number.isFinite(n))
-    ) {
-        // IIIF xywh convention: [x, y, w, h] in image pixels
-        terms["storymap:imageRegion"] = slide.location.region;
-    }
     return terms;
+}
+
+/**
+ * A slide's `location.region` as the painting annotation's target, so the
+ * region is an Image API selector rather than a term (§2.8).
+ *
+ * `xywh=pixel:` rather than a bare `xywh=` because the field is documented in
+ * image pixels, and the prefix then says so itself instead of implying the
+ * canvas size — which matters for a non-image map, where the canvas is a
+ * nominal 1080×1080 and the region's image is something else entirely. It is
+ * the prefix Media Fragments 1.0 defines for source-image pixels; `image:` is
+ * not one of the three it defines.
+ */
+function buildRegionTarget(canvasId, region) {
+    if (!Array.isArray(region) || region.length !== 4) return null;
+    if (!region.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
+    return {
+        type: "SpecificResource",
+        source: canvasId,
+        selector: { type: "ImageApiSelector", value: `xywh=pixel:${region.join(",")}` },
+    };
 }
 
 function buildNavPlace(canvasId, slide) {

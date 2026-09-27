@@ -5,8 +5,9 @@ import type { StorymapDataWrapper } from "../src/types";
 
 /**
  * Image region stops (StrollView-style): `location.region` is an IIIF
- * xywh box ([x, y, w, h] image pixels). IIIF manifests encode it as the
- * `storymap:imageRegion` term; invalid regions are ignored.
+ * xywh box ([x, y, w, h] image pixels). A IIIF manifest encodes it as the
+ * painting annotation's `ImageApiSelector` target selector; invalid regions
+ * are ignored.
  */
 describe("image region stops", () => {
     beforeAll(() => {
@@ -19,7 +20,30 @@ describe("image region stops", () => {
         (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
     });
 
-    it("round-trips the storymap:imageRegion manifest term", () => {
+    function canvasWithRegion(selector: unknown) {
+        return {
+            id: "https://example.org/manifest/canvas/2",
+            type: "Canvas",
+            label: { none: ["Head"] },
+            items: [
+                {
+                    id: "https://example.org/manifest/canvas/2/page/1",
+                    type: "AnnotationPage",
+                    items: [
+                        {
+                            id: "https://example.org/manifest/canvas/2/annotation/1",
+                            type: "Annotation",
+                            motivation: "painting",
+                            body: { id: "https://example.org/i.jpg", type: "Image" },
+                            target: selector,
+                        },
+                    ],
+                },
+            ],
+        };
+    }
+
+    it("round-trips the ImageApiSelector on the painting target", () => {
         const manifest = {
             "@context": [
                 "http://iiif.io/api/presentation/3/context.json",
@@ -34,18 +58,38 @@ describe("image region stops", () => {
                     label: { none: ["Overview"] },
                     storymap: { type: "overview" },
                 },
-                {
-                    id: "https://example.org/manifest/canvas/2",
-                    type: "Canvas",
-                    label: { none: ["Head"] },
-                    "storymap:imageRegion": [800, 100, 700, 700],
-                },
+                canvasWithRegion({
+                    type: "SpecificResource",
+                    source: "https://example.org/manifest/canvas/2",
+                    selector: { type: "ImageApiSelector", value: "xywh=pixel:800,100,700,700" },
+                }),
             ],
         };
         expect(isPresentation3Manifest(manifest)).toBe(true);
         const data = manifestToStorymapData(manifest);
         expect(data.slides[0].location).toBeUndefined();
         expect(data.slides[1].location?.region).toEqual([800, 100, 700, 700]);
+    });
+
+    it("ignores an imageRegion term left over from before §2.8", () => {
+        const manifest = {
+            "@context": [
+                "http://iiif.io/api/presentation/3/context.json",
+                "https://cmahnke.github.io/StoryMapJS/context.json",
+            ],
+            id: "https://example.org/manifest",
+            type: "Manifest",
+            items: [
+                {
+                    id: "https://example.org/manifest/canvas/1",
+                    type: "Canvas",
+                    label: { none: ["Head"] },
+                    "storymap:imageRegion": [800, 100, 700, 700],
+                },
+            ],
+        };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].location).toBeUndefined();
     });
 
     it("ignores invalid regions (wrong length, non-numeric)", () => {

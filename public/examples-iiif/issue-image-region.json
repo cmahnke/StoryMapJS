@@ -99,7 +99,14 @@
                                     }
                                 ]
                             },
-                            "target": "https://example.org/storymap/issue-image-region/canvas/2"
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": "https://example.org/storymap/issue-image-region/canvas/2",
+                                "selector": {
+                                    "type": "ImageApiSelector",
+                                    "value": "xywh=pixel:800,100,700,700"
+                                }
+                            }
                         }
                     ]
                 }
@@ -113,13 +120,7 @@
                 "none": [
                     "The view fits the [x, y, w, h] region in image pixels."
                 ]
-            },
-            "storymap:imageRegion": [
-                800,
-                100,
-                700,
-                700
-            ]
+            }
         },
         {
             "id": "https://example.org/storymap/issue-image-region/canvas/3",
@@ -149,7 +150,14 @@
                                     }
                                 ]
                             },
-                            "target": "https://example.org/storymap/issue-image-region/canvas/3"
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": "https://example.org/storymap/issue-image-region/canvas/3",
+                                "selector": {
+                                    "type": "ImageApiSelector",
+                                    "value": "xywh=pixel:700,800,900,1100"
+                                }
+                            }
                         }
                     ]
                 }
@@ -163,13 +171,7 @@
                 "none": [
                     "StrollView-style image stops via the IIIF xywh convention."
                 ]
-            },
-            "storymap:imageRegion": [
-                700,
-                800,
-                900,
-                1100
-            ]
+            }
         }
     ],
     "service": [
