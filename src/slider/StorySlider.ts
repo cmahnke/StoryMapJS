@@ -258,6 +258,33 @@ class StorySliderBase {
         this.goTo(_n, fast, displayupdate);
     }
 
+    /**
+     * Release listeners, timers and running animations. Called by
+     * `StoryMap.dispose()`; the slider must not be used afterwards.
+     */
+    dispose() {
+        if (this.preloadTimer) {
+            clearTimeout(this.preloadTimer);
+            (
+                window as unknown as { cancelIdleCallback?: (handle: number) => void }
+            ).cancelIdleCallback?.(this.preloadTimer as unknown as number);
+            this.preloadTimer = undefined as unknown as ReturnType<typeof setTimeout>;
+        }
+        if (this._swipable) {
+            this._swipable.dispose();
+        }
+        DomEvent.removeListener(this._el.container, "keydown", this._onKeyDown, this);
+        // Web Animations API (morpheus replacement): stop slide transitions
+        // mid-flight so they don't keep running against a detached tree
+        for (const el of [
+            this._el.container,
+            this._el.slider_container,
+            this._el.background,
+        ]) {
+            el?.getAnimations?.().forEach((a) => a.cancel());
+        }
+    }
+
     goTo(n: number, fast?: boolean, displayupdate?: boolean) {
         this.changeBackground({ color_value: "", image: false });
 

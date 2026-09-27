@@ -464,18 +464,18 @@ export default class OpenLayers extends Map {
                     layer.setVisible(false);
                     return;
                 }
-                layer.setSource(
-                    new IIIF({
-                        ...(parsed ?? {}),
-                        projection: "EPSG:4326",
-                        // the fitted corner box: the affine placement of the
-                        // image in geographic coordinates
-                        extent: fit.bbox,
-                        size: [size.width, size.height],
-                        crossOrigin: "anonymous",
-                        attributions: entry.attribution ? [entry.attribution] : [],
-                    }),
-                );
+                const geo_source = new IIIF({
+                    ...(parsed ?? {}),
+                    projection: "EPSG:4326",
+                    // the fitted corner box: the affine placement of the
+                    // image in geographic coordinates
+                    extent: fit.bbox,
+                    size: [size.width, size.height],
+                    crossOrigin: "anonymous",
+                    attributions: entry.attribution ? [entry.attribution] : [],
+                });
+                layer.setSource(geo_source);
+                this._fireImageready(geo_source, "iiif", layer);
             })
             .catch((err) => {
                 // the layer stays in place (indices must not shift) but
@@ -717,6 +717,47 @@ export default class OpenLayers extends Map {
         return this._createDefaultTileLayer(map_type);
     }
 
+    /**
+     * Stop the line animation, drop the minimap control and dispose the
+     * OpenLayers map. Called by `StoryMap.dispose()`; the engine must not be
+     * used afterwards.
+     */
+    dispose(): void {
+        if (this._line_animation !== null) {
+            cancelAnimationFrame(this._line_animation);
+            this._line_animation = null;
+        }
+        // detach the viewport first: dispose() alone leaves the canvas in
+        // the caller's DOM
+        this._map.setTarget(undefined);
+        this._map.dispose();
+    }
+
+    /**
+     * Fire `imageready` once `source` is usable (and immediately when it
+     * already is). Image sources — IIIF, zoomify, the deferred tile layer —
+     * attach asynchronously, so this is the only outward signal that the
+     * imagery is really on the map; the `loaded` event can fire before the
+     * source is attached at all.
+     */
+    _fireImageready(source: { getState?(): string }, kind: string, layer?: Layer): void {
+        const payload = { source, kind, layer: layer ?? null };
+        if (typeof source.getState !== "function" || source.getState() === "ready") {
+            this.fire("imageready", payload);
+            return;
+        }
+        const onChange = () => {
+            if (source.getState?.() === "ready") {
+                (source as { un?: (t: string, f: () => void) => void }).un?.(
+                    "change",
+                    onChange,
+                );
+                this.fire("imageready", payload);
+            }
+        };
+        (source as { once?: (t: string, f: () => void) => void }).once?.("change", onChange);
+    }
+
     /** Computed zooms take precedence over the authored slide zoom. */
     _markerZoom(index: number): number | undefined {
         return this._marker_zooms[index] ?? super._markerZoom(index);
@@ -810,6 +851,7 @@ export default class OpenLayers extends Map {
                             attributions: this.options.iiif.attribution || [],
                         });
                         iiif_layer.setSource(source);
+                        this._fireImageready(source, "iiif", iiif_layer);
                         if (source.getState() === "ready") {
                             this._markerOverview();
                         } else {
@@ -1128,6 +1170,15 @@ export default class OpenLayers extends Map {
         };
         const mini_source = this._tile_layer_mini.getSource();
         if (mini_source) {
+            this._fireImageready(
+                mini_source,
+                this.options.map_type === "zoomify"
+                    ? "zoomify"
+                    : this.options.map_type === "iiif"
+                      ? "iiif"
+                      : "tiles",
+                this._tile_layer_mini,
+            );
             if (mini_source.getState() === "ready") {
                 fit_mini_image();
             } else {

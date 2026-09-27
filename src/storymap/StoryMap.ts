@@ -121,6 +121,13 @@ class StoryMapBase {
     /** the data source was a IIIF Presentation manifest (legacy zoomify options are ignored) */
     declare "_data_from_manifest": boolean;
     declare "_resize_observer": ResizeObserver | null;
+    /** Stored so `dispose()` can remove them again (see AGENTS: no leaks) */
+    declare "_on_resize": (() => void) | null;
+    declare "_on_keydown_global": ((e: KeyboardEvent) => void) | null;
+    declare "_on_fullscreen": (() => void) | null;
+    declare "_on_hashchange": (() => void) | null;
+    /** Set by `dispose()` so a second call returns early. */
+    declare "_disposed": boolean;
     declare "_resize_timer": ReturnType<typeof setTimeout> | null;
     declare "fire": EventedInstance["fire"];
     declare "hasEventListeners": EventedInstance["hasEventListeners"];
@@ -305,6 +312,11 @@ class StoryMapBase {
         this.animator_map = null;
         this.animator_storyslider = null;
         this._resize_observer = null;
+        this._on_resize = null;
+        this._on_keydown_global = null;
+        this._on_fullscreen = null;
+        this._on_hashchange = null;
+        this._disposed = false;
         this._resize_timer = null;
         this._autoplay_timer = null;
         this._transition_timer = null;
@@ -700,6 +712,63 @@ class StoryMapBase {
         return this._map ? this._map.getLine() : null;
     }
 
+    /**
+     * Release everything the viewer attached to the page: window/document
+     * listeners, timers, the resize observer, running Web Animations and the
+     * OpenLayers map. Use this when tearing a storymap down (SPA route
+     * change, modal close) — the instance is unusable afterwards, and
+     * calling `dispose()` twice is a no-op.
+     *
+     * The map container's child nodes are left in place; remove the element
+     * itself if it should disappear.
+     */
+    dispose(): void {
+        if (this._disposed) {
+            return;
+        }
+        this._disposed = true;
+
+        for (const timer of [this._transition_timer, this._autoplay_timer, this._resize_timer]) {
+            if (timer !== null && timer !== undefined) {
+                clearTimeout(timer);
+            }
+        }
+        this._transition_timer = null;
+        this._autoplay_timer = null;
+        this._resize_timer = null;
+
+        this._resize_observer?.disconnect();
+        this._resize_observer = null;
+
+        if (this._on_resize) {
+            window.removeEventListener("resize", this._on_resize);
+            this._on_resize = null;
+        }
+        if (this._on_keydown_global) {
+            window.removeEventListener("keydown", this._on_keydown_global);
+            this._on_keydown_global = null;
+        }
+        if (this._on_fullscreen) {
+            document.removeEventListener("fullscreenchange", this._on_fullscreen);
+            this._on_fullscreen = null;
+        }
+        if (this._on_hashchange) {
+            window.removeEventListener("hashchange", this._on_hashchange);
+            this._on_hashchange = null;
+        }
+
+        // slide transitions in flight (Web Animations API)
+        for (const el of [this._el?.container, this._el?.map]) {
+            el?.getAnimations?.().forEach((a) => a.cancel());
+        }
+
+        this._storyslider?.dispose?.();
+        this._map?.dispose?.();
+        // kept as a disposed reference: like ol/Map, further calls throw a
+        // loud error rather than silently operating on a dead instance
+        this.map = null;
+    }
+
     /** The highlighted route line drawn up to the current slide. */
     getLineActive(): OlLayer | null {
         return this._map ? this._map.getLineActive() : null;
@@ -777,6 +846,12 @@ class StoryMapBase {
         this._map = new OpenLayersMap(this._el.map, this.data, this.options);
         this.map = this._map._map; // For access to the OpenLayers map.
         this._map.on("loaded", this._onMapLoaded, this);
+        // image readiness (IIIF/zoomify sources attach asynchronously) is
+        // re-fired on the StoryMap, the coordination point for hosts that
+        // overlay or measure their own layers
+        this._map.on("imageready", (e: unknown) => {
+            this.fire("imageready", e);
+        });
 
         // Map Background Color
         this._el.map.style.backgroundColor = this.options.map_background_color;
@@ -830,11 +905,13 @@ class StoryMapBase {
         // Global slide navigation (opt-in): the slider only listens on its
         // own panel, which needs focus
         if (this.options.keyboard) {
-            window.addEventListener("keydown", this._onKeyDownGlobal.bind(this));
+            this._on_keydown_global = (e: KeyboardEvent) => this._onKeyDownGlobal(e);
+            window.addEventListener("keydown", this._on_keydown_global);
         }
 
         // Fullscreen state
-        document.addEventListener("fullscreenchange", this._onFullscreenChange.bind(this));
+        this._on_fullscreen = () => this._onFullscreenChange();
+        document.addEventListener("fullscreenchange", this._on_fullscreen);
     }
 
     _onKeyDownGlobal(e: KeyboardEvent) {
@@ -1176,6 +1253,7 @@ class StoryMapBase {
             this._resize_observer = new ResizeObserver(onResize);
             this._resize_observer.observe(this._el.container);
         }
+        this._on_resize = onResize;
         window.addEventListener("resize", onResize);
     }
 
@@ -1309,7 +1387,8 @@ class StoryMapBase {
                 // a #slide-N hash deep-links the initial slide (issue #146)
                 // and keeps working through the browser back/forward buttons
                 this._applyHashSlide();
-                window.addEventListener("hashchange", () => this._applyHashSlide());
+                this._on_hashchange = () => this._applyHashSlide();
+                window.addEventListener("hashchange", this._on_hashchange);
                 this._syncHash();
             }
             this._updateProgress();

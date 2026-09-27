@@ -189,6 +189,18 @@ class SwipableBase {
         }
     }
 
+    /**
+     * Full teardown for `dispose()`: `disable()` only covers the listeners
+     * `enable()` adds, but a gesture in flight also holds the `move`/`leave`
+     * pair plus the momentum animation.
+     */
+    dispose() {
+        this.stopMomentum();
+        this.disable();
+        DomEvent.removeListener(this._el.drag, this.dragevent.move, this._onDragMove, this);
+        DomEvent.removeListener(this._el.drag, this.dragevent.leave, this._onDragEnd, this);
+    }
+
     stopMomentum() {
         if (this.animator) {
             this.animator.stop();
