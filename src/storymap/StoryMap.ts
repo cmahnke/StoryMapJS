@@ -1,7 +1,7 @@
 import { mergeData, slideTransitionDuration, updateData, prefersReducedMotion } from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
-import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
+import { isPresentation3Manifest, isPresentation3Collection, manifestToStorymapData } from "./iiif";
 import {
     ConsentManager,
     consentManagerOf,
@@ -418,7 +418,9 @@ class StoryMapBase {
                     : data;
             void this._loadDataFromUrl(url, data);
         } else if (typeof data === "object") {
-            if (isPresentation3Manifest(data)) {
+            // a Collection is a legitimate IIIF input too: its member
+            // Manifests' canvases concatenate into one linear story
+            if (isPresentation3Manifest(data) || isPresentation3Collection(data)) {
                 this._data_from_manifest = true;
                 this.data = manifestToStorymapData(data);
             } else {
@@ -446,7 +448,7 @@ class StoryMapBase {
                 throw new Error("HTTP " + response.status + " " + response.statusText);
             }
             const result: unknown = await response.json();
-            if (isPresentation3Manifest(result)) {
+            if (isPresentation3Manifest(result) || isPresentation3Collection(result)) {
                 this._data_from_manifest = true;
                 this.data = manifestToStorymapData(result);
             } else {

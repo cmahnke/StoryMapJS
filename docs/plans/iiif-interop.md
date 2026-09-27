@@ -28,8 +28,12 @@ embeds the context block this plan changes).
 
 ## 0. Background: what we read today
 
-Verified against the current tree. Line numbers are hints; the symbol names are
-the stable handle.
+> **Re-verified 0.10.8, and three of the four "silently wrong" items are now
+> fixed** — §2.1, §2.2 and §2.3. What follows is the state as of that pass.
+> Every claim below was re-checked against the tree rather than assumed; the
+> drift is listed in §0.2.
+
+Line numbers are hints; the symbol names are the stable handle.
 
 - `readTerm` (`src/storymap/iiif.ts:130`) reads `storymap:<term>` first and
   falls back to the bare key, except for `type`, which is hard-blocked from the
@@ -81,7 +85,7 @@ the stable handle.
 These are correctness bugs, not missing features, and they are all the same
 shape: a real-world manifest is mis-read without any error.
 
-1. **`requiredStatement` loses its `label`.** We read only `.value`, so a
+1. ~~**`requiredStatement` loses its `label`.**~~ **Fixed (§2.1).** We read only `.value`, so a
    manifest that labels its statement — "Credit", "Rights holder", a
    language-tagged term — loses that half. The property is a **single
    object**, not an array: an earlier draft of this plan claimed otherwise,
@@ -89,11 +93,70 @@ shape: a real-world manifest is mis-read without any error.
    rejects `requiredStatement: [...]` with "is not of type 'object'" and
    accepts `{"label": …, "value": …}`. Verified with `validate:iiif`, not
    assumed.
-2. **A `Collection` is accepted and mangled.** Detection never inspects
+2. ~~**A `Collection` is accepted and mangled.**~~ **Fixed (§2.2), by
+   rejecting rather than flattening — see §0.3 for why flattening turned out
+   to be impossible.** Detection never inspects
    `type` negatively, so each member Manifest becomes a text-only slide: no
    media (a Manifest has no `body.id` to read), no locations, no warning.
-3. **Canonical `id`s are discarded**, so a stop cannot be addressed by id even
-   though the viewer is already built for it.
+3. ~~**Canonical `id`s are discarded**, so a stop cannot be addressed by id even
+   though the viewer is already built for it.~~ **Fixed (§2.3).**
+
+### 0.2 Drift since this plan was written
+
+Re-checked rather than assumed. Nothing in §0 above had gone stale except the
+line numbers, but the tree around it has moved, and three things a
+re-implementer would get wrong:
+
+- **The `uniqueid` generator moved and no longer writes to the caller's data.**
+  §0 cites `StorySlider._addSlide` (`:234`); the generation is now in
+  `_createSlides`, and it builds a per-slide copy instead of assigning into
+  `data.slides[i]` — the same fix that stopped two viewers built from one
+  parsed document emitting duplicate element ids. §2.3 therefore assigns
+  `slide.uniqueid` on the returned slide, and must not reintroduce the
+  write-back.
+- **§2.3's write interacts with the multi-instance work.** A duplicate
+  `uniqueid` is no longer merely untidy: `goToId` resolves by first match, so a
+  collision navigates to the wrong stop. There is a fixture-wide test for it
+  (`tests/iiif.test.ts`, "every shipped IIIF fixture") and it should stay
+  green through the remaining §2 commits.
+- **`StoryMap`'s public methods are now dispose-guarded and terminal**, and
+  `_syncHash` / `_applyHashSlide` (which §5.1 changes) run inside that guard.
+  The id-based hash and `current_id` work has to keep `dispose()` semantics: a
+  disposed viewer no-ops rather than throwing.
+- New fixture `public/examples/issue-iiif-geo.json` (a georeferenced IIIF
+  _storymap JSON_, not a manifest) took `public/examples/` to 49 files. The
+  IIIF fixture count is unchanged at 50, and `validate:iiif` is still 50/50.
+
+Also worth knowing before writing the e2e for §5/§6: the Playwright suite now
+runs on Chromium, Firefox and WebKit (`npm run test:e2e:all`), and the harness
+pages accept `?record=<events>` to collect events into `window.__events` — the
+mechanism a `current_id` or `seeAlso` test will want.
+
+### 0.3 Why a Collection is rejected rather than flattened
+
+§2.2 offered two branches and asked which to take. Neither of the reasons
+expected survived contact with the specification, and the finding is worth
+keeping:
+
+- **Flattening is impossible for a synchronous converter.** A Presentation 3
+  `Collection`'s `items` are `id` _references_ to manifests held in other
+  documents. Concatenating their canvases means fetching them, and the
+  converter does no I/O — the same constraint that is holding §5.2's
+  `seeAlso` reader back.
+- **A Collection fixture cannot be authored either.** The official IIIF
+  validator rejects both obvious member shapes: an embedded `Manifest` object
+  ("not valid under any of the given schemas") _and_ a bare id string (the
+  same). So there is no conforming `public/examples-iiif/` fixture that could
+  exercise the path, and `validate:iiif` must stay at 50/50.
+
+So the outcome is the branch that removes a defect and promises no feature: a
+Collection is detected, reported by name with its members, and contributes no
+slides — instead of being accepted and mangled. A host that wants a
+multi-manifest tour fetches the members and concatenates their
+`manifestToStorymapData()` slides itself, which is documented in the
+authoring guide. Multi-manifest tours are a real and wanted capability
+(Exhibit, Annona's Multi Storyboard, §1.7), but it is a _host_ composition
+here, not a converter one.
 
 ---
 
@@ -272,6 +335,13 @@ The 9: `iiifUrl`, `date` (manifest side), `background` (manifest side),
 
 ### 2.1 `requiredStatement`: use the `label`, not just the `value`
 
+> **Done (0.10.8).** `readRequiredStatement()` reduces the statement to
+> `{label, value}` and `formatAttribution()` prefixes the label when there is
+> one, leaving an unlabelled statement as the bare value. The same reader now
+> backs body-level credit, so `media.credit` keeps its label too. The shipped
+> labelled fixtures (`annotated-image`, `iiif-wellcome`, `issue-image-region`)
+> now read `Attribution: …`.
+
 `requiredStatement` is a **single `{label, value}` object** in P3, not an
 array — the official validator rejects the array form, so a plan written
 against 0..n would have coded a shape no conforming manifest has. Read the
@@ -284,6 +354,13 @@ label; the unlabelled form still works.
 
 ### 2.2 `Collection` handling
 
+> **Done (0.10.8), as a rejection rather than a flattening** — see §0.3 for
+> why flattening is impossible and why no conforming fixture can exist.
+> `isPresentation3Manifest()` no longer accepts a `Collection`,
+> `isPresentation3Collection()` detects one, and `StoryMap` routes it to the
+> converter, which names the collection and its members in a console warning
+> and returns its label and `requiredStatement` but no slides.
+
 Either flatten a `Collection` into the story (member Manifests become
 sequences of slides, in order) or reject it with an explicit console error.
 What we must not do any more is the current silent mangling. Decide by asking:
@@ -292,6 +369,15 @@ Manifests' canvases are concatenated in order, which is also what
 `within`-style round-tripping expects. Test both branches.
 
 ### 2.3 Canvas and Manifest `id` → `uniqueid`
+
+> **Done (0.10.8).** `canvasToSlide`'s caller assigns the Canvas `id`, falling
+> back to the Manifest `id`, then to `""` so the slider generates one. An
+> annotation-driven stop on a canvas gets `<canvasId>#<index>`, so it is
+> addressable without colliding with the canvas it annotates. A fixture-wide
+> test asserts no duplicate or `"undefined"` ids across all 50 manifests.
+> Still open: `StoryMap._applyHashSlide` only matches `#slide-<digits>`, so
+> these ids are not yet reachable from a URL — that is §5.1, which was always
+> the other half of this workstream.
 
 `canvasToSlide` sets `slide.uniqueid` from the Canvas `id` (falling back to the
 Manifest `id`, then letting `StorySlider._addSlide` generate one). The viewer

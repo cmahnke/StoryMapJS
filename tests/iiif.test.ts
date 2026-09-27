@@ -1,7 +1,11 @@
-import { test, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { describe, test, expect, vi } from "vitest";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { isPresentation3Manifest, manifestToStorymapData } from "../src/storymap/iiif";
+import {
+    isPresentation3Manifest,
+    isPresentation3Collection,
+    manifestToStorymapData,
+} from "../src/storymap/iiif";
 import { fitGeoreference } from "../src/map/georeference";
 import type { StorymapData, StorymapOverlayLayer } from "../src/types";
 
@@ -306,7 +310,9 @@ test("maps the mapconfig service to storymap options fields", () => {
     expect(data.zoomify).toBeUndefined();
 });
 
-test("maps requiredStatement to iiif.attribution", () => {
+test("keeps the requiredStatement label, not just the value", () => {
+    // a real-world manifest labels its statement; reading only `.value` threw
+    // that half away (iiif-interop.md §2.1)
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
         requiredStatement: {
@@ -315,7 +321,195 @@ test("maps requiredStatement to iiif.attribution", () => {
         },
         items: [],
     });
-    expect(data.iiif).toEqual({ url: "", attribution: "Courtesy of Example" });
+    expect(data.iiif).toEqual({ url: "", attribution: "Attribution: Courtesy of Example" });
+});
+
+test("an unlabelled requiredStatement is still the bare value", () => {
+    // plenty of manifests state a bare rights line; prefixing it would be noise
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        requiredStatement: { value: { none: ["In the public domain"] } },
+        items: [],
+    });
+    expect(data.iiif).toEqual({ url: "", attribution: "In the public domain" });
+});
+
+test("a labelled requiredStatement keeps a language-tagged label", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        requiredStatement: {
+            label: { en: ["Rights holder"], de: ["Rechteinhaber"] },
+            value: { en: ["Example Institution"] },
+        },
+        items: [],
+    });
+    // flattenLanguageMap's current behaviour: every language, concatenated
+    const attribution = (data.iiif as { attribution?: string }).attribution ?? "";
+    expect(attribution).toContain("Example Institution");
+    expect(attribution).toContain("Rights holder");
+});
+
+test("a body requiredStatement keeps its label too", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        items: [
+            {
+                "@type": "Canvas",
+                id: "https://example.org/canvas/1",
+                items: [
+                    {
+                        "@type": "AnnotationPage",
+                        items: [
+                            {
+                                "@type": "Annotation",
+                                motivation: "painting",
+                                body: {
+                                    id: "https://example.org/img.jpg",
+                                    type: "Image",
+                                    requiredStatement: {
+                                        label: { none: ["Photographer"] },
+                                        value: { none: ["A Photographer"] },
+                                    },
+                                },
+                                target: "https://example.org/canvas/1",
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    });
+    expect(data.slides[0].media?.credit).toBe("Photographer: A Photographer");
+});
+
+test("a Collection is not accepted as a Manifest", () => {
+    // detection used to accept anything carrying the P3 context, so a
+    // Collection passed and its member Manifests were read as if they were
+    // Canvases (iiif-interop.md §2.2)
+    const collection = {
+        "@context": CONTEXTS,
+        id: "https://example.org/collection",
+        type: "Collection",
+        label: { none: ["A collection"] },
+        items: [],
+    };
+    expect(isPresentation3Manifest(collection)).toBe(false);
+    expect(isPresentation3Collection(collection)).toBe(true);
+    // and a plain Manifest is still one
+    expect(isPresentation3Manifest({ "@context": CONTEXTS, type: "Manifest" })).toBe(true);
+});
+
+test("a Collection is reported and yields no slides, not mangled ones", () => {
+    // §2.2: a Collection's members are id references to other documents, so a
+    // synchronous converter cannot flatten them. What it must not do is the old
+    // behaviour — read each member as if it were a Canvas, producing text-only
+    // slides with no media and no warning.
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+        const data = manifestToStorymapData({
+            "@context": CONTEXTS,
+            id: "https://example.org/collection",
+            type: "Collection",
+            label: { none: ["Two manifests"] },
+            requiredStatement: {
+                label: { none: ["Attribution"] },
+                value: { none: ["Example Institution"] },
+            },
+            items: ["https://example.org/m1", "https://example.org/m2"],
+        });
+        expect(data.slides).toEqual([]);
+        // the label and the labelled statement are still real information
+        expect(data.title).toBe("Two manifests");
+        expect((data.iiif as { attribution?: string }).attribution).toContain(
+            "Example Institution",
+        );
+        // and the gap is named, with both members, rather than silent
+        expect(warn).toHaveBeenCalledTimes(1);
+        const message = String(warn.mock.calls[0][0]);
+        expect(message).toContain("Collection");
+        expect(message).toContain("https://example.org/m1");
+        expect(message).toContain("https://example.org/m2");
+    } finally {
+        warn.mockRestore();
+    }
+});
+
+test("a canvas is addressable by its canonical id, and so is a tour stop", () => {
+    // §2.3: the viewer already resolves deep links by `uniqueid`
+    // (`StorySlider.goToId`) and generated one because the converter never set
+    // it, so a stop could not be shared by its own id.
+    const canvasId = "https://example.org/canvas/1";
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        items: [
+            {
+                id: canvasId,
+                type: "Canvas",
+                width: 2000,
+                height: 1000,
+                items: [
+                    {
+                        id: `${canvasId}/page/1`,
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                id: `${canvasId}/a/1`,
+                                type: "Annotation",
+                                motivation: "painting",
+                                body: { id: "https://example.org/i.jpg", type: "Image" },
+                                target: canvasId,
+                            },
+                        ],
+                    },
+                    {
+                        id: `${canvasId}/page/2`,
+                        type: "AnnotationPage",
+                        items: [
+                            {
+                                id: `${canvasId}/a/2`,
+                                type: "Annotation",
+                                motivation: "commenting",
+                                body: { type: "TextualBody", value: "A stop", format: "text/html" },
+                                target: `${canvasId}#xywh=100,200,300,400`,
+                            },
+                        ],
+                    },
+                ],
+            },
+            { id: "https://example.org/canvas/2", type: "Canvas", items: [] },
+        ],
+    });
+    const ids = data.slides.map((slide) => slide.uniqueid);
+    expect(ids).toHaveLength(3);
+    expect(ids[0]).toBe(canvasId);
+    // the annotation stop: same canvas, its own addressable id
+    expect(ids[1]).toBe(`${canvasId}#1`);
+    expect(ids[2]).toBe("https://example.org/canvas/2");
+    // every id is unique, or goToId would resolve ambiguously
+    expect(new Set(ids).size).toBe(ids.length);
+});
+
+test("a canvas without an id falls back to the manifest id", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        items: [{ "@type": "Canvas", items: [] }],
+    });
+    expect(data.slides[0].uniqueid).toBe("https://example.org/manifest");
+});
+
+test("a manifest with neither id leaves the slider to generate one", () => {
+    // StorySlider generates when uniqueid is falsy, which is what it did
+    // before this change — the point is that we do not now write "undefined"
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        type: "Manifest",
+        items: [{ "@type": "Canvas", items: [] }],
+    });
+    expect(data.slides[0].uniqueid).toBe("");
 });
 
 test("maps the newer mapconfig terms to their storymap fields", () => {
@@ -650,4 +844,43 @@ test("the shipped georeferenced-layer manifest maps as documented", () => {
         expect(fit.bbox[2]).toBeCloseTo(4.5, 3);
         expect(fit.bbox[3]).toBeCloseTo(51.92, 3);
     }
+});
+
+describe("every shipped IIIF fixture", () => {
+    const dir = join(process.cwd(), "public/examples-iiif");
+    const fixtures = readdirSync(dir)
+        .filter((name) => name.endsWith(".json"))
+        .sort();
+
+    test("finds the fixtures", () => {
+        // guards the guard below: an empty glob would pass vacuously
+        expect(fixtures.length).toBeGreaterThan(40);
+    });
+
+    test("converts without throwing and every slide is addressable", () => {
+        // §2.3 made `uniqueid` meaningful, so a duplicate or missing id is now
+        // a real defect: `StorySlider.goToId` resolves by first match, so a
+        // duplicate silently navigates to the wrong stop.
+        let slideCount = 0;
+        for (const name of fixtures) {
+            const manifest = JSON.parse(readFileSync(join(dir, name), "utf8"));
+            const data = manifestToStorymapData(manifest);
+            const ids = data.slides.map((slide) => slide.uniqueid ?? "");
+            slideCount += ids.length;
+            const nonEmpty = ids.filter((id) => id !== "");
+            expect(new Set(nonEmpty).size, `duplicate uniqueid in ${name}`).toBe(nonEmpty.length);
+            for (const id of ids) {
+                expect(id, `bad uniqueid in ${name}`).not.toContain("undefined");
+            }
+        }
+        expect(slideCount).toBeGreaterThan(50);
+    });
+
+    test("no fixture is a Collection, which is now rejected as a Manifest", () => {
+        // §2.2: a Collection used to be accepted and mangled
+        for (const name of fixtures) {
+            const manifest = JSON.parse(readFileSync(join(dir, name), "utf8"));
+            expect(isPresentation3Collection(manifest), `${name} is a Collection`).toBe(false);
+        }
+    });
 });

@@ -93,6 +93,19 @@ Added
 
 Fixed
 -----
+- A IIIF `requiredStatement`'s `label` was discarded, so a manifest that labels
+  its statement — "Credit", "Rights holder", "Photographer" — showed the bare
+  value. The label is now kept ("Attribution: …") where there is one, and an
+  unlabelled statement is still the bare value, unchanged
+- An IIIF `Collection` was accepted as a Manifest and its member Manifests were
+  read as if they were Canvases, producing text-only slides with no media, no
+  locations and no warning. A Collection is now detected and reported by name
+  with its members instead
+- A IIIF manifest's canonical ids were dropped, so a stop could not be
+  addressed by its own id even though the viewer already resolves deep links by
+  `uniqueid`. Canvas `id` (falling back to the Manifest's) now lands on the
+  slide, and an annotation-driven stop gets `<canvasId>#<index>` so it is
+  addressable without colliding with the canvas it annotates
 - A slide with body text and no headline rendered a literal "headline" as an
   `<h2>`: `Text`'s constructor seeded its data with the placeholder strings
   "headline"/"text", which `mergeData` only overwrites when the key is

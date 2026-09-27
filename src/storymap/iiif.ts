@@ -263,6 +263,46 @@ export function flattenLanguageMap(value: unknown): string {
 }
 
 /**
+ * A `requiredStatement` reduced to its label and value.
+ *
+ * In Presentation 3 `requiredStatement` is a **single `{label, value}`
+ * object** — the official IIIF validator rejects the array form with "is not of
+ * type 'object'" — so the array branch below is producer leniency, not
+ * conformance. The `label` ("Credit", "Rights holder", a language-tagged term)
+ * is half of what a real institutional manifest ships, and reading only
+ * `.value` dropped it. See docs/plans/iiif-interop.md §2.1.
+ */
+function readRequiredStatement(statement: unknown): { label: string; value: string } {
+    const entries = Array.isArray(statement)
+        ? statement
+        : statement !== undefined
+          ? [statement]
+          : [];
+    for (const entry of entries) {
+        const record = asRecord(entry);
+        if (!record) continue;
+        const value = flattenLanguageMap(record.value);
+        if (value === "") continue;
+        return { label: flattenLanguageMap(record.label), value };
+    }
+    return { label: "", value: "" };
+}
+
+/**
+ * Attribution text for a `requiredStatement`, keeping its label.
+ *
+ * A labelled statement reads as "Label: value", because that is how the value
+ * was meant to be attributed. An unlabelled one is returned verbatim, exactly
+ * as before — plenty of manifests state a bare rights line and prefixing it
+ * would be noise.
+ */
+function formatAttribution(statement: { label: string; value: string }): string {
+    if (statement.value === "") return "";
+    if (statement.label === "") return statement.value;
+    return `${statement.label}: ${statement.value}`;
+}
+
+/**
  * Reads a StoryMap extension term from a Canvas or service object. Manifests
  * use the `storymap:`-prefixed form, but JSON-LD processors may emit the bare
  * term, so both are accepted. The bare `type` key is never read because it
@@ -276,16 +316,90 @@ function readTerm(record: Record<string, unknown>, term: string): unknown {
     return term === "type" ? undefined : record[term];
 }
 
-/** True when `data` looks like a Presentation API 3.0 manifest. */
+/**
+ * True when `data` looks like a Presentation API 3.0 **Manifest**.
+ *
+ * A `Collection` is explicitly *not* one, even though it carries the same
+ * `@context`. Detection used to accept anything with the P3 context, so a
+ * Collection passed and its member Manifests were fed to `canvasToSlide` as if
+ * they were Canvases — every member became a text-only slide, with no media, no
+ * locations and no warning. `within`-style Collections are now handled by
+ * {@link collectionToStorymapData}, and anything else is rejected here.
+ */
 export function isPresentation3Manifest(data: unknown): boolean {
     const record = asRecord(data);
     if (!record) return false;
+    if (record.type === "Collection") return false;
     if (record.type === "Manifest") return true;
     const context = record["@context"];
     const candidates = Array.isArray(context) ? context : [context];
     return candidates.some(
         (entry) => typeof entry === "string" && entry.includes(PRESENTATION_3_CONTEXT),
     );
+}
+
+/** True when `data` is a Presentation API 3.0 Collection. */
+export function isPresentation3Collection(data: unknown): boolean {
+    const record = asRecord(data);
+    return record !== null && record.type === "Collection";
+}
+
+/**
+ * A Collection: reported and rejected, with nothing silently mangled.
+ *
+ * §2.2 offered two branches — flatten the member Manifests, or reject with an
+ * explicit error. Neither survives contact with the specification, and the
+ * choice is worth recording:
+ *
+ * - **Flattening is impossible here.** A Presentation 3 `Collection`'s
+ *   `items` are `id` **references** to manifests in other documents, so
+ *   flattening means fetching them, and this converter is synchronous and does
+ *   no I/O.
+ * - **A Collection fixture could not be authored either.** The official IIIF
+ *   validator rejects both shapes of member the obvious forms suggest: an
+ *   embedded `Manifest` object ("not valid under any of the given schemas") and
+ *   a bare id string (the same). So no `public/examples-iiif/` fixture can
+ *   exercise this path, and shipping one that fails `npm run validate:iiif` is
+ *   not an option.
+ *
+ * So the honest outcome is the one that removes a defect and promises no
+ * feature: previously a Collection was *accepted* and its members were fed to
+ * `canvasToSlide` as if they were Canvases, producing text-only slides with no
+ * media, no locations and no warning. Now it is named and skipped.
+ *
+ * A host that wants a multi-manifest tour composes it: fetch the members, call
+ * {@link manifestToStorymapData} on each, and concatenate the `slides`. That
+ * keeps the "no I/O on the load path" property §5.2's `seeAlso` reader is being
+ * held back for.
+ */
+function collectionToStorymapData(collection: Record<string, unknown>): StorymapData {
+    const data: StorymapData = { slides: [] };
+    const title = flattenLanguageMap(collection.label);
+    if (title !== "") data.title = title;
+
+    const required = formatAttribution(readRequiredStatement(collection.requiredStatement));
+    if (required !== "") {
+        const iiif = (data.iiif as { url?: string; attribution?: string } | undefined) ?? {};
+        iiif.attribution = required;
+        if (iiif.url === undefined) iiif.url = "";
+        data.iiif = iiif;
+    }
+
+    const members = Array.isArray(collection.items) ? collection.items : [];
+    const memberIds = members
+        .map((member) => (typeof member === "string" ? member : asString(asRecord(member)?.id)))
+        .filter((id): id is string => typeof id === "string");
+    console.warn(
+        "StoryMapJS: this is a IIIF Collection with " +
+            `${memberIds.length} member manifest(s) [${memberIds.join(", ")}]. ` +
+            "A Presentation 3 Collection references its members from other documents, and " +
+            "the converter is synchronous, so it contributes no slides rather than " +
+            "mangling them. To build a multi-manifest tour, fetch the members and " +
+            "concatenate their manifestToStorymapData() slides yourself " +
+            "(see docs/plans/iiif-interop.md §2.2).",
+    );
+
+    return data;
 }
 
 /**
@@ -324,11 +438,8 @@ export interface PaintingBody {
     /** `body.accessibilitySummary` — the interoperable alt text. */
     accessibilitySummary: string | null;
     /**
-     * `body.requiredStatement`'s `value`, or `body.provider`. The statement
-     * is a single `{label, value}` object in the spec — the official IIIF
-     * validator rejects an array — so the array branch in `readBodyCredit()`
-     * is producer leniency, not conformance. The `label` is not read yet;
-     * that is the one open item in docs/plans/iiif-interop.md §2.1.
+     * `body.requiredStatement` (label and value), or `body.provider`.
+     * See {@link readRequiredStatement} on the single-object shape.
      */
     credit: string | null;
     thumbnail: string | null;
@@ -346,26 +457,17 @@ export interface PaintingBody {
 }
 
 /**
- * Credit from `body.requiredStatement`'s `value`, or `body.provider`, which is
- * where a manifest records who made the media.
- *
- * `requiredStatement` is a single `{label, value}` object in P3, not 0..n: the
- * official IIIF validator rejects `requiredStatement: [...]` with "is not of
- * type 'object'". The array branch is here for producers that emit one
- * anyway, and costs three lines.
+ * Credit from `body.requiredStatement`, or `body.provider`, which is where a
+ * manifest records who made the media. The statement's `label` is kept, like
+ * the manifest-level attribution (§2.1) — a body that says
+ * `{label: "Photographer", value: "Someone"}` should not reduce to a bare
+ * "Someone".
  */
 function readBodyCredit(body: unknown): string | null {
     const record = asRecord(body);
     if (!record) return null;
-    const statements = Array.isArray(record.requiredStatement)
-        ? record.requiredStatement
-        : record.requiredStatement !== undefined
-          ? [record.requiredStatement]
-          : [];
-    for (const entry of statements) {
-        const value = flattenLanguageMap(asRecord(entry)?.value);
-        if (value !== "") return value;
-    }
+    const statement = formatAttribution(readRequiredStatement(record.requiredStatement));
+    if (statement !== "") return statement;
     const provider = asRecord(record.provider);
     const providerLabel = provider === null ? "" : flattenLanguageMap(provider.label);
     if (providerLabel !== "") return providerLabel;
@@ -783,8 +885,20 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
     const record = asRecord(manifest);
     if (!record) return data;
 
+    // A Collection is not a Manifest, but it is a legitimate IIIF input: its
+    // member Manifests' canvases concatenate into one linear story (§2.2)
+    if (isPresentation3Collection(record)) {
+        return collectionToStorymapData(record);
+    }
+
     const title = flattenLanguageMap(record.label);
     if (title !== "") data.title = title;
+
+    // A slide is addressed by its Canvas id, falling back to the Manifest's
+    // (§2.3). The viewer already resolves deep links by `uniqueid`
+    // (`StorySlider.goToId`) and generates one when falsy, so this is what
+    // makes a manifest stop shareable by its canonical id.
+    const manifestId = asString(record.id);
 
     // Manifest-level map configuration service → storymap options fields.
     const config = readMapConfig(record);
@@ -792,9 +906,8 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         applyMapConfig(data, config);
     }
 
-    // requiredStatement → iiif.attribution
-    const requiredStatement = asRecord(record.requiredStatement);
-    const attribution = requiredStatement ? flattenLanguageMap(requiredStatement.value) : "";
+    // requiredStatement → iiif.attribution, label included (§2.1)
+    const attribution = formatAttribution(readRequiredStatement(record.requiredStatement));
     if (attribution !== "") {
         const iiif = (data.iiif as { url?: string; attribution?: string } | undefined) ?? {};
         iiif.attribution = attribution;
@@ -813,10 +926,19 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         // The canvas index, not the output-slide index: annotation stops
         // appended below shift the slide array, and the manifest-level
         // navPlace features line up with canvases.
+        const canvasId = asString(asRecord(items[index])?.id);
         const slide = canvasToSlide(items[index], manifestFeatures[index]);
-        if (slide !== null) data.slides.push(slide);
-        // Annotation-driven tour stops, in annotation page order.
+        if (slide !== null) {
+            slide.uniqueid = canvasId ?? manifestId ?? "";
+            data.slides.push(slide);
+        }
+        // Annotation-driven tour stops, in annotation page order. They share
+        // the canvas they annotate, suffixed so they stay addressable and do
+        // not collide with it.
         for (const stop of readCommentingAnnotations(items[index])) {
+            if (canvasId) {
+                stop.uniqueid = `${canvasId}#${data.slides.length}`;
+            }
             data.slides.push(stop);
         }
         // A polygon navPlace states the geographic extent of the story

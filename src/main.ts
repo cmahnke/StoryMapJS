@@ -59,7 +59,11 @@ export type {
  * True when a fetched document is an IIIF Presentation 3 manifest (accepted
  * directly as a StoryMap source).
  */
-export { isPresentation3Manifest, manifestToStorymapData } from "./storymap/iiif";
+export {
+    isPresentation3Manifest,
+    isPresentation3Collection,
+    manifestToStorymapData,
+} from "./storymap/iiif";
 
 /**
  * Re-exported OpenLayers types, so consumers can type the map reachable at
