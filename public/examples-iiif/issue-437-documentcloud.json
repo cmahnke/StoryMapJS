@@ -76,6 +76,18 @@
                             "id": "https://example.org/storymap/issue-437-documentcloud/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: https://www.documentcloud.org/documents/1234567-sample-document.html"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.documentcloud.org/documents/3914627-APS-report.html",
                                 "type": "Text",
@@ -95,8 +107,7 @@
                 "none": [
                     "A document."
                 ]
-            },
-            "storymap:mediaCredit": "Original: https://www.documentcloud.org/documents/1234567-sample-document.html"
+            }
         }
     ],
     "service": [

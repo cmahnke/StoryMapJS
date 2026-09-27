@@ -309,7 +309,9 @@ thresholds, `goTo` firing `change` immediately instead of post-animation,
 - **Canvas** ↔ slide (order = slide order; nominal 1080×1080 for non-image
   canvases, real dimensions for IIIF image canvases). Canvas-level
   `storymap:` terms: `type` ("overview"), `group`, `date`, `background`
-  {url, color, opacity}, `mediaCaption`, `mediaCredit`.
+  {url, color, opacity}. The media caption, credit and alt text are the
+  painting annotation's own `label` / `requiredStatement` /
+  `accessibilitySummary`, not terms.
 - **Locations** via the official **navPlace** extension: canvas-level
   `navPlace` FeatureCollection; Point coordinates `[lon, lat]`; marker data
   (zoom/line/icon/iconSize/image/useCustomMarkers) as Feature properties.

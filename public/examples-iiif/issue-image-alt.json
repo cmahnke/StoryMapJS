@@ -40,6 +40,16 @@
                             "id": "https://example.org/storymap/issue-image-alt/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "<p>The caption stays HTML.</p>"
+                                ]
+                            },
+                            "accessibilitySummary": {
+                                "none": [
+                                    "Portrait-oriented placeholder photograph"
+                                ]
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -60,9 +70,7 @@
                     "Explicit alt text on the overview image."
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:mediaCaption": "<p>The caption stays HTML.</p>",
-            "storymap:mediaAlt": "Portrait-oriented placeholder photograph"
+            "storymap:type": "overview"
         }
     ],
     "service": [

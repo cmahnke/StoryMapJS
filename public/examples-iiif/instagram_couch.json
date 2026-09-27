@@ -40,6 +40,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://images.ak.instagram.com/profiles/profile_652_75sq_1382829649.jpg?instagramprofile"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -60,8 +72,7 @@
                     "<div class=\"vco-snapmap-instagram-text\"><span class=\"vco-snapmap-instagram-posts\">656</span><span class=\"vco-snapmap-instagram-followed_by\">24037</span><span class=\"vco-snapmap-instagram-follows\">258</span><span class=\"vco-snapmap-instagram-website\"><a href=\"http://williamcouch.com\" target=\"_blank\">http://williamcouch.com</a></span></div>"
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_652_75sq_1382829649.jpg?instagramprofile"
+            "storymap:type": "overview"
         },
         {
             "id": "https://example.org/storymap/instagram_couch/canvas/2",
@@ -77,6 +88,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10483347_786032961436267_725514152_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -97,7 +120,6 @@
                     "I am not allowed to complain about anything ever.<span class=\"vco-media-instagram-likes\">378</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10483347_786032961436267_725514152_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -133,6 +155,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10475101_1493435787557725_527506329_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -153,7 +187,6 @@
                     "Alpine Dam drop<span class=\"vco-media-instagram-likes\">176</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10475101_1493435787557725_527506329_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -189,6 +222,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488737_1470134833230706_1018075160_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -209,7 +254,6 @@
                     "Yesterday on the bike, looking to my right.<span class=\"vco-media-instagram-likes\">265</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488737_1470134833230706_1018075160_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -245,6 +289,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10520198_780176792035098_1142583387_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -265,7 +321,6 @@
                     "The Sunset is a secret.<span class=\"vco-media-instagram-likes\">254</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10520198_780176792035098_1142583387_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -301,6 +356,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467695_648597075222160_1033016379_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -321,7 +388,6 @@
                     "Waveforms.<span class=\"vco-media-instagram-likes\">329</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10467695_648597075222160_1033016379_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -357,6 +423,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10508085_1445383065714880_2117209835_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -377,7 +455,6 @@
                     "This is how I’ll remember summers in San Francisco.<span class=\"vco-media-instagram-likes\">257</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10508085_1445383065714880_2117209835_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -413,6 +490,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10467759_1506009949611342_1366706119_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -428,7 +517,6 @@
                     "Foglines<span class=\"vco-media-instagram-likes\">384</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10467759_1506009949611342_1366706119_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -464,6 +552,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10454009_1473052939606613_584288724_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -484,7 +584,6 @@
                     "West coast red, white, and blue.<span class=\"vco-media-instagram-likes\">297</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10454009_1473052939606613_584288724_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -520,6 +619,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-prn/t51.2885-15/929136_250718841795901_1879631386_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -535,7 +646,6 @@
                     "A Fourth cookout on the sidewalk, empty streets, neighbors walking about, powers out, wind blowing and fog invading, feels like a snow day in San Francisco.<span class=\"vco-media-instagram-likes\">292</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-prn/t51.2885-15/929136_250718841795901_1879631386_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -571,6 +681,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/927092_650914828331185_1165693375_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -591,7 +713,6 @@
                     "Seeking sunlight.<span class=\"vco-media-instagram-likes\">348</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/927092_650914828331185_1165693375_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -627,6 +748,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926801_1590837847809415_263852512_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -647,7 +780,6 @@
                     "Settled at 1500'<span class=\"vco-media-instagram-likes\">322</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926801_1590837847809415_263852512_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -683,6 +815,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925034_326424910844311_466022625_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -703,7 +847,6 @@
                     "Afternoon dedicated to explorations of architecture.<span class=\"vco-media-instagram-likes\">244</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/925034_326424910844311_466022625_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -739,6 +882,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488616_683343168414897_1281040327_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -759,7 +914,6 @@
                     "<span class=\"vco-media-instagram-likes\">251</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488616_683343168414897_1281040327_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -795,6 +949,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522315_1504204289793357_87668020_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -810,7 +976,6 @@
                     "Weekend ending with @kvanscha.<span class=\"vco-media-instagram-likes\">237</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10522315_1504204289793357_87668020_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -846,6 +1011,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10520345_1456232291300225_1466525789_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -866,7 +1043,6 @@
                     "Despite high humidity and the warm air, the sky this morning reminded me of Michigan in the fall.<span class=\"vco-media-instagram-likes\">264</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10520345_1456232291300225_1466525789_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -902,6 +1078,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1515084_315821795250608_441617042_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -917,7 +1105,6 @@
                     "Measured in weeks.<span class=\"vco-media-instagram-likes\">177</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1515084_315821795250608_441617042_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -953,6 +1140,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475006_1450370065222414_711580170_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -973,7 +1172,6 @@
                     "Weathered by the wind, salt, sun, and sea today in my first time out surfing for @kristen_fortier’s birthday with @bradleyrhughes, @weightshift, and @jenschuetz. I’m afraid a new hobby is stirring.<span class=\"vco-media-instagram-likes\">212</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475006_1450370065222414_711580170_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -1009,6 +1207,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/928588_1442596822675350_1247118963_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1029,7 +1239,6 @@
                     "There.<span class=\"vco-media-instagram-likes\">261</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/928588_1442596822675350_1247118963_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1065,6 +1274,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549615_716308391763002_42187880_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1080,7 +1301,6 @@
                     "Pacelining through Half Moon Bay.<span class=\"vco-media-instagram-likes\">158</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549615_716308391763002_42187880_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1116,6 +1336,18 @@
                             "id": "https://example.org/storymap/instagram_couch/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915611_527537560706314_239241638_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1131,7 +1363,6 @@
                     "Junipero Serra<span class=\"vco-media-instagram-likes\">172</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/915611_527537560706314_239241638_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_couch/canvas/21/navplace",
                 "type": "FeatureCollection",

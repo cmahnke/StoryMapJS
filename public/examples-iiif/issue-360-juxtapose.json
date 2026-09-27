@@ -76,6 +76,18 @@
                             "id": "https://example.org/storymap/issue-360-juxtapose/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: https://juxtapose.knightlab.com/frame/?uid=abc123"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=abc123",
                                 "type": "Text",
@@ -95,8 +107,7 @@
                 "none": [
                     "A before/after slider."
                 ]
-            },
-            "storymap:mediaCredit": "Original: https://juxtapose.knightlab.com/frame/?uid=abc123"
+            }
         }
     ],
     "service": [

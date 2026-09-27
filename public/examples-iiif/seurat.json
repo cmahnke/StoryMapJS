@@ -287,6 +287,23 @@
                             "id": "https://example.org/storymap/seurat/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Seurat made several studies for the large painting including a smaller version. Study for La Grand Jatte, 1884. "
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Georges Seurat"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
                                 "type": "Image",
@@ -316,8 +333,6 @@
                     "The dots appear as solid and luminous forms when seen from a distance."
                 ]
             },
-            "storymap:mediaCaption": "Seurat made several studies for the large painting including a smaller version. Study for La Grand Jatte, 1884. ",
-            "storymap:mediaCredit": "Georges Seurat",
             "navPlace": {
                 "id": "https://example.org/storymap/seurat/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -421,6 +436,23 @@
                             "id": "https://example.org/storymap/seurat/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "La plage de Trouville, 1870, National Gallery, London. "
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Claude Monet"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
                                 "type": "Image",
@@ -450,8 +482,6 @@
                     "Although Seurat embraced the subject matter of modern life preferred by artists such as Claude Monet and Pierre-Auguste Renoir, he went beyond their concern for capturing the accidental and instantaneous qualities of light in nature."
                 ]
             },
-            "storymap:mediaCaption": "La plage de Trouville, 1870, National Gallery, London. ",
-            "storymap:mediaCredit": "Claude Monet",
             "navPlace": {
                 "id": "https://example.org/storymap/seurat/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -489,6 +519,23 @@
                             "id": "https://example.org/storymap/seurat/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Riace bronzes, examples of proto classic bronze sculpture"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "<a href='http://en.wikipedia.org/wiki/Ancient_Greek_sculpture' target='_blank'>Wikipedia</a>"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
                                 "type": "Image",
@@ -518,8 +565,6 @@
                     "Seurat sought to evoke permanence by recalling the art of the past, especially Egyptian and Greek sculpture and even Italian Renaissance frescoes."
                 ]
             },
-            "storymap:mediaCaption": "Riace bronzes, examples of proto classic bronze sculpture",
-            "storymap:mediaCredit": "<a href='http://en.wikipedia.org/wiki/Ancient_Greek_sculpture' target='_blank'>Wikipedia</a>",
             "navPlace": {
                 "id": "https://example.org/storymap/seurat/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -557,6 +602,23 @@
                             "id": "https://example.org/storymap/seurat/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Cattle led to sacrifice, South XLV, 137–140, British Museum."
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
                                 "type": "Image",
@@ -586,8 +648,6 @@
                     "Seurat explained to the French poet Gustave Kahn, \"The Panathenaeans of Phidias formed a procession. I want to make modern people, in their essential traits, move about as they do on those friezes, and place them on canvases organized by harmonies of color.\""
                 ]
             },
-            "storymap:mediaCaption": "Cattle led to sacrifice, South XLV, 137–140, British Museum.",
-            "storymap:mediaCredit": "Wikipedia",
             "navPlace": {
                 "id": "https://example.org/storymap/seurat/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -823,6 +883,23 @@
                             "id": "https://example.org/storymap/seurat/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Island of La Grande Jatte"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Stamen Maps"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
                                 "type": "Image",
@@ -851,9 +928,7 @@
                 "none": [
                     "<strong>Georges Seurat (Creator)1859 - 1891</strong><br> <strong>Physical Format:</strong> w3079.75 x h2076.45 in <br><strong>See on institution's site:</strong> The Art Institute of Chicago<br> <strong>Medium:</strong> Oil on canvas<br><strong>Nationality:</strong> French"
                 ]
-            },
-            "storymap:mediaCaption": "Island of La Grande Jatte",
-            "storymap:mediaCredit": "Stamen Maps"
+            }
         }
     ],
     "service": [

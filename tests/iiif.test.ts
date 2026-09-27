@@ -75,6 +75,11 @@ const manifest = {
                             id: "https://example.org/storymap/storm/canvas/2/annotation/1",
                             type: "Annotation",
                             motivation: "painting",
+                            label: { none: ["Landfall"] },
+                            requiredStatement: {
+                                label: { none: ["Credit"] },
+                                value: { none: ["Weather Service"] },
+                            },
                             body: {
                                 id: "https://example.org/images/landfall.jpg",
                                 type: "Image",
@@ -85,8 +90,6 @@ const manifest = {
                     ],
                 },
             ],
-            "storymap:mediaCaption": "Landfall",
-            "storymap:mediaCredit": "Weather Service",
             "storymap:background": { url: "https://example.org/bg.jpg", opacity: 25 },
             navPlace: {
                 type: "FeatureCollection",
@@ -150,7 +153,7 @@ test("converts a small manifest to storymap data", () => {
     expect(landfall.text?.text).toBe("The storm made landfall.");
     expect(landfall.media?.url).toBe("https://example.org/images/landfall.jpg");
     expect(landfall.media?.caption).toBe("Landfall");
-    expect(landfall.media?.credit).toBe("Weather Service");
+    expect(landfall.media?.credit).toBe("Credit: Weather Service");
     expect(landfall.background).toEqual({ url: "https://example.org/bg.jpg" });
     expect(landfall.location?.lat).toBe(28.2);
     expect(landfall.location?.lon).toBe(-89.6);

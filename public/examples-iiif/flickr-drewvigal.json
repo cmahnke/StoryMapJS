@@ -71,6 +71,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5559/14462761661_5e7a29cfa1_n.jpg",
                                 "type": "Image",
@@ -91,7 +103,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">43</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -127,6 +138,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm3.staticflickr.com/2906/14467316921_98d5910bbf_n.jpg",
                                 "type": "Image",
@@ -147,7 +170,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">39</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -183,6 +205,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5573/14294022087_0851ba4294_n.jpg",
                                 "type": "Image",
@@ -203,7 +237,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">43</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -239,6 +272,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5277/14457784346_228e814bd5_n.jpg",
                                 "type": "Image",
@@ -259,7 +304,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">48</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -295,6 +339,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3843/14309373429_6561f4fd2b_n.jpg",
                                 "type": "Image",
@@ -315,7 +371,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">27</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -351,6 +406,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3916/14473055256_999f3d85e5_n.jpg",
                                 "type": "Image",
@@ -371,7 +438,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">27</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -407,6 +473,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5233/14309815329_191216fb0b_n.jpg",
                                 "type": "Image",
@@ -427,7 +505,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">29</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -463,6 +540,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5509/14310872907_a5f77dd9e3_n.jpg",
                                 "type": "Image",
@@ -483,7 +572,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">39</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -519,6 +607,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5118/14522026773_0dbdb5f23b_n.jpg",
                                 "type": "Image",
@@ -539,7 +639,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">38</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -575,6 +674,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm3.staticflickr.com/2901/14559641993_7f0b4f382e_n.jpg",
                                 "type": "Image",
@@ -595,7 +706,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">64</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -631,6 +741,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3851/14547827025_1ee69dcdbc_n.jpg",
                                 "type": "Image",
@@ -651,7 +773,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">68</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -687,6 +808,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3866/14396115930_fcef9ab7be_n.jpg",
                                 "type": "Image",
@@ -707,7 +840,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">38</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -743,6 +875,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3870/14582370934_f43fe87c83_n.jpg",
                                 "type": "Image",
@@ -763,7 +907,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">69</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -799,6 +942,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm6.staticflickr.com/5503/14608469012_68c7062ab6_n.jpg",
                                 "type": "Image",
@@ -819,7 +974,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">55</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -855,6 +1009,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3843/14628668162_e67ea911a8_n.jpg",
                                 "type": "Image",
@@ -875,7 +1041,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">40</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -911,6 +1076,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3883/14630609092_ba461e5c03_n.jpg",
                                 "type": "Image",
@@ -931,7 +1108,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">41</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -967,6 +1143,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3911/14636554165_0925fcb898_n.jpg",
                                 "type": "Image",
@@ -987,7 +1175,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">65</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -1023,6 +1210,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm3.staticflickr.com/2912/14471105858_8b768e0887_n.jpg",
                                 "type": "Image",
@@ -1043,7 +1242,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">79</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1079,6 +1277,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm4.staticflickr.com/3884/14471202298_644fb506d9_n.jpg",
                                 "type": "Image",
@@ -1099,7 +1309,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">82</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1135,6 +1344,18 @@
                             "id": "https://example.org/storymap/flickr-drewvigal/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "drewvigal"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://farm3.staticflickr.com/2895/14501031158_a274076838_n.jpg",
                                 "type": "Image",
@@ -1155,7 +1376,6 @@
                     "<span class=\"vco-snapmap-flickr-views\">51</span>"
                 ]
             },
-            "storymap:mediaCredit": "drewvigal",
             "navPlace": {
                 "id": "https://example.org/storymap/flickr-drewvigal/canvas/21/navplace",
                 "type": "FeatureCollection",

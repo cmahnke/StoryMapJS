@@ -40,6 +40,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://images.ak.instagram.com/profiles/profile_566781_75sq_1349661215.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -55,8 +67,7 @@
                     "<span class=\"vco-snapmap-instagram\">kristen joy watts<small><a href=\"http://instagram.com/kjwww\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> kjwww</a></small></span>"
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:mediaCredit": "Original: http://images.ak.instagram.com/profiles/profile_566781_75sq_1349661215.jpg"
+            "storymap:type": "overview"
         },
         {
             "id": "https://example.org/storymap/instagram_test/canvas/2",
@@ -72,6 +83,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/891437_1426889687599049_1534411085_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -92,7 +115,6 @@
                     "canvas"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/891437_1426889687599049_1534411085_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -128,6 +150,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10533592_583939295055955_537799888_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -148,7 +182,6 @@
                     "spiral"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10533592_583939295055955_537799888_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -184,6 +217,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10523582_1446073535652652_1972696004_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -204,7 +249,6 @@
                     "oiseaux"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10523582_1446073535652652_1972696004_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -240,6 +284,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554277_768190486536323_1548300790_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -260,7 +316,6 @@
                     "fromage"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10554277_768190486536323_1548300790_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -296,6 +351,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10549750_697514880320433_939082141_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -316,7 +383,6 @@
                     "fée"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10549750_697514880320433_939082141_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -352,6 +418,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/914416_805647066135597_2143364955_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -372,7 +450,6 @@
                     "another from our Paris Instagram community gathering"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/914416_805647066135597_2143364955_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -408,6 +485,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10546627_692684480779490_1057091115_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -428,7 +517,6 @@
                     "dangly detail"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10546627_692684480779490_1057091115_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -464,6 +552,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10499113_781447105240312_1873521341_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -484,7 +584,6 @@
                     "Paris parting shot"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10499113_781447105240312_1873521341_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -520,6 +619,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513714_733676590027122_1610874769_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -540,7 +651,6 @@
                     "breakfast on Saturday"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10513714_733676590027122_1610874769_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -576,6 +686,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520337_1474529226126730_1287109742_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -596,7 +718,6 @@
                     "another bookstore I wish I could live in"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10520337_1474529226126730_1287109742_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -632,6 +753,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10518237_775627895792350_1569859720_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -652,7 +785,6 @@
                     "clouds"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10518237_775627895792350_1569859720_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -688,6 +820,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10546594_1447510642169144_639257620_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -708,7 +852,6 @@
                     "two great shows on at @serpentineuk. Marina Ambramovic was gorgeous and strange. Until August 25th"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10546594_1447510642169144_639257620_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -744,6 +887,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10534816_590978977688145_473599969_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -764,7 +919,6 @@
                     "lad"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10534816_590978977688145_473599969_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -800,6 +954,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1941116_770718122979196_2134123139_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -820,7 +986,6 @@
                     "❤️🌸❤️"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1941116_770718122979196_2134123139_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -856,6 +1021,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475023_1511088002440493_553502399_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -876,7 +1053,6 @@
                     "@msryanmcnamara's Misty Malarky Ying Yang last night. Curated by @ceciliaalemani."
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10475023_1511088002440493_553502399_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -912,6 +1088,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472078_737215726321509_2072486444_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -932,7 +1120,6 @@
                     "the only way to have a meeting on a Friday afternoon"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10472078_737215726321509_2072486444_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -968,6 +1155,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10499308_674397492653450_965588066_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -988,7 +1187,6 @@
                     "Nancy Rubin's #ourfriendfluidmetal"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10499308_674397492653450_965588066_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -1024,6 +1222,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924808_1441151989492391_83424458_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1044,7 +1254,6 @@
                     "anemone (finally made it to Tara Donovan)"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/924808_1441151989492391_83424458_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1080,6 +1289,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10467879_259688257571341_1703146352_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1100,7 +1321,6 @@
                     "treasure"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10467879_259688257571341_1703146352_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1136,6 +1356,18 @@
                             "id": "https://example.org/storymap/instagram_test/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549627_1511889872380635_794098574_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1151,7 +1383,6 @@
                     "Compost Cookies and champagne"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10549627_1511889872380635_794098574_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_test/canvas/21/navplace",
                 "type": "FeatureCollection",

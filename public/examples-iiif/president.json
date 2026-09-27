@@ -40,6 +40,23 @@
                             "id": "https://example.org/storymap/president/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Barack Obama wikipedia"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://en.wikipedia.org/wiki/Barack_Obama",
                                 "type": "Text",
@@ -61,8 +78,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "President Barack Obama wikipedia",
-            "storymap:mediaCredit": "wikipedia",
             "storymap:date": "2013"
         },
         {
@@ -79,6 +94,23 @@
                             "id": "https://example.org/storymap/president/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Air Force One"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/2/2e/US_Navy_050521-N-0295M-026_Air_Force_One_takes_off_from_Andrews_Air_Force_Base,_Md.,_during_the_2005_Joint_Service_Open_House.jpg",
                                 "type": "Image",
@@ -99,8 +131,6 @@
                     "The President departs Joint Base Andrews.</i></b>"
                 ]
             },
-            "storymap:mediaCaption": "Air Force One",
-            "storymap:mediaCredit": "wikipedia",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/2/navplace",
@@ -140,6 +170,23 @@
                             "id": "https://example.org/storymap/president/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama and Prime Minister Reinfeldt of Sweden hold a joint press conference. September 4, 2013."
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The White House YouTube"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=Sa5pVSNoBXk",
                                 "type": "Video"
@@ -163,8 +210,6 @@
                 "url": "http://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg",
                 "color": "#cdbfe3"
             },
-            "storymap:mediaCaption": "President Obama and Prime Minister Reinfeldt of Sweden hold a joint press conference. September 4, 2013.",
-            "storymap:mediaCredit": "The White House YouTube",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/3/navplace",
@@ -204,6 +249,23 @@
                             "id": "https://example.org/storymap/president/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama meets the King and Queen of Sweden"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The Times UK"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.thetimes.co.uk/tto/multimedia/archive/00448/136109075__448536c.jpg",
                                 "type": "Image",
@@ -224,8 +286,6 @@
                     "The President meets with the King and Queen of Sweden."
                 ]
             },
-            "storymap:mediaCaption": "President Obama meets the King and Queen of Sweden",
-            "storymap:mediaCredit": "The Times UK",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/4/navplace",
@@ -265,6 +325,23 @@
                             "id": "https://example.org/storymap/president/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama arrives at G-20 dinner"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "sealight films"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=EkNzAuxhZA8",
                                 "type": "Video"
@@ -284,8 +361,6 @@
                     "The President arrives Saint Petersburg, Russia. The President holds a bilateral meeting with Prime Minister Abe of Japan. The President participates in an Official G-20 Arrival and Leaders Welcome. The President participates in G-20 Working Session One."
                 ]
             },
-            "storymap:mediaCaption": "President Obama arrives at G-20 dinner",
-            "storymap:mediaCredit": "sealight films",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/5/navplace",
@@ -325,6 +400,23 @@
                             "id": "https://example.org/storymap/president/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama holds a press conference at the G20 Summit in St. Petersburg, Russia. September 6, 2013."
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The White House YouTube"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=nWPBJY8KDa8",
                                 "type": "Video"
@@ -348,8 +440,6 @@
                 "url": "http://gorod94.com/images/st-petersburg-sightseeing-08.jpg",
                 "color": "#cdbfe3"
             },
-            "storymap:mediaCaption": "President Obama holds a press conference at the G20 Summit in St. Petersburg, Russia. September 6, 2013.",
-            "storymap:mediaCredit": "The White House YouTube",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/6/navplace",
@@ -389,6 +479,23 @@
                             "id": "https://example.org/storymap/president/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama in Oval Office"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Flickr"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://farm4.static.flickr.com/3612/3684028152_69c7133162_b.jpg",
                                 "type": "Image",
@@ -409,8 +516,6 @@
                     "The President receives the Presidential Daily Briefing. The President and the Vice President meet with Secretary of Defense Hagel."
                 ]
             },
-            "storymap:mediaCaption": "President Obama in Oval Office",
-            "storymap:mediaCredit": "Flickr",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/7/navplace",
@@ -450,6 +555,23 @@
                             "id": "https://example.org/storymap/president/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President addresses the nation on Syria"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "martysoffice"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=WbIrm42zYTU",
                                 "type": "Video"
@@ -469,8 +591,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President meets with the Senate Democratic Caucus. The President meets with the Senate Republican Conference. The President delivers a statement on Syria."
                 ]
             },
-            "storymap:mediaCaption": "President addresses the nation on Syria",
-            "storymap:mediaCredit": "martysoffice",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/8/navplace",
@@ -510,6 +630,23 @@
                             "id": "https://example.org/storymap/president/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Moment of silence at the White House"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "John Parkinson"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://a.abcnews.com/images/Politics/GTY_obama_michelle_biden_pentagon_tk_130911_16x9_992.jpg",
                                 "type": "Image",
@@ -530,8 +667,6 @@
                     "The President, The Vice President, The First Lady, Dr. Jill Biden and White House staff observe a moment of silence to mark the 12th anniversary of the 9/11 attacks. The President participates in a service project. The President attends September 11th Observance Ceremony."
                 ]
             },
-            "storymap:mediaCaption": "Moment of silence at the White House",
-            "storymap:mediaCredit": "John Parkinson",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/9/navplace",
@@ -571,6 +706,23 @@
                             "id": "https://example.org/storymap/president/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Cabinet meeting"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "talkingpointsmemo.com"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://a5.img.talkingpointsmemo.com/image/upload/c_fill,fl_keep_iptc,g_faces,h_365,w_652/wfa0yzjmz8yursllh1da.jpg",
                                 "type": "Image",
@@ -591,8 +743,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President holds a Cabinet meeting; the Vice President also attends. The President and the Vice President meet for lunch."
                 ]
             },
-            "storymap:mediaCaption": "Cabinet meeting",
-            "storymap:mediaCredit": "talkingpointsmemo.com",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/10/navplace",
@@ -632,6 +782,23 @@
                             "id": "https://example.org/storymap/president/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama and the Amir of Kuwait "
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The White House YouTube"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=MVSfAWUwAzc",
                                 "type": "Video"
@@ -651,8 +818,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President holds a bilateral meeting with the Amir of Kuwait, His Highness Shaykh Sabah Al-Ahmad Al-Jaber Al Sabah and the Vice President attends. The President and the Vice President meet with Labor Leaders."
                 ]
             },
-            "storymap:mediaCaption": "President Obama and the Amir of Kuwait ",
-            "storymap:mediaCredit": "The White House YouTube",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/11/navplace",
@@ -692,6 +857,23 @@
                             "id": "https://example.org/storymap/president/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama marks the anniversary of the financial crisis"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The White House YouTube"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=sP_DdESn7AQ",
                                 "type": "Video"
@@ -711,8 +893,6 @@
                     "The President receives the Presidential Daily Briefing. The President meets with senior advisors. The President delivers remarks to mark the five-year anniversary of the financial crisis."
                 ]
             },
-            "storymap:mediaCaption": "President Obama marks the anniversary of the financial crisis",
-            "storymap:mediaCredit": "The White House YouTube",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/12/navplace",
@@ -752,6 +932,23 @@
                             "id": "https://example.org/storymap/president/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President and Vice President having lunch"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The White House"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.whitehouse.gov/sites/default/files/imagecache/gallery_img_embed_blog/image/image_file/7592298730_d82d6e750d_b.jpg?itok=Tqwv8OaX",
                                 "type": "Image",
@@ -772,8 +969,6 @@
                     "The President and the Vice President receive the Presidential Daily Briefing. The President and the Vice President meet for lunch. The President participates in an Ambassador Credentialing Ceremony. The President and the Vice President meet with Secretary of Defense."
                 ]
             },
-            "storymap:mediaCaption": "President and Vice President having lunch",
-            "storymap:mediaCredit": "The White House",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/13/navplace",
@@ -813,6 +1008,23 @@
                             "id": "https://example.org/storymap/president/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "President Obama Speaks to the Business Roundtable "
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "The White House YouTube"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=rkM32oQfHlk",
                                 "type": "Video"
@@ -832,8 +1044,6 @@
                     " The President receives the Presidential Daily Briefing. The President delivers remarks to members of the Business Roundtable and answer questions. The President and the Vice President meet with Secretary of the Treasury Lew. The President and the Vice President meet with Secretary of State Kerry."
                 ]
             },
-            "storymap:mediaCaption": "President Obama Speaks to the Business Roundtable ",
-            "storymap:mediaCredit": "The White House YouTube",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/14/navplace",
@@ -873,6 +1083,23 @@
                             "id": "https://example.org/storymap/president/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "The Oval Office"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Vanity Fair"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.vanityfair.com/politics/features/2010/09/oval-office-redesigns-201009/_jcr_content/par/cn_contentwell/par-main/cn_slideshow/item0.size.0.0.oval-office-01.jpg",
                                 "type": "Image",
@@ -893,8 +1120,6 @@
                     "The President and Vice President receive the Presidential Daily Briefing. The President delivers remarks at a meeting of his Export Council. The President meets with senior advisors. The President attends a DNC event."
                 ]
             },
-            "storymap:mediaCaption": "The Oval Office",
-            "storymap:mediaCredit": "Vanity Fair",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/15/navplace",
@@ -934,6 +1159,23 @@
                             "id": "https://example.org/storymap/president/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "White House Twitter"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Twitter"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://twitter.com/WhiteHouse/status/381114492215513088",
                                 "type": "Text",
@@ -958,8 +1200,6 @@
                 "url": "http://s.wsj.net/public/resources/images/OB-YZ561_Obama2_E_20130920154351.jpg",
                 "color": "#cdbfe3"
             },
-            "storymap:mediaCaption": "White House Twitter",
-            "storymap:mediaCredit": "Twitter",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/16/navplace",
@@ -999,6 +1239,23 @@
                             "id": "https://example.org/storymap/president/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Chicago Tribune front page 1941"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Illinois State Society"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://illinoisstatesoceity.typepad.com/photos/19411950_illinois_state_s/pearl5.jpg",
                                 "type": "Image",
@@ -1019,8 +1276,6 @@
                     " The President and First Lady depart Joint Base Andrews. The President and First Lady arrive New York City. The President holds a bilateral meeting with President Goodluck Jonathan of the Federal Republic of Nigeria. The President meets with USUN Mission employees and their families. The President and First Lady attend a reception for visiting Heads of State and Government."
                 ]
             },
-            "storymap:mediaCaption": "Chicago Tribune front page 1941",
-            "storymap:mediaCredit": "Illinois State Society",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/17/navplace",
@@ -1060,6 +1315,23 @@
                             "id": "https://example.org/storymap/president/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Illinois RailRoads 1950s"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "WDTVLIVE42"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.youtube.com/watch?v=ElyERLwsV0c",
                                 "type": "Video"
@@ -1079,8 +1351,6 @@
                     "The President addresses the United Nations General Assembly; the First Lady also attends. The President participates in a conversation with former President Clinton about the future of health care reform. The President and the First Lady depart New York en route Andrews Air Force Base."
                 ]
             },
-            "storymap:mediaCaption": "Illinois RailRoads 1950s",
-            "storymap:mediaCredit": "WDTVLIVE42",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/18/navplace",
@@ -1120,6 +1390,23 @@
                             "id": "https://example.org/storymap/president/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Muddy Waters - Louisiana Blues"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Soundcloud"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://soundcloud.com/carolebphotographe/4-muddy-waters-louisiana-blues",
                                 "type": "Sound"
@@ -1139,8 +1426,6 @@
                     "The President holds a call with mayors, county officials, and state legislators on the Affordable Care Act. The President meets with Treasury Secretary Lew."
                 ]
             },
-            "storymap:mediaCaption": "Muddy Waters - Louisiana Blues",
-            "storymap:mediaCredit": "Soundcloud",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/19/navplace",
@@ -1180,6 +1465,23 @@
                             "id": "https://example.org/storymap/president/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Apollo 11 in 100 seconds"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Spacecraft Films"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://vimeo.com/62707231",
                                 "type": "Video"
@@ -1199,8 +1501,6 @@
                     "The President delivers remarks on the Affordable Care Act. The President attends a DNC event."
                 ]
             },
-            "storymap:mediaCaption": "Apollo 11 in 100 seconds",
-            "storymap:mediaCredit": "Spacecraft Films",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/20/navplace",
@@ -1240,6 +1540,23 @@
                             "id": "https://example.org/storymap/president/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "United States Territories"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikimedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/U.S._Territorial_Acquisitions.png/1280px-U.S._Territorial_Acquisitions.png",
                                 "type": "Image",
@@ -1260,8 +1577,6 @@
                     "The President holds a bilateral meeting with Prime Minister Singh of India; the Vice President attends. The President delivers a statement "
                 ]
             },
-            "storymap:mediaCaption": "United States Territories",
-            "storymap:mediaCredit": "wikimedia",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/21/navplace",
@@ -1301,6 +1616,23 @@
                             "id": "https://example.org/storymap/president/canvas/22/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Best of Hubble"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Coconut Science Lab"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.youtube.com/watch?v=z_ISPDTpJrk",
                                 "type": "Video"
@@ -1320,8 +1652,6 @@
                     "The President holds a bilateral meeting with Israeli Prime Minister Netanyahu; the Vice President also attends. The President holds a working lunch with Israeli Prime Minister Netanyahu; the Vice President also attends. The President delivers a statement. The President holds a Cabinet Meeting; the Vice President also attends."
                 ]
             },
-            "storymap:mediaCaption": "Best of Hubble",
-            "storymap:mediaCredit": "Coconut Science Lab",
             "storymap:date": "2013",
             "navPlace": {
                 "id": "https://example.org/storymap/president/canvas/22/navplace",

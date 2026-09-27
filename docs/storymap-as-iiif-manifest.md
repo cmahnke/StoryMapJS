@@ -90,9 +90,6 @@ what the fixtures reference. Content:
         "georeferencedLayers": "storymap:georeferencedLayers",
         "type": { "@id": "storymap:type", "@type": "@id" },
         "background": "storymap:background",
-        "mediaCaption": "storymap:mediaCaption",
-        "mediaCredit": "storymap:mediaCredit",
-        "mediaAlt": "storymap:mediaAlt",
         "mediaSrcset": "storymap:mediaSrcset",
         "mediaSizes": "storymap:mediaSizes",
         "imageRegion": "storymap:imageRegion",
@@ -123,23 +120,20 @@ Each slide becomes one Canvas in `items` order. Canvas ids are
 (`<canvas-id>/annotationpage/1`) holding the slide's painted media
 (`<canvas-id>/annotation/1`, `motivation: "painting"`, `target: <canvas-id>`).
 
-| IIIF                    | StoryMap                | Notes                                                                                    |
-| ----------------------- | ----------------------- | ---------------------------------------------------------------------------------------- |
-| `id`, `type`            | —                       | `"Canvas"`                                                                               |
-| `label`                 | `slide.text.headline`   | Language map `{"none": [headline]}`; omitted when the headline is empty                  |
-| `summary`               | `slide.text.text`       | Language map; the slide body text (may contain HTML)                                     |
-| `height`, `width`       | —                       | Nominal `1080 × 1080` for non-image slides; actual image dimensions for image-map slides |
-| `items`                 | `slide.media`           | AnnotationPage with the painting annotation, see below                                   |
-| `storymap:type`         | `slide.type`            | `"overview"` marks the map overview slide                                                |
-| `storymap:background`   | `slide.background`      | `{url, color}` — only present keys                                                       |
-| `storymap:mediaCaption` | `slide.media.caption`   |                                                                                          |
-| `storymap:mediaCredit`  | `slide.media.credit`    |                                                                                          |
-| `storymap:mediaAlt`     | `slide.media.alt`       | Accessible image description (falls back to the caption when rendering)                  |
-| `storymap:mediaSrcset`  | `slide.media.srcset`    | Responsive image candidates, passed through to the `img` element                         |
-| `storymap:mediaSizes`   | `slide.media.sizes`     | The `sizes` companion of `mediaSrcset`                                                   |
-| `storymap:imageRegion`  | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides      |
-| `storymap:date`         | `slide.date`            | String or object, verbatim                                                               |
-| `navPlace`              | `slide.location`        | See below                                                                                |
+| IIIF                   | StoryMap                | Notes                                                                                                        |
+| ---------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `id`, `type`           | —                       | `"Canvas"`                                                                                                   |
+| `label`                | `slide.text.headline`   | Language map `{"none": [headline]}`; omitted when the headline is empty                                      |
+| `summary`              | `slide.text.text`       | Language map; the slide body text (may contain HTML)                                                         |
+| `height`, `width`      | —                       | Nominal `1080 × 1080` for non-image slides; actual image dimensions for image-map slides                     |
+| `items`                | `slide.media`           | AnnotationPage with the painting annotation, see below — which also carries the caption, credit and alt text |
+| `storymap:type`        | `slide.type`            | `"overview"` marks the map overview slide                                                                    |
+| `storymap:background`  | `slide.background`      | `{url, color}` — only present keys                                                                           |
+| `storymap:mediaSrcset` | `slide.media.srcset`    | Responsive image candidates, passed through to the `img` element                                             |
+| `storymap:mediaSizes`  | `slide.media.sizes`     | The `sizes` companion of `mediaSrcset`                                                                       |
+| `storymap:imageRegion` | `slide.location.region` | `[x, y, w, h]` image pixels (IIIF xywh convention); image stops on image-map slides                          |
+| `storymap:date`        | `slide.date`            | String or object, verbatim                                                                                   |
+| `navPlace`             | `slide.location`        | See below                                                                                                    |
 
 ## Locations via navPlace
 
@@ -278,8 +272,11 @@ properties):
 
 Canvas objects are open for extension terms, so slide-specific StoryMap data is
 carried directly on the Canvas: `storymap:type`, `storymap:background`,
-`storymap:mediaCaption`, `storymap:mediaCredit`, `storymap:date` (see the
-Canvas table above).
+`storymap:date` (see the Canvas table above). The media caption, credit and alt
+text are **not** terms any more: they are the painting annotation's own `label`,
+`requiredStatement` and `accessibilitySummary`, which is where Presentation 3
+defines them. A manifest written against the old terms still loads — the strings
+are simply no longer read.
 
 Readers must use the prefixed term for the slide type (`storymap:type`): the
 bare `type` key of a Canvas is the IIIF class type (`"Canvas"`) and can never
@@ -513,13 +510,16 @@ photo, and a slide with a YouTube video — full manifest:
                                 "type": "Image",
                                 "format": "image/jpeg"
                             },
-                            "target": "https://example.org/storymap/storm/canvas/2"
+                            "target": "https://example.org/storymap/storm/canvas/2",
+                            "label": "Landfall",
+                            "requiredStatement": {
+                                "label": { "none": ["Credit"] },
+                                "value": { "none": ["Weather Service"] }
+                            }
                         }
                     ]
                 }
             ],
-            "storymap:mediaCaption": "Landfall",
-            "storymap:mediaCredit": "Weather Service",
             "storymap:date": "Sep 2",
             "navPlace": {
                 "id": "https://example.org/storymap/storm/canvas/2/navplace",
@@ -553,12 +553,15 @@ photo, and a slide with a YouTube video — full manifest:
                                 "id": "https://www.youtube.com/watch?v=example",
                                 "type": "Video"
                             },
-                            "target": "https://example.org/storymap/storm/canvas/3"
+                            "target": "https://example.org/storymap/storm/canvas/3",
+                            "requiredStatement": {
+                                "label": { "none": ["Credit"] },
+                                "value": { "none": ["News"] }
+                            }
                         }
                     ]
                 }
             ],
-            "storymap:mediaCredit": "News",
             "storymap:date": "Sep 3",
             "navPlace": {
                 "id": "https://example.org/storymap/storm/canvas/3/navplace",
@@ -637,9 +640,9 @@ photo, and a slide with a YouTube video — full manifest:
 | `media.url` (audio service)    | Annotation body `{type: "Sound"}`                          |
 | `media.url` (web page)         | Annotation body `{type: "Text", format: "text/html"}`      |
 | `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`        |
-| `media.caption`                | Canvas `storymap:mediaCaption`                             |
-| `media.credit`                 | Canvas `storymap:mediaCredit`                              |
-| `media.alt`                    | Canvas `storymap:mediaAlt`                                 |
+| `media.caption`                | Painting annotation `label`                                |
+| `media.credit`                 | Painting annotation `requiredStatement` (`{label, value}`) |
+| `media.alt`                    | Painting annotation `accessibilitySummary`                 |
 | `media.srcset`                 | Canvas `storymap:mediaSrcset`                              |
 | `media.sizes`                  | Canvas `storymap:mediaSizes`                               |
 | `location.region`              | Canvas `storymap:imageRegion` `[x, y, w, h]` (xywh)        |

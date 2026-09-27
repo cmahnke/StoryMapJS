@@ -478,12 +478,13 @@ describe("manifestToStorymapData with annotation stops", () => {
         expect(data.slides[0].media?.credit).toBe("A credit");
     });
 
-    it("still lets an extension term win over the standard body field", () => {
+    it("ignores a mediaCaption term left over from before §2.7", () => {
         const manifest = manifestWith([]);
         const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
             string,
             unknown
         >;
+        // a manifest written before the term was dropped still carries it
         canvas["storymap:mediaCaption"] = "Term caption";
         const pages = canvas.items as Record<string, unknown>[];
         const painting = (pages[0].items as Record<string, unknown>[])[0];
@@ -492,7 +493,28 @@ describe("manifestToStorymapData with annotation stops", () => {
             label: { none: ["Body caption"] },
         };
         const data = manifestToStorymapData(manifest);
-        // dropping the terms and inverting this precedence is interop §2
-        expect(data.slides[0].media?.caption).toBe("Term caption");
+        // The term is no longer read at all — not even as a fallback — so the
+        // standard property is the only source. A manifest that relied on the
+        // term keeps loading, it just loses that string.
+        expect(data.slides[0].media?.caption).toBe("Body caption");
+    });
+
+    it("prefers the annotation's own label over the body's", () => {
+        // P3 puts label on the Annotation; the body is a fallback for
+        // producers that put it there
+        const manifest = manifestWith([]);
+        const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        const pages = canvas.items as Record<string, unknown>[];
+        const painting = (pages[0].items as Record<string, unknown>[])[0];
+        painting.label = { none: ["Annotation caption"] };
+        painting.body = {
+            ...(painting.body as Record<string, unknown>),
+            label: { none: ["Body caption"] },
+        };
+        const data = manifestToStorymapData(manifest);
+        expect(data.slides[0].media?.caption).toBe("Annotation caption");
     });
 });

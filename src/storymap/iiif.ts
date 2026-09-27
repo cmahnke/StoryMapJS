@@ -474,6 +474,17 @@ function readBodyCredit(body: unknown): string | null {
     return null;
 }
 
+/**
+ * Credit from the painting annotation's own `requiredStatement`, which is
+ * where P3 defines it and where our converter now writes it (§2.7). The
+ * `label` is kept, as everywhere else.
+ */
+function readAnnotationCredit(annotation: Record<string, unknown>): string | null {
+    if (annotation.requiredStatement === undefined) return null;
+    const statement = formatAttribution(readRequiredStatement(annotation.requiredStatement));
+    return statement === "" ? null : statement;
+}
+
 /** A `TextualBody` carrying WebVTT is the closest standard spelling of a
  *  subtitle track, so accept it alongside `media.subtitles`. */
 function readBodySubtitles(body: unknown): string | null {
@@ -532,9 +543,18 @@ function readPainting(
                 region: readSelector(annotationRecord.target, width, height).region,
                 type: asString(body.type),
                 format: asString(body.format),
-                label: flattenLanguageMap(body.label) || null,
-                accessibilitySummary: flattenLanguageMap(body.accessibilitySummary) || null,
-                credit: readBodyCredit(body),
+                // P3 puts label / requiredStatement / accessibilitySummary on
+                // the Annotation; some producers put them on the body, so the
+                // body is still consulted as a fallback (§2.7)
+                label:
+                    flattenLanguageMap(annotationRecord.label) ||
+                    flattenLanguageMap(body.label) ||
+                    null,
+                accessibilitySummary:
+                    flattenLanguageMap(annotationRecord.accessibilitySummary) ||
+                    flattenLanguageMap(body.accessibilitySummary) ||
+                    null,
+                credit: readAnnotationCredit(annotationRecord) ?? readBodyCredit(body),
                 thumbnail: asString(asRecord(body.thumbnail)?.id) ?? null,
                 duration: asNumber(body.duration),
                 start: asNumber(body.start),
@@ -658,15 +678,14 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
         if (text !== "") slide.text.text = text;
     }
 
-    // media: painting annotation body plus the caption/credit/alt/srcset/sizes
-    // extension terms. The extension terms keep winning for now; the
-    // standard properties are read as fallbacks. Dropping the terms and
-    // inverting the precedence is docs/plans/iiif-interop.md §2, which is a
-    // separate, breaking change.
+    // media: the painting annotation's body, with its label /
+    // requiredStatement / accessibilitySummary as caption, credit and alt
+    // text (§2.7 — the `mediaCaption`/`mediaCredit`/`mediaAlt` canvas terms are
+    // gone). srcset/sizes remain terms: IIIF has no vocabulary for either.
     const painting = readPainting(record, asNumber(record.width), asNumber(record.height));
-    const caption = asString(readTerm(record, "mediaCaption")) ?? painting?.label ?? null;
-    const credit = asString(readTerm(record, "mediaCredit")) ?? painting?.credit ?? null;
-    const alt = asString(readTerm(record, "mediaAlt")) ?? painting?.accessibilitySummary ?? null;
+    const caption = painting?.label ?? null;
+    const credit = painting?.credit ?? null;
+    const alt = painting?.accessibilitySummary ?? null;
     const srcset = asString(readTerm(record, "mediaSrcset"));
     const sizes = asString(readTerm(record, "mediaSizes"));
     if (
@@ -806,15 +825,19 @@ function readAnnotationStop(
             if (media === null) {
                 const url = asString(body.id);
                 if (url !== null) {
+                    // Same precedence as readPainting: the annotation's own
+                    // P3 properties first, the body's as a fallback (§2.7)
+                    const caption =
+                        flattenLanguageMap(record.label) || flattenLanguageMap(body.label);
+                    const credit = readAnnotationCredit(record) ?? readBodyCredit(body);
+                    const alt =
+                        flattenLanguageMap(record.accessibilitySummary) ||
+                        flattenLanguageMap(body.accessibilitySummary);
                     media = {
                         url,
-                        ...(flattenLanguageMap(body.label) !== ""
-                            ? { caption: flattenLanguageMap(body.label) }
-                            : {}),
-                        ...(readBodyCredit(body) !== null ? { credit: readBodyCredit(body) } : {}),
-                        ...(flattenLanguageMap(body.accessibilitySummary) !== ""
-                            ? { alt: flattenLanguageMap(body.accessibilitySummary) }
-                            : {}),
+                        ...(caption !== "" ? { caption } : {}),
+                        ...(credit !== null ? { credit } : {}),
+                        ...(alt !== "" ? { alt } : {}),
                         ...(asString(asRecord(body.thumbnail)?.id) !== null
                             ? { thumb: asString(asRecord(body.thumbnail)?.id) as string }
                             : {}),

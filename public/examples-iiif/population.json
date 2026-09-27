@@ -40,6 +40,23 @@
                             "id": "https://example.org/storymap/population/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Mean US_Mean_Center_of_Population_1790-2010"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/US_Mean_Center_of_Population_1790-2010.PNG/800px-US_Mean_Center_of_Population_1790-2010.PNG",
                                 "type": "Image",
@@ -61,8 +78,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "Mean US_Mean_Center_of_Population_1790-2010",
-            "storymap:mediaCredit": "wikipedia",
             "storymap:date": "1790-2010",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/1/navplace",
@@ -101,6 +116,23 @@
                             "id": "https://example.org/storymap/population/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "1790 Map of the US Census"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "photobucket"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Population_of_the_United_States%2C_excluding_Indians_not_taxed-_1790_to_1820._10._Distribution_in_1790._11._Distribution_in_1800._%28IA_dr_population-of-the-united-states-excluding-indians-not-taxed-1790-to-1820-1873003%29.jpg/960px-thumbnail.jpg",
                                 "type": "Image",
@@ -121,8 +153,6 @@
                     "A look at the US during this first Census data collection.<br></br><span class='vco-note'>Map (left) is an example of a URL to an image hosted on the web.</span>"
                 ]
             },
-            "storymap:mediaCaption": "1790 Map of the US Census",
-            "storymap:mediaCredit": "photobucket",
             "storymap:date": "1790",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/2/navplace",
@@ -161,6 +191,23 @@
                             "id": "https://example.org/storymap/population/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Thomas Jefferson Twitter account"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Twitter"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://twitter.com/ThomasJefferson/status/265523460720168960",
                                 "type": "Text",
@@ -181,8 +228,6 @@
                     "In 1800, Thomas Jefferson was elected as the President of the United States, not too far from Howard County Maryland the new center of US population. He of course did not have a Twitter account, but this is fun.<br></br><span class='vco-note'>You can embed a tweet into your StoryMapJS using the URL to the tweet.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Thomas Jefferson Twitter account",
-            "storymap:mediaCredit": "Twitter",
             "storymap:date": "1800",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/3/navplace",
@@ -221,6 +266,23 @@
                             "id": "https://example.org/storymap/population/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "1810 Map of the US"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "worldmapsonline"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/United_States_1810-04-1810-10.png/960px-United_States_1810-04-1810-10.png",
                                 "type": "Image",
@@ -241,8 +303,6 @@
                     "The population moved 40 miles northwest of Washington, DC. The US also acquired new territory west of the original 13 states in 1803 through the Louisiana Purchase from France.<br></br><span class='vco-note'>The headline and location name to the previous and next slide (left and right), show up under the navigation arrows.</span>"
                 ]
             },
-            "storymap:mediaCaption": "1810 Map of the US",
-            "storymap:mediaCredit": "worldmapsonline",
             "storymap:date": "1810",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/4/navplace",
@@ -281,6 +341,23 @@
                             "id": "https://example.org/storymap/population/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "1820 Census Record"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "David H. Burr, 1839 (Library of Congress)"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/Map_of_the_United_States_With_The_Recent_Counties%2C_Cities%2C_Villages_and_Internal_Improvements_in_the_Western_States._By_J.L._%28IA_dr_map-of-the-united-states-with-the-recent-counties-cities-villages-and-int-5463000%29.jpg/960px-thumbnail.jpg",
                                 "type": "Image",
@@ -301,8 +378,6 @@
                     "The mean population has moved into what is now West Virginia. <br></br><span class='vco-note'>This example of an 1820 Census record pulled from Flickr gives an example of how the Census was conducted by hand.</span>"
                 ]
             },
-            "storymap:mediaCaption": "1820 Census Record",
-            "storymap:mediaCredit": "David H. Burr, 1839 (Library of Congress)",
             "storymap:date": "1820",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/5/navplace",
@@ -341,6 +416,23 @@
                             "id": "https://example.org/storymap/population/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Map of Virginia"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Yale Library"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Virginia_Constitutional_Convention_1829%E2%80%931830_District_Map.png/960px-Virginia_Constitutional_Convention_1829%E2%80%931830_District_Map.png",
                                 "type": "Image",
@@ -361,8 +453,6 @@
                     "A cool map showing how West Virginia was once part of Virginia. It is the only state to form by seceding from a Confederate state, it did so in 1863 and was almost named the State of Kanawha."
                 ]
             },
-            "storymap:mediaCaption": "Map of Virginia",
-            "storymap:mediaCredit": "Yale Library",
             "storymap:date": "1830",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/6/navplace",
@@ -401,6 +491,23 @@
                             "id": "https://example.org/storymap/population/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Crash Course on the Mexican American War"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "crashcourse"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=tkdF8pOFUfI",
                                 "type": "Video"
@@ -420,8 +527,6 @@
                     "The mean population has moved into Upshur County, Virginia (now W. Virginia). By the mid 1840s the US was fighting the Mexican American War with one of the results being the annexation of Texas. <br></br><span class='vco-note'>You can add a YouTube URL like this Crash Course on the Mexican American War.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Crash Course on the Mexican American War",
-            "storymap:mediaCredit": "crashcourse",
             "storymap:date": "1840",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/7/navplace",
@@ -460,6 +565,23 @@
                             "id": "https://example.org/storymap/population/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Black History Month"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Ethan Embry"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Uncle_Tom%27s_Cabin_-_Eva_and_Tom.jpg",
                                 "type": "Image",
@@ -480,8 +602,6 @@
                     "The mean is in Wirt County in what is now West Virginia. In 1852, Harriet Beecher Stowe's 'Uncle Tom's Cabin' was published, galvanizing the abolitionist movement.<br></br><span class='vco-note'>Illustration from Uncle Tom's Cabin (1871 edition), Wikimedia Commons.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Black History Month",
-            "storymap:mediaCredit": "Ethan Embry",
             "storymap:date": "1850",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/8/navplace",
@@ -520,6 +640,23 @@
                             "id": "https://example.org/storymap/population/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "1860 Abraham Lincoln elected President"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://en.wikipedia.org/wiki/Abraham_Lincoln",
                                 "type": "Text",
@@ -540,8 +677,6 @@
                     "Abraham Lincoln is elected as the 16th President of the U.S. <br></br><span class='vco-note'>This excerpt is embedded from Wikipedia</span>."
                 ]
             },
-            "storymap:mediaCaption": "1860 Abraham Lincoln elected President",
-            "storymap:mediaCredit": "wikipedia",
             "storymap:date": "1860",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/9/navplace",
@@ -580,6 +715,23 @@
                             "id": "https://example.org/storymap/population/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "41st & 42nd Congress newly elected"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "examiner"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/House_of_Representatives%2C_thirty-eighth_Congress_-_1864-%2765_LCCN2014646324.jpg/960px-House_of_Representatives%2C_thirty-eighth_Congress_-_1864-%2765_LCCN2014646324.jpg",
                                 "type": "Image",
@@ -600,8 +752,6 @@
                     "This census was the first to record the names and other personal information of all African-Americans, including those who were formerly enslaved. In researching your African-American ancestors, moving backward from the present, the 1870 federal census may be the last census in which you are able to identify these ancestors by name. The 1870 census often even serves as a powerful tool in identifying former slave owners, a necessary step for anyone desiring to reclaim the heritage of their enslaved ancestors."
                 ]
             },
-            "storymap:mediaCaption": "41st & 42nd Congress newly elected",
-            "storymap:mediaCredit": "examiner",
             "storymap:date": "1870",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/10/navplace",
@@ -640,6 +790,23 @@
                             "id": "https://example.org/storymap/population/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Frames Louis Le Prince's record of Leeds Bridge"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Huntley Film Archives"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.youtube.com/watch?v=C-nTpGMMVjY",
                                 "type": "Video"
@@ -659,8 +826,6 @@
                     "The mean is in Boone County, Kentucky, 8 miles west by south of Cincinnati, OH. Here are some frames from film pioneer Louis Le Prince's record of Leeds Bridge and horse traffic made as a series of glass plates in 1889 (some sources say paper). The first film ever made.<br></br><span class='vco-note'>Embed videos from YouTube.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Frames Louis Le Prince's record of Leeds Bridge",
-            "storymap:mediaCredit": "Huntley Film Archives",
             "storymap:date": "1880",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/11/navplace",
@@ -699,6 +864,23 @@
                             "id": "https://example.org/storymap/population/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Minute-by-minute coverage of the Columbus, Indiana, plane crash"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Ebony Shamberger"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Sanborn_Fire_Insurance_Map_from_Columbus%2C_Bartholomew_County%2C_Indiana._LOC_sanborn02300_002-1.jpg/960px-Sanborn_Fire_Insurance_Map_from_Columbus%2C_Bartholomew_County%2C_Indiana._LOC_sanborn02300_002-1.jpg",
                                 "type": "Image",
@@ -719,8 +901,6 @@
                     "Mean population is now 20 miles east of Columbus, IN. On July 25, 2013, a plane crashed into a house in Columbus. <br></br><span class='vco-note'>Sanborn fire insurance map of Columbus, Indiana, Library of Congress.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Minute-by-minute coverage of the Columbus, Indiana, plane crash",
-            "storymap:mediaCredit": "Ebony Shamberger",
             "storymap:date": "1890",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/12/navplace",
@@ -759,6 +939,23 @@
                             "id": "https://example.org/storymap/population/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "In the sweet bye and bye"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Soundcloud"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://soundcloud.com/mister-click/harry-macdonough-in-the-sweet",
                                 "type": "Sound"
@@ -778,8 +975,6 @@
                     "The mean population is now 6 miles southeast of Columbus. Listen to 'In the sweet bye and bye' by Harry MacDonough. Original recording by Roger Harding released in 1898. Popular music from 1900-1910.<br></br><span class='vco-note'>Embed soundclips from Soundcloud.</span>"
                 ]
             },
-            "storymap:mediaCaption": "In the sweet bye and bye",
-            "storymap:mediaCredit": "Soundcloud",
             "storymap:date": "1900",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/13/navplace",
@@ -818,6 +1013,23 @@
                             "id": "https://example.org/storymap/population/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "1910 Center of the US Population"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/US-center-pop.jpg/471px-US-center-pop.jpg",
                                 "type": "Image",
@@ -838,8 +1050,6 @@
                     "The mean is now in the city of Bloomington. Which had the University of Indiana since 1820. In 1910 the population was 8,838 people. One hundred years later in 2010 the population was 80,405 people."
                 ]
             },
-            "storymap:mediaCaption": "1910 Center of the US Population",
-            "storymap:mediaCredit": "wikipedia",
             "storymap:date": "1910",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/14/navplace",
@@ -878,6 +1088,23 @@
                             "id": "https://example.org/storymap/population/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "An American in the Making"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Ned Thanhouser"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Photograph_of_Immigrants_on_a_Ferry_Boat_Near_Ellis_Island.png/960px-Photograph_of_Immigrants_on_a_Ferry_Boat_Near_Ellis_Island.png",
                                 "type": "Image",
@@ -898,8 +1125,6 @@
                     "An old film from the time showing Gary, Indiana, which is near Owen County where the population mean is in 1920. Director/Photographer: Carl Lewis Gregory, Locations: Ellis Island in New York Harbor; the Gary, Indiana works of the United States Steel Corporation. <br></br><span class='vco-note'>Immigrants on a ferry boat near Ellis Island, Wikimedia Commons.</span>"
                 ]
             },
-            "storymap:mediaCaption": "An American in the Making",
-            "storymap:mediaCredit": "Ned Thanhouser",
             "storymap:date": "1920",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/15/navplace",
@@ -938,6 +1163,23 @@
                             "id": "https://example.org/storymap/population/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Judy Garland 1930"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Daily Motion"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Judy_Garland_publicity_photo.png/960px-Judy_Garland_publicity_photo.png",
                                 "type": "Image",
@@ -958,8 +1200,6 @@
                     "Greene County, Indiana located 3 miles northeast of Linton. Judy Garland singing 'Bubbles' from 1930. <br></br><span class='vco-note'>Judy Garland publicity photo, Wikimedia Commons.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Judy Garland 1930",
-            "storymap:mediaCredit": "Daily Motion",
             "storymap:date": "1930",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/16/navplace",
@@ -998,6 +1238,23 @@
                             "id": "https://example.org/storymap/population/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Chicago Tribune front page 1941"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Illinois State Society"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/USS_SHAW_exploding_Pearl_Harbor_Nara_80-G-16871_2.jpg/960px-USS_SHAW_exploding_Pearl_Harbor_Nara_80-G-16871_2.jpg",
                                 "type": "Image",
@@ -1018,8 +1275,6 @@
                     "The mean population has moved to Sullivan County, Indiana, 2 miles southeast by east of Carlisle. Here is a newspaper from 1941, Chicago Tribune publisher Col. Robert McCormick had been opposed to the U.S. getting into a war with Japan, but once war was declared, the Tribune lines up solidly behind FDR's war efforts."
                 ]
             },
-            "storymap:mediaCaption": "Chicago Tribune front page 1941",
-            "storymap:mediaCredit": "Illinois State Society",
             "storymap:date": "1940",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/17/navplace",
@@ -1058,6 +1313,23 @@
                             "id": "https://example.org/storymap/population/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Illinois RailRoads 1950s"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "WDTVLIVE42"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.youtube.com/watch?v=ElyERLwsV0c",
                                 "type": "Video"
@@ -1077,8 +1349,6 @@
                     "Richland County, Illinois is the new mean center of the US. Here is an educational documentary from the time by the 31 members of the Illinois Association of Railroads. It examines the problems facing railroads in the 1950's such as competition from cars, trucks and planes, as well as the unfair tax burden faced by railroads at the time."
                 ]
             },
-            "storymap:mediaCaption": "Illinois RailRoads 1950s",
-            "storymap:mediaCredit": "WDTVLIVE42",
             "storymap:date": "1950",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/18/navplace",
@@ -1117,6 +1387,23 @@
                             "id": "https://example.org/storymap/population/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Muddy Waters - Louisiana Blues"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Soundcloud"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://soundcloud.com/carolebphotographe/4-muddy-waters-louisiana-blues",
                                 "type": "Sound"
@@ -1136,8 +1423,6 @@
                     "Clinton County, Illinois has become the new mean of the populatin as it moves west. This is the time period of Chicago Blues and Chess Records released the Best of Muddy Waters which included this song.<br></br><span class='vco-note'>Embed a Soundcloud track</span>"
                 ]
             },
-            "storymap:mediaCaption": "Muddy Waters - Louisiana Blues",
-            "storymap:mediaCredit": "Soundcloud",
             "storymap:date": "1960",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/19/navplace",
@@ -1176,6 +1461,23 @@
                             "id": "https://example.org/storymap/population/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Apollo 11 in 100 seconds"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Spacecraft Films"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Apollo_11_Launch2.jpg/960px-Apollo_11_Launch2.jpg",
                                 "type": "Image",
@@ -1196,8 +1498,6 @@
                     "St. Clair County, Illinois is the new population center. In 1969, the US not only went west, but landed on the moon! This photo shows the Apollo 11 launch (Wikimedia Commons)."
                 ]
             },
-            "storymap:mediaCaption": "Apollo 11 in 100 seconds",
-            "storymap:mediaCredit": "Spacecraft Films",
             "storymap:date": "1970",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/20/navplace",
@@ -1236,6 +1536,23 @@
                             "id": "https://example.org/storymap/population/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "United States Territories"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikimedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/U.S._Territorial_Acquisitions.png/1280px-U.S._Territorial_Acquisitions.png",
                                 "type": "Image",
@@ -1256,8 +1573,6 @@
                     "Jefferson County, Missouri a 1/4 mile west of DeSoto. This is the first year that the mean was outside and west of the territory of the original 13 states."
                 ]
             },
-            "storymap:mediaCaption": "United States Territories",
-            "storymap:mediaCredit": "wikimedia",
             "storymap:date": "1980",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/21/navplace",
@@ -1296,6 +1611,23 @@
                             "id": "https://example.org/storymap/population/canvas/22/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Best of Hubble"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Coconut Science Lab"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.youtube.com/watch?v=z_ISPDTpJrk",
                                 "type": "Video"
@@ -1315,8 +1647,6 @@
                     "The US mean moved west to Crawford County, Missouri, but the US again makes a leap into space, launching the Hubble telescope.<br></br><span class='vco-note'>YouTube video featuring images taken by Hubble space telescope.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Best of Hubble",
-            "storymap:mediaCredit": "Coconut Science Lab",
             "storymap:date": "1990",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/22/navplace",
@@ -1355,6 +1685,23 @@
                             "id": "https://example.org/storymap/population/canvas/23/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Valley Residents Prepare for Y2K"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "KGBT"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://www.youtube.com/watch?v=X_KoNZkf-2k",
                                 "type": "Video"
@@ -1374,8 +1721,6 @@
                     "Phelps County, Missouri is the new center of US population. Here's a good laugh and some good perspective, remember Y2K?<br></br><span class='vco-note'>YouTube video</span>"
                 ]
             },
-            "storymap:mediaCaption": "Valley Residents Prepare for Y2K",
-            "storymap:mediaCredit": "KGBT",
             "storymap:date": "2000",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/23/navplace",
@@ -1414,6 +1759,23 @@
                             "id": "https://example.org/storymap/population/canvas/24/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Stephen Colbert"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Twitter"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://twitter.com/StephenAtHome/status/16360461594",
                                 "type": "Text",
@@ -1434,8 +1796,6 @@
                     "The new center is Texas County, Missouri, which has nothing to do with Texas. In the past decade many things happened but a big one is the founding of Twitter in 2006. Here is the #1 most retweeted tweet from 2010.<br></br><span class='vco-note'>So you can finally embed tweets into StoryMapJS.</span>"
                 ]
             },
-            "storymap:mediaCaption": "Stephen Colbert",
-            "storymap:mediaCredit": "Twitter",
             "storymap:date": "2010",
             "navPlace": {
                 "id": "https://example.org/storymap/population/canvas/24/navplace",

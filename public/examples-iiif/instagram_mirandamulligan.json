@@ -40,6 +40,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://photos-a.ak.instagram.com/hphotos-ak-xpa1/10522238_811507668881440_970537186_a.jpg?instagramprofile"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -60,8 +72,7 @@
                     "<div class=\"vco-snapmap-instagram-text\"><span class=\"vco-snapmap-instagram-posts\">1007</span><span class=\"vco-snapmap-instagram-followed_by\">639</span><span class=\"vco-snapmap-instagram-follows\">315</span><span class=\"vco-snapmap-instagram-website\">http://twitter.com/jmm</span></div>"
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:mediaCredit": "Original: http://photos-a.ak.instagram.com/hphotos-ak-xpa1/10522238_811507668881440_970537186_a.jpg?instagramprofile"
+            "storymap:type": "overview"
         },
         {
             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/2",
@@ -77,6 +88,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10508007_689510424417873_1015501336_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -92,7 +115,6 @@
                     "<span class=\"vco-media-instagram-likes\">22</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10508007_689510424417873_1015501336_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -128,6 +150,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10514101_1508022582749704_28368454_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -143,7 +177,6 @@
                     "#leeloudallasthedog<span class=\"vco-media-instagram-likes\">23</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/10514101_1508022582749704_28368454_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -179,6 +212,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10508067_878178198877688_315074171_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -199,7 +244,6 @@
                     "Happy Fourth y'all<span class=\"vco-media-instagram-likes\">14</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10508067_878178198877688_315074171_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -235,6 +279,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488739_323950774448855_470767806_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -250,7 +306,6 @@
                     "<span class=\"vco-media-instagram-likes\">8</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10488739_323950774448855_470767806_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -286,6 +341,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926218_412146218927905_1250766222_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -301,7 +368,6 @@
                     "Is that @cmully34 or @mullimonster in the background?! #leeloudallasthedog<span class=\"vco-media-instagram-likes\">8</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/926218_412146218927905_1250766222_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -337,6 +403,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10514093_1443591972583628_1098068680_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -352,7 +430,6 @@
                     "#leeloudallasthedog is just a smidge cold after getting stuck in the rain<span class=\"vco-media-instagram-likes\">24</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10514093_1443591972583628_1098068680_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -388,6 +465,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10483416_263480513860841_2007831758_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -408,7 +497,6 @@
                     "Ya shoes are lookin’ extra red this a.m., lady.<span class=\"vco-media-instagram-likes\">17</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10483416_263480513860841_2007831758_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -444,6 +532,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/924435_309573859205457_1352906932_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -464,7 +564,6 @@
                     "lily pool<span class=\"vco-media-instagram-likes\">15</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/924435_309573859205457_1352906932_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -500,6 +599,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xaf1/t51.2885-15/10499298_410453862428707_962074942_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -520,7 +631,6 @@
                     "Morning<span class=\"vco-media-instagram-likes\">30</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xaf1/t51.2885-15/10499298_410453862428707_962074942_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -556,6 +666,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xaf1/t51.2885-15/10483540_715755615149706_905565463_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -576,7 +698,6 @@
                     "<span class=\"vco-media-instagram-likes\">17</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xaf1/t51.2885-15/10483540_715755615149706_905565463_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -612,6 +733,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10560925_294595430726124_1706110621_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -632,7 +765,6 @@
                     "Morning outtakes<span class=\"vco-media-instagram-likes\">19</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10560925_294595430726124_1706110621_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -668,6 +800,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10514114_716075895126425_365340248_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -688,7 +832,6 @@
                     "Short hike peak view<span class=\"vco-media-instagram-likes\">10</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10514114_716075895126425_365340248_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -724,6 +867,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10514035_553067088149362_851487293_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -744,7 +899,6 @@
                     "So sweet, borderline saccharine<span class=\"vco-media-instagram-likes\">25</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10514035_553067088149362_851487293_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -780,6 +934,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10561147_761889713861494_2003031265_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -800,7 +966,6 @@
                     "#karajessemendotime<span class=\"vco-media-instagram-likes\">9</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10561147_761889713861494_2003031265_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -836,6 +1001,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10507938_795075203860320_789793275_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -856,7 +1033,6 @@
                     "#karajessemendotime<span class=\"vco-media-instagram-likes\">6</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10507938_795075203860320_789793275_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -892,6 +1068,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10537273_545706215535825_1036617790_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -912,7 +1100,6 @@
                     "Hike action<span class=\"vco-media-instagram-likes\">19</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/t51.2885-15/10537273_545706215535825_1036617790_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -948,6 +1135,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10499040_1502063633339094_2032097703_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -968,7 +1167,6 @@
                     "Bye. See you.<span class=\"vco-media-instagram-likes\">11</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/10499040_1502063633339094_2032097703_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -1004,6 +1202,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10560982_1454058114845693_158419081_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1024,7 +1234,6 @@
                     "Cool accidental outtake<span class=\"vco-media-instagram-likes\">17</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfa1/t51.2885-15/10560982_1454058114845693_158419081_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -1060,6 +1269,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/l/t51.2885-15/10474949_320233988139934_637726084_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1080,7 +1301,6 @@
                     "<span class=\"vco-media-instagram-likes\">5</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/l/t51.2885-15/10474949_320233988139934_637726084_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1116,6 +1336,18 @@
                             "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10570057_334921373329526_1986809472_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1136,7 +1368,6 @@
                     "<span class=\"vco-media-instagram-likes\">21</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10570057_334921373329526_1986809472_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_mirandamulligan/canvas/21/navplace",
                 "type": "FeatureCollection",

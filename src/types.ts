@@ -41,6 +41,12 @@ export interface StorymapSlideMedia {
     url?: string | null;
     caption?: string | null;
     credit?: string | null;
+    /**
+     * Accessible description of the media, used as the image's `alt` when the
+     * media is an image. In IIIF this is the painting annotation's
+     * `accessibilitySummary`.
+     */
+    alt?: string | null;
     thumb?: string | null;
     mediatype?: MediaTypeMatch | null;
     /**

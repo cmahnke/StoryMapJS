@@ -414,12 +414,29 @@ slide background.
 
 ### 2.7 `mediaCaption` / `mediaCredit` / `mediaAlt` → body properties
 
-Extend `readPainting` (`:173`) and feed `media.caption`, `media.credit` and
-`media.alt` from the body; delete the three terms. Highest fixture volume in
-this plan (`mediaCredit` appears 297 times across the IIIF fixtures) but it is
-mechanical, since the converter already visits the body. Test: a body with
-`label` + `requiredStatement` + `accessibilitySummary` populates all three
-slide media fields.
+**Done** (commit 1). Extend `readPainting` and feed `media.caption`,
+`media.credit` and `media.alt` from the painting annotation; delete the three
+terms. Highest fixture volume in this plan (`mediaCredit` appears 297 times
+across the IIIF fixtures) but it is mechanical, since the converter already
+visits the body. Test: an annotation with `label` + `requiredStatement` +
+`accessibilitySummary` populates all three slide media fields.
+
+Two things came out of doing it against the official validator rather than from
+the spec text alone:
+
+- **The properties go on the `Annotation`, not on the body.** P3 defines
+  `label`, `requiredStatement` and `accessibilitySummary` on the Annotation.
+  The body is still read as a fallback, because real manifests put them there,
+  but the annotation wins. The validator accepted either; the annotation is the
+  conformant one.
+- **A credit is a _labelled_ statement.** P3's `requiredStatement` shape is
+  `{label, value}`, and the official validator rejects the array form. So a
+  credit round-trips as `Credit: <credit>` — the same inherent asymmetry as
+  §2.1's manifest-level attribution, and the round-trip test allows exactly
+  that one label.
+
+A manifest written against the old terms still loads; the three strings are
+simply no longer read, and the context no longer declares them.
 
 **This record is the shared contract, not just this commit's business.** The
 media-tours plan needs `body.type` to tell a `Sound` body from an `Image` or a

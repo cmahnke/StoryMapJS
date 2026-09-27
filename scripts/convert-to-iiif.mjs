@@ -295,6 +295,11 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
                         id: `${canvasId}/annotation/1`,
                         type: "Annotation",
                         motivation: "painting",
+                        // P3 defines label / requiredStatement /
+                        // accessibilitySummary on the Annotation, which is
+                        // where a caption, a credit and alt text belong for
+                        // the resource being painted (§2.7)
+                        ...buildAnnotationPresentation(slide),
                         body: buildBody(slide, isImageMap),
                         target: canvasId,
                     },
@@ -317,6 +322,32 @@ function buildCanvas(manifestId, index, slide, isImageMap) {
         canvas.navPlace = navPlace;
     }
     return canvas;
+}
+
+/**
+ * A slide's media caption, credit and alt text as the painting annotation's
+ * own P3 properties, replacing the `storymap:mediaCaption` /
+ * `mediaCredit` / `mediaAlt` canvas terms (§2.7).
+ *
+ * `requiredStatement` is a single `{label, value}` object in P3 — the official
+ * validator rejects the array form — so the credit becomes a labelled
+ * statement, and §2.1's reader turns it back into "Credit: …".
+ */
+function buildAnnotationPresentation(slide) {
+    const out = {};
+    if (present(slide.media?.caption)) {
+        out.label = languageMap(slide.media.caption);
+    }
+    if (present(slide.media?.credit)) {
+        out.requiredStatement = {
+            label: languageMap("Credit"),
+            value: languageMap(slide.media.credit),
+        };
+    }
+    if (present(slide.media?.alt)) {
+        out.accessibilitySummary = languageMap(slide.media.alt);
+    }
+    return out;
 }
 
 function buildBody(slide, isImageMap) {
@@ -368,15 +399,6 @@ function buildCanvasTerms(slide) {
         }
     } else if (present(slide.background)) {
         terms["storymap:background"] = { color: slide.background };
-    }
-    if (present(slide.media?.caption)) {
-        terms["storymap:mediaCaption"] = slide.media.caption;
-    }
-    if (present(slide.media?.credit)) {
-        terms["storymap:mediaCredit"] = slide.media.credit;
-    }
-    if (present(slide.media?.alt)) {
-        terms["storymap:mediaAlt"] = slide.media.alt;
     }
     if (present(slide.media?.srcset)) {
         terms["storymap:mediaSrcset"] = slide.media.srcset;

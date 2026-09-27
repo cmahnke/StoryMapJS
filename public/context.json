@@ -8,7 +8,10 @@
         "mapBackgroundColor": "storymap:mapBackgroundColor",
         "mapCenterOffset": "storymap:mapCenterOffset",
         "mapSubdomains": "storymap:mapSubdomains",
-        "iiifUrl": { "@id": "storymap:iiifUrl", "@type": "@id" },
+        "iiifUrl": {
+            "@id": "storymap:iiifUrl",
+            "@type": "@id"
+        },
         "fontCss": "storymap:fontCss",
         "callToAction": "storymap:callToAction",
         "callToActionText": "storymap:callToActionText",
@@ -31,11 +34,11 @@
         "keyboard": "storymap:keyboard",
         "overlays": "storymap:overlays",
         "georeferencedLayers": "storymap:georeferencedLayers",
-        "type": { "@id": "storymap:type", "@type": "@id" },
+        "type": {
+            "@id": "storymap:type",
+            "@type": "@id"
+        },
         "background": "storymap:background",
-        "mediaCaption": "storymap:mediaCaption",
-        "mediaCredit": "storymap:mediaCredit",
-        "mediaAlt": "storymap:mediaAlt",
         "mediaSrcset": "storymap:mediaSrcset",
         "mediaSizes": "storymap:mediaSizes",
         "imageRegion": "storymap:imageRegion",

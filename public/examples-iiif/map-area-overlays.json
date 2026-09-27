@@ -40,6 +40,16 @@
                             "id": "https://example.org/storymap/map-area-overlays/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "map_area, overlays, overview_extent, keyboard"
+                                ]
+                            },
+                            "accessibilitySummary": {
+                                "none": [
+                                    "A map of London with two stacked overlay layers"
+                                ]
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -61,8 +71,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "map_area, overlays, overview_extent, keyboard",
-            "storymap:mediaAlt": "A map of London with two stacked overlay layers",
             "storymap:date": "1890",
             "navPlace": {
                 "id": "https://example.org/storymap/map-area-overlays/canvas/1/navplace",

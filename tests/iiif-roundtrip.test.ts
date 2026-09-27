@@ -198,9 +198,28 @@ describe("manifest -> storymap round trip", () => {
                 if (!want?.url) continue;
                 const got = out.slides[i]?.media;
                 expect(got?.url, `${name}[${i}] media.url`).toBe(want.url);
-                if (want.caption) expect(got?.caption, `${name}[${i}] caption`).toBe(want.caption);
-                if (want.credit) expect(got?.credit, `${name}[${i}] credit`).toBe(want.credit);
-                if (want.alt) expect(got?.alt, `${name}[${i}] alt`).toBe(want.alt);
+                // Every string crosses a language map, and flattenLanguageMap
+                // trims, so leading/trailing whitespace is normalised away.
+                // A fixture caption that ends in a space comes back without it.
+                if (want.caption) {
+                    expect(got?.caption?.trim(), `${name}[${i}] caption`).toBe(
+                        String(want.caption).trim(),
+                    );
+                }
+                if (want.alt) {
+                    expect(got?.alt?.trim(), `${name}[${i}] alt`).toBe(String(want.alt).trim());
+                }
+                if (want.credit) {
+                    // A credit is written as a *labelled* `requiredStatement`,
+                    // because P3's shape is `{label, value}` and §2.1 keeps the
+                    // label. So the round trip is not the identity for this one
+                    // field: it comes back as "Credit: <credit>". The value
+                    // itself must still be intact.
+                    expect(got?.credit, `${name}[${i}] credit`).toBe(
+                        got?.credit === want.credit ? want.credit : `Credit: ${want.credit}`,
+                    );
+                    expect(got?.credit, `${name}[${i}] credit value`).toContain(want.credit);
+                }
                 checked++;
             }
         }
@@ -290,5 +309,23 @@ describe("context agreement", () => {
             (t) => !declared.has(t) || emitted.has(t),
         );
         expect(unused, "NOT_EXERCISED_BY_A_FIXTURE is stale").toEqual([]);
+    });
+
+    test("leaves no dropped term in any shipped manifest", () => {
+        // A term replaced by a standard property in docs/plans/iiif-interop.md
+        // §2 must be gone from the reader, the emitter, the context *and* every
+        // manifest we ship. The fixture-drift test already pins the generated
+        // ones to the converter; this is the independent check, and it also
+        // covers the hand-authored georeferenced manifests.
+        const DROPPED = ["storymap:mediaCaption", "storymap:mediaCredit", "storymap:mediaAlt"];
+        const offenders: string[] = [];
+        for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
+            if (!file.endsWith(".json")) continue;
+            const raw = readFileSync(join(process.cwd(), "public/examples-iiif", file), "utf8");
+            for (const term of DROPPED) {
+                if (raw.includes(`"${term}"`)) offenders.push(`${file} still carries ${term}`);
+            }
+        }
+        expect(offenders).toEqual([]);
     });
 });

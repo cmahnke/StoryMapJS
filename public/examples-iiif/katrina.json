@@ -40,6 +40,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hurricane Katrina"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "wikipedia"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://en.wikipedia.org/wiki/Hurricane_Katrina",
                                 "type": "Text",
@@ -61,8 +78,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "Hurricane Katrina",
-            "storymap:mediaCredit": "wikipedia",
             "storymap:date": "2013"
         },
         {
@@ -79,6 +94,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Twitter status update"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Twitter"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://twitter.com/seymourdfair/status/370893881640247296",
                                 "type": "Text",
@@ -102,8 +134,6 @@
             "storymap:background": {
                 "url": "http://www.uscg.mil/history/katrina/img/katrinaphoto1sm.jpg"
             },
-            "storymap:mediaCaption": "Twitter status update",
-            "storymap:mediaCredit": "Twitter",
             "storymap:date": "Aug 23",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/2/navplace",
@@ -142,6 +172,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hurricane Katrina First Landfall In S FL (Aug 25, 2005) "
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "cdcollura"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=Uu2cAFb7Odg",
                                 "type": "Video"
@@ -164,8 +211,6 @@
             "storymap:background": {
                 "url": "http://upload.wikimedia.org/wikipedia/commons/1/10/Hurricane_Katrina_8-26-05_1415_UTC.jpg"
             },
-            "storymap:mediaCaption": "Hurricane Katrina First Landfall In S FL (Aug 25, 2005) ",
-            "storymap:mediaCredit": "cdcollura",
             "storymap:date": "Aug 26",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/3/navplace",
@@ -204,6 +249,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hurricane Evacuation"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "recmod.com"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.recmod.com/hurricane/hurricane2005/katrina/neworleans/sept1-refugee-evacuationsofcitya.jpg",
                                 "type": "Image",
@@ -227,8 +289,6 @@
             "storymap:background": {
                 "url": "http://www.mississippiriverdelta.org/files/2011/10/katrina_goes12_big1.jpg"
             },
-            "storymap:mediaCaption": "Hurricane Evacuation",
-            "storymap:mediaCredit": "recmod.com",
             "storymap:date": "Aug 27",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/4/navplace",
@@ -267,6 +327,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hurricane Katrina Historic Storm Surge Video - Gulfport, Mississippi "
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Mike Theiss"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=-Kou0HBpX4A",
                                 "type": "Video"
@@ -289,8 +366,6 @@
             "storymap:background": {
                 "url": "http://blog.chron.com/sciguy/files/2012/08/Hurricane_Katrina_August_28_2005_NASA.jpg"
             },
-            "storymap:mediaCaption": "Hurricane Katrina Historic Storm Surge Video - Gulfport, Mississippi ",
-            "storymap:mediaCredit": "Mike Theiss",
             "storymap:date": "Aug 28",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/5/navplace",
@@ -329,6 +404,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hurricane Katrina making its second landfall in Louisiana, as seen by NWS New Orleans radar."
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "NOAA"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/9/97/Hurricane_Katrina_LA_landfall_radar.gif",
                                 "type": "Image",
@@ -349,8 +441,6 @@
                     "<ul><li>At 5:10 AM CDT, Hurricane Katrina made its second landfall as a strong Category 3 hurricane near Buras-Triumph, Louisiana, with sustained winds of more than 125 mph (205 km/h), although Category 4 winds may have briefly affected the area.</li><li>By 9:00 AM CDT, there was 6–8 feet of water in the Lower Ninth Ward. </li><li>By 11:00 AM CDT, there was approximately 10 feet of water in St. Bernard Parish. Many rooftops could not be seen here as they were submerged. </li><li>At 2:00 PM CDT, New Orleans officials confirmed a breach of the 17th Street Canal levee. There was also confirmation of breaches at two other canals. Governor Blanco ordered 68 school buses into New Orleans from surrounding parishes to begin evacuating any survivors that remained in the city.</li></ul> "
                 ]
             },
-            "storymap:mediaCaption": "Hurricane Katrina making its second landfall in Louisiana, as seen by NWS New Orleans radar.",
-            "storymap:mediaCredit": "NOAA",
             "storymap:date": "Aug 29",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/6/navplace",
@@ -389,6 +479,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hurricane Katrina aftermath"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Vimeo"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "https://vimeo.com/21821970",
                                 "type": "Video"
@@ -408,8 +515,6 @@
                     "<ul><li>At 12:00 PM CDT, Homeland Security Secretary Michael Chertoff became aware that the New Orleans levee breaches could not be plugged.</li><li> Governor Blanco ordered that all of New Orleans, including the Superdome, be evacuated due to the flooding of the city. She commandeered hundreds of buses from across Louisiana using her executive powers, and those buses eventually evacuated more than 15,000 people that were stranded in the city to the Superdome by Thursday, September 1. </li><li>USCG helicopters rescue 350 people off roof tops.</li></ul>"
                 ]
             },
-            "storymap:mediaCaption": "Hurricane Katrina aftermath",
-            "storymap:mediaCredit": "Vimeo",
             "storymap:date": "Aug 30",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/7/navplace",
@@ -448,6 +553,23 @@
                             "id": "https://example.org/storymap/katrina/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Overview of Katrina"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "weatherbug.com"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://api.ning.com/files/DgJl8IbalZiVjphWi2SfqoBhonpNNZNLZeTconOtqptv38c11mWYn38O5L6ZHErcbhygVcAoWr3lhYlYbPl1Pv24cAiBzLoq/wxwhyHurricaneKatrinaAugust23302005385X287X96.jpg",
                                 "type": "Image",
@@ -469,8 +591,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "Overview of Katrina",
-            "storymap:mediaCredit": "weatherbug.com",
             "storymap:date": "Aug 31",
             "navPlace": {
                 "id": "https://example.org/storymap/katrina/canvas/8/navplace",

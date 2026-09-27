@@ -40,6 +40,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Twain caricatured by Spy for Vanity Fair, 1908"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Vanity Fair"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Mark_Twain_Vanity_Fair_1908-05-13.jpeg/375px-Mark_Twain_Vanity_Fair_1908-05-13.jpeg",
                                 "type": "Image",
@@ -61,8 +78,6 @@
                 ]
             },
             "storymap:type": "overview",
-            "storymap:mediaCaption": "Twain caricatured by Spy for Vanity Fair, 1908",
-            "storymap:mediaCredit": "Vanity Fair",
             "storymap:date": "1835",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/1/navplace",
@@ -102,6 +117,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Mark Twain's birthplace, Florida, Missouri"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: https://twitter.com/MarkTwainQuote/status/441928360583643136"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -122,8 +154,6 @@
                     "Born in Florida, Missouri. Halley’s comet visible from earth."
                 ]
             },
-            "storymap:mediaCaption": "Mark Twain's birthplace, Florida, Missouri",
-            "storymap:mediaCredit": "Original: https://twitter.com/MarkTwainQuote/status/441928360583643136",
             "storymap:date": "1835",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/2/navplace",
@@ -163,6 +193,11 @@
                             "id": "https://example.org/storymap/marktwain/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Mark Twain's boyhood home in Hannibal, Missouri."
+                                ]
+                            },
                             "body": {
                                 "id": "http://instagram.com/p/lEPdm4J20m/",
                                 "type": "Text",
@@ -183,7 +218,6 @@
                     "Moves to Hannibal, Missouri, which later serves as the model town for Tom Sawyer and Huckleberry Finn."
                 ]
             },
-            "storymap:mediaCaption": "Mark Twain's boyhood home in Hannibal, Missouri.",
             "storymap:date": "1839",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/3/navplace",
@@ -223,6 +257,11 @@
                             "id": "https://example.org/storymap/marktwain/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Hannibal Gazette. Begins work as a journeyman printer with the Hannibal Gazette. Publishes first sketches."
+                                ]
+                            },
                             "body": {
                                 "id": "http://www.youtube.com/watch?v=C-nTpGMMVjY",
                                 "type": "Video"
@@ -232,7 +271,6 @@
                     ]
                 }
             ],
-            "storymap:mediaCaption": "Hannibal Gazette. Begins work as a journeyman printer with the Hannibal Gazette. Publishes first sketches.",
             "storymap:date": "1851",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/4/navplace",
@@ -271,6 +309,18 @@
                             "id": "https://example.org/storymap/marktwain/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: https://vine.co/v/bjHh0zHdgZT"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -291,7 +341,6 @@
                     "Visits St. Louis, New York, and Philadelphia as an itinerant printer."
                 ]
             },
-            "storymap:mediaCredit": "Original: https://vine.co/v/bjHh0zHdgZT",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -329,6 +378,11 @@
                             "id": "https://example.org/storymap/marktwain/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Mark Twain's desk when he was editor of the Territorial Enterprise. Mark Twain Territorial Enterprise Museum, Virginia City, NV."
+                                ]
+                            },
                             "body": {
                                 "id": "http://en.wikipedia.org/wiki/Mark_Twain",
                                 "type": "Text",
@@ -349,7 +403,6 @@
                     "Travels around Nevada and California. Takes job as reporter for the Virginia City Territorial Enterprise."
                 ]
             },
-            "storymap:mediaCaption": "Mark Twain's desk when he was editor of the Territorial Enterprise. Mark Twain Territorial Enterprise Museum, Virginia City, NV.",
             "storymap:date": "1862",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/6/navplace",
@@ -388,6 +441,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "something"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "ETC"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://2.bp.blogspot.com/-dxJbW0CG8Zs/TmkoMA5-cPI/AAAAAAAAAqw/fQpsz9GpFdo/s1600/voyage-dans-la-lune-1902-02-g.jpg",
                                 "type": "Image",
@@ -411,8 +481,6 @@
             "storymap:background": {
                 "color": "#000000"
             },
-            "storymap:mediaCaption": "something",
-            "storymap:mediaCredit": "ETC",
             "storymap:date": "1865",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/7/navplace",
@@ -451,6 +519,11 @@
                             "id": "https://example.org/storymap/marktwain/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Wreck of USS Hornet."
+                                ]
+                            },
                             "body": {
                                 "id": "http://photos.wikimapia.org/p/00/00/56/17/28_big.jpg",
                                 "type": "Image",
@@ -471,7 +544,6 @@
                     "Takes trip to Hawaii as correspondent of the Sacramento Alta Californian. Reports on shipwreck of the Hornet. Gives first public lecture."
                 ]
             },
-            "storymap:mediaCaption": "Wreck of USS Hornet.",
             "storymap:date": "1866",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/8/navplace",
@@ -568,6 +640,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "something"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "ETC"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://2.bp.blogspot.com/-dxJbW0CG8Zs/TmkoMA5-cPI/AAAAAAAAAqw/fQpsz9GpFdo/s1600/voyage-dans-la-lune-1902-02-g.jpg",
                                 "type": "Image",
@@ -591,8 +680,6 @@
             "storymap:background": {
                 "color": "#000000"
             },
-            "storymap:mediaCaption": "something",
-            "storymap:mediaCredit": "ETC",
             "storymap:date": "1868",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/10/navplace",
@@ -631,6 +718,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "something"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "ETC"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://2.bp.blogspot.com/-dxJbW0CG8Zs/TmkoMA5-cPI/AAAAAAAAAqw/fQpsz9GpFdo/s1600/voyage-dans-la-lune-1902-02-g.jpg",
                                 "type": "Image",
@@ -654,8 +758,6 @@
             "storymap:background": {
                 "color": "#000000"
             },
-            "storymap:mediaCaption": "something",
-            "storymap:mediaCredit": "ETC",
             "storymap:date": "1870",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/11/navplace",
@@ -693,6 +795,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "something"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "ETC"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://2.bp.blogspot.com/-dxJbW0CG8Zs/TmkoMA5-cPI/AAAAAAAAAqw/fQpsz9GpFdo/s1600/voyage-dans-la-lune-1902-02-g.jpg",
                                 "type": "Image",
@@ -716,8 +835,6 @@
             "storymap:background": {
                 "color": "#000000"
             },
-            "storymap:mediaCaption": "something",
-            "storymap:mediaCredit": "ETC",
             "storymap:date": "1872",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/12/navplace",
@@ -756,6 +873,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "something"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "ETC"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://2.bp.blogspot.com/-dxJbW0CG8Zs/TmkoMA5-cPI/AAAAAAAAAqw/fQpsz9GpFdo/s1600/voyage-dans-la-lune-1902-02-g.jpg",
                                 "type": "Image",
@@ -779,8 +913,6 @@
             "storymap:background": {
                 "color": "#000000"
             },
-            "storymap:mediaCaption": "something",
-            "storymap:mediaCredit": "ETC",
             "storymap:date": "1891",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/13/navplace",
@@ -818,6 +950,23 @@
                             "id": "https://example.org/storymap/marktwain/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "something"
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "ETC"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "id": "http://2.bp.blogspot.com/-dxJbW0CG8Zs/TmkoMA5-cPI/AAAAAAAAAqw/fQpsz9GpFdo/s1600/voyage-dans-la-lune-1902-02-g.jpg",
                                 "type": "Image",
@@ -841,8 +990,6 @@
             "storymap:background": {
                 "color": "#000000"
             },
-            "storymap:mediaCaption": "something",
-            "storymap:mediaCredit": "ETC",
             "storymap:date": "1891",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/14/navplace",
@@ -880,6 +1027,11 @@
                             "id": "https://example.org/storymap/marktwain/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "label": {
+                                "none": [
+                                    "Twains house, \"Stormfield\", in Redding, Connecticut (front view)"
+                                ]
+                            },
                             "body": {
                                 "id": "http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Mark_Twain%27s_house%2C_front_view._-_NARA_-_516527.tif/lossy-page1-800px-Mark_Twain%27s_house%2C_front_view._-_NARA_-_516527.tif.jpg",
                                 "type": "Image",
@@ -900,7 +1052,6 @@
                     "Moves into Stormfield in Redding, CT. Forms the Angelfish Club for young girls."
                 ]
             },
-            "storymap:mediaCaption": "Twains house, \"Stormfield\", in Redding, Connecticut (front view)",
             "storymap:date": "1891",
             "navPlace": {
                 "id": "https://example.org/storymap/marktwain/canvas/15/navplace",

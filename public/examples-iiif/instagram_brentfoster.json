@@ -40,6 +40,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/1/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://photos-g.ak.instagram.com/hphotos-ak-xpf1/10432049_297937443715230_1890922830_a.jpg?instagramprofile"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -55,8 +67,7 @@
                     "<span class=\"vco-snapmap-instagram\">Brent  Foster<small><a href=\"http://instagram.com/brentfoster\" target=\"_blank\"><span class=\"vco-icon-instagram\"></span> brentfoster</a></small></span>"
                 ]
             },
-            "storymap:type": "overview",
-            "storymap:mediaCredit": "Original: http://photos-g.ak.instagram.com/hphotos-ak-xpf1/10432049_297937443715230_1890922830_a.jpg?instagramprofile"
+            "storymap:type": "overview"
         },
         {
             "id": "https://example.org/storymap/instagram_brentfoster/canvas/2",
@@ -72,6 +83,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/2/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/outbound-distilleryimage4/t0.0-17/OBPTH/d6fee680103211e3b5f422000a9e5ad5_7.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -87,7 +110,6 @@
                     "Cohen attacking some pizza and veggies #vscocam #family #children #youngfoodie<span class='vco-media-instagram-likes'>15</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/outbound-distilleryimage4/t0.0-17/OBPTH/d6fee680103211e3b5f422000a9e5ad5_7.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/2/navplace",
                 "type": "FeatureCollection",
@@ -123,6 +145,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/3/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage9/t0.0-17/OBPTH/9658152210d511e393e222000a1fc7f0_7.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -138,7 +172,6 @@
                     "Daylia working hard on the mean streets of Wallaceburg. #youngentrepreneur #lemonaid<span class='vco-media-instagram-likes'>15</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage9/t0.0-17/OBPTH/9658152210d511e393e222000a1fc7f0_7.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/3/navplace",
                 "type": "FeatureCollection",
@@ -174,6 +207,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/4/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/outbound-distilleryimage5/t0.0-17/OBPTH/0200e00e141111e3993f22000a9e0af5_7.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -189,7 +234,6 @@
                     "Spaghetti night at the Fosters #dinnertime #yum<span class='vco-media-instagram-likes'>15</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/outbound-distilleryimage5/t0.0-17/OBPTH/0200e00e141111e3993f22000a9e0af5_7.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/4/navplace",
                 "type": "FeatureCollection",
@@ -225,6 +269,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/5/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/outbound-distilleryimage7/t0.0-17/OBPTH/78748f32149411e3bfd922000ae90db3_7.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -240,7 +296,6 @@
                     "Daylia's first day of grade one and Cohen's first day in the toddler room. #vscocam #firstdayofschool #school<span class='vco-media-instagram-likes'>15</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpf1/outbound-distilleryimage7/t0.0-17/OBPTH/78748f32149411e3bfd922000ae90db3_7.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/5/navplace",
                 "type": "FeatureCollection",
@@ -276,6 +331,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/6/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/outbound-distilleryimage7/t0.0-17/OBPTH/d64b1f9a14d011e3a19522000a9f126b_7.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -291,7 +358,6 @@
                     "Great afternoon of flying. #octocopter #aerialcinema #aerialphotography<span class='vco-media-instagram-likes'>15</span>"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/outbound-distilleryimage7/t0.0-17/OBPTH/d64b1f9a14d011e3a19522000a9f126b_7.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/6/navplace",
                 "type": "FeatureCollection",
@@ -327,6 +393,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/7/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage3/t0.0-17/OBPTH/abe85ee635de11e3a31b22000a1fbb63_8.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -342,7 +420,6 @@
                     "Thanksgiving with GG #thanksgiving #thankful"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage3/t0.0-17/OBPTH/abe85ee635de11e3a31b22000a1fbb63_8.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/7/navplace",
                 "type": "FeatureCollection",
@@ -378,6 +455,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/8/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/outbound-distilleryimage8/t0.0-17/OBPTH/2a25c6ce39a211e3847022000aeb0b98_8.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -393,7 +482,6 @@
                     "Best breakfast ever. Thanks @tammyfos"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/outbound-distilleryimage8/t0.0-17/OBPTH/2a25c6ce39a211e3847022000aeb0b98_8.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/8/navplace",
                 "type": "FeatureCollection",
@@ -429,6 +517,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/9/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1172349_244413202379818_1127794539_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -444,7 +544,6 @@
                     "Packing up for a week long trip in Newfoundland for Maclean's magazine. Now to figure out how to pack it. #kesslercrane #C100 #djiphantom #canon #timelapse #aerialcinema"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1172349_244413202379818_1127794539_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/9/navplace",
                 "type": "FeatureCollection",
@@ -480,6 +579,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/10/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1389552_180932892098335_1685886716_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -495,7 +606,6 @@
                     "My creepy family #halloween"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/1389552_180932892098335_1685886716_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/10/navplace",
                 "type": "FeatureCollection",
@@ -531,6 +641,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/11/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1209554_231642443668120_186288027_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -546,7 +668,6 @@
                     "Timelapse on Fogo Island. #timelapse #newfoundland #macleansmagazine #kesslercrane"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1209554_231642443668120_186288027_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/11/navplace",
                 "type": "FeatureCollection",
@@ -582,6 +703,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/12/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/outbound-distilleryimage7/t0.0-17/OBPTH/53238d606ce011e3ba8612765964d65f_8.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -597,7 +730,6 @@
                     "Cohen all dressed up for Christmas Eve with a new haircut. #family #xmas"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/outbound-distilleryimage7/t0.0-17/OBPTH/53238d606ce011e3ba8612765964d65f_8.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/12/navplace",
                 "type": "FeatureCollection",
@@ -633,6 +765,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/13/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage6/t0.0-17/OBPTH/d4d4da3e6e7111e380a30e9a0402a7de_8.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -648,7 +792,6 @@
                     "Cohen visiting grandpa Taylor's for Christmas. #hideout #cutekids #christmas"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/outbound-distilleryimage6/t0.0-17/OBPTH/d4d4da3e6e7111e380a30e9a0402a7de_8.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/13/navplace",
                 "type": "FeatureCollection",
@@ -684,6 +827,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/14/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage10/t0.0-17/OBPTH/5608807c702711e3ab4012f602fa8bc2_8.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -699,7 +854,6 @@
                     "Gerty joins in on the holiday celebrations. #bulldog #christmas #dogs"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage10/t0.0-17/OBPTH/5608807c702711e3ab4012f602fa8bc2_8.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/14/navplace",
                 "type": "FeatureCollection",
@@ -735,6 +889,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/15/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1516894_355407197937021_1596567017_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -750,7 +916,6 @@
                     "Bringing the airport back in after a very windy and chilly New Year's Day ice fishing experience with my dad. #fishing #icefishing #airboat"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1516894_355407197937021_1596567017_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/15/navplace",
                 "type": "FeatureCollection",
@@ -786,6 +951,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/16/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/1515823_1454260421460305_724042684_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -801,7 +978,6 @@
                     "Mojitos at the Hotel Nacional in Havana. #havana #cuba #yolo #travel"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/1515823_1454260421460305_724042684_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/16/navplace",
                 "type": "FeatureCollection",
@@ -837,6 +1013,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/17/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1527624_1412512122326078_148547489_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -852,7 +1040,6 @@
                     "The streets of old Havana. #cuba #travel #authenticacuba"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/1527624_1412512122326078_148547489_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/17/navplace",
                 "type": "FeatureCollection",
@@ -888,6 +1075,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/18/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/1169092_696345263729276_1380361903_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -903,7 +1102,6 @@
                     "Havana streets #travelphotography #instagramtravel #havana #travel #cuba"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfa1/t51.2885-15/1169092_696345263729276_1380361903_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/18/navplace",
                 "type": "FeatureCollection",
@@ -939,6 +1137,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/19/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1530649_1380194438909358_373922444_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -954,7 +1164,6 @@
                     "Doggie and puddle in Old Havana. #cubatravel #dogs #streetscene #cuba"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1530649_1380194438909358_373922444_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/19/navplace",
                 "type": "FeatureCollection",
@@ -990,6 +1199,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/20/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1527682_687116191308478_1910102745_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1005,7 +1226,6 @@
                     "Dominos in Cuba #travel #streetphotography #cuba"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1527682_687116191308478_1910102745_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/20/navplace",
                 "type": "FeatureCollection",
@@ -1041,6 +1261,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/21/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1168679_1414246825481685_578979506_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1056,7 +1288,6 @@
                     "@prestonkanak playing dominos in the streets of Havana. #filmmakingfun"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1168679_1414246825481685_578979506_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/21/navplace",
                 "type": "FeatureCollection",
@@ -1092,6 +1323,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/22/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1739504_232906886882151_1047274749_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1107,7 +1350,6 @@
                     "Cohen decided to throw and brake a frame today, but this kind of made up for it. #cutekids"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1739504_232906886882151_1047274749_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/22/navplace",
                 "type": "FeatureCollection",
@@ -1143,6 +1385,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/23/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1740866_608625579206474_1702064410_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1158,7 +1412,6 @@
                     "Upgrading a motor and doing a little maintenance on the octocopter tonight. #multirotor #uav #aerialcinema"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/1740866_608625579206474_1702064410_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/23/navplace",
                 "type": "FeatureCollection",
@@ -1194,6 +1447,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/24/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage0/t0.0-17/OBPTH/025f2ee2a63e11e383940ee0962af0a0_8.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1209,7 +1474,6 @@
                     "Celebrating our friend @geraldmp 30th bday in Michigan and we found this little gem. #onlythirtyonce #bubleforever"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/outbound-distilleryimage0/t0.0-17/OBPTH/025f2ee2a63e11e383940ee0962af0a0_8.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/24/navplace",
                 "type": "FeatureCollection",
@@ -1245,6 +1509,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/25/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1515918_627260440687327_262793878_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1260,7 +1536,6 @@
                     "Ice fishing with my little bro Manitoba #canadianwinter"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/1515918_627260440687327_262793878_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/25/navplace",
                 "type": "FeatureCollection",
@@ -1296,6 +1571,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/26/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1172000_277129682454356_22869590_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1311,7 +1598,6 @@
                     "Shooting a few timelapses in T.O today. #timelapse #toronto"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpa1/t51.2885-15/1172000_277129682454356_22869590_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/26/navplace",
                 "type": "FeatureCollection",
@@ -1347,6 +1633,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/27/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10299879_246506868869711_1639932805_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1362,7 +1660,6 @@
                     "Shooting wedding photos from the ocean. #costarica #destinationwedding"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xap1/t51.2885-15/10299879_246506868869711_1639932805_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/27/navplace",
                 "type": "FeatureCollection",
@@ -1398,6 +1695,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/28/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10326523_634137619996430_433595486_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1413,7 +1722,6 @@
                     "Like a kid at Christmas at the studio today. #moviM5 #freeflysystems #multirotor #movi #cinematography"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xfp1/t51.2885-15/10326523_634137619996430_433595486_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/28/navplace",
                 "type": "FeatureCollection",
@@ -1449,6 +1757,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/29/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10362084_766317546735862_118229060_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1464,7 +1784,6 @@
                     "Setting up for a day of filming #djiphantom #freeflysystems"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xaf1/t51.2885-15/10362084_766317546735862_118229060_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/29/navplace",
                 "type": "FeatureCollection",
@@ -1500,6 +1819,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/30/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10413281_1488153714754373_851054565_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1515,7 +1846,6 @@
                     "Happy Fathers Day! Nerd alert."
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10413281_1488153714754373_851054565_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/30/navplace",
                 "type": "FeatureCollection",
@@ -1551,6 +1881,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/31/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xaf1/t51.2885-15/915570_314169908749238_855405505_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1566,7 +1908,6 @@
                     "Getting the Movi ready to head to the east coast for a project! #freeflysystems #movim5 #travel"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xaf1/t51.2885-15/915570_314169908749238_855405505_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/31/navplace",
                 "type": "FeatureCollection",
@@ -1602,6 +1943,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/32/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/923670_315114831984676_13342280_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1617,7 +1970,6 @@
                     "Almost lobster time! #eastcoastcanada #peggyscove"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xap1/t51.2885-15/923670_315114831984676_13342280_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/32/navplace",
                 "type": "FeatureCollection",
@@ -1653,6 +2005,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/33/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10369386_315046651992211_2107368657_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1668,7 +2032,6 @@
                     "A foggy day at the Cove #halifax #easterncanada"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10369386_315046651992211_2107368657_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/33/navplace",
                 "type": "FeatureCollection",
@@ -1704,6 +2067,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/34/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10431874_327179514105607_749221344_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1719,7 +2094,6 @@
                     "Sometimes you just have to be one of those people that instagrams their food. #novascotia"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-b.cdninstagram.com/hphotos-xpa1/t51.2885-15/10431874_327179514105607_749221344_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/34/navplace",
                 "type": "FeatureCollection",
@@ -1755,6 +2129,18 @@
                             "id": "https://example.org/storymap/instagram_brentfoster/canvas/35/annotation/1",
                             "type": "Annotation",
                             "motivation": "painting",
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Credit"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10547311_837231402956657_389819957_n.jpg"
+                                    ]
+                                }
+                            },
                             "body": {
                                 "type": "TextualBody",
                                 "format": "text/html",
@@ -1770,7 +2156,6 @@
                     "The copter going up for this mornings shoot. #ontag #aerialcinema #photography #s1000 #uav"
                 ]
             },
-            "storymap:mediaCredit": "Original: http://scontent-a.cdninstagram.com/hphotos-xpf1/t51.2885-15/10547311_837231402956657_389819957_n.jpg",
             "navPlace": {
                 "id": "https://example.org/storymap/instagram_brentfoster/canvas/35/navplace",
                 "type": "FeatureCollection",
