@@ -466,10 +466,16 @@ class MapBase {
 
     _destroyMarker(marker: MapMarker): void {
         this._removeMarker(marker);
-        for (let i = 0; i < this._markers.length; i++) {
-            if (this._markers[i] === marker) {
-                this._markers.splice(i, 1);
-            }
+        const index = this._markers.indexOf(marker);
+        if (index === -1) {
+            return;
+        }
+        this._markers.splice(index, 1);
+        // `marker_number` is the marker's index into this array and is what
+        // _onMarkerClick hands to goTo(), so every marker after the removed
+        // one has to shift down or clicks navigate to the wrong slide
+        for (let i = index; i < this._markers.length; i++) {
+            this._markers[i].marker_number = i;
         }
         this.fire("markerRemoved", marker);
     }
