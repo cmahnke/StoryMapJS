@@ -529,6 +529,36 @@ describe("manifestToStorymapData with annotation stops", () => {
         expect(data.slides[0].background).toBeUndefined();
     });
 
+    it("reads a slide's thumbnail from the canvas and from the body", () => {
+        // P3 allows either, and real manifests use both (§3.1)
+        const withCanvas = manifestWith([]);
+        const canvas = (withCanvas as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas.thumbnail = [{ id: "https://example.org/canvas-thumb.jpg", type: "Image" }];
+        expect(manifestToStorymapData(withCanvas).slides[0].media?.thumb).toBe(
+            "https://example.org/canvas-thumb.jpg",
+        );
+
+        const withBody = manifestWith([]);
+        const canvas2 = (withBody as { items: Record<string, unknown>[] }).items[0] as Record<
+            string,
+            unknown
+        >;
+        canvas2.thumbnail = [{ id: "https://example.org/canvas-thumb.jpg", type: "Image" }];
+        const pages = canvas2.items as Record<string, unknown>[];
+        const painting = (pages[0].items as Record<string, unknown>[])[0];
+        painting.body = {
+            ...(painting.body as Record<string, unknown>),
+            thumbnail: [{ id: "https://example.org/body-thumb.jpg", type: "Image" }],
+        };
+        // the body's wins: it describes the painted resource specifically
+        expect(manifestToStorymapData(withBody).slides[0].media?.thumb).toBe(
+            "https://example.org/body-thumb.jpg",
+        );
+    });
+
     it("reads a slide's date from the canvas's navDate", () => {
         const manifest = manifestWith([]);
         const canvas = (manifest as { items: Record<string, unknown>[] }).items[0] as Record<

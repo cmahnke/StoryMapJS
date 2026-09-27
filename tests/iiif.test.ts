@@ -394,6 +394,78 @@ test("accepts an info.json url used directly as the service id", () => {
     expect(data.iiif).toEqual({ url: "https://iiif.example.org/image/info.json", attribution: "" });
 });
 
+test("reads institutional credit onto the one credit line", () => {
+    // §3.2: everything the manifest says about who published it and under
+    // what licence lands on the string the viewer actually renders
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["Institutional credit"] },
+        requiredStatement: {
+            label: { none: ["Attribution"] },
+            value: { none: ["Courtesy of the Estate"] },
+        },
+        provider: [
+            { id: "https://rijks.example.org/", type: "Agent", label: { none: ["Rijksmuseum"] } },
+        ],
+        rights: "http://creativecommons.org/publicdomain/zero/1.0/",
+        logo: { id: "https://rijks.example.org/logo.png", type: "Image" },
+        metadata: [
+            { label: { none: ["Date"] }, value: { none: ["1789"] } },
+            { label: { none: ["Medium"] }, value: { none: ["oil on canvas"] } },
+        ],
+        items: [],
+    });
+    expect((data.iiif as { attribution: string }).attribution).toBe(
+        "Attribution: Courtesy of the Estate · Provider: Rijksmuseum · Licence: http://creativecommons.org/publicdomain/zero/1.0/",
+    );
+    // an image is not a credit line, and pairs cannot be rendered generically,
+    // so both are offered as data
+    expect(data.logo).toBe("https://rijks.example.org/logo.png");
+    expect(data.metadata).toEqual([
+        { label: "Date", value: "1789" },
+        { label: "Medium", value: "oil on canvas" },
+    ]);
+});
+
+test("falls back to an Agent's id when it has no label", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["x"] },
+        provider: [{ id: "https://example.org/agency", type: "Agent" }],
+        items: [],
+    });
+    expect((data.iiif as { attribution: string }).attribution).toBe(
+        "Provider: https://example.org/agency",
+    );
+});
+
+test("reads a homepage-only Agent as an unlabelled credit fragment", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["x"] },
+        homepage: [{ id: "https://example.org/about", type: "Agent" }],
+        items: [],
+    });
+    expect((data.iiif as { attribution: string }).attribution).toBe("https://example.org/about");
+});
+
+test("leaves the credit line alone when the manifest says nothing", () => {
+    const data = manifestToStorymapData({
+        "@context": CONTEXTS,
+        id: "https://example.org/manifest",
+        type: "Manifest",
+        label: { none: ["x"] },
+        items: [],
+    });
+    expect(data.iiif).toBeUndefined();
+});
+
 test("maps the mapconfig service to storymap options fields", () => {
     const data = manifestToStorymapData({
         "@context": CONTEXTS,

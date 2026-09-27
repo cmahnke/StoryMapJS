@@ -607,12 +607,36 @@ slides.
 
 ## 3. P2 — standard fields with no term to remove
 
-- **`thumbnail` → `media.thumb`.** `StorymapSlideMedia.thumb` exists
-  (`src/types.ts:44`) and is never written; the manifest doc already lists it
-  as dropped. Read the body or canvas `thumbnail`.
-- **`metadata`, `rights`, `provider`, `logo`, `homepage`.** P3's label/value
-  pairs and Agent links are where institutional credit lives. `rights` is a
-  licence URI and should be shown, not ignored.
+- **DONE (commit 8): `thumbnail` → `media.thumb`.** `StorymapSlideMedia.thumb`
+  existed and was never written; the manifest doc listed it as dropped. The
+  reader now takes the body's `thumbnail` or the canvas's. Writing it out
+  needed a fix the reader wanted anyway: **P3's `thumbnail` is a _list_**, and
+  `readPainting` was reading it as a single object, so a correct manifest's
+  body thumbnail was being dropped silently. The canvas one was not read at
+  all, and was doubly missed — it only reaches `media` if something else put it
+  there.
+- **DONE (commit 8): `metadata`, `rights`, `provider`, `logo`, `homepage`.**
+  P3's label/value pairs and Agent links are where institutional credit lives.
+  `rights` is a licence URI and should be shown, not ignored. They all land on
+  the one credit line the viewer renders — the map attribution, which the host
+  can also feed with `setExtraAttributions()` — joined with `·`:
+  `Attribution: …` from `requiredStatement`, `Provider: …` from an Agent (its
+  `label`, or its `id` when it has none), `Licence: …` from `rights`, and a
+  `homepage` Agent unlabelled. `logo` is an image, not a credit line, so it is
+  `data.logo`; `metadata`'s pairs are `data.metadata[]`, because arbitrary pairs
+  cannot be rendered generically and dropping them loses provenance.
+
+    The converter had to stop claiming to be the publisher here: it wrote a
+    `provider` Agent labelled "StoryMapJS", which is inert while `provider` is
+    ignored and actively wrong once it is not — every converted storymap would
+    have shown "Provider: StoryMapJS". P3's `provider` is whoever _published_ the
+    content, so the generator now says so in `metadata` instead.
+
+    Fixing this also found a hole in the round-trip gate: it compared only the
+    _source's_ root keys, so a key the reader _adds_ was never checked. §2 had
+    already slipped three past it (`title`, `tilejson`, `map_as_image`); the loop
+    now walks the union, like the per-slide loop always did.
+
 - **A local linked-data context for the `navPlace` properties bag.** The
   navPlace extension §3.2 says terms used in a GeoJSON Feature's `properties`
   "should be described either by registered IIIF API extensions or local

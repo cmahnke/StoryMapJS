@@ -636,7 +636,7 @@ function readPainting(
                     flattenLanguageMap(body.accessibilitySummary) ||
                     null,
                 credit: readAnnotationCredit(annotationRecord) ?? readBodyCredit(body),
-                thumbnail: asString(asRecord(body.thumbnail)?.id) ?? null,
+                thumbnail: readThumbnailId(body.thumbnail),
                 duration: asNumber(body.duration),
                 start: asNumber(body.start),
                 end: asNumber(body.end),
@@ -728,6 +728,56 @@ function collectPositions(value: unknown, out: number[][], depth: number): void 
 }
 
 /**
+ * The first id of a P3 `thumbnail`, which is a *list* of content resources
+ * (§3.1). A bare resource is accepted too, since that is what a one-element
+ * list collapses to once it has been through a few tools.
+ */
+/**
+ * An Agent as a credit fragment: its label, or its id when it has none. An
+ * empty `label` produces a bare fragment, which is what a homepage-only Agent
+ * wants (§3.2).
+ */
+function agentCredit(value: unknown, label: string): string {
+    const entries = Array.isArray(value) ? value : [value];
+    const parts: string[] = [];
+    for (const entry of entries) {
+        const record = asRecord(entry);
+        if (!record) continue;
+        const name = flattenLanguageMap(record.label) || asString(record.id) || "";
+        if (name === "") continue;
+        parts.push(label === "" ? name : `${label}: ${name}`);
+    }
+    return parts.join(", ");
+}
+
+/**
+ * P3 `metadata` as plain `{label, value}` pairs (§3.2). Entries without both a
+ * label and a value are dropped, since a pair with neither says nothing.
+ */
+function readMetadata(value: unknown): { label: string; value: string }[] {
+    const entries = Array.isArray(value) ? value : [value];
+    const out: { label: string; value: string }[] = [];
+    for (const entry of entries) {
+        const record = asRecord(entry);
+        if (!record) continue;
+        const label = flattenLanguageMap(record.label);
+        const text = flattenLanguageMap(record.value);
+        if (label === "" && text === "") continue;
+        out.push({ label, value: text });
+    }
+    return out;
+}
+
+function readThumbnailId(value: unknown): string | null {
+    const entries = Array.isArray(value) ? value : [value];
+    for (const entry of entries) {
+        const id = asString(asRecord(entry)?.id);
+        if (id !== null) return id;
+    }
+    return null;
+}
+
+/**
  * A canvas's P3 `background` annotation into a slide background (§2.6).
  *
  * The annotation is a painting annotation whose body is the image and/or the
@@ -791,13 +841,18 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
     const alt = painting?.accessibilitySummary ?? null;
     const srcset = asString(readTerm(record, "mediaSrcset"));
     const sizes = asString(readTerm(record, "mediaSizes"));
+    // P3 allows the thumbnail on the body or on the canvas, and real manifests
+    // use both; the body's wins because it describes the painted resource
+    // specifically
+    const thumbnail = painting?.thumbnail ?? readThumbnailId(record.thumbnail);
     if (
         painting !== null ||
         caption !== null ||
         credit !== null ||
         alt !== null ||
         srcset !== null ||
-        sizes !== null
+        sizes !== null ||
+        thumbnail !== null
     ) {
         const media: StorymapSlideMedia = {};
         if (painting !== null) media.url = painting.url;
@@ -806,7 +861,7 @@ function canvasToSlide(canvas: unknown, manifestFeature: unknown): StorymapSlide
         if (alt !== null) media.alt = alt;
         if (srcset !== null) media.srcset = srcset;
         if (sizes !== null) media.sizes = sizes;
-        if (painting?.thumbnail != null) media.thumb = painting.thumbnail;
+        if (thumbnail !== null) media.thumb = thumbnail;
         if (painting?.subtitles != null) media.subtitles = painting.subtitles;
         slide.media = media;
     }
@@ -948,8 +1003,8 @@ function readAnnotationStop(
                         ...(caption !== "" ? { caption } : {}),
                         ...(credit !== null ? { credit } : {}),
                         ...(alt !== "" ? { alt } : {}),
-                        ...(asString(asRecord(body.thumbnail)?.id) !== null
-                            ? { thumb: asString(asRecord(body.thumbnail)?.id) as string }
+                        ...(readThumbnailId(body.thumbnail) !== null
+                            ? { thumb: readThumbnailId(body.thumbnail) as string }
                             : {}),
                     };
                 }
@@ -1059,14 +1114,35 @@ export function manifestToStorymapData(manifest: unknown): StorymapData {
         if (imageService !== null) data.iiif = { url: imageService, attribution: "" };
     }
 
-    // requiredStatement → iiif.attribution, label included (§2.1)
-    const attribution = formatAttribution(readRequiredStatement(record.requiredStatement));
-    if (attribution !== "") {
+    // Institutional credit: the manifest's own `requiredStatement`, then who
+    // provided it and under what licence. All of it lands on the one credit
+    // string the viewer renders, so a licence stated in the manifest is
+    // actually shown rather than silently dropped (§3.2).
+    const credit = [
+        formatAttribution(readRequiredStatement(record.requiredStatement)),
+        agentCredit(record.provider, "Provider"),
+        asString(record.rights) !== null ? `Licence: ${asString(record.rights)}` : "",
+        // an Agent with only a homepage still says who published this
+        agentCredit(record.homepage, ""),
+    ]
+        .filter((part) => part !== "")
+        .join(" · ");
+    if (credit !== "") {
         const iiif = (data.iiif as { url?: string; attribution?: string } | undefined) ?? {};
-        iiif.attribution = attribution;
+        iiif.attribution = credit;
         if (iiif.url === undefined) iiif.url = "";
         data.iiif = iiif;
     }
+
+    // `logo` is an image, not a credit line, so it is offered as data for a
+    // host to show (§3.2)
+    const logo = asString(asRecord(record.logo)?.id);
+    if (logo !== null) data.logo = logo;
+
+    // `metadata` is a list of label/value pairs, which cannot be rendered
+    // generically — they are handed on as data (§3.2)
+    const metadata = readMetadata(record.metadata);
+    if (metadata.length > 0) data.metadata = metadata;
 
     // items[] (Canvases) → slides[], in order
     const items = Array.isArray(record.items) ? record.items : [];
