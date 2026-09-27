@@ -69,14 +69,19 @@ export default class OpenLayers extends Map {
     declare "_overlay_entries": StorymapOverlayLayer[];
     /** rAF handle of the running active-line draw animation */
     declare "_line_animation": number | null;
+    /** Sources `imageready` has already been fired for. */
+    declare "_imageready_fired": WeakSet<object>;
 
     /*	Create the Map
 	================================================== */
     _createMap(): void {
         const is_image_map = this.isImageSpace();
+        this._imageready_fired = new WeakSet();
 
-        // Caller-supplied OpenLayers options: controls/interactions replace the
-        // defaults, view merges over the computed default, other options pass through
+        // Caller-supplied OpenLayers options: `controls` replaces the defaults
+        // (the viewer installs none), `interactions` are added to the viewer's
+        // own pan/zoom set, `view` merges over the computed default, everything
+        // else passes through
         const user_map_options = this.options.map_options ?? {};
         const { element: _element, view: user_view, ...passthrough } = user_map_options;
         const user_view_options = (user_view ?? {}) as Record<string, unknown>;
@@ -758,6 +763,11 @@ export default class OpenLayers extends Map {
      * source is attached at all.
      */
     _fireImageready(source: { getState?(): string }, kind: string, layer?: Layer): void {
+        // one event per source: the base layer and the minimap can be asked
+        // about the same source, and a host toggling layers should not have
+        // to filter duplicates
+        if (this._imageready_fired.has(source)) return;
+        this._imageready_fired.add(source);
         const payload = { source, kind, layer: layer ?? null };
         if (typeof source.getState !== "function" || source.getState() === "ready") {
             this.fire("imageready", payload);

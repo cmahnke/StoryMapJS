@@ -112,6 +112,47 @@ describe("storymap imageready", () => {
         (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
     });
 
+    it("fires imageready once per source", () => {
+        const el = document.createElement("div");
+        el.id = "sm-imageready-once";
+        document.body.appendChild(el);
+        const sm = new StoryMap("sm-imageready-once", {
+            storymap: {
+                map_type: "osm",
+                slides: [{ date: "", type: "overview", text: { headline: "Overview", text: "" } }],
+            },
+        } as unknown as StorymapDataWrapper);
+
+        const seen: unknown[] = [];
+        sm.on("imageready", (e: unknown) => seen.push(e));
+
+        const engine = (
+            sm as unknown as {
+                _map: {
+                    fire(t: string, p: unknown): void;
+                    _fireImageready(s: object, k: string): void;
+                };
+            }
+        )._map;
+
+        // the base layer and the minimap can report the same source; a host
+        // should not have to filter duplicates
+        const source = { getState: () => "ready" };
+        engine._fireImageready(source, "tiles");
+        engine._fireImageready(source, "tiles");
+        expect(seen.length).toBe(1);
+
+        // a different source is a new event
+        engine._fireImageready({ getState: () => "ready" }, "iiif");
+        expect(seen.length).toBe(2);
+
+        // and the storymap forwards what the engine fires
+        engine.fire("imageready", { source, kind: "tiles", layer: null });
+        expect(seen.length).toBe(3);
+
+        sm.dispose();
+    });
+
     it("re-fires the map's imageready on the storymap", () => {
         const el = document.createElement("div");
         el.id = "sm-imageready";
