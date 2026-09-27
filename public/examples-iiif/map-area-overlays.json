@@ -200,6 +200,44 @@
             }
         }
     ],
+    "navPlace": {
+        "id": "https://example.org/storymap/map-area-overlays/navplace",
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "id": "https://example.org/storymap/map-area-overlays/navplace/feature/1",
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [
+                                -0.6,
+                                51.2
+                            ],
+                            [
+                                0.4,
+                                51.2
+                            ],
+                            [
+                                0.4,
+                                51.8
+                            ],
+                            [
+                                -0.6,
+                                51.8
+                            ],
+                            [
+                                -0.6,
+                                51.2
+                            ]
+                        ]
+                    ]
+                },
+                "properties": {}
+            }
+        ]
+    },
     "service": [
         {
             "id": "https://example.org/storymap/map-area-overlays/map-config",

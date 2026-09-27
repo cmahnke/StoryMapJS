@@ -1,0 +1,294 @@
+import { describe, expect, test } from "vitest";
+import { readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+// The CLI wrapper is imported, not run: its main() is behind an
+// invoked-directly guard precisely so this works.
+import { storymapToManifest } from "../scripts/convert-to-iiif.mjs";
+import { manifestToStorymapData } from "../src/storymap/iiif";
+import type { StorymapData, StorymapSlide } from "../src/types";
+
+/**
+ * The IIIF fixtures are generated, not hand-written, so "the 52 manifests
+ * still validate unchanged in meaning" (docs/plans/iiif-interop.md §2) has to
+ * be checkable rather than a diff somebody reads. Three properties:
+ *
+ *  1. **drift** — regenerating a fixture reproduces the committed file
+ *     byte-for-byte, so a hand edit to a generated file is caught.
+ *  2. **round trip** — a manifest converts back to the storymap it came from.
+ *  3. **context agreement** — every term the converter emits is declared in
+ *     public/context.json, and every declared term is either emitted or on an
+ *     explicit list of terms no fixture exercises.
+ *
+ * The round trip is not byte equality and must not pretend to be. The
+ * differences below are each deliberate or unavoidable, and the list is the
+ * point: a new one appearing is a finding, not a rounding error.
+ */
+
+const EXAMPLES = join(process.cwd(), "public/examples");
+const MANIFESTS = join(process.cwd(), "public/examples-iiif");
+
+/** Hand-authored: a georeferenced layer is manifest-only, so nothing to convert from. */
+const HAND_AUTHORED = new Set(["georeferenced-layer", "georeferenced-layer-unsupported"]);
+
+/** Canonical JSON, so comparison is structural and ignores key order. */
+function canon(value: unknown): string {
+    if (Array.isArray(value)) return `[${value.map(canon).join(",")}]`;
+    if (value !== null && typeof value === "object") {
+        const record = value as Record<string, unknown>;
+        return `{${Object.keys(record)
+            .sort()
+            .map((k) => `${JSON.stringify(k)}:${canon(record[k])}`)
+            .join(",")}}`;
+    }
+    return JSON.stringify(value) ?? "null";
+}
+
+function sourceFixtures(): string[] {
+    return readdirSync(EXAMPLES)
+        .filter((f) => f.endsWith(".json"))
+        .map((f) => f.replace(/\.json$/, ""));
+}
+
+/**
+ * Differences that are expected, and why. Each is a place where the manifest
+ * cannot carry the storymap's exact value.
+ *
+ * `root.zoomify`, `root.map_type` — the converter deliberately rewrites a
+ *   `zoomify` pyramid to an IIIF image map; the legacy definition is not
+ *   carried because nothing reads it.
+ * `root.iiif.attribution` — the manifest always labels its
+ *   `requiredStatement`, so the bare storymap attribution comes back prefixed
+ *   with "Attribution: ". §2.1 made this deliberate.
+ * `root.map_subdomains` — an empty string is dropped as absent.
+ * `root.map_mini` — the minimap toggle has no IIIF vocabulary at all.
+ * `slide.background.opacity` — accepted by the reader, never rendered, and the
+ *   term has no standard slot to carry it.
+ * `slide.date`, `slide.text.text` — an empty string is dropped as absent.
+ * `slide.location` — a location with marker presentation but **no** lat/lon
+ *   (an icon without a position) cannot become a navPlace Point, so it is
+ *   lost. IIIF has no vocabulary for "a marker with no location".
+ * `slide.media.url` — a slide with an empty media block paints a
+ *   TextualBody carrying the slide text, so the url comes back as that text.
+ * `slide.uniqueid` — the converter emits no id; the reader synthesises the
+ *   canvas id (§2.3), which is the point of that change.
+ */
+const EXPECTED_DIFFERENCES = new Set([
+    "root.iiif",
+    "root.map_subdomains",
+    "root.map_type",
+    "root.map_mini",
+    "root.zoomify",
+    "slide.background",
+    "slide.date",
+    "slide.location",
+    "slide.media",
+    "slide.text",
+    "slide.uniqueid",
+]);
+
+describe("IIIF fixture generation", () => {
+    const names = sourceFixtures();
+
+    test("finds the source fixtures", () => {
+        expect(names.length).toBeGreaterThan(40);
+    });
+
+    test("regenerating a fixture is a no-op", () => {
+        // a hand edit to a generated file would otherwise survive silently,
+        // and the next `npm run convert:iiif` would revert it
+        const drifted: string[] = [];
+        for (const name of names) {
+            const legacy = JSON.parse(readFileSync(join(EXAMPLES, `${name}.json`), "utf8"));
+            const produced = `${JSON.stringify(storymapToManifest(name, legacy), null, 4)}\n`;
+            let committed: string;
+            try {
+                committed = readFileSync(join(MANIFESTS, `${name}.json`), "utf8");
+            } catch {
+                drifted.push(`${name}: no manifest`);
+                continue;
+            }
+            if (committed !== produced) drifted.push(name);
+        }
+        expect(drifted, `run npm run convert:iiif to regenerate: ${drifted}`).toEqual([]);
+    });
+
+    test("every source fixture has a manifest, and only the hand-authored ones do not convert", () => {
+        const missing: string[] = [];
+        for (const name of names) {
+            const exists = readdirSync(MANIFESTS).includes(`${name}.json`);
+            if (!exists) missing.push(name);
+        }
+        expect(missing).toEqual([]);
+        // and the two exceptions are genuinely manifest-only features
+        for (const name of HAND_AUTHORED) {
+            expect(names).not.toContain(name);
+        }
+    });
+});
+
+describe("manifest -> storymap round trip", () => {
+    const names = sourceFixtures().filter((n) => !HAND_AUTHORED.has(n));
+
+    test("the differences are only the documented ones", () => {
+        const found = new Map<string, string[]>();
+        const note = (key: string, example: string) => {
+            if (!found.has(key)) found.set(key, []);
+            const list = found.get(key) as string[];
+            if (list.length < 2) list.push(example);
+        };
+
+        for (const name of names) {
+            const source = JSON.parse(readFileSync(join(EXAMPLES, `${name}.json`), "utf8"))
+                .storymap as Record<string, unknown>;
+            const out = manifestToStorymapData(
+                storymapToManifest(name, { storymap: source }),
+            ) as StorymapData;
+
+            for (const key of Object.keys(source)) {
+                if (key === "slides") continue;
+                if (canon(out[key as keyof StorymapData]) !== canon(source[key])) {
+                    note(`root.${key}`, name);
+                }
+            }
+
+            const sourceSlides = (source.slides ?? []) as StorymapSlide[];
+            const outSlides = out.slides ?? [];
+            if (outSlides.length !== sourceSlides.length) {
+                note("slides.length", `${name}: ${sourceSlides.length} -> ${outSlides.length}`);
+            }
+            for (let i = 0; i < Math.min(sourceSlides.length, outSlides.length); i++) {
+                for (const key of new Set([
+                    ...Object.keys(sourceSlides[i]),
+                    ...Object.keys(outSlides[i] ?? {}),
+                ])) {
+                    if (
+                        canon(sourceSlides[i][key as keyof StorymapSlide]) !==
+                        canon(outSlides[i]?.[key])
+                    ) {
+                        note(`slide.${key}`, `${name}[${i}]`);
+                    }
+                }
+            }
+        }
+
+        // an undocumented difference is a finding: either the converter is
+        // lossy somewhere new, or a legitimate difference needs documenting
+        expect([...found.keys()].filter((k) => !EXPECTED_DIFFERENCES.has(k))).toEqual([]);
+        // and the list itself must not rot: every entry should still occur
+        const unused = [...EXPECTED_DIFFERENCES].filter((k) => !found.has(k));
+        expect(unused, "EXPECTED_DIFFERENCES lists a difference that no longer occurs").toEqual([]);
+    });
+
+    test("the slides that do round-trip carry their media", () => {
+        // The fields a tour depends on: a slide keeps its media url and its
+        // caption/credit/alt. Image maps are excluded — the converter
+        // deliberately repaints every canvas of an image map with the IIIF
+        // reference image, because the original pyramid assets are dead, so
+        // their per-slide media is not expected to survive.
+        let checked = 0;
+        for (const name of names) {
+            const document = JSON.parse(readFileSync(join(EXAMPLES, `${name}.json`), "utf8"))
+                .storymap as { slides?: StorymapSlide[]; map_type?: string };
+            if (document.map_type === "zoomify" || document.map_type === "iiif") continue;
+            const source = document;
+            const out = manifestToStorymapData(storymapToManifest(name, { storymap: source }));
+            const sourceSlides = source.slides ?? [];
+            for (let i = 0; i < Math.min(sourceSlides.length, out.slides.length); i++) {
+                const want = sourceSlides[i]?.media;
+                if (!want?.url) continue;
+                const got = out.slides[i]?.media;
+                expect(got?.url, `${name}[${i}] media.url`).toBe(want.url);
+                if (want.caption) expect(got?.caption, `${name}[${i}] caption`).toBe(want.caption);
+                if (want.credit) expect(got?.credit, `${name}[${i}] credit`).toBe(want.credit);
+                if (want.alt) expect(got?.alt, `${name}[${i}] alt`).toBe(want.alt);
+                checked++;
+            }
+        }
+        expect(checked).toBeGreaterThan(50);
+    });
+});
+
+describe("context agreement", () => {
+    test("every emitted term is declared, and every declared term is accounted for", () => {
+        // context.json keys terms by their bare name and states the full IRI as
+        // the value, so the declared set has to be built from the values (or an
+        // "@id" for the two object-valued ones), not the keys
+        const context = (
+            JSON.parse(readFileSync(join(process.cwd(), "public/context.json"), "utf8")) as {
+                "@context": Record<string, unknown>;
+            }
+        )["@context"];
+        const declared = new Set<string>();
+        for (const [key, value] of Object.entries(context)) {
+            if (key.startsWith("@") || key === "storymap") continue;
+            const iri = typeof value === "string" ? value : (value as { "@id"?: string })["@id"];
+            if (typeof iri === "string" && iri.startsWith("storymap:")) declared.add(iri);
+        }
+
+        // Derived from what the converter actually produces, not from a list
+        // in the source — otherwise the two could agree while both are wrong.
+        const emitted = new Set<string>();
+        const walk = (node: unknown) => {
+            if (Array.isArray(node)) {
+                for (const entry of node) walk(entry);
+                return;
+            }
+            if (node === null || typeof node !== "object") return;
+            for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+                if (key.startsWith("storymap:")) emitted.add(key);
+                walk(value);
+            }
+        };
+        for (const name of sourceFixtures()) {
+            if (HAND_AUTHORED.has(name)) continue;
+            const legacy = JSON.parse(readFileSync(join(EXAMPLES, `${name}.json`), "utf8"));
+            walk(storymapToManifest(name, legacy));
+        }
+
+        // a term the converter writes but the context does not declare is a
+        // manifest that no JSON-LD processor can resolve
+        const undeclared = [...emitted].filter((t) => !declared.has(t));
+        expect(undeclared, "emitted but not declared in public/context.json").toEqual([]);
+
+        // Declared terms no fixture exercises. Not an error — a term can be
+        // valid without a fixture shipping it — but it should be a deliberate
+        // list rather than "whatever is left over", so that adding coverage
+        // shows up as a diff here.
+        //
+        // The categories: map vendor configuration that needs a credential or
+        // a paid style (no bundled key by design), presentation options with
+        // no interesting storymap to show them on, and the two hand-authored
+        // georeferenced manifests, which are manifest-only features with
+        // nothing in public/examples to convert from.
+        const NOT_EXERCISED_BY_A_FIXTURE = new Set([
+            // need a credential or a vendor style
+            "storymap:mapAccessToken",
+            "storymap:mapSubdomains",
+            // no fixture sets these; the code path is covered by unit tests
+            "storymap:mapBackgroundColor",
+            "storymap:mapCenterOffset",
+            "storymap:callToActionText",
+            "storymap:calculateZoom",
+            "storymap:lessBounce",
+            "storymap:lineFollowsPath",
+            "storymap:showHistoryLine",
+            "storymap:lineColor",
+            "storymap:lineColorInactive",
+            "storymap:lineWeight",
+            "storymap:lineOpacity",
+            "storymap:lineDash",
+            "storymap:lineJoin",
+            // only in the two hand-authored georeferenced manifests
+            "storymap:georeferencedLayers",
+        ]);
+        const unaccounted = [...declared].filter(
+            (t) => !emitted.has(t) && !NOT_EXERCISED_BY_A_FIXTURE.has(t),
+        );
+        expect(unaccounted, "declared in context.json but neither emitted nor listed").toEqual([]);
+        // and the allowlist must not rot either
+        const unused = [...NOT_EXERCISED_BY_A_FIXTURE].filter(
+            (t) => !declared.has(t) || emitted.has(t),
+        );
+        expect(unused, "NOT_EXERCISED_BY_A_FIXTURE is stale").toEqual([]);
+    });
+});

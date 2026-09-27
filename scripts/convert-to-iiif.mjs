@@ -10,8 +10,16 @@
 // are hand-authored: a georeferenced layer is a manifest-only feature
 // (storymap JSON cannot express ground control points), so there is nothing
 // to convert from.
+//
+// The mapping itself is exported as `storymapToManifest()` and is pure, so
+// tests/iiif-roundtrip.test.ts can convert in-process: it asserts that
+// regenerating a fixture is a no-op (so a hand edit to a generated file is
+// caught) and that a manifest converts back to the storymap it came from. That
+// is what makes each docs/plans/iiif-interop.md §2 term migration checkable
+// as "unchanged in meaning" rather than by reading a fixture diff.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 // The original zoomify tile paths of the legacy fixtures are dead, so image-map
 // storymaps are rewritten to the IIIF reference image used by the repo's IIIF
@@ -77,7 +85,7 @@ function present(value) {
     return value !== undefined && value !== null && value !== "";
 }
 
-function buildManifest(name, legacy) {
+export function storymapToManifest(name, legacy) {
     const storymap = legacy.storymap || {};
     const slides = storymap.slides || [];
     const isZoomify = storymap.map_type === "zoomify";
@@ -100,6 +108,38 @@ function buildManifest(name, legacy) {
         ],
         items: slides.map((slide, i) => buildCanvas(manifestId, i, slide, isImageMap)),
     };
+
+    // A map bbox has no extension term: the interoperable spelling is a
+    // navPlace Polygon, which the reader turns back into map_bbox
+    // (readNavPlaceBbox). Without this the extent was silently lost on the
+    // round trip.
+    const bbox = storymap.map_bbox;
+    if (isLonLatBox(bbox)) {
+        const [west, south, east, north] = bbox;
+        manifest.navPlace = {
+            id: `${manifestId}/navplace`,
+            type: "FeatureCollection",
+            features: [
+                {
+                    id: `${manifestId}/navplace/feature/1`,
+                    type: "Feature",
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [west, south],
+                                [east, south],
+                                [east, north],
+                                [west, north],
+                                [west, south],
+                            ],
+                        ],
+                    },
+                    properties: {},
+                },
+            ],
+        };
+    }
 
     const config = buildMapConfig(storymap, legacy, isZoomify);
     if (Object.keys(config).length > 0) {
@@ -383,31 +423,41 @@ function buildNavPlace(canvasId, slide) {
     };
 }
 
-const args = process.argv.slice(2);
-let files;
-if (args.length > 0) {
-    files = args;
-} else {
-    const examplesDir = join(process.cwd(), "public/examples");
-    files = readdirSync(examplesDir)
-        .filter((f) => f.endsWith(".json"))
-        .map((f) => join(examplesDir, f));
+/** True when this file is the process entry point, not an import. */
+const invokedDirectly =
+    process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+function main() {
+    const args = process.argv.slice(2);
+    let files;
+    if (args.length > 0) {
+        files = args;
+    } else {
+        const examplesDir = join(process.cwd(), "public/examples");
+        files = readdirSync(examplesDir)
+            .filter((f) => f.endsWith(".json"))
+            .map((f) => join(examplesDir, f));
+    }
+
+    const outDir = join(process.cwd(), "public/examples-iiif");
+    mkdirSync(outDir, { recursive: true });
+
+    let converted = 0;
+    for (const file of files) {
+        const name = file
+            .split("/")
+            .pop()
+            .replace(/\.json$/, "");
+        const legacy = JSON.parse(readFileSync(file, "utf8"));
+        const manifest = storymapToManifest(name, legacy);
+        const outPath = join(outDir, `${name}.json`);
+        writeFileSync(outPath, `${JSON.stringify(manifest, null, 4)}\n`);
+        converted++;
+        console.log(`✓ ${outPath} (${manifest.items.length} canvas(es))`);
+    }
+    console.log(`Converted ${converted} storymap(s) to ${outDir}/`);
 }
 
-const outDir = join(process.cwd(), "public/examples-iiif");
-mkdirSync(outDir, { recursive: true });
-
-let converted = 0;
-for (const file of files) {
-    const name = file
-        .split("/")
-        .pop()
-        .replace(/\.json$/, "");
-    const legacy = JSON.parse(readFileSync(file, "utf8"));
-    const manifest = buildManifest(name, legacy);
-    const outPath = join(outDir, `${name}.json`);
-    writeFileSync(outPath, `${JSON.stringify(manifest, null, 4)}\n`);
-    converted++;
-    console.log(`✓ ${outPath} (${manifest.items.length} canvas(es))`);
+if (invokedDirectly) {
+    main();
 }
-console.log(`Converted ${converted} storymap(s) to ${outDir}/`);
