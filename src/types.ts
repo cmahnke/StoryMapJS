@@ -219,6 +219,11 @@ export interface StorymapOptions {
      * container div.
      */
     map_options: StorymapMapOptions;
+    /**
+     * Accepted for backwards compatibility but inert: the original viewer
+     * called `marker.createPopup()` when it was set, and that method was
+     * never implemented. Render slide text yourself.
+     */
     map_popup: boolean;
     zoom_distance: number;
     calculate_zoom: boolean;

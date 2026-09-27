@@ -173,20 +173,20 @@ names and behaviour (`storymap._map.<method>()`, `marker.<method>()`); the OL
 engine implements them as thin wrappers over `storymap.map`. Two methods are
 deprecated no-ops and one is gone:
 
-| Original method                                                                                           | Status                                                                                                                       |
-| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `updateDisplay`, `goTo`, `panTo`, `zoomTo`, `viewTo`                                                      | unchanged                                                                                                                    |
-| `getBoundsZoom`, `markerOverview`, `calculateMarkerZooms`                                                 | unchanged (`getBoundsZoom()` now returns `number \| undefined` instead of a falsy value)                                     |
-| `createMiniMap`, `createMarkers`, `createMarker`                                                          | unchanged                                                                                                                    |
-| `setMapOffset`, `calculateMinMaxZoom`, `updateMinMaxZoom`, `initialMapLocation`                           | unchanged                                                                                                                    |
-| `show()` / `hide()` (map and marker)                                                                      | **deprecated no-ops** — they were already empty in the original viewer. Style `.vco-mapmarker` or use `marker.active(false)` |
-| `map.addTo()` / `map.removeFrom()`                                                                        | **removed** — the map is placed in the constructor; use `storymap.map.setTarget(el)` or `options.map_options.element`        |
-| `marker.createPopup()`                                                                                    | **removed** with Leaflet's popups. `map_popup` is accepted but inert; render slide text yourself                             |
-| `marker.addTo()`, `marker.removeFrom()`, `marker.updateDisplay()`, `marker.active()`, `marker.location()` | unchanged                                                                                                                    |
+| Original method                                                                                           | Status                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `updateDisplay`, `goTo`, `panTo`, `zoomTo`, `viewTo`                                                      | unchanged                                                                                                                                                                                                                            |
+| `getBoundsZoom`, `markerOverview`, `calculateMarkerZooms`                                                 | unchanged (`getBoundsZoom()` now returns `number \| undefined` instead of a falsy value)                                                                                                                                             |
+| `createMiniMap`, `createMarkers`, `createMarker`                                                          | unchanged                                                                                                                                                                                                                            |
+| `setMapOffset`, `calculateMinMaxZoom`, `updateMinMaxZoom`, `initialMapLocation`                           | unchanged                                                                                                                                                                                                                            |
+| `show()` / `hide()` (map and marker)                                                                      | **deprecated no-ops** — they were already empty in the original viewer. Style `.vco-mapmarker` or use `marker.active(false)`                                                                                                         |
+| `map.addTo(container)` / `map.removeFrom(container)`                                                      | unchanged — inherited from the `DomMixed` mixin: append/remove the map container and fire `added`/`removed`. The engine override re-targets and re-measures the OpenLayers viewport, so a move into a differently sized parent works |
+| `marker.createPopup()`                                                                                    | **deprecated no-op** — it never did anything upstream either (empty base body, commented-out Leaflet body), so the `map_popup` option that called it had no effect. Still accepted, still inert                                      |
+| `marker.addTo()`, `marker.removeFrom()`, `marker.updateDisplay()`, `marker.active()`, `marker.location()` | unchanged                                                                                                                                                                                                                            |
 
 Marker helpers that Leaflet provided on the marker object (`getLatLng`,
-`setIcon`, `bindPopup`) are gone; use `marker.latLon()`, `marker.element`
-and your own DOM/CSS.
+`setIcon`, `bindPopup`) are gone; use `marker.latLon()`, the
+`.vco-mapmarker` element and your own DOM/CSS.
 
 ## Reaching the map, layers and markers
 

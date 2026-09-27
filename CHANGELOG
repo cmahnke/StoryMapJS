@@ -28,6 +28,16 @@ Added
 - The no-op `show()`/`hide()` methods (map and marker) are marked deprecated
   with the reason, and the surviving map/marker methods are documented as
   aliases over the OpenLayers map
+- `marker.createPopup()` is back as a deprecated no-op, so pre-0.10 code that
+  calls it keeps working. It never did anything upstream either: the base
+  `MapMarker._createPopup` had an empty body and the Leaflet override's body
+  was commented out, so the `map_popup` option that called it never had an
+  effect
+- `map.addTo(container)` / `map.removeFrom(container)` keep their original
+  `DomMixed` behaviour (append/remove the map container, fire
+  `added`/`removed`) and are now OpenLayers-aware: `addTo` re-attaches the map
+  target and calls `updateSize()` after the move, `removeFrom` untargets the
+  map so it does not render into a detached node
 
 Fixed
 -----

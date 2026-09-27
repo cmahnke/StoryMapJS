@@ -150,6 +150,12 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
   instance (`_on_resize`, `_on_keydown_global`, `_on_fullscreen`,
   `_on_hashchange`) precisely so they can be removed again; anything added
   with an inline arrow or a fresh `bind()` cannot be.
+- `addTo(container)` / `removeFrom(container)` come from the `DomMixed`
+  mixin (`src/core/mixins.ts`), which is where the original `DomMixins`
+  behavior now lives; the engine overrides them in
+  `Map.OpenLayers.ts` only to re-target/re-measure `ol/Map`, since OpenLayers
+  caches the viewport it measured at construction. `show()`/`hide()` on the
+  map and marker are deliberately shadowed by deprecated no-ops.
 - `isImageSpace()` is the single source of truth for "IIIF shown as a
   picture of the world" (`map_type: "iiif"` + `map_as_image`), the view being
   `EPSG:4326` image space. Do not re-test `map_type` at a call site: that is

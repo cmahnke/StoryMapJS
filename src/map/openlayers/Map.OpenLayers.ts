@@ -728,6 +728,33 @@ export default class OpenLayers extends Map {
     }
 
     /**
+     * Move the map into another element, keeping OpenLayers in step.
+     *
+     * `DomMixed.addTo()` (the original semantics, unchanged: append the map
+     * container, fire `added`) only moves DOM — the `ol/Map` still has the
+     * viewport it measured at construction, so it would keep painting at the
+     * old size. Re-attach the target, which `removeFrom()` detached, and
+     * re-measure. The argument must be the new parent.
+     */
+    addTo(container: HTMLElement): this {
+        super.addTo(container);
+        this._map.setTarget(this._el.map);
+        this._map.updateSize();
+        return this;
+    }
+
+    /**
+     * Move the map out of `container`. Untargets the OpenLayers map so it
+     * does not render into a detached node; a later {@link addTo} re-attaches
+     * it. The argument must be the current parent.
+     */
+    removeFrom(container: HTMLElement): this {
+        super.removeFrom(container);
+        this._map.setTarget(undefined);
+        return this;
+    }
+
+    /**
      * True when the map is a plain image in an `EPSG:4326` "image space"
      * rather than a geographic map: a IIIF image presented as a picture of
      * the world (`map_as_image`), not georeferenced.

@@ -92,6 +92,16 @@ class MapMarkerBase {
     /** @deprecated See {@link show} — no-op since 0.9.x upstream. */
     hide(): void {}
 
+    /**
+     * @deprecated Never implemented, in the original viewer either: the base
+     * `MapMarker._createPopup` had an empty body and the Leaflet override's
+     * body was commented out, so the `map_popup` option that called it never
+     * had any effect. Kept as a no-op so pre-0.10 code that calls it keeps
+     * working. Render the slide text yourself, or use CSS on
+     * `.vco-mapmarker` to show a label.
+     */
+    createPopup(_d?: MapMarkerData, _o?: StorymapOptions): void {}
+
     addTo(m: unknown): void {
         this._addTo(m);
     }
