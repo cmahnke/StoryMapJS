@@ -5,6 +5,45 @@ import Dom from "../dom/Dom";
 const CONSENT_STORAGE_KEY = "storymapjs-consent";
 
 /**
+ * Read the shared consent record, remapping keys written by an earlier
+ * version onto their namespaced form.
+ *
+ * @returns The state, and whether any key was remapped (so a caller can
+ *          write the modern form back once and retire the legacy keys).
+ */
+function readStoredState(): { state: Record<string, boolean>; migrated: boolean } {
+    const state: Record<string, boolean> = {};
+    let migrated = false;
+    try {
+        const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
+        if (!raw) {
+            return { state, migrated };
+        }
+        const parsed = JSON.parse(raw) as Record<string, boolean>;
+        for (const stored in parsed) {
+            if (!Object.hasOwn(parsed, stored)) continue;
+            const key = migrateLegacyKey(stored);
+            if (key !== stored) {
+                migrated = true;
+            }
+            state[key] = parsed[stored];
+        }
+    } catch {
+        // ignore malformed or unavailable storage
+    }
+    return { state, migrated };
+}
+
+/** Write the shared consent record. */
+function writeStoredState(state: Record<string, boolean>): void {
+    try {
+        window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(state));
+    } catch {
+        // storage unavailable (e.g. sandboxed contexts)
+    }
+}
+
+/**
  * An external service the viewer asks permission to load.
  *
  * `key` is the *only* thing ever persisted, and it is stable, namespaced and
@@ -141,41 +180,57 @@ export class ConsentManager {
      * keys so they cannot drift out of sync later.
      */
     private restore(): void {
-        try {
-            const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
-            if (!raw) return;
-            const state = JSON.parse(raw) as Record<string, boolean>;
-            let migrated = false;
-            for (const stored in state) {
-                if (!Object.hasOwn(state, stored)) continue;
-                const key = migrateLegacyKey(stored);
-                if (key !== stored) {
-                    migrated = true;
-                }
-                if (state[stored]) {
-                    this.granted.add(key);
-                } else {
-                    this.denied.add(key);
-                }
+        const { state, migrated } = readStoredState();
+        for (const [key, allowed] of Object.entries(state)) {
+            if (allowed) {
+                this.granted.add(key);
+            } else {
+                this.denied.add(key);
             }
-            if (migrated) {
-                this.persist();
-            }
-        } catch {
-            // ignore malformed or unavailable storage
+        }
+        if (migrated) {
+            this.persist();
         }
     }
 
-    /** Persist the per-service state to localStorage. */
+    /**
+     * Persist the per-service state to localStorage.
+     *
+     * A page can hold more than one viewer, and they all share this one
+     * record — a visitor should not answer the same question twice for the
+     * same service. So this *merges* into whatever is already stored instead
+     * of replacing it: writing this viewer's full set back would silently
+     * erase a decision a sibling viewer made, while that sibling still
+     * believed otherwise. The merged result is then adopted, which is what
+     * makes every viewer converge on the same decisions.
+     */
     private persist(): void {
-        const state: Record<string, boolean> = {};
-        for (const service of this.granted) state[service] = true;
-        for (const service of this.denied) state[service] = false;
-        try {
-            window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(state));
-        } catch {
-            // storage unavailable (e.g. sandboxed contexts)
+        const merged = readStoredState().state;
+        for (const service of this.granted) merged[service] = true;
+        for (const service of this.denied) merged[service] = false;
+        writeStoredState(merged);
+        this.adopt(merged);
+    }
+
+    /** Replace the in-memory decision set with `state`, in place. */
+    private adopt(state: Record<string, boolean>): void {
+        this.granted.clear();
+        this.denied.clear();
+        for (const [key, allowed] of Object.entries(state)) {
+            if (allowed) {
+                this.granted.add(key);
+            } else {
+                this.denied.add(key);
+            }
         }
+    }
+
+    /**
+     * Re-read the shared record, so a decision the visitor made in a sibling
+     * viewer is honoured here without having to reconstruct this one.
+     */
+    private sync(): void {
+        this.adopt(readStoredState().state);
     }
 
     /**
@@ -196,6 +251,11 @@ export class ConsentManager {
             this.denied.add(service);
             this.granted.delete(service);
         }
+        // Store before resolving. A resolved promise starts loading the media,
+        // which asks again for the next service, and that ask re-reads the
+        // shared record — so the decision has to be durable first.
+        this.persist();
+
         // answering resolves every pending ask of that service (preloaded
         // slides ask in parallel)
         for (const pending of this.pending.get(service) ?? []) {
@@ -208,7 +268,6 @@ export class ConsentManager {
         // cannot be cleaned up by its own click handler alone.
         this.startRows.get(service)?.remove();
         this.startRows.delete(service);
-        this.persist();
     }
 
     isGranted(service: string): boolean {
@@ -221,6 +280,7 @@ export class ConsentManager {
 
     /** True when at least one of the services has no stored decision yet. */
     hasUnanswered(services: string[]): boolean {
+        this.sync();
         return services.some((service) => !this.granted.has(service) && !this.denied.has(service));
     }
 
@@ -318,6 +378,10 @@ export class ConsentManager {
      */
     request(service: ConsentService, host: string, container: HTMLElement): Promise<boolean> {
         const key = service.key;
+        // the record is shared with any sibling viewer on the page, so re-read
+        // it: a decision the visitor just made over there answers this ask
+        // without showing a second dialog for the same service
+        this.sync();
         if (this.granted.has(key)) return Promise.resolve(true);
         if (this.denied.has(key)) return Promise.resolve(false);
         return new Promise((resolve) => {

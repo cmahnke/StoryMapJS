@@ -12,7 +12,19 @@ import {
 } from "./Consent";
 import Dom from "../dom/Dom";
 import { easeInOutQuint, easeOutStrong } from "../animation/easings";
-import { setLanguage, isRtl } from "../language/Language";
+import {
+    setLanguage,
+    isRtl,
+    claimLanguage,
+    releaseLanguage,
+    isLanguageConflict,
+} from "../language/Language";
+import {
+    markInteraction,
+    ownsPageEvent,
+    registerParticipant,
+    unregisterParticipant,
+} from "../core/viewers";
 import MediaType from "../media/MediaType";
 import { Evented, type EventedInstance } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
@@ -135,6 +147,11 @@ class StoryMapBase {
     declare "_on_hashchange": (() => void) | null;
     /** Set by `dispose()` so a second call returns early. */
     declare "_disposed": boolean;
+    /** identity of this viewer's claim on the page-wide locale */
+    declare "_language_holder": symbol;
+    /** bumped on interaction, so page-wide keys can pick one viewer */
+    declare "_interaction": number;
+    declare "_onInteraction": (() => void) | null;
     declare "_resize_timer": ReturnType<typeof setTimeout> | null;
     declare "fire": EventedInstance["fire"];
     declare "hasEventListeners": EventedInstance["hasEventListeners"];
@@ -324,6 +341,9 @@ class StoryMapBase {
         this._on_fullscreen = null;
         this._on_hashchange = null;
         this._disposed = false;
+        this._language_holder = Symbol("storymap");
+        this._interaction = 0;
+        this._onInteraction = null;
         this._resize_timer = null;
         this._autoplay_timer = null;
         this._transition_timer = null;
@@ -401,6 +421,14 @@ class StoryMapBase {
             }
             this._initOptions();
         } catch (err: unknown) {
+            if (isLanguageConflict(err)) {
+                // a second viewer on this page asked for another locale. This
+                // is a configuration error, not a failed fetch, and reporting
+                // it as one would send the host looking for a 404.
+                console.error((err as Error).message);
+                this.fire("error", { message: (err as Error).message, source, conflict: true });
+                return;
+            }
             console.error("StoryMapJS: could not load storymap data from " + source, err);
             this.fire("error", { message: String(err), source });
         }
@@ -482,7 +510,13 @@ class StoryMapBase {
     _loadLanguage() {
         // the locale chunk is fetched on demand, so the language is not
         // available synchronously; layout proceeds with the English defaults
-        // and the labels are repainted once the locale arrives
+        // and the labels are repainted once the locale arrives.
+        //
+        // The claim is what makes a second viewer on this page safe: the UI
+        // strings are one module-level binding, so a conflicting locale would
+        // otherwise repaint this viewer in the other viewer's language. It
+        // throws rather than warn, before any of this viewer's DOM exists.
+        claimLanguage(this.options.language, this._language_holder);
         setLanguage(this.options.language);
         this._onDataLoaded();
     }
@@ -492,6 +526,8 @@ class StoryMapBase {
 
     refreshLanguage(code: string): void {
         if (this._disposed) return;
+        // throws if a sibling viewer is rendering in another language
+        claimLanguage(code, this._language_holder);
         this.options.language = code;
         setLanguage(code);
         this._applyLanguageLayout();
@@ -803,6 +839,39 @@ class StoryMapBase {
         // players, but their nodes (and the ol canvas) would otherwise stay
         // in the document after teardown
         this._el?.container?.replaceChildren();
+
+        // let another viewer claim a different language, now that this one is
+        // no longer reading the shared strings (refcounted, so a sibling in
+        // the same language keeps its claim)
+        releaseLanguage(this._language_holder);
+
+        if (this._onInteraction) {
+            for (const type of ["pointerdown", "focusin", "wheel"] as const) {
+                this._el.container.removeEventListener(type, this._onInteraction);
+            }
+            this._onInteraction = null;
+        }
+        unregisterParticipant(this);
+    }
+
+    /**
+     * This viewer's root element. Satisfies the `Participant` shape the
+     * page-wide key registry (`src/core/viewers.ts`) arbitrates on.
+     *
+     * @internal
+     */
+    get element(): HTMLElement | null {
+        return this._el?.container ?? null;
+    }
+
+    /**
+     * Monotonic stamp of the last interaction with this viewer; the highest
+     * one owns a page-wide keypress when nothing is focused.
+     *
+     * @internal
+     */
+    get interaction(): number {
+        return this._interaction;
     }
 
     /** The highlighted route line drawn up to the current slide. */
@@ -941,8 +1010,23 @@ class StoryMapBase {
         this._map.on("change", this._onMapChange, this);
 
         // Global slide navigation (opt-in): the slider only listens on its
-        // own panel, which needs focus
+        // own panel, which needs focus.
+        //
+        // With more than one viewer on the page, `window` is shared, and
+        // e.preventDefault() does not stop a sibling listener on the same
+        // target — so an arrow press used to advance every story at once. This
+        // viewer takes part in the registry and then answers whether it owns
+        // the event (focus first, then most-recently-interacted).
         if (this.options.keyboard) {
+            this._onInteraction = () => {
+                this._interaction = markInteraction();
+            };
+            for (const type of ["pointerdown", "focusin", "wheel"] as const) {
+                this._el.container.addEventListener(type, this._onInteraction, {
+                    passive: true,
+                });
+            }
+            registerParticipant(this);
             this._on_keydown_global = (e: KeyboardEvent) => this._onKeyDownGlobal(e);
             window.addEventListener("keydown", this._on_keydown_global);
         }
@@ -966,8 +1050,11 @@ class StoryMapBase {
         ) {
             return;
         }
-        // let OpenLayers keep arrow-key map panning when the map has focus
-        if (target instanceof Element && target.closest(".vco-map")) {
+        // One viewer owns a page-wide keypress. This also covers the old
+        // "let OpenLayers pan the map" carve-out: the map is inside the
+        // viewer's own container, so a keypress aimed at another viewer (or at
+        // nothing the visitor has focused) no longer reaches this slider.
+        if (!ownsPageEvent(this)) {
             return;
         }
         if (e.key === "ArrowRight" || e.key === "ArrowDown") {

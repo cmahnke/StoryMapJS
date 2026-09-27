@@ -112,6 +112,79 @@ const FALLBACK: LanguageEntry = {
 
 let Language: LanguageEntry = FALLBACK;
 
+/**
+ * Which live viewer owns the page-wide locale.
+ *
+ * `Language` above is a single module-level binding, and every label read in
+ * the viewer goes through it (MenuBar, Message, StorySlider, Consent, Media,
+ * ...). That is deliberate — the strings are read synchronously while a viewer
+ * is constructed — but it means two viewers on one page cannot show different
+ * languages: whichever called `setLanguage` last would win, and the other
+ * would silently keep repainting its chrome in the wrong language.
+ *
+ * Rather than thread a resolved entry down the options chain, the viewer
+ * claims the locale it needs and we fail loudly on a conflict. The claim is
+ * refcounted, so tearing down one of two viewers set in the same language
+ * does not release the page.
+ */
+const languageHolders = new Map<symbol, string>();
+
+/** Why a claim was rejected, for the thrown error. */
+function languageConflict(claimed: string, requested: string): Error {
+    const err = new Error(
+        `StoryMapJS: two viewers on this page asked for different languages ` +
+            `("${claimed}" and "${requested}"), but the UI strings are a single ` +
+            `page-wide setting — the last one set would win and the other viewer ` +
+            `would keep rendering its chrome in the wrong language. Pass the same ` +
+            `language to every viewer on the page, or call refreshLanguage() on ` +
+            `the surviving viewer. See docs/DEVELOPMENT.md, ` +
+            `"Multiple instances on one page".`,
+    );
+    // the data may carry its own `language`, and a URL-loaded document claims
+    // asynchronously, where the constructor cannot throw — the name lets the
+    // async load path report the real cause instead of "could not load data"
+    err.name = "StoryMapLanguageConflict";
+    return err;
+}
+
+/** True for the error {@link claimLanguage} throws on a conflicting locale. */
+function isLanguageConflict(err: unknown): boolean {
+    return err instanceof Error && err.name === "StoryMapLanguageConflict";
+}
+
+/**
+ * Claim the page-wide locale for a viewer.
+ *
+ * @param code - The locale code the viewer is about to render.
+ * @param holder - Per-viewer identity; pass the same one to `releaseLanguage`.
+ * @throws If a live holder already claimed a different locale.
+ */
+function claimLanguage(code: string, holder: symbol): void {
+    for (const [existingHolder, existingCode] of languageHolders) {
+        if (existingHolder !== holder && existingCode !== code) {
+            throw languageConflict(existingCode, code);
+        }
+    }
+    languageHolders.set(holder, code);
+}
+
+/**
+ * Release a viewer's claim. The page-wide locale is only released once the
+ * last holder is gone, so a disposed viewer does not free the locale a
+ * sibling is still rendering in.
+ *
+ * @param holder - The identity passed to `claimLanguage`.
+ */
+function releaseLanguage(holder: symbol): void {
+    languageHolders.delete(holder);
+}
+
+/** The locale currently claimed by a live viewer, or null if there is none. */
+function claimedLanguage(): string | null {
+    const codes = new Set(languageHolders.values());
+    return codes.size > 0 ? [...codes][0] : null;
+}
+
 function getLanguage(code: string): Record<string, unknown> {
     const lang: Record<string, unknown> = {};
     // start from a deep copy of the English defaults, then layer this locale
@@ -171,4 +244,13 @@ function isRtl(): boolean {
     return Language.direction === "rtl";
 }
 
-export { setLanguage, Language, currentLocale, isRtl };
+export {
+    setLanguage,
+    Language,
+    currentLocale,
+    isRtl,
+    claimLanguage,
+    releaseLanguage,
+    claimedLanguage,
+    isLanguageConflict,
+};

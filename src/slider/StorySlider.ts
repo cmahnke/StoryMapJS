@@ -220,13 +220,25 @@ class StorySliderBase {
             return;
         }
         for (let i = 0; i < array.length; i++) {
-            if (array[i].uniqueid === "") {
-                array[i].uniqueid = unique_ID(6, "vco-slide");
-            }
+            // The id is generated into a per-slide copy, not written back into
+            // `array`. StoryMap hands its own `this.data` down without cloning
+            // it, so writing here would be visible to every other viewer built
+            // from the same parsed document: the second one would find the id
+            // already set, adopt it, and emit a duplicate element id — the id
+            // becomes a DOM id in Slide, Text and Media.
+            //
+            // The guard is falsy rather than `=== ""`: `uniqueid` is optional
+            // in the schema and absent from 47 of the 48 bundled fixtures, so
+            // an empty-string test never fired and every slide ended up with
+            // an empty id.
+            const needs_id = !array[i].uniqueid;
+            const slide_data = needs_id
+                ? { ...array[i], uniqueid: unique_ID(6, "vco-slide") }
+                : array[i];
             if (i === 0) {
-                this._createSlide(array[i], true);
+                this._createSlide(slide_data, true);
             } else {
-                this._createSlide(array[i], false);
+                this._createSlide(slide_data, false);
             }
         }
     }

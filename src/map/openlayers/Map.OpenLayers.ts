@@ -1378,7 +1378,17 @@ export default class OpenLayers extends Map {
     _opaquePanelPadding(): [number, number, number, number] {
         const padding: [number, number, number, number] = [15, 15, 15, 15];
         if (typeof document === "undefined") return padding;
-        const panel = document.querySelector(".vco-storyslider .vco-slide.vco-active .vco-text");
+        // Scope the search to THIS viewer's root. The slide panel is a sibling
+        // of the map, not a descendant, so it is not reachable from
+        // this._el.container (the .vco-map div); a document-wide query would
+        // find whichever panel comes first on the page, and then measure this
+        // map against another viewer's rectangle — the overlap test below then
+        // decides padding for a panel that may not overlap this map at all.
+        const root = this._el.container.closest?.(".vco-storymap");
+        // no viewer root means the map is standalone, so there is no slide
+        // panel to make room for
+        if (!root) return padding;
+        const panel = root.querySelector(".vco-storyslider .vco-slide.vco-active .vco-text");
         if (!panel) return padding;
         const bg = getComputedStyle(panel).backgroundColor;
         const match = /rgba?\(([^)]+)\)/.exec(bg);

@@ -52,25 +52,77 @@ function loadElement(
 }
 
 /**
+ * In-flight and completed loads, keyed by URL.
+ *
+ * A page can hold more than one viewer, and they all need the same third-party
+ * scripts (the YouTube and SoundCloud APIs) and the same font stylesheet.
+ * Injecting those once per viewer re-defines `window.YT`/`window.SC` and
+ * re-applies the theme, so the second viewer awaits the first load instead.
+ *
+ * This is per bundle copy: two separately bundled copies of StoryMapJS on one
+ * page each keep their own map and would still both inject.
+ */
+const sharedLoads = new Map<string, Promise<void>>();
+
+/** Reject `promise` early if `signal` aborts, without touching the load. */
+function withAbort(promise: Promise<void>, signal: AbortSignal): Promise<void> {
+    if (signal.aborted) {
+        return Promise.reject(new DOMException("Load aborted", "AbortError"));
+    }
+    return new Promise<void>((resolve, reject) => {
+        const onAbort = () => {
+            reject(new DOMException("Load aborted", "AbortError"));
+        };
+        signal.addEventListener("abort", onAbort, { once: true });
+        promise.then(resolve, reject).then(() => {
+            signal.removeEventListener("abort", onAbort);
+        });
+    });
+}
+
+function loadOnce(url: string, load: () => Promise<void>, options?: LoadOptions): Promise<void> {
+    let shared = sharedLoads.get(url);
+    if (!shared) {
+        shared = load().catch((err: unknown) => {
+            // never cache a failure: the next viewer should get a fresh try
+            sharedLoads.delete(url);
+            throw err;
+        });
+        sharedLoads.set(url, shared);
+    }
+    if (!options?.signal) {
+        return shared;
+    }
+    // A viewer aborts its own media loads when it is torn down. That must
+    // reject this caller's promise without cancelling the load a sibling
+    // viewer is still waiting on, so the shared load gets no signal at all.
+    return withAbort(shared, options.signal);
+}
+
+/**
  * Append a script to the document head.
+ *
+ * Concurrent and repeat requests for the same URL share one injected script.
  *
  * @param url - The script URL.
  * @param options - Optional AbortSignal to cancel an in-flight load.
  * @returns Resolves when the script has loaded, rejects on error or abort.
  */
 function loadJS(url: string, options?: LoadOptions): Promise<void> {
-    return loadElement("script", { src: url }, options);
+    return loadOnce(url, () => loadElement("script", { src: url }), options);
 }
 
 /**
  * Append one stylesheet to the document head.
+ *
+ * Concurrent and repeat requests for the same URL share one `<link>`.
  *
  * @param url - The stylesheet URL.
  * @param options - Optional AbortSignal to cancel an in-flight load.
  * @returns Resolves when the stylesheet has loaded, rejects on error or abort.
  */
 function loadCSS(url: string, options?: LoadOptions): Promise<void> {
-    return loadElement("link", { href: url, rel: "stylesheet" }, options);
+    return loadOnce(url, () => loadElement("link", { href: url, rel: "stylesheet" }), options);
 }
 
 export interface JSONPOptions extends LoadOptions {

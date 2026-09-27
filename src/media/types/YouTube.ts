@@ -197,12 +197,18 @@ export default class YouTube extends Media {
 	================================================== */
     onPlayerReady(e?: unknown) {
         this.youtube_loaded = true;
-        // the iframe replaces the placeholder div — re-resolve it, but a
-        // slide removed in the meantime must not crash the display update
-        const mount_id = this._el.content_item?.id;
-        const el = mount_id ? document.getElementById(mount_id) : null;
-        if (el) {
-            this._el.content_item = el;
+        // The IFrame API replaces the placeholder div with its own iframe, so
+        // re-resolve the mount. Prefer the element this instance already
+        // holds: a document-wide getElementById() reads the global id space,
+        // which two viewers on a page both write into, and would hand this
+        // player the sibling's container. The id lookup stays as a fallback
+        // for the case where the node really was replaced under us.
+        if (!this._el.content_item?.isConnected) {
+            const mount_id = (this._el.content_item as HTMLElement | undefined)?.id;
+            const found = mount_id ? document.getElementById(mount_id) : null;
+            if (found) {
+                this._el.content_item = found;
+            }
         }
         this.onMediaLoaded();
         this.onLoaded();
