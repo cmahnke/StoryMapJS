@@ -2,6 +2,7 @@ import Overlay from "ol/Overlay";
 import { fromLonLat } from "ol/proj";
 import type { Map as OlMap } from "ol";
 import MapMarker from "../MapMarker";
+import { clearTimer } from "../../core/Util";
 import type { LatLngLiteral, MapMarkerData, StorymapOptions } from "../../types";
 
 /*	MapMarker.OpenLayers
@@ -17,20 +18,21 @@ export default class OpenLayersMapMarker extends MapMarker {
     /*	Create Marker
     ================================================== */
     _createMarker(d?: MapMarkerData, o?: StorymapOptions): void {
-        if (d.location && typeof d.location.lat == "number" && typeof d.location.lon == "number") {
+        const location = d?.location;
+        if (location && typeof location.lat == "number" && typeof location.lon == "number") {
             this.data.real_marker = true;
-            const use_custom_marker = o.use_custom_markers || d.location.use_custom_marker;
-            if (use_custom_marker && d.location.icon) {
+            const use_custom_marker = o?.use_custom_markers || location.use_custom_marker;
+            if (use_custom_marker && location.icon) {
                 this._custom_icon = {
-                    url: d.location.icon,
-                    size: d.location.iconSize || [48, 48],
-                    anchor: this._customIconAnchor(d.location.iconSize),
+                    url: location.icon,
+                    size: location.iconSize || [48, 48],
+                    anchor: this._customIconAnchor(location.iconSize),
                 };
-            } else if (use_custom_marker && d.location.image) {
-                this._custom_image_icon = d.location.image;
+            } else if (use_custom_marker && location.image) {
+                this._custom_image_icon = location.image;
             }
 
-            this._marker = this._createMarkerElement(d, o);
+            this._marker = this._createMarkerElement(d as MapMarkerData, o);
             this._marker.addEventListener("click", (e) => {
                 e.stopPropagation();
                 this._onMarkerClick(e);
@@ -69,14 +71,31 @@ export default class OpenLayersMapMarker extends MapMarker {
         return el;
     }
 
+    /**
+     * The marker's {lat, lon}, or null when it is a non-georeferenced marker
+     * (an overview slide, or a slide with only an image region). `_createMarker`
+     * already established this for a real marker, but returning it from one
+     * place means the type checker can see it too.
+     */
+    latLon(): LatLngLiteral | null {
+        const location = this.data.location;
+        if (!this.data.real_marker || !location) {
+            return null;
+        }
+        if (typeof location.lat !== "number" || typeof location.lon !== "number") {
+            return null;
+        }
+        return { lat: location.lat, lon: location.lon };
+    }
+
     _addTo(m: OlMap): void {
-        if (this.data.real_marker) {
-            const d = this.data;
+        const latlon = this.latLon();
+        if (latlon && this._marker) {
             // Image-space maps (IIIF) use EPSG:4326 with raw image pixel coordinates
             const is_image_space = m.getView().getProjection().getCode() === "EPSG:4326";
             const position = is_image_space
-                ? [d.location.lon, d.location.lat]
-                : fromLonLat([d.location.lon, d.location.lat]);
+                ? [latlon.lon, latlon.lat]
+                : fromLonLat([latlon.lon, latlon.lat]);
 
             // Default pins anchor on their tip: OL's inline styles override
             // any CSS top/left, so the alignment is done here — bottom-center
@@ -112,7 +131,7 @@ export default class OpenLayersMapMarker extends MapMarker {
                 // custom icons look the same active or not (as in the
                 // original Leaflet version): only the stacking changes
                 if (!a) {
-                    clearTimeout(this.timer);
+                    clearTimer(this.timer);
                 }
                 this._marker.style.zIndex = a ? "1000" : "";
             } else if (this._custom_image_icon) {
@@ -121,7 +140,7 @@ export default class OpenLayersMapMarker extends MapMarker {
                     this._marker.classList.add("vco-mapmarker-image-icon-active");
                     this._marker.style.zIndex = "1000";
                 } else {
-                    clearTimeout(this.timer);
+                    clearTimer(this.timer);
                     this._marker.classList.remove("vco-mapmarker-image-icon-active");
                     this._marker.classList.add("vco-mapmarker-image-icon");
                     this._marker.style.zIndex = "";
@@ -131,7 +150,7 @@ export default class OpenLayersMapMarker extends MapMarker {
                 this._marker.classList.add("vco-mapmarker-active");
                 this._marker.style.zIndex = "1000";
             } else {
-                clearTimeout(this.timer);
+                clearTimer(this.timer);
                 this._marker.classList.remove("vco-mapmarker-active");
                 this._marker.classList.add("vco-mapmarker");
                 this._marker.style.zIndex = "";
@@ -166,11 +185,7 @@ export default class OpenLayersMapMarker extends MapMarker {
         }
     }
 
-    _location(): LatLngLiteral {
-        if (this.data.real_marker) {
-            return { lat: this.data.location.lat, lon: this.data.location.lon };
-        } else {
-            return {} as LatLngLiteral;
-        }
+    _location(): LatLngLiteral | null {
+        return this.latLon();
     }
 }

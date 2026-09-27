@@ -5,7 +5,7 @@ import { easeInOutQuint } from "../animation/easings";
 
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
-import { Language } from "../language/Language";
+import { Language, currentLocale } from "../language/Language";
 
 /*	MenuBar
 	Buttons, progress and distance display for the storymap
@@ -53,7 +53,11 @@ class MenuBarBase {
         if (typeof elem === "object") {
             this._el.container = elem;
         } else {
-            this._el.container = Dom.get(elem);
+            const found = Dom.get(elem);
+            if (!found) {
+                throw new Error("StoryMapJS: no element with id " + elem);
+            }
+            this._el.container = found;
         }
 
         if (parent_elem) {
@@ -117,6 +121,40 @@ class MenuBarBase {
     }
 
     /**
+     * Repaint the overview button label. An image map has no interactive
+     * overview, so it gets the shorter wording.
+     */
+    _renderOverviewLabel(): void {
+        this._el.button_overview.innerHTML = this.options.map_as_image
+            ? Language.buttons.overview
+            : Language.buttons.map_overview;
+    }
+
+    /**
+     * Repaint the "back to start" button label. Icon-only on mobile.
+     */
+    _renderBackToStartLabel(): void {
+        this._el.button_backtostart.innerHTML = Browser.mobile
+            ? "<span class='vco-icon-goback'></span>"
+            : Language.buttons.backtostart + " <span class='vco-icon-goback'></span>";
+    }
+
+    /**
+     * Repaint the collapse/expand toggle. Icon-only on mobile.
+     */
+    _renderCollapseLabel(collapsed: boolean): void {
+        const arrow = collapsed ? "arrow-down" : "arrow-up";
+        if (Browser.mobile) {
+            this._el.button_collapse_toggle.innerHTML = `<span class='vco-icon-${arrow}'></span>`;
+        } else {
+            const text = collapsed
+                ? Language.buttons.uncollapse_toggle
+                : Language.buttons.collapse_toggle;
+            this._el.button_collapse_toggle.innerHTML = `${text} <span class='vco-icon-${arrow}'></span>`;
+        }
+    }
+
+    /**
      * Repaint every text label from the active language (see `setLanguage`).
      * Icon-only mobile buttons carry no text and are left untouched.
      */
@@ -124,21 +162,10 @@ class MenuBarBase {
         if (Browser.mobile) {
             return;
         }
-        if (this.options.map_as_image) {
-            this._el.button_overview.innerHTML = Language.buttons.overview;
-        } else {
-            this._el.button_overview.innerHTML = Language.buttons.map_overview;
-        }
-        this._el.button_backtostart.innerHTML =
-            Language.buttons.backtostart + " <span class='vco-icon-goback'></span>";
+        this._renderOverviewLabel();
+        this._renderBackToStartLabel();
         this.setFullscreenState(this._fullscreenActive);
-        if (this.collapsed) {
-            this._el.button_collapse_toggle.innerHTML =
-                Language.buttons.uncollapse_toggle + "<span class='vco-icon-arrow-down'></span>";
-        } else {
-            this._el.button_collapse_toggle.innerHTML =
-                Language.buttons.collapse_toggle + "<span class='vco-icon-arrow-up'></span>";
-        }
+        this._renderCollapseLabel(this.collapsed);
     }
 
     /**
@@ -171,7 +198,7 @@ class MenuBarBase {
         }
         this._el.distance.style.display = "";
         const miles = kilometers * 0.621371;
-        const locale = typeof Language.lang === "string" && Language.lang ? Language.lang : "en";
+        const locale = currentLocale();
         this._el.distance.textContent =
             kilometers >= 10
                 ? `${Math.round(kilometers).toLocaleString(locale)} km · ${Math.round(miles).toLocaleString("en-US")} mi`
@@ -204,27 +231,17 @@ class MenuBarBase {
             this.collapsed = false;
             this.show();
             this._el.button_overview.style.display = "inline";
-            this.fire("collapse", { y: this.options.menubar_default_y });
-            if (Browser.mobile) {
-                this._el.button_collapse_toggle.innerHTML =
-                    "<span class='vco-icon-arrow-up'></span>";
-            } else {
-                this._el.button_collapse_toggle.innerHTML =
-                    Language.buttons.collapse_toggle + "<span class='vco-icon-arrow-up'></span>";
-            }
+            // `collapsed` is the authoritative signal: `y` is the menubar
+            // position, and reading it back as a map height made the
+            // un-collapse pass shrink the map to the menubar's pixel height.
+            this.fire("collapse", { y: this.options.menubar_default_y, collapsed: false });
+            this._renderCollapseLabel(false);
         } else {
             this.collapsed = true;
             this.hide(25);
             this._el.button_overview.style.display = "none";
-            this.fire("collapse", { y: 1 });
-            if (Browser.mobile) {
-                this._el.button_collapse_toggle.innerHTML =
-                    "<span class='vco-icon-arrow-down'></span>";
-            } else {
-                this._el.button_collapse_toggle.innerHTML =
-                    Language.buttons.uncollapse_toggle +
-                    "<span class='vco-icon-arrow-down'></span>";
-            }
+            this.fire("collapse", { y: 1, collapsed: true });
+            this._renderCollapseLabel(true);
         }
     }
 
@@ -301,10 +318,8 @@ class MenuBarBase {
             this._el.button_fullscreen.innerHTML = "<span class='vco-icon-resize-full'></span>";
             this._el.container.setAttribute("ontouchstart", " ");
         } else {
-            this._el.button_backtostart.innerHTML =
-                Language.buttons.backtostart + " <span class='vco-icon-goback'></span>";
-            this._el.button_collapse_toggle.innerHTML =
-                Language.buttons.collapse_toggle + "<span class='vco-icon-arrow-up'></span>";
+            this._renderBackToStartLabel();
+            this._renderCollapseLabel(this.collapsed);
             this._el.button_fullscreen.innerHTML =
                 Language.buttons.fullscreen + " <span class='vco-icon-resize-full'></span>";
         }

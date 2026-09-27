@@ -120,3 +120,77 @@ test("rejects malformed overlays, map_area and overview_extent", () => {
     expect(errors.some((e) => e.path.includes("overview_extent"))).toBe(true);
     expect(errors.filter((e) => e.path.includes("overlays")).length).toBe(3);
 });
+
+/*	anyOf / format coverage
+	`anyOf` was not implemented at all, so map_bbox, map_overview_center and
+	the legacy zoomify block were accepted completely unvalidated — including
+	map_bbox's "exactly four numbers" rule, which the runtime depends on.
+================================================== */
+
+test("anyOf: map_bbox must have exactly four numbers", () => {
+    const data = {
+        storymap: {
+            map_type: "osm",
+            map_bbox: [1, 2, 3],
+            slides: [],
+        },
+    };
+    const errors = validateStorymap(data);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors.map((e) => e.path).join()).toContain("map_bbox");
+});
+
+test("anyOf: a valid map_bbox still passes", () => {
+    const data = {
+        storymap: {
+            map_type: "osm",
+            map_bbox: [-180, -85, 180, 85],
+            slides: [],
+        },
+    };
+    expect(validateStorymap(data)).toEqual([]);
+});
+
+test("anyOf: map_overview_center rejects a non-object, non-null value", () => {
+    // note: the schema's object branch has no "required", so a partial
+    // { lat } *is* valid by design — this only pins the branch selection.
+    const data = {
+        storymap: {
+            map_type: "osm",
+            map_overview_center: "somewhere",
+            slides: [],
+        },
+    };
+    const errors = validateStorymap(data);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors.map((e) => e.path).join()).toContain("map_overview_center");
+});
+
+test("anyOf: map_bbox may be null (the documented default)", () => {
+    const data = {
+        storymap: { map_type: "osm", map_bbox: null, slides: [] },
+    };
+    // null is the default value, so it must not be an error
+    expect(
+        validateStorymap(data)
+            .map((e) => e.path)
+            .join(),
+    ).not.toContain("map_bbox");
+});
+
+test("format: a malformed location icon URL is reported", () => {
+    const data = {
+        storymap: {
+            map_type: "osm",
+            slides: [
+                {
+                    text: { headline: "x", text: "" },
+                    media: { url: "" },
+                    location: { lat: 1, lon: 2, icon: "http://" },
+                },
+            ],
+        },
+    };
+    const errors = validateStorymap(data);
+    expect(errors.length).toBeGreaterThan(0);
+});

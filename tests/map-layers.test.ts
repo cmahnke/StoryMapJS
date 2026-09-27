@@ -8,8 +8,9 @@ type LayerProbe = {
 };
 
 function layersOf(storymap: StoryMap): LayerProbe[] {
-    const inner = (storymap as unknown as { _map: { _map: { getLayers(): { getArray(): LayerProbe[] } } } })
-        ._map._map;
+    const inner = (
+        storymap as unknown as { _map: { _map: { getLayers(): { getArray(): LayerProbe[] } } } }
+    )._map._map;
     return inner.getLayers().getArray();
 }
 
@@ -84,8 +85,9 @@ describe("tile layer switches", () => {
 
     it("appends extra attributions without touching the base credit", () => {
         const { storymap, root } = storymapWithAttribution("sm-layers-extra");
-        const vcoMap = (storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } })
-            ._map;
+        const vcoMap = (
+            storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } }
+        )._map;
         vcoMap.setExtraAttributions(["Historic overlay, public domain"]);
         expect(attribution(root)).toContain("OpenStreetMap");
         expect(attribution(root)).toContain("Historic overlay, public domain");
@@ -95,8 +97,9 @@ describe("tile layer switches", () => {
 
     it("collapses duplicate extra attributions", () => {
         const { storymap, root } = storymapWithAttribution("sm-layers-dedupe-extra");
-        const vcoMap = (storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } })
-            ._map;
+        const vcoMap = (
+            storymap as unknown as { _map: { setExtraAttributions(p: string[]): void } }
+        )._map;
         vcoMap.setExtraAttributions(["Gallica", "Gallica"]);
         expect((attribution(root).match(/Gallica/g) ?? []).length).toBe(1);
         vcoMap.setExtraAttributions([]);

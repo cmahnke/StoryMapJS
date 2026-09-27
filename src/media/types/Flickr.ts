@@ -1,6 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 
 /*	Media.Flickr
 
@@ -13,7 +12,7 @@ export default class Flickr extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -56,17 +55,17 @@ export default class Flickr extends Media {
 
     establishMediaID() {
         const marker = "flickr.com/photos/";
-        const idx = this.data.url.indexOf(marker);
+        const idx = this._url().indexOf(marker);
         if (idx === -1) {
             throw "Invalid Flickr URL";
         }
         const pos = idx + marker.length;
-        this.media_id = this.data.url.slice(pos).split("/")[1];
+        this.media_id = this._url().slice(pos).split("/")[1];
     }
 
     createMedia(d: unknown) {
         const data = d as { sizes: { size: { label: string; source: string }[] } };
-        const best_size = this.sizes(this.options.height);
+        const best_size = this.sizes(Number(this.options.height ?? 0));
         const sizes = data?.sizes?.size;
         if (!sizes || !sizes.length) {
             this.loadErrorDisplay("Photo not found or private.");

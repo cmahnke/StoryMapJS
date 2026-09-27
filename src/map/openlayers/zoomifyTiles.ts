@@ -15,10 +15,7 @@ export const ZOOMIFY_TILE_SIZE = 256;
  * Full-size tiles are left untouched for OpenLayers' own load handling.
  */
 export function padCroppedZoomifyTile(tile: ImageTile, image: HTMLImageElement): void {
-    if (
-        image.naturalWidth !== ZOOMIFY_TILE_SIZE ||
-        image.naturalHeight !== ZOOMIFY_TILE_SIZE
-    ) {
+    if (image.naturalWidth !== ZOOMIFY_TILE_SIZE || image.naturalHeight !== ZOOMIFY_TILE_SIZE) {
         const canvas = document.createElement("canvas");
         canvas.width = ZOOMIFY_TILE_SIZE;
         canvas.height = ZOOMIFY_TILE_SIZE;

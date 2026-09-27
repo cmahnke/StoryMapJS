@@ -3,16 +3,13 @@ import { test, expect } from "vitest";
 // never execute, so tests drive the registered window globals directly.
 
 const { loadJSONP, uniqueGlobalName } = await import("../src/core/Load");
-const {
-    parseWikipediaUrl,
-    wikipediaCallbackBase,
-    wikipediaApiUrl,
-} = await import("../src/media/types/Wikipedia");
+const { parseWikipediaUrl, wikipediaCallbackBase, wikipediaApiUrl } =
+    await import("../src/media/types/Wikipedia");
 
 type Globals = Record<string, unknown>;
 
-const globals = (window as unknown as Globals);
-const payload = (name: string) => (globals[name] as (d: unknown) => void);
+const globals = window as unknown as Globals;
+const payload = (name: string) => globals[name] as (d: unknown) => void;
 
 /*	uniqueGlobalName
 ================================================== */

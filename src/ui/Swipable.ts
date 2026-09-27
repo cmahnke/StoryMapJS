@@ -7,9 +7,23 @@ import { DomEvent, type LegacyEvent } from "../dom/DomEvent";
 import type { AnimateOptions, AnimationHandle } from "../types";
 
 /*    Swipable
-    Draggable allows you to add dragging capabilities to any element. Supports mobile devices too.
-    TODO Enable constraints
+    Adds drag/swipe capabilities to an element, with momentum on release.
 ================================================== */
+
+/**
+ * Clamp `value` into `[min, max]`. Either bound may be `false` (unset) or a
+ * number; `0` is a real bound, so this tests for a number rather than
+ * truthiness.
+ */
+function clampAxis(value: number, min: number | boolean, max: number | boolean): number {
+    if (typeof max === "number" && value > max) {
+        return max;
+    }
+    if (typeof min === "number" && value < min) {
+        return min;
+    }
+    return value;
+}
 
 interface DragEventNames {
     down: string;
@@ -153,10 +167,13 @@ class SwipableBase {
         // iOS fires touchcancel when the browser claims the gesture (page
         // scroll): without it, touchend never runs and the move/leave
         // listeners registered in _onDragStart leak on every cancelled touch
-        if (this.dragevent === this.touchdrag) {
+        if (this.dragevent === this.touchdrag && this.touchdrag.cancel) {
             DomEvent.addListener(this._el.drag, this.touchdrag.cancel, this._onDragEnd, this);
         }
-        this.data.pos.start = 0 as unknown as { x: number; y: number }; //VCO.Dom.getPosition(this._el.move);
+        // reset the dragged element to its origin. `pos.start` used to be
+        // assigned the *number* 0 and then read as `pos.start.x`, which is
+        // undefined — so this wrote `left: "undefinedpx"`.
+        this.data.pos.start = { x: 0, y: 0 };
         this._el.move.style.left = this.data.pos.start.x + "px";
         this._el.move.style.top = this.data.pos.start.y + "px";
         this._el.move.style.position = "absolute";
@@ -167,7 +184,7 @@ class SwipableBase {
     disable() {
         DomEvent.removeListener(this._el.drag, this.dragevent.down, this._onDragStart, this);
         DomEvent.removeListener(this._el.drag, this.dragevent.up, this._onDragEnd, this);
-        if (this.dragevent === this.touchdrag) {
+        if (this.dragevent === this.touchdrag && this.touchdrag.cancel) {
             DomEvent.removeListener(this._el.drag, this.touchdrag.cancel, this._onDragEnd, this);
         }
     }
@@ -381,7 +398,7 @@ class SwipableBase {
         } else if (this.data.direction) {
             this.fire("swipe_nodirection", this.data);
         } else if (this.options.snap) {
-            this.animator.stop();
+            this.animator?.stop();
             this.animator = Animate(this._el.move, {
                 top: this.data.pos.start.y,
                 left: this.data.pos.start.x,
@@ -393,31 +410,25 @@ class SwipableBase {
 
     _animateMomentum() {
         const pos = {
-                x: this.data.new_pos.x,
-                y: this.data.new_pos.y,
-            },
-            animate: AnimateOptions = {
-                duration: this.options.duration,
-                easing: easeOutStrong,
-            };
+            x: this.data.new_pos.x,
+            y: this.data.new_pos.y,
+        };
+        const animate: AnimateOptions = {
+            duration: this.options.duration,
+            easing: easeOutStrong,
+        };
+        // Clamp the resting position into the configured range. Each bound is
+        // optional and defaults to `false`, so test for a number rather than
+        // truthiness (0 is a meaningful bound). The x pair was inverted —
+        // `left` was treated as the maximum and `right` as the minimum — so a
+        // real horizontal constraint snapped every momentum animation to the
+        // left edge.
         if (this.options.enable.y) {
-            if (this.options.constraint.top || this.options.constraint.bottom) {
-                if (pos.y > (this.options.constraint.bottom as number)) {
-                    pos.y = this.options.constraint.bottom as number;
-                } else if (pos.y < (this.options.constraint.top as number)) {
-                    pos.y = this.options.constraint.top as number;
-                }
-            }
+            pos.y = clampAxis(pos.y, this.options.constraint.top, this.options.constraint.bottom);
             animate.top = Math.floor(pos.y) + "px";
         }
         if (this.options.enable.x) {
-            if (this.options.constraint.left || this.options.constraint.right) {
-                if (pos.x >= (this.options.constraint.left as number)) {
-                    pos.x = this.options.constraint.left as number;
-                } else if (pos.x < (this.options.constraint.right as number)) {
-                    pos.x = this.options.constraint.right as number;
-                }
-            }
+            pos.x = clampAxis(pos.x, this.options.constraint.left, this.options.constraint.right);
             animate.left = Math.floor(pos.x) + "px";
         }
         this.animator = Animate(this._el.move, animate);

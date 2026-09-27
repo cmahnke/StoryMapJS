@@ -69,7 +69,11 @@ class MapBase {
         if (typeof elem === "object") {
             this._el.container = elem;
         } else {
-            this._el.container = Dom.get(elem);
+            const found = Dom.get(elem);
+            if (!found) {
+                throw new Error("StoryMapJS: no element with id " + elem);
+            }
+            this._el.container = found;
         }
 
         // LOADED
@@ -118,7 +122,10 @@ class MapBase {
             slides: [{ test: "yes" }, { test: "yes" }, { test: "yes" }],
         };
 
-        //Options
+        // Options — the map-owned subset only. StoryMap passes its own full
+        // options object in (see the constructor), so `this.options` is a
+        // complete StorymapOptions by the time anything reads it; these are
+        // just the fallbacks for a standalone Map.
         this.options = {
             map_type: "osm:standard",
             map_as_image: false,
@@ -149,7 +156,7 @@ class MapBase {
             show_lines: true,
             show_history_line: true,
             map_center_offset: null, // takes object {top:0,left:0}
-        } as StorymapOptions;
+        } as unknown as StorymapOptions;
 
         // Animation
         this.animator = null;
@@ -204,32 +211,30 @@ class MapBase {
             // Check to see if it's an overview
             if (marker.data.type && marker.data.type === "overview") {
                 this._markerOverview();
-                if (!change) {
-                    this._onMarkerChange();
-                }
             } else {
                 // Make marker active
                 marker.active(true);
 
+                const target_location = marker.data.location ?? undefined;
                 if (change) {
                     // Set Map View
-                    if (marker.data.location) {
-                        this._viewTo(marker.data.location, {
+                    if (target_location) {
+                        this._viewTo(target_location, {
                             duration: this._transition_duration,
                         });
                     } else {
                         // nothing to show
                     }
-                } else {
+                } else if (target_location) {
                     if (this._hasLocation(marker.data) || this._hasRegion(marker.data)) {
                         // Calculate Zoom
-                        zoom = this._calculateZoomChange(
-                            this._getMapCenter(true),
-                            marker.location(),
-                        );
+                        const here = marker.location();
+                        zoom = here
+                            ? this._calculateZoomChange(this._getMapCenter(true), here)
+                            : undefined;
 
                         // Set Map View
-                        this._viewTo(marker.data.location, {
+                        this._viewTo(target_location, {
                             calculate_zoom: this.options.calculate_zoom,
                             zoom: zoom,
                             duration: this._transition_duration,
@@ -252,32 +257,19 @@ class MapBase {
                                 // the already-traveled prefix 0..previous,
                                 // which stays drawn while [prev..current]
                                 // traces progressively (see _replaceLines).
-                                let line_num = 0,
-                                    point;
+                                let line_num = 0;
                                 let retract_path_source: LinePoint[] | null = null;
                                 let grow_path_source: LinePoint[] | null = null;
                                 if (previous_marker < this.current_marker) {
                                     while (line_num < this.current_marker) {
-                                        if (this._hasLocation(this._markers[line_num].data)) {
-                                            point = {
-                                                lat: this._markers[line_num].data.location.lat,
-                                                lon: this._markers[line_num].data.location.lon,
-                                            };
-                                            lines_array.push(point);
+                                        const loc = this._locationOf(this._markers[line_num].data);
+                                        if (loc) {
+                                            lines_array.push(loc);
                                         }
 
                                         line_num++;
                                     }
-                                    const grow_path: LinePoint[] = [];
-                                    for (let idx = 0; idx <= previous_marker; idx++) {
-                                        if (this._hasLocation(this._markers[idx].data)) {
-                                            grow_path.push({
-                                                lat: this._markers[idx].data.location.lat,
-                                                lon: this._markers[idx].data.location.lon,
-                                            });
-                                        }
-                                    }
-                                    grow_path_source = grow_path;
+                                    grow_path_source = this._locationsUpTo(previous_marker);
                                 } else if (previous_marker > this.current_marker) {
                                     // Backward navigation: the line retracts —
                                     // the end state is the traveled path from
@@ -285,33 +277,13 @@ class MapBase {
                                     // the far end pulls back from the old
                                     // marker to the new one (handled by the
                                     // map's retract animation).
-                                    const traveled = [];
-                                    for (let idx = 0; idx <= this.current_marker; idx++) {
-                                        if (this._hasLocation(this._markers[idx].data)) {
-                                            traveled.push({
-                                                lat: this._markers[idx].data.location.lat,
-                                                lon: this._markers[idx].data.location.lon,
-                                            });
-                                        }
-                                    }
-                                    const retract_path = [];
-                                    for (let idx = 0; idx <= previous_marker; idx++) {
-                                        if (this._hasLocation(this._markers[idx].data)) {
-                                            retract_path.push({
-                                                lat: this._markers[idx].data.location.lat,
-                                                lon: this._markers[idx].data.location.lon,
-                                            });
-                                        }
-                                    }
-                                    lines_array = traveled;
-                                    retract_path_source = retract_path;
+                                    lines_array = this._locationsUpTo(this.current_marker);
+                                    retract_path_source = this._locationsUpTo(previous_marker);
                                 }
 
-                                if (!retract_path_source) {
-                                    lines_array.push({
-                                        lat: marker.data.location.lat,
-                                        lon: marker.data.location.lon,
-                                    });
+                                const marker_loc = this._locationOf(marker.data);
+                                if (!retract_path_source && marker_loc) {
+                                    lines_array.push(marker_loc);
                                 }
 
                                 this._replaceLines(this._line_active, lines_array, {
@@ -321,36 +293,23 @@ class MapBase {
                                 });
                             }
                         } else {
-                            // Show Line
-                            if (
-                                this.options.show_history_line &&
-                                marker.data.real_marker &&
-                                this._markers[previous_marker].data.real_marker
-                            ) {
-                                this._replaceLines(
-                                    this._line_active,
-                                    [
-                                        {
-                                            lat: marker.data.location.lat,
-                                            lon: marker.data.location.lon,
-                                        },
-                                        {
-                                            lat: this._markers[previous_marker].data.location.lat,
-                                            lon: this._markers[previous_marker].data.location.lon,
-                                        },
-                                    ],
-                                    { duration: this._transition_duration },
-                                );
+                            // Show Line — both endpoints need a real location.
+                            // The path branch above guards every access with
+                            // _hasLocation(); `real_marker` alone is not enough
+                            // because a slide can carry a region only.
+                            const from = this._locationOf(marker.data);
+                            const to = this._locationOf(this._markers[previous_marker].data);
+                            if (this.options.show_history_line && from && to) {
+                                this._replaceLines(this._line_active, [from, to], {
+                                    duration: this._transition_duration,
+                                });
                             }
                         }
                     } else {
                         this._markerOverview();
-                        if (!change) {
-                            this._onMarkerChange();
-                        }
                     }
 
-                    // Fire Event
+                    // Fire Event — once per goTo(), for every branch above
                     this._onMarkerChange();
                 }
             }
@@ -369,8 +328,13 @@ class MapBase {
         this._viewTo(loc, opts);
     }
 
-    getBoundsZoom(m1: LatLngLiteral, m2: LatLngLiteral, inside?: boolean, padding?: unknown): void {
-        this._getBoundsZoom(m1, m2, inside, padding); // (LatLngBounds[, Boolean, Point]) -> Number
+    getBoundsZoom(
+        m1: LatLngLiteral,
+        m2: LatLngLiteral,
+        inside?: boolean,
+        padding?: unknown,
+    ): number | undefined {
+        return this._getBoundsZoom(m1, m2, inside, padding);
     }
 
     markerOverview(): void {
@@ -397,18 +361,22 @@ class MapBase {
 
     calculateMinMaxZoom(): void {
         for (let i = 0; i < this._markers.length; i++) {
-            if (this._markers[i].data.location && this._markers[i].data.location.zoom) {
-                this.updateMinMaxZoom(this._markers[i].data.location.zoom);
+            const zoom = this._markers[i].data.location?.zoom;
+            if (typeof zoom === "number") {
+                this.updateMinMaxZoom(zoom);
             }
         }
     }
 
     updateMinMaxZoom(zoom: number): void {
-        if (!this.zoom_min_max.max) {
+        // `!x` treated a legitimate zoom level of 0 as "not measured yet" and
+        // then re-ran the min/max comparison against null, which coerces to 0.
+        // Test for null explicitly so zoom 0 is a real bound.
+        if (this.zoom_min_max.max === null) {
             this.zoom_min_max.max = zoom;
         }
 
-        if (!this.zoom_min_max.min) {
+        if (this.zoom_min_max.min === null) {
             this.zoom_min_max.min = zoom;
         }
 
@@ -470,9 +438,39 @@ class MapBase {
      * lon 0 are valid coordinates and must not be treated as missing.
      */
     _hasLocation(d: StorymapSlide): boolean {
-        return (
-            !!d.location && typeof d.location.lat == "number" && typeof d.location.lon == "number"
-        );
+        return this._locationOf(d) !== null;
+    }
+
+    /**
+     * The {lat, lon} points of every marker from the first up to and
+     * including `n`, skipping the ones without a real location. This was four
+     * near-identical loops building the same thing.
+     */
+    private _locationsUpTo(n: number): LinePoint[] {
+        const points: LinePoint[] = [];
+        for (let idx = 0; idx <= n && idx < this._markers.length; idx++) {
+            const loc = this._locationOf(this._markers[idx].data);
+            if (loc) {
+                points.push(loc);
+            }
+        }
+        return points;
+    }
+
+    /**
+     * The slide's {lat, lon} point, or null when it has no real location.
+     *
+     * Preferred over testing `_hasLocation()` and then reading
+     * `data.location.lat`: a boolean guard does not narrow the property for
+     * the type checker, so the old form had to be trusted and re-checked by
+     * hand at every one of its dozen call sites.
+     */
+    _locationOf(d: StorymapSlide): LatLngLiteral | null {
+        const loc = d.location;
+        if (!loc || typeof loc.lat !== "number" || typeof loc.lon !== "number") {
+            return null;
+        }
+        return { lat: loc.lat, lon: loc.lon };
     }
 
     /**
@@ -529,7 +527,9 @@ class MapBase {
         return { data: d };
     }
 
-    _addToLine(line: VectorLayer | null, d: LinePoint): void {}
+    /** Append a slide's location to a route line. Takes the *slide*, not a
+     *  point — the engine reads `d.location`. */
+    _addToLine(line: VectorLayer | null, d: StorymapSlide): void {}
 
     _replaceLines(
         line: VectorLayer | null,
@@ -561,15 +561,31 @@ class MapBase {
     }
 
     _getMapCenter(correct_for_center?: boolean): LatLngLiteral {
-        return { lat: 0, lng: 0 };
+        return { lat: 0, lon: 0 };
     }
 
+    /**
+     * The `ease` option as an OpenLayers easing function.
+     *
+     * `ease` is documented as either a function or a name, so the cast to
+     * OpenLayers' expected shape was repeated at all ten `view.animate()` call
+     * sites.
+     */
+    protected get _easing(): ((t: number) => number) | undefined {
+        return this.options.ease as ((t: number) => number) | undefined;
+    }
+
+    /**
+     * Zoom that fits the two given points, or `undefined` when the engine
+     * cannot compute one. Mirrors `getRouteDistance`: the base class is the
+     * no-op template, the OpenLayers subclass returns a real value.
+     */
     _getBoundsZoom(
         m1: LatLngLiteral,
         m2: LatLngLiteral,
         inside?: boolean,
         padding?: unknown,
-    ): number {
+    ): number | undefined {
         return undefined;
     }
 
@@ -666,7 +682,7 @@ class MapBase {
         origin: LatLngLiteral,
         destination: LatLngLiteral,
         correct_for_center?: boolean,
-    ): number {
+    ): number | undefined {
         return this._getBoundsZoom(origin, destination, correct_for_center);
     }
 

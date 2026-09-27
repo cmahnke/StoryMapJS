@@ -1,6 +1,6 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
+import { sanitizeSlideText } from "../EmbedUtil";
 
 /*	Media.SoundCloud
 ================================================== */
@@ -19,7 +19,7 @@ export default class SoundCloud extends Media {
 	================================================== */
     async _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -29,7 +29,7 @@ export default class SoundCloud extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url;
+        this.media_id = this._url();
 
         // API URL
         const api_url = "https://soundcloud.com/oembed?url=" + this.media_id + "&format=json";
@@ -56,14 +56,24 @@ export default class SoundCloud extends Media {
             this.loadErrorDisplay("Unable to load this track.");
             return;
         }
-        this._el.content_item.innerHTML = data.html;
+        // The oEmbed response is third-party HTML. It is sanitized like any
+        // other untrusted markup, which in practice keeps the provider's
+        // <iframe> (rebuilt by the sanitizer) and drops its inline script —
+        // the widget is created from the iframe below, so the script was never
+        // needed in the first place.
+        const content_item = this._el.content_item;
+        if (!content_item) {
+            this.loadErrorDisplay("Unable to load this track.");
+            return;
+        }
+        content_item.appendChild(sanitizeSlideText(data.html));
 
         this.soundCloudCreated = true;
 
         const sc = SC as { Widget: (iframe: Element | null) => SoundCloudWidget };
         // per-instance widget: a global would be overwritten by every
         // SoundCloud slide and _stopMedia would pause the wrong one
-        this.widget = sc.Widget(this._el.content_item.querySelector("iframe"));
+        this.widget = sc.Widget(content_item.querySelector("iframe"));
 
         // After Loaded
         this.onLoaded();

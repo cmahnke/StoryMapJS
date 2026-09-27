@@ -5,7 +5,7 @@ import { isPresentation3Manifest, manifestToStorymapData } from "./iiif";
 import { ConsentManager, consentManagerOf, consentMessage } from "./Consent";
 import Dom from "../dom/Dom";
 import { easeInOutQuint, easeOutStrong } from "../animation/easings";
-import { setLanguage, Language } from "../language/Language";
+import { setLanguage, isRtl } from "../language/Language";
 import MediaType from "../media/MediaType";
 import { Evented, type EventedInstance } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
@@ -15,6 +15,9 @@ import { Browser } from "../core/Browser";
 import Animate from "morpheus";
 import type { Map as OlMap } from "ol";
 import type { AnimationHandle, StorymapData, StorymapDataWrapper, StorymapOptions } from "../types";
+
+/** Map height in pixels while the menubar has collapsed the map (portrait only). */
+const COLLAPSED_MAP_HEIGHT = 1;
 
 type StoryMapListener = (e: unknown) => void;
 
@@ -29,14 +32,43 @@ type StoryMapListener = (e: unknown) => void;
 export function resolveFontCssUrl(font: string): string {
     if (font.startsWith("stock:")) {
         const font_name = font.split(":")[1] || "default";
+        // A crafted name ("stock:../../secret") would otherwise resolve to an
+        // arbitrary same-origin file next to the bundle, because the name is
+        // concatenated into a URL path. Only accept a bare theme name.
+        if (!/^[a-z0-9-]+$/i.test(font_name)) {
+            console.warn(
+                "StoryMapJS: ignoring font_css with an invalid stock theme name",
+                font_name,
+            );
+            return new URL("../css/fonts/font.default.css", import.meta.url).href;
+        }
         // resolved against the library location: one directory up from
         // src/main.ts (dev) and js/storymap.js (build) in both cases
         return new URL("../css/fonts/font." + font_name + ".css", import.meta.url).href;
     }
-    if (!/^(http|https|\/\/)/.test(font)) {
-        return new URL(font, document.baseURI).href;
+    // Absolute URL, protocol-relative, or a data: URL. Note this must be a
+    // real URL test, not a `/^(http|https|\/\/)/` prefix check: the old prefix
+    // test false-positived on a relative path that merely *starts* with those
+    // letters (e.g. "httpfonts.css"), which raised a spurious consent prompt
+    // for a same-origin file.
+    if (/^[a-z][a-z0-9+.-]*:/i.test(font) || font.startsWith("//")) {
+        return font;
     }
-    return font;
+    return new URL(font, document.baseURI).href;
+}
+
+/** True when `url` points off-origin (or at a data: URL) and needs a consent ask. */
+export function isExternalUrl(url: string): boolean {
+    // data:/blob: are not off-origin but are not a theme stylesheet either
+    if (/^(data|blob):/i.test(url)) {
+        return true;
+    }
+    try {
+        return new URL(url, document.baseURI).origin !== window.location.origin;
+    } catch {
+        // unparseable: treat as external, so we err towards asking
+        return true;
+    }
 }
 
 /**
@@ -78,6 +110,7 @@ class StoryMapBase {
     declare "_transition_timer": ReturnType<typeof setTimeout> | null;
     declare "_autoplay_stopped": boolean;
     declare "_hash_initialized": boolean;
+    declare "_collapsed": boolean;
     /** the data source was a IIIF Presentation manifest (legacy zoomify options are ignored) */
     declare "_data_from_manifest": boolean;
     declare "_resize_observer": ResizeObserver | null;
@@ -148,7 +181,11 @@ class StoryMapBase {
         if (typeof elem === "object") {
             this._el.container = elem;
         } else {
-            this._el.container = Dom.get(elem);
+            const found = Dom.get(elem);
+            if (!found) {
+                throw new Error("StoryMapJS: no element with id " + elem);
+            }
+            this._el.container = found;
         }
 
         // Slider
@@ -170,6 +207,10 @@ class StoryMapBase {
 
         this.options = {
             script_path: StoryMap.SCRIPT_PATH,
+            // raw OpenLayers Map/View options passed through (see map_options
+            // in the README); empty by default, and the OL code reads it
+            // defensively because the option is also settable from JSON
+            map_options: {},
             height: this._el.container.offsetHeight,
             width: this._el.container.offsetWidth,
             layout: "landscape", // portrait or landscape
@@ -258,11 +299,16 @@ class StoryMapBase {
         this._transition_timer = null;
         this._autoplay_stopped = false;
         this._hash_initialized = false;
+        this._collapsed = false;
 
         // Merge Options -- legacy, in case people still need to pass in
         mergeData(this.options, options);
 
-        // Current Slide (after the options merge so start_at_slide applies)
+        // Current Slide — the constructor options have been merged, but the
+        // storymap *data* has not (issue #305). _initData -> _initOptions
+        // merges the data in afterwards, and the data may carry a
+        // start_at_slide of its own, so re-read it there rather than
+        // freezing the constructor value here.
         this.current_slide = this.options.start_at_slide;
 
         this._initData(data);
@@ -336,6 +382,13 @@ class StoryMapBase {
         // Grab options from storymap data
         updateData(this.options, this.data);
 
+        // issue #305: the data may override start_at_slide. The constructor
+        // read it before this merge, and the slider's opening goTo() fires
+        // before _initEvents() attaches our change listener — so nothing
+        // else resynchronises the field, leaving the hash, the progress bar
+        // and current_slide disagreeing with the visible slide.
+        this.current_slide = this.options.start_at_slide;
+
         // legacy zoomify options only work with storymap JSON sources — a
         // IIIF Presentation manifest cannot carry them
         if (this._data_from_manifest) {
@@ -398,8 +451,6 @@ class StoryMapBase {
 
     _loadLanguage() {
         setLanguage(this.options.language);
-        // the resolved locale decides the layout direction (issues #211, #245)
-        this.options.language = Language as unknown as string;
         this._onDataLoaded();
     }
 
@@ -409,8 +460,6 @@ class StoryMapBase {
     refreshLanguage(code: string): void {
         this.options.language = code;
         setLanguage(code);
-        // the resolved locale decides the layout direction (issues #211, #245)
-        this.options.language = Language as unknown as string;
         if (this._menubar && typeof this._menubar.refreshLabels === "function") {
             this._menubar.refreshLabels();
         }
@@ -467,19 +516,48 @@ class StoryMapBase {
         // out-of-range indices are ignored: they would desync the slider and
         // map (no active slide) and write a broken #slide-N bookmark
         if (n >= 0 && n < (this.data?.slides?.length ?? 0) && n !== this.current_slide) {
-            const duration = slideTransitionDuration(this.current_slide, n);
-            this.current_slide = n;
-            this._storyslider.goTo(this.current_slide);
-            this._map.goTo(this.current_slide);
-            this._beginTransition(duration);
-            // programmatic navigation reports outward like interaction does;
-            // the bubbled slider/map change events below are dropped by
-            // their equality guards, so this fires exactly once
-            this.fire("change", { current_slide: this.current_slide }, this);
-            this._syncHash();
-            this._scheduleAutoplay();
-            this._updateProgress();
+            this._navigate(n);
         }
+    }
+
+    /**
+     * The single navigation path shared by programmatic navigation, the
+     * slider's `change` event, the map's `change` event and "back to start".
+     *
+     * `navigate` names the single component that the bubble source already
+     * moved; the other component follows. `navigated` says whether the caller
+     * has *not* already reported the change outward, so the outward `change`
+     * event fires exactly once per navigation (the bubble paths would
+     * otherwise re-enter through the other component's handler).
+     */
+    private _navigate(
+        n: number,
+        opts: {
+            navigate?: "slider" | "map";
+            navigated?: boolean;
+            animate?: boolean;
+        } = {},
+    ): void {
+        const { navigate, navigated = false, animate = true } = opts;
+        const duration = animate ? slideTransitionDuration(this.current_slide, n) : 0;
+
+        this.current_slide = n;
+        if (navigate !== "slider") {
+            this._storyslider.goTo(this.current_slide);
+        }
+        if (navigate !== "map") {
+            this._map.goTo(this.current_slide);
+        }
+        this._beginTransition(duration);
+        if (!navigated) {
+            // programmatic navigation reports outward like interaction does;
+            // the bubbled slider/map change events are dropped by their
+            // equality guards, so this fires exactly once
+            this.fire("change", { current_slide: this.current_slide }, this);
+        }
+        this._syncHash();
+        this._scheduleAutoplay();
+        this._updateProgress();
     }
 
     /**
@@ -548,25 +626,28 @@ class StoryMapBase {
         if (this._map && this._map.options) {
             mergeData(this._map.options, options);
             this._map.applyOptions(Object.keys(options));
-        } else {
-            for (const key of Object.keys(options)) {
-                (this.options as Record<string, unknown>)[key] = (
-                    options as Record<string, unknown>
-                )[key];
-            }
         }
         if (this.ready) {
             // text color theming follows runtime option changes (issue #177)
-            if (this.options.text_color) {
-                this._el.container.style.setProperty("--vco-color-text", this.options.text_color);
-            }
-            if (this.options.text_background_color) {
-                this._el.container.style.setProperty(
-                    "--vco-color-text-background",
-                    this.options.text_background_color,
-                );
-            }
+            this._applyTextColors();
             this.updateDisplay();
+        }
+    }
+
+    /**
+     * Publish the text colour custom properties. Called from both the initial
+     * layout and every runtime option change (issue #177) so the two paths
+     * cannot drift.
+     */
+    _applyTextColors(): void {
+        if (this.options.text_color) {
+            this._el.container.style.setProperty("--vco-color-text", this.options.text_color);
+        }
+        if (this.options.text_background_color) {
+            this._el.container.style.setProperty(
+                "--vco-color-text-background",
+                this.options.text_background_color,
+            );
         }
     }
 
@@ -580,22 +661,12 @@ class StoryMapBase {
 
         // Text color theming (issue #177): expose the text colors as CSS
         // custom properties consumed by the slide typography
-        if (this.options.text_color) {
-            this._el.container.style.setProperty("--vco-color-text", this.options.text_color);
-        }
-        if (this.options.text_background_color) {
-            this._el.container.style.setProperty(
-                "--vco-color-text-background",
-                this.options.text_background_color,
-            );
-        }
+        this._applyTextColors();
 
         // Create Layout
         this._el.menubar = Dom.create("div", "vco-menubar", this._el.container);
-        this._el.map = this._resolveMapElement();
-        if (!this._el.map) {
-            this._el.map = Dom.create("div", "vco-map", this._el.container);
-        }
+        this._el.map =
+            this._resolveMapElement() ?? Dom.create("div", "vco-map", this._el.container);
         this._el.storyslider = Dom.create("div", "vco-storyslider", this._el.container);
 
         // Initial Default Layout
@@ -695,7 +766,7 @@ class StoryMapBase {
         }
     }
 
-    // Update View
+    // View
     _updateDisplay(map_height?: number, animate?: boolean, d?: number) {
         // prefers-reduced-motion: glides collapse to instant size changes
         if (animate && prefersReducedMotion()) {
@@ -736,7 +807,16 @@ class StoryMapBase {
             // Map Offset
             this._map.setMapOffset(0, 0);
 
-            this.options.map_height = this.options.height / this.options.map_size_sticky;
+            // Portrait split. The collapse toggle is only offered in portrait
+            // (MenuBar hides it in landscape), so this branch used to
+            // unconditionally recompute map_height and discard the collapsed
+            // height it was handed — the button was a visual no-op. Honour
+            // the toggle state instead.
+            if (this._collapsed) {
+                this.options.map_height = COLLAPSED_MAP_HEIGHT;
+            } else {
+                this.options.map_height = this.options.height / this.options.map_size_sticky;
+            }
             this.options.storyslider_height = this.options.height - this.options.map_height - 1;
             this._menubar.setSticky(0);
 
@@ -801,7 +881,6 @@ class StoryMapBase {
             // Set Default Component Sizes
             this.options.map_height = this.options.height;
             this.options.storyslider_height = this.options.height;
-            this._menubar.setSticky(this.options.menubar_height);
 
             // Set Sticky state of MenuBar
             this._menubar.setSticky(this.options.menubar_height);
@@ -835,7 +914,8 @@ class StoryMapBase {
             );
         }
 
-        if ((this.options.language as unknown as { direction?: string }).direction === "rtl") {
+        // the resolved locale decides the layout direction (issues #211, #245)
+        if (isRtl()) {
             display_class += " vco-rtl";
         }
 
@@ -882,9 +962,10 @@ class StoryMapBase {
             key: consentMessage("consent_service_tiles", "map tiles"),
             label: consentMessage("consent_service_tiles", "map tiles"),
         });
-        // media services with a real URL in the slides
+        // media services with a real URL in the slides (a storymap is allowed
+        // to have no slides at all)
         const seen = new Set<string>();
-        for (const slide of this.data.slides) {
+        for (const slide of this.data.slides ?? []) {
             const url = (slide.media as { url?: string | null } | null)?.url;
             if (!url) continue;
             const match = MediaType({ url } as never) as { type: string; name: string } | false;
@@ -892,9 +973,12 @@ class StoryMapBase {
             seen.add(match.type);
             services.push({ key: match.type, label: match.name });
         }
-        // external web fonts (same-origin themes never ask)
+        // external web fonts (same-origin themes never ask). Compared by
+        // origin, not by a prefix test on the resolved URL: resolveFontCssUrl
+        // has already turned a relative path into an absolute one, so testing
+        // that for "http" made every relative font_css look external.
         const font = resolveFontCssUrl(this.options.font_css || "stock:default");
-        if (/^https?:|^\/\//.test(font)) {
+        if (isExternalUrl(font)) {
             services.push({
                 key: consentMessage("consent_service_fonts", "web fonts"),
                 label: consentMessage("consent_service_fonts", "web fonts"),
@@ -1032,27 +1116,15 @@ class StoryMapBase {
 
     _onSlideChange(e: { current_slide: number }) {
         if (this.current_slide !== e.current_slide) {
-            const duration = slideTransitionDuration(this.current_slide, e.current_slide);
-            this.current_slide = e.current_slide;
-            this._map.goTo(this.current_slide);
-            this._beginTransition(duration);
-            this.fire("change", { current_slide: this.current_slide }, this);
-            this._syncHash();
-            this._scheduleAutoplay();
-            this._updateProgress();
+            // the slider already moved itself
+            this._navigate(e.current_slide, { navigate: "slider" });
         }
     }
 
     _onMapChange(e: { current_marker: number }) {
         if (this.current_slide !== e.current_marker) {
-            const duration = slideTransitionDuration(this.current_slide, e.current_marker);
-            this.current_slide = e.current_marker;
-            this._storyslider.goTo(this.current_slide);
-            this._beginTransition(duration);
-            this.fire("change", { current_slide: this.current_slide }, this);
-            this._syncHash();
-            this._scheduleAutoplay();
-            this._updateProgress();
+            // the map already moved itself
+            this._navigate(e.current_marker, { navigate: "map" });
         }
     }
 
@@ -1095,18 +1167,18 @@ class StoryMapBase {
     }
 
     _onBackToStart(e?: unknown) {
-        this.current_slide = 0;
-        this._map.goTo(this.current_slide);
-        this._storyslider.goTo(this.current_slide);
-        this.fire("change", { current_slide: this.current_slide }, this);
-        // keep hash, progress and autoplay in sync like the other paths
-        this._syncHash();
-        this._scheduleAutoplay();
-        this._updateProgress();
+        if (this.current_slide === 0) {
+            return;
+        }
+        this._navigate(0);
     }
 
-    _onMenuBarCollapse(e: { y: number }) {
-        this._updateDisplay(e.y, true);
+    _onMenuBarCollapse(e: { y?: number; collapsed?: boolean }) {
+        // `y` is the menubar position, not a map height; `collapsed` is the
+        // authoritative signal. Older menubars omit it, so infer it from a
+        // near-zero y for backwards compatibility.
+        this._collapsed = e.collapsed !== undefined ? e.collapsed : e.y !== undefined && e.y < 5;
+        this._updateDisplay(undefined, true);
     }
 
     _onMapLoaded() {

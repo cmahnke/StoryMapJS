@@ -28,9 +28,7 @@ interface HarnessWindow {
     };
 }
 
-test("map_area left renders the map at the visible half with an opaque panel", async ({
-    page,
-}) => {
+test("map_area left renders the map at the visible half with an opaque panel", async ({ page }) => {
     await page.goto(harnessUrl("katrina", { map_area: "left" }));
     await waitForStoryMap(page);
     await page.waitForTimeout(2500);
@@ -38,9 +36,9 @@ test("map_area left renders the map at the visible half with an opaque panel", a
     const state = await page.evaluate(() => {
         const sm = (window as unknown as HarnessWindow).__sm;
         const mapRect = document.querySelector("#storymap-embed .vco-map")!.getBoundingClientRect();
-        const sliderRect = document.querySelector(
-            "#storymap-embed .vco-storyslider",
-        )!.getBoundingClientRect();
+        const sliderRect = document
+            .querySelector("#storymap-embed .vco-storyslider")!
+            .getBoundingClientRect();
         const container = document.querySelector("#storymap-embed.vco-storymap")!;
         return {
             mapWidth: Math.round(mapRect.width),
@@ -83,12 +81,8 @@ test("map_area full keeps the default layout and offset", async ({ page }) => {
     expect(state.offset!.left).toBeLessThan(0);
 });
 
-test("map_area left with map_bbox composes the active marker in the map area", async ({
-    page,
-}) => {
-    await page.goto(
-        harnessUrl("katrina", { map_area: "left", map_bbox: bbox }),
-    );
+test("map_area left with map_bbox composes the active marker in the map area", async ({ page }) => {
+    await page.goto(harnessUrl("katrina", { map_area: "left", map_bbox: bbox }));
     await waitForStoryMap(page);
     await page.waitForTimeout(3000);
 

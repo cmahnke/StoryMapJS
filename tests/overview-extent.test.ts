@@ -65,7 +65,9 @@ describe("overview_extent", () => {
     });
 
     it("constrains the overview to the lon/lat box", () => {
-        const view = overviewView(storymapWithMini("sm-overview-box", { overview_extent: [5, 50, 6, 51] }));
+        const view = overviewView(
+            storymapWithMini("sm-overview-box", { overview_extent: [5, 50, 6, 51] }),
+        );
         // fitting the whole world clamps the constrained view into the box
         view.fit([-20037508, -20037508, 20037508, 20037508], { size: [150, 100] });
         const center = view.getCenter() ?? [];

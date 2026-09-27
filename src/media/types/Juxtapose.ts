@@ -1,6 +1,6 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
+import { buildIframe } from "../EmbedUtil";
 
 /*	Media.Juxtapose
 	Embeds a JuxtaposeJS before/after slider (issue #360)
@@ -11,7 +11,7 @@ export default class Juxtapose extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -20,13 +20,22 @@ export default class Juxtapose extends Media {
             this._el.content,
         );
 
-        // published Juxtapose URLs are iframe-ready embeds
-        this._el.content_item.innerHTML = `<iframe src="${this.data.url}" />`;
+        // Built through buildIframe rather than an `<iframe src="${url}">`
+        // template string: interpolating a storymap-JSON string into markup
+        // is a stored-XSS break-out (`"><img src=x onerror=...>`), and
+        // MediaType routes *any* URL containing "juxtapose" here.
+        const embed = buildIframe(`<iframe src="${String(this._url() ?? "")}"></iframe>`);
+        if (!embed) {
+            this.loadErrorDisplay("Invalid URL.");
+            return;
+        }
+        embed.setAttribute("loading", "lazy");
+        this._el.content_item.appendChild(embed);
         this.onLoaded();
     }
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height = this.options.height + "px";
+        this._sizeContentItemToOptionHeight();
     }
 }

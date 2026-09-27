@@ -27,6 +27,10 @@ interface SchemaNode {
     items?: SchemaNode;
     required?: string[];
     properties?: Record<string, SchemaNode>;
+    /** Value must satisfy at least one of these. */
+    anyOf?: SchemaNode[];
+    /** Annotation only — see `formatMatches`. */
+    format?: string;
     [key: string]: unknown;
 }
 
@@ -50,12 +54,44 @@ function typeMatches(value: unknown, type: string | string[]): boolean {
                 return typeof value === "boolean";
             case "null":
                 return value === null;
-            case "uri":
-                return typeof value === "string";
             default:
                 return true;
         }
     });
+}
+
+/**
+ * JSON Schema `format` is an annotation by default, so it is only checked
+ * where it costs nothing. The schema uses it twice, both for icon/image URLs.
+ * Note this was previously listed as a *type* in `typeMatches`, where it was
+ * unreachable: `typeMatches` is only ever called with `schemaNode.type`.
+ */
+/**
+ * A malformed `pattern` in the schema used to throw straight out of
+ * validation, aborting `new StoryMap(...)` instead of reporting an error.
+ */
+function safeRegExp(pattern: string, value: string): boolean {
+    try {
+        return new RegExp(pattern).test(value);
+    } catch {
+        // an unusable pattern must not make the document fail to load
+        return true;
+    }
+}
+
+function formatMatches(value: unknown, format: string): boolean {
+    if (typeof value !== "string") {
+        return true;
+    }
+    if (format === "uri" || format === "uri-reference") {
+        try {
+            new URL(value, "https://example.invalid/");
+            return true;
+        } catch {
+            return false;
+        }
+    }
+    return true;
 }
 
 function validateAgainstSchema(
@@ -76,6 +112,36 @@ function validateAgainstSchema(
         for (const part of refPath.split("/")) node = node[part] as SchemaNode;
         validateAgainstSchema(value, node, path, errors);
         return;
+    }
+
+    // anyOf — the schema uses it for map_bbox, map_overview_center and the
+    // legacy zoomify block. It was not implemented at all, so those three
+    // fields (including map_bbox's "exactly 4 numbers" rule) were accepted
+    // completely unvalidated at runtime and by the CLI.
+    if (schemaNode.anyOf) {
+        // try each branch into a scratch error list; the value is valid if any
+        // branch accepts it
+        const branchErrors: StorymapError[][] = schemaNode.anyOf.map((branch) => {
+            const collected: StorymapError[] = [];
+            validateAgainstSchema(value, branch, path, collected);
+            return collected;
+        });
+        const anyOfValid = branchErrors.some((collected) => collected.length === 0);
+        if (!anyOfValid) {
+            // report the closest branch: the most likely intent
+            let best = branchErrors[0] ?? [];
+            for (const candidate of branchErrors) {
+                if (candidate.length > 0 && candidate.length < best.length) {
+                    best = candidate;
+                }
+            }
+            errors.push(...best);
+            errors.push({
+                path,
+                message: `must match one of the ${schemaNode.anyOf.length} allowed shapes`,
+            });
+            return;
+        }
     }
 
     // type
@@ -115,9 +181,17 @@ function validateAgainstSchema(
         if (schemaNode.minLength !== undefined && value.length < schemaNode.minLength) {
             errors.push({ path, message: `must be at least ${schemaNode.minLength} characters` });
         }
-        if (schemaNode.pattern !== undefined && !new RegExp(schemaNode.pattern).test(value)) {
+        if (schemaNode.maxLength !== undefined && value.length > schemaNode.maxLength) {
+            errors.push({ path, message: `must be at most ${schemaNode.maxLength} characters` });
+        }
+        if (schemaNode.pattern !== undefined && !safeRegExp(schemaNode.pattern, value)) {
             errors.push({ path, message: `must match ${schemaNode.pattern}` });
         }
+    }
+
+    // format (annotation)
+    if (schemaNode.format && !formatMatches(value, schemaNode.format)) {
+        errors.push({ path, message: `must be a valid ${schemaNode.format}` });
     }
 
     // array constraints
@@ -128,10 +202,9 @@ function validateAgainstSchema(
         if (schemaNode.maxItems !== undefined && value.length > schemaNode.maxItems) {
             errors.push({ path, message: `must have at most ${schemaNode.maxItems} items` });
         }
-        if (schemaNode.items) {
-            value.forEach((item, i) =>
-                validateAgainstSchema(item, schemaNode.items, `${path}[${i}]`, errors),
-            );
+        const items = schemaNode.items;
+        if (items) {
+            value.forEach((item, i) => validateAgainstSchema(item, items, `${path}[${i}]`, errors));
         }
     }
 

@@ -1,6 +1,6 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
+import { validateWebURL } from "../EmbedUtil";
 
 /* IIIF Image API 2/3 URL tail: .../region/size/rotation/quality.format
    (optionally a query string). Used to request container-matched widths
@@ -37,14 +37,17 @@ export default class Image extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
-        // Link
-        if (this.data.link) {
+        // Link — protocol-checked: a `javascript:` href in the storymap JSON
+        // would be a click-through XSS (see Media._initLayout)
+        const link_href = this.data.link ? validateWebURL(this.data.link) : null;
+        if (link_href) {
             this._el.content_link = Dom.create("a", "", this._el.content);
             const content_link = this._el.content_link as HTMLAnchorElement;
-            content_link.href = this.data.link;
+            content_link.href = link_href;
             content_link.target = "_blank";
+            content_link.rel = "noopener noreferrer";
             this._el.content_item = Dom.create(
                 "img",
                 "vco-media-item vco-media-image vco-media-shadow",
@@ -73,8 +76,8 @@ export default class Image extends Media {
         // matched width; author-provided srcset/sizes pass through;
         // everything else renders byte-identically
         const media_width = Number(this.options.width) || 0;
-        const sized = iiifSizedUrl(this.data.url, media_width);
-        img.src = sized ?? this.data.url;
+        const sized = iiifSizedUrl(this._url(), media_width);
+        img.src = sized ?? this._url();
         // accessibility: explicit alt text, falling back to the caption as
         // plain text; an empty string marks a decorative image
         img.alt = this._altText();
@@ -84,6 +87,11 @@ export default class Image extends Media {
         if (this.data.sizes) {
             img.sizes = this.data.sizes as string;
         }
+
+        // the element is built and the src is set: hand over to Media so the
+        // loading overlay is hidden and credit/caption are rendered. The
+        // `load` listener above only fires the separate media_loaded event.
+        this.onLoaded();
     }
 
     _altText(): string {
@@ -99,8 +107,6 @@ export default class Image extends Media {
                 .trim();
         }
         return "";
-
-        this.onLoaded();
     }
 
     _updateMediaDisplay(layout?: string) {

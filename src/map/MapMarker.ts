@@ -54,7 +54,7 @@ class MapMarkerBase {
         this.media_icon_class = "";
 
         // Timer
-        this.timer = {} as ReturnType<typeof setTimeout>;
+        this.timer = null;
 
         // Data
         this.data = {};
@@ -105,7 +105,7 @@ class MapMarkerBase {
         this._active(a);
     }
 
-    location(): LatLngLiteral {
+    location(): LatLngLiteral | null {
         return this._location();
     }
 
@@ -120,8 +120,15 @@ class MapMarkerBase {
 
     _active(a: boolean): void {}
 
-    _location(): LatLngLiteral {
-        return { lat: 0, lng: 0 };
+    /**
+     * The marker's coordinate, or null when it has none (an overview slide, or
+     * a slide carrying only an image region). Every caller treats null as
+     * "nothing to focus", so this is the honest shape — the previous
+     * `{ lat: 0, lng: 0 }` was a real point at Null Island, spelled with a
+     * longitude key nothing in the map read.
+     */
+    _location(): LatLngLiteral | null {
+        return null;
     }
 
     /*	Events

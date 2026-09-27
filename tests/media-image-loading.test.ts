@@ -24,8 +24,13 @@ describe("slide image loading strategy", () => {
 
     type SlideProbe = {
         _media?: {
-            _el: { content_item?: HTMLImageElement };
+            _el: {
+                content_item?: HTMLImageElement;
+                credit?: HTMLElement | null;
+                caption?: HTMLElement | null;
+            };
             _state?: { loaded?: boolean; eager?: boolean };
+            message?: { _el: { container: HTMLElement } };
         };
         active?: boolean;
     };
@@ -135,5 +140,50 @@ describe("slide image loading strategy", () => {
         expect(img.getAttribute("src")).toBe("https://example.com/overview.jpg");
         expect(img.getAttribute("srcset")).toBe("https://example.com/overview-480.jpg 480w");
         expect(img.getAttribute("sizes")).toBe("50vw");
+    }, 25_000);
+
+    /**
+     * Regression guard: `Image._loadMedia()` must finish with `onLoaded()`.
+     * That single call hides the loading overlay and runs `showMeta()`,
+     * so omitting it left a permanent "Loading Image" spinner painted over
+     * every image slide and dropped credit/caption entirely.
+     */
+    it("hides the loading overlay and renders credit/caption", async () => {
+        const el = document.createElement("div");
+        el.id = "sm-img-meta";
+        document.body.appendChild(el);
+        const data = {
+            storymap: {
+                map_type: "osm",
+                slides: [
+                    {
+                        date: "",
+                        type: "overview",
+                        text: { headline: "Overview", text: "" },
+                        media: {
+                            url: "https://example.com/overview.jpg",
+                            caption: "<em>Beach at dawn</em>",
+                            credit: "Ada Lovelace",
+                        },
+                    },
+                ],
+            },
+        };
+        const storymap = new StoryMap("sm-img-meta", data as unknown as StorymapDataWrapper);
+
+        await vi.waitFor(
+            () => {
+                expect(imageOf(slidesOf(storymap)[0])).not.toBeNull();
+            },
+            { timeout: 15_000 },
+        );
+
+        const media = slidesOf(storymap)[0]._media;
+        expect(media?._state?.loaded).toBe(true);
+        // onLoaded() hides the overlay
+        expect(media?.message?._el.container.style.display).toBe("none");
+        // onLoaded() -> showMeta() renders credit and caption
+        expect(media?._el.credit?.textContent).toBe("Ada Lovelace");
+        expect(media?._el.caption?.innerHTML).toBe("<em>Beach at dawn</em>");
     }, 25_000);
 });

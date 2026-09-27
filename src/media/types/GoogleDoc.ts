@@ -1,6 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 import { validateWebURL } from "../EmbedUtil";
 
 /*	Media.GoogleDoc
@@ -14,7 +13,7 @@ export default class GoogleDoc extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -24,7 +23,7 @@ export default class GoogleDoc extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url;
+        this.media_id = this._url();
 
         // Rebuild a clean iframe from a validated src: injecting the raw
         // URL into markup would allow stored XSS via the storymap JSON
@@ -54,6 +53,6 @@ export default class GoogleDoc extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height = this.options.height + "px";
+        this._sizeContentItemToOptionHeight();
     }
 }

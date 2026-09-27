@@ -16,6 +16,21 @@ export type LegacyEvent = Event & {
     pageY?: number;
 };
 
+/**
+ * The wrapper is remembered on the target so `removeListener` can find it
+ * again. Keyed by a per-registration counter rather than only by the stamped
+ * function: registering the same function twice for the same event used to
+ * overwrite the key, leaving the first listener permanently unremovable.
+ */
+const registrationCounts = new WeakMap<object, number>();
+
+function handlerKey(obj: DomEventTarget, type: string, fn: (e: Event) => void): string {
+    const target = obj as object;
+    const next = (registrationCounts.get(target) ?? 0) + 1;
+    registrationCounts.set(target, next);
+    return "_vco_" + type + stamp(fn) + "_" + next;
+}
+
 const DomEvent = {
     addListener: function (
         obj: DomEventTarget,
@@ -28,7 +43,7 @@ const DomEvent = {
         };
 
         obj.addEventListener(type, handler, false);
-        (obj as unknown as Record<string, unknown>)["_vco_" + type + stamp(fn)] = handler;
+        (obj as unknown as Record<string, unknown>)[handlerKey(obj, type, fn)] = handler;
     },
 
     removeListener: function (
@@ -37,15 +52,19 @@ const DomEvent = {
         fn: (e: Event) => void,
         context?: unknown,
     ): void {
-        const key = "_vco_" + type + stamp(fn);
-        const handler = (obj as unknown as Record<string, unknown>)[key];
-
-        if (!handler) {
+        // The most recent registration for this (type, fn) pair is the one the
+        // caller means; walk the counter back to find it.
+        const target = obj as unknown as Record<string, unknown>;
+        for (let n = registrationCounts.get(obj as object) ?? 0; n > 0; n--) {
+            const key = "_vco_" + type + stamp(fn) + "_" + n;
+            const handler = target[key];
+            if (!handler) {
+                continue;
+            }
+            obj.removeEventListener(type, handler as EventListener, false);
+            target[key] = null;
             return;
         }
-
-        obj.removeEventListener(type, handler as EventListener, false);
-        (obj as unknown as Record<string, unknown>)[key] = null;
     },
 
     preventDefault: function (e: Event): void {

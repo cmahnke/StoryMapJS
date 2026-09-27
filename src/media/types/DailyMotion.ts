@@ -1,7 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
-import { ratio } from "../../core/Util";
 
 /*	Media.DailyMotion
 ================================================== */
@@ -13,7 +11,7 @@ export default class DailyMotion extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -23,9 +21,9 @@ export default class DailyMotion extends Media {
         );
 
         // Get Media ID
-        const id = this.data.url.match("video")
-            ? this.data.url.split("video/")[1]
-            : this.data.url.split("embed/")[1];
+        const id = this._url().match("video")
+            ? this._url().split("video/")[1]
+            : this._url().split("embed/")[1];
         if (!id) {
             throw new Error("Invalid DailyMotion URL");
         }
@@ -47,8 +45,7 @@ export default class DailyMotion extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height =
-            ratio.r16_9({ w: this._el.content_item.offsetWidth }) + "px";
+        this._sizeContentItemTo16x9();
     }
 
     _stopMedia() {

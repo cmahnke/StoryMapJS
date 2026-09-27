@@ -1,10 +1,12 @@
-import { mergeData } from "../core/Util";
+import { mergeData, ratio, clearTimer } from "../core/Util";
 import { Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
 import { MediaState, StorymapSlideMedia } from "../types";
+import { Language } from "../language/Language";
 import { consentManagerOf, consentMessage } from "../storymap/Consent";
+import { validateWebURL, sanitizeSlideText } from "./EmbedUtil";
 import { loadJS } from "../core/Load";
 /*	VCO.Media
 	Main media template for media assets.
@@ -29,29 +31,48 @@ export interface MediaOptions {
 /*	Data for media assets: the shared exchange format plus the link
 	fields the base layout renders. */
 export interface MediaData extends StorymapSlideMedia {
-    uniqueid?: string;
-    link?: string;
-    link_target?: string;
+    uniqueid?: string | null;
+    link?: string | null;
+    link_target?: string | null;
     [key: string]: unknown;
 }
 
+/**
+ * The media element cache.
+ *
+ * `content_item`, `content_link`, `caption` and `credit` are only created
+ * once `_loadMedia()` / `showMeta()` have run, so they start out null rather
+ * than as an empty element — that is what the "did the load happen?" check is
+ * for, and pretending otherwise with `{} as HTMLElement` is what let the
+ * consent-denied path dereference `undefined.style`.
+ */
+type MediaElements = {
+    container: HTMLElement;
+    content_container: HTMLElement;
+    content: HTMLElement;
+    content_item: HTMLElement | null;
+    content_link: HTMLElement | null;
+    source_item: HTMLSourceElement | null;
+    caption: HTMLElement | null;
+    credit: HTMLElement | null;
+    parent: HTMLElement;
+    link: HTMLElement | null;
+};
+
 export class MediaBase {
-    declare "_el": Record<string, HTMLElement>;
+    declare "_el": MediaElements;
     declare "player": unknown;
-    declare "timer": ReturnType<typeof setTimeout>;
-    declare "load_timer": ReturnType<typeof setTimeout>;
+    declare "timer": ReturnType<typeof setTimeout> | null;
+    declare "load_timer": ReturnType<typeof setTimeout> | null;
     declare "load_controller": AbortController | null;
-    declare "message": Message;
+    declare "message": Message | null;
     declare "media_id": unknown;
     declare "_state": MediaState;
     declare "data": MediaData;
     declare "options": MediaOptions;
     declare "animator": unknown;
     declare "_media": unknown;
-    declare "_": (key: string) => string;
     declare "fire": EventedInstance["fire"];
-
-    //_el: {},
 
     /*	Constructor
 	================================================== */
@@ -61,8 +82,9 @@ export class MediaBase {
             container: {} as HTMLElement,
             content_container: {} as HTMLElement,
             content: {} as HTMLElement,
-            content_item: {} as HTMLElement,
-            content_link: {} as HTMLElement,
+            content_item: null,
+            content_link: null,
+            source_item: null,
             caption: null,
             credit: null,
             parent: {} as HTMLElement,
@@ -182,47 +204,76 @@ export class MediaBase {
         this.onLoaded(true);
     }
 
-    loadingMessage() {
-        this.message.updateMessage(this._("loading") + " " + this.options.media_name);
+    /**
+     * Look up a UI string for the active language, falling back to the
+     * English default (which `setLanguage` already merges in) and finally to
+     * the key itself, so a missing translation degrades to something visible
+     * rather than "undefined".
+     */
+    _(key: string): string {
+        return Language.messages[key] ?? key;
+    }
+
+    /** Show the loading overlay for this media item. */
+    loadingMessage(): void {
+        this.message?.updateMessage(this._("loading") + " " + this.options.media_name);
     }
 
     updateMediaDisplay(layout?: string) {
-        if (this._state.loaded) {
-            this._updateMediaDisplay(layout);
+        // `content_item` only exists once a media type's `_loadMedia()` has
+        // run. It stays null when a consent decision blocked the load, so the
+        // sizing below has to be skipped rather than dereference a
+        // placeholder — that was the crash on the denied path.
+        const content_item = this._el.content_item;
+        if (!this._state.loaded || !content_item) {
+            return;
+        }
 
-            if (!Browser.mobile && layout !== "portrait") {
-                this._el.content_item.style.maxHeight = this.options.height / 2 + "px";
-            }
+        this._updateMediaDisplay(layout);
 
-            if (this._state.media_loaded) {
-                if (this._el.credit) {
-                    this._el.credit.style.width = "auto";
-                }
-                if (this._el.caption) {
-                    this._el.caption.style.width = "auto";
-                }
-            }
+        if (!Browser.mobile && layout !== "portrait") {
+            content_item.style.maxHeight = Number(this.options.height ?? 0) / 2 + "px";
+        }
 
-            if (layout === "portrait") {
-                this._el.content_item.style.maxHeight = "none";
+        if (layout === "portrait") {
+            content_item.style.maxHeight = "none";
+        }
+        if (this._state.media_loaded) {
+            const width = content_item.offsetWidth + "px";
+            if (this._el.credit) {
+                this._el.credit.style.width = width;
             }
-            if (this._state.media_loaded) {
-                if (this._el.credit) {
-                    this._el.credit.style.width = this._el.content_item.offsetWidth + "px";
-                }
-                if (this._el.caption) {
-                    this._el.caption.style.width = this._el.content_item.offsetWidth + "px";
-                }
+            if (this._el.caption) {
+                this._el.caption.style.width = width;
             }
         }
     }
 
-    /*	Media Specific
+    /**
+     * Media Specific
 	================================================== */
     _loadMedia() {}
 
     _updateMediaDisplay(l?: string) {
         //this._el.content_item.style.maxHeight = (this.options.height - this.options.credit_height - this.options.caption_height - 16) + "px";
+    }
+
+    /** Size the media box to the `height` option, in pixels. */
+    _sizeContentItemToOptionHeight(): void {
+        if (this._el.content_item) {
+            this._el.content_item.style.height = Number(this.options.height ?? 0) + "px";
+        }
+    }
+
+    /**
+     * Size the media box to a 16:9 box matching its current width — the
+     * aspect ratio every video provider embeds at.
+     */
+    _sizeContentItemTo16x9(): void {
+        const item = this._el.content_item;
+        if (item) {
+            item.style.height = ratio.r16_9({ w: item.offsetWidth }) + "px";
+        }
     }
 
     /*	Public
@@ -251,7 +302,8 @@ export class MediaBase {
         // load delay): avoids building iframes and injecting scripts for a
         // slide the visitor already skipped past
         if (!this._state.loaded && this.load_timer) {
-            clearTimeout(this.load_timer);
+            clearTimer(this.load_timer);
+            this.load_timer = null;
             this.load_timer = null;
         }
         // Abort an in-flight external script load, if any
@@ -312,27 +364,35 @@ export class MediaBase {
     onMediaLoaded(e?: unknown) {
         this._state.media_loaded = true;
         this.fire("media_loaded", this.data);
+        const width = (this._el.content_item?.offsetWidth ?? 0) + "px";
         if (this._el.credit) {
-            this._el.credit.style.width = this._el.content_item.offsetWidth + "px";
+            this._el.credit.style.width = width;
         }
         if (this._el.caption) {
-            this._el.caption.style.width = this._el.content_item.offsetWidth + "px";
+            this._el.caption.style.width = width;
         }
     }
 
-    showMeta(credit?: unknown, caption?: unknown) {
+    /** Render the media credit and caption, if the slide has them. */
+    showMeta(): void {
         this._state.show_meta = true;
-        // Credit
-        if (this.data.credit && this.data.credit !== "" && !this._el.credit) {
+        // Credit and caption are author-supplied strings that may legitimately
+        // contain formatting (they are documented as HTML), so they go through
+        // the same sanitizer as the slide text rather than straight to
+        // innerHTML — the JSON is untrusted input, and these were the two
+        // easiest stored-XSS sinks in the viewer.
+        const credit = this._credit();
+        if (credit && credit !== "" && !this._el.credit) {
             this._el.credit = Dom.create("div", "vco-credit", this._el.content_container);
-            this._el.credit.innerHTML = this.data.credit;
+            this._el.credit.appendChild(sanitizeSlideText(credit));
             this.options.credit_height = this._el.credit.offsetHeight;
         }
 
         // Caption
-        if (this.data.caption && this.data.caption !== "" && !this._el.caption) {
+        const caption = this._caption();
+        if (caption && caption !== "" && !this._el.caption) {
             this._el.caption = Dom.create("div", "vco-caption", this._el.content_container);
-            this._el.caption.innerHTML = this.data.caption;
+            this._el.caption.appendChild(sanitizeSlideText(caption));
             this.options.caption_height = this._el.caption.offsetHeight;
         }
     }
@@ -347,6 +407,21 @@ export class MediaBase {
 
     /*	Private Methods
 	================================================== */
+    /** The media URL, normalised to a string. */
+    _url(): string {
+        return typeof this.data.url === "string" ? this.data.url : "";
+    }
+
+    /** The media caption, or null when the slide has none. */
+    _caption(): string | null {
+        return typeof this.data.caption === "string" ? this.data.caption : null;
+    }
+
+    /** The media credit, or null when the slide has none. */
+    _credit(): string | null {
+        return typeof this.data.credit === "string" ? this.data.credit : null;
+    }
+
     _initLayout() {
         // Message
         this.message = new Message({}, this.options);
@@ -360,14 +435,28 @@ export class MediaBase {
         );
 
         // Link
-        if (this.data.link && this.data.link !== "") {
+        // The link target comes from the storymap JSON, so it has to pass the
+        // same protocol check as every other author-supplied URL — otherwise a
+        // `javascript:` href is a click-through XSS. A rejected link falls
+        // through to the unlinked layout below rather than rendering a
+        // dead anchor.
+        // (`_el.content` starts as a truthy `{}` placeholder, so the branch is
+        // tracked with a local flag rather than a truthiness test.)
+        const raw_link = this.data.link;
+        const href = typeof raw_link === "string" ? validateWebURL(raw_link) : null;
+        if (href) {
             this._el.link = Dom.create("a", "vco-media-link", this._el.content_container);
             const link = this._el.link as HTMLAnchorElement;
-            link.href = this.data.link;
+            link.href = href;
             if (this.data.link_target && this.data.link_target !== "") {
                 link.target = this.data.link_target;
             } else {
                 link.target = "_blank";
+            }
+            if (link.target === "_blank") {
+                // rel=noopener so the opened page cannot reach back through
+                // window.opener
+                link.rel = "noopener noreferrer";
             }
 
             this._el.content = Dom.create("div", "vco-media-content", this._el.link);

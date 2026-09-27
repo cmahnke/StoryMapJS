@@ -267,7 +267,7 @@ function readNavPlaceBbox(navPlace: unknown): [number, number, number, number] |
         const type = geometry ? asString(geometry.type) : null;
         if (type !== "Polygon" && type !== "MultiPolygon") continue;
         const positions: number[][] = [];
-        collectPositions(geometry.coordinates, positions, 0);
+        collectPositions(geometry?.coordinates, positions, 0);
         const lons = positions.map((p) => p[0]).filter((n) => n !== undefined);
         const lats = positions.map((p) => p[1]).filter((n) => n !== undefined);
         if (lons.length === 0 || lats.length === 0) continue;

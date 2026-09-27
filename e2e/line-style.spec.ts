@@ -29,11 +29,18 @@ test("route lines are dashed like the original from the start", async ({ page })
                 };
             }
         ).__sm?._map;
-        const read = (l: {
-            getStyle(): { getStroke?(): { getLineDash?(): number[]; getLineJoin?(): string } };
-        }) => {
-            const stroke = l?.getStyle()?.getStroke();
-            return { dash: stroke?.getLineDash(), join: stroke?.getLineJoin() };
+        const read = (
+            l:
+                | {
+                      getStyle(): {
+                          getStroke?(): { getLineDash?(): number[]; getLineJoin?(): string };
+                      };
+                  }
+                | null
+                | undefined,
+        ) => {
+            const stroke = l?.getStyle()?.getStroke?.();
+            return { dash: stroke?.getLineDash?.(), join: stroke?.getLineJoin?.() };
         };
         return { inactive: read(sm?._line), active: read(sm?._line_active) };
     });

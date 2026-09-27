@@ -1,4 +1,4 @@
-import { mergeData, setData, htmlify, convertUnixTime } from "../../core/Util";
+import { mergeData, htmlify, convertUnixTime } from "../../core/Util";
 import { Evented, type EventedInstance } from "../../core/mixins";
 import Dom from "../../dom/Dom";
 import { sanitizeSlideText } from "../EmbedUtil";
@@ -47,13 +47,13 @@ class TextBase {
             title: false,
         };
 
-        setData(this, data);
+        mergeData(this.data, data);
 
         // Merge Options
         mergeData(this.options, options);
 
         this._el.container = Dom.create("div", "vco-text");
-        this._el.container.id = this.data.uniqueid;
+        this._el.container.id = this.data.uniqueid ?? "";
 
         this._initLayout();
 
@@ -128,20 +128,22 @@ class TextBase {
         }
 
         // Headline (sanitized; issue #358 keeps formatting but drops scripts)
-        if (this.data.headline !== "") {
+        const headline = this.data.headline ?? "";
+        if (headline !== "") {
             let headline_class = "vco-headline";
             if (this.options.title) {
                 headline_class = "vco-headline vco-headline-title";
             }
             this._el.headline = Dom.create("h2", headline_class, this._el.content_container);
-            this._el.headline.appendChild(sanitizeSlideText(this.data.headline));
+            this._el.headline.appendChild(sanitizeSlideText(headline));
         }
 
         // Text (sanitized; issue #358 allows extra iframe media in the text field)
-        if (this.data.text !== "") {
+        const text = this.data.text ?? "";
+        if (text !== "") {
             let text_content = "";
 
-            text_content += htmlify(this.data.text);
+            text_content += htmlify(text);
 
             // Date
             if (

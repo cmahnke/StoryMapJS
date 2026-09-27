@@ -16,9 +16,17 @@ export interface EventedInstance {
     hasEventListeners: (type: string) => boolean;
 }
 
-/** Instance contract for DomMixed consumers. */
+/**
+ * Instance contract for DomMixed consumers.
+ *
+ * `_el` is deliberately `Record<string, unknown>`: each class declares its
+ * own element shape, and several of them hold members that are legitimately
+ * null before the component builds them (a slide's call-to-action, a
+ * slider's live region). Requiring `Record<string, HTMLElement>` here would
+ * force every one of those back into an `{} as HTMLElement` placeholder.
+ */
 export interface DomMixedInstance extends EventedInstance {
-    _el: Record<string, HTMLElement>;
+    _el: Record<string, unknown>;
     data?: unknown;
 }
 
@@ -115,27 +123,36 @@ export function Evented<T extends Constructor>(Base: T) {
  *  and the onAdd/onRemove/onLoaded lifecycle events) to a class. */
 export function DomMixed<T extends Constructor<DomMixedInstance>>(Base: T) {
     return class extends Base {
+        /**
+         * The host element. Every DomMixed consumer keeps its root element
+         * here, so this narrows the `Record<string, unknown>` element map to
+         * something with a style and children.
+         */
+        container(): HTMLElement {
+            return this._el.container as HTMLElement;
+        }
+
         /*	Adding, Hiding, Showing etc
         ================================================== */
         show(animate?: unknown): void {
             if (!animate) {
-                this._el.container.style.display = "block";
+                this.container().style.display = "block";
             }
             // animated show is not implemented
         }
 
         hide(): void {
-            this._el.container.style.display = "none";
+            this.container().style.display = "none";
         }
 
         addTo(container: HTMLElement): this {
-            container.appendChild(this._el.container);
+            container.appendChild(this.container());
             this.onAdd();
             return this;
         }
 
         removeFrom(container: HTMLElement): this {
-            container.removeChild(this._el.container);
+            container.removeChild(this.container());
             this.onRemove();
             return this;
         }
@@ -143,7 +160,7 @@ export function DomMixed<T extends Constructor<DomMixedInstance>>(Base: T) {
         /*	Set the Position
         ================================================== */
         setPosition(pos: Record<string, number>, el?: HTMLElement): this {
-            const target = el || this._el.container;
+            const target = el || this.container();
             for (const name of Object.keys(pos)) {
                 (target.style as unknown as Record<string, string>)[name] = pos[name] + "px";
             }

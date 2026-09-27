@@ -1,24 +1,30 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 import { validateWebURL } from "../EmbedUtil";
 
 /*	Media.Website
+	An <iframe> pointed straight at a URL. Shared with the DocumentCloud
+	type, which is the same embed with a different CSS class.
 ================================================= */
 
-export default class Website extends Media {
+export class WebsiteBase extends Media {
     declare "media_id": string;
 
+    /** Extra class on the wrapper element, e.g. "vco-media-documentcloud". */
+    protected extraClass(): string {
+        return "";
+    }
+
     _loadMedia() {
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
-        this._el.content_item = Dom.create(
-            "div",
-            "vco-media-item vco-media-iframe",
-            this._el.content,
-        );
-        this.media_id = this.data.url;
-        // rebuild a clean iframe from a validated src: injecting the raw
-        // URL as markup would allow stored XSS via the storymap JSON
+        this.loadingMessage();
+
+        const classes = `vco-media-item vco-media-iframe ${this.extraClass()}`.trim();
+        const content_item = Dom.create("div", classes, this._el.content);
+        this._el.content_item = content_item;
+
+        this.media_id = this._url();
+        // rebuilt from a validated src: injecting the raw URL as markup would
+        // allow stored XSS via the storymap JSON
         const src = validateWebURL(this.media_id);
         if (!src) {
             this.loadErrorDisplay("Invalid URL.");
@@ -26,11 +32,15 @@ export default class Website extends Media {
         }
         const iframe = document.createElement("iframe");
         iframe.setAttribute("src", src);
-        this._el.content_item.appendChild(iframe);
+        content_item.appendChild(iframe);
         this.onLoaded();
     }
 
     _updateMediaDisplay() {
-        this._el.content_item.style.height = this.options.height + "px";
+        if (this._el.content_item) {
+            this._el.content_item.style.height = Number(this.options.height ?? 0) + "px";
+        }
     }
 }
+
+export default class Website extends WebsiteBase {}

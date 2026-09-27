@@ -4,6 +4,7 @@ import Dom from "../dom/Dom";
 import Animate from "morpheus";
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
+import { sanitizeSlideText } from "../media/EmbedUtil";
 import { AnimateOptions, AnimationHandle } from "../types";
 /*	SlideNav
 	Navigation for Slideshows
@@ -169,14 +170,16 @@ class SlideNavBase {
         // update data
         this.data = mergeData(this.data, d);
 
-        // Title
+        // Title and date are the slide's own headline/date — sanitized like
+        // the slide body. They were the reachable twin of an already-sanitized
+        // field: a hostile headline executed as soon as a nav arrow rendered.
         if (this.data.title !== "") {
-            this._el.title.innerHTML = this.data.title;
+            this._el.title.replaceChildren(sanitizeSlideText(this.data.title));
         }
 
         // Date
-        if (this.data.date !== "") {
-            this._el.description.innerHTML = this.data.description;
+        if (this.data.date) {
+            this._el.description.replaceChildren(sanitizeSlideText(this.data.date));
         }
     }
 

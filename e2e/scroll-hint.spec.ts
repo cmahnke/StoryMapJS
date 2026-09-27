@@ -36,9 +36,9 @@ function hintState(page: import("@playwright/test").Page) {
             // anchored to the bottom center of the visible slide area
             nearBottomCenter:
                 rect && slideRect
-                    ? Math.abs(rect.left + rect.width / 2 - (slideRect.left + slideRect.width / 2)) <
-                          4 &&
-                      Math.abs(rect.bottom - slideRect.bottom) < 90
+                    ? Math.abs(
+                          rect.left + rect.width / 2 - (slideRect.left + slideRect.width / 2),
+                      ) < 4 && Math.abs(rect.bottom - slideRect.bottom) < 90
                     : false,
             scrollTop: el?.scrollTop ?? null,
         };

@@ -30,7 +30,7 @@ test("map_bbox constrains the view", async ({ page }) => {
     });
     // the extent constraint is set (projected coords of the bbox)
     expect(view.extent).not.toBeNull();
-    expect(view.extent.length).toBe(4);
+    expect(view.extent?.length).toBe(4);
 
     // panning far away cannot move the visible area outside of the bbox:
     // at high zoom the viewport is smaller than the box, so the center is
@@ -59,7 +59,7 @@ test("map_bbox constrains the view", async ({ page }) => {
         ).__sm?._map?._map?.getView();
         return v?.getCenter() ?? [];
     });
-    const [minX, minY, maxX, maxY] = view.extent;
+    const [minX, minY, maxX, maxY] = view.extent ?? [];
     expect(after[0]).toBeGreaterThanOrEqual(minX);
     expect(after[0]).toBeLessThanOrEqual(maxX);
     expect(after[1]).toBeGreaterThanOrEqual(minY);

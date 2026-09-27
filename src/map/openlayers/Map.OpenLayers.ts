@@ -34,6 +34,7 @@ import type {
 } from "../../types";
 import { fitGeoreference, resolveInfoJsonUrl } from "../georeference";
 import { consentManagerOf, consentMessage, type ConsentManager } from "../../storymap/Consent";
+import { sanitizeSlideText } from "../../media/EmbedUtil";
 
 /*	Map.OpenLayers
 	Creates a Map using OpenLayers
@@ -205,7 +206,14 @@ export default class OpenLayers extends Map {
             el = this._el.map.querySelector(".vco-map-attribution") as HTMLElement | null;
         }
         if (el) {
-            el.innerHTML = parts;
+            // The library-authored credits are trusted markup, but
+            // `options.attribution` and overlay credits come from the
+            // storymap JSON. Rather than trusting them, the whole line is
+            // re-sanitized: a fragment that is not well-formed markup is
+            // unwrapped to text, so an author-supplied credit can never
+            // inject an element into the map.
+            el.textContent = "";
+            el.appendChild(sanitizeSlideText(parts));
         }
     }
 
@@ -213,10 +221,30 @@ export default class OpenLayers extends Map {
         const parts = [
             "<a href='https://storymap.knightlab.com/' target='_blank' class='vco-knightlab-brand'><span>&#x25a0;</span> StoryMapJS</a>",
         ];
-        if (map_type === "osm" || map_type === "" || map_type.startsWith("osm")) {
+        // Every source is created with `attributions: []` and the OL
+        // attribution control is disabled, so this hand-built line is the
+        // *only* attribution the visitor ever sees. Emitting provider credit
+        // only for OSM left Stadia, Mapbox and the OL XYZ template providers
+        // uncredited, which their terms of service require. The credit is
+        // keyed off the resolved map_type, so a custom `{z}` template gets
+        // the generic "map data" line and the author can still override it
+        // with the `attribution` option.
+        if (map_type === "" || map_type.startsWith("osm")) {
             parts.push(
                 "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
             );
+        } else if (map_type.startsWith("stadia") || map_type === "stamen") {
+            parts.push(
+                '© <a target="_blank" rel="noopener noreferrer" href="https://stadiamaps.com/">Stadia Maps</a>, ' +
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://openmaptiles.org/">OpenMapTiles</a> ' +
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            );
+        } else if (map_type.startsWith("mapbox://")) {
+            parts.push('© <a target="_blank" href="https://www.mapbox.com/about/maps/">Mapbox</a>');
+        } else if (map_type.startsWith("ch-") || map_type.startsWith("esri")) {
+            parts.push('Map data © <a target="_blank" href="https://www.esri.com/">Esri</a>');
+        } else {
+            parts.push("Map data");
         }
         if (this.options.attribution) {
             parts.push(this.options.attribution);
@@ -485,8 +513,11 @@ export default class OpenLayers extends Map {
             const marker = this._markers[this.current_marker];
             if (marker.data.type === "overview") {
                 this._markerOverview();
-            } else if (this._hasLocation(marker.data)) {
-                this._fitView(this._map, [[marker.data.location.lon, marker.data.location.lat]], 0);
+            } else {
+                const latlon = marker.latLon();
+                if (latlon) {
+                    this._fitView(this._map, [[latlon.lon, latlon.lat]], 0);
+                }
             }
         }
     }
@@ -624,7 +655,12 @@ export default class OpenLayers extends Map {
             }
 
             case "stadia": {
-                let style_url = "osm:standard";
+                // Stadia hosts a style *set*, not a single style. A bare
+                // `map_type: "stadia"` used to fall back to the literal
+                // "osm:standard", which is not one of them — every tile 404'd.
+                // `alidade_smooth` is the correct default here (matches the
+                // remapped `stamen` case below).
+                let style_url = "alidade_smooth";
                 if (_map_type_arr.length > 1) {
                     style_url = _map_type_arr.slice(1).join(":");
                     if (this.options.map_access_token) {
@@ -633,7 +669,7 @@ export default class OpenLayers extends Map {
                 }
                 return new TileLayer({
                     source: new XYZ({
-                        url: `https://tiles.stadiamaps.com/tiles/${style_url}/{z}/{x}/{y}.png`,
+                        url: `https://tiles.stadiamaps.com/tiles/${style_url}/{z}/{x}/{y}{r}.png`,
                         attributions: [],
                     }),
                 });
@@ -1044,12 +1080,16 @@ export default class OpenLayers extends Map {
         if (this._map.getView().getProjection().getCode() === "EPSG:4326") {
             return;
         }
-        const real = this._markers.filter(
-            (m) => m.data.real_marker && m.data.location?.lon !== undefined,
-        );
-        const unwrapped = this._unwrapLongitudes(real.map((m) => m.data.location.lon as number));
-        real.forEach((m, i) => {
-            m._overlay?.setPosition(fromLonLat([unwrapped[i], m.data.location.lat as number]));
+        const real: { marker: OpenLayersMapMarker; latlon: LatLngLiteral }[] = [];
+        for (const marker of this._markers) {
+            const latlon = marker.latLon();
+            if (latlon) {
+                real.push({ marker: marker, latlon: latlon });
+            }
+        }
+        const unwrapped = this._unwrapLongitudes(real.map((entry) => entry.latlon.lon));
+        real.forEach((entry, i) => {
+            entry.marker._overlay?.setPosition(fromLonLat([unwrapped[i], entry.latlon.lat]));
         });
     }
 
@@ -1062,18 +1102,16 @@ export default class OpenLayers extends Map {
     /*	Marker helpers
 	================================================== */
     _getAllMarkersBounds(markers_array: OpenLayersMapMarker[]): number[][] {
-        const coords = [];
-        for (let i = 0; i < markers_array.length; i++) {
-            if (markers_array[i].data.real_marker) {
-                coords.push([
-                    markers_array[i].data.location.lon,
-                    markers_array[i].data.location.lat,
-                ]);
+        const coords: number[][] = [];
+        for (const marker of markers_array) {
+            const latlon = marker.latLon();
+            if (latlon) {
+                coords.push([latlon.lon, latlon.lat]);
             }
         }
         // unwrap dateline crossings so fits don't span the whole globe
         // (issue #381)
-        const lons = this._unwrapLongitudes(coords.map((c) => c[0] as number));
+        const lons = this._unwrapLongitudes(coords.map((c) => c[0]));
         return coords.map((c, i) => [lons[i], c[1]]);
     }
 
@@ -1183,52 +1221,60 @@ export default class OpenLayers extends Map {
             padding: this._opaquePanelPadding(),
             maxZoom: 12,
             duration: duration,
-            easing: this.options.ease as ((t: number) => number) | undefined,
+            easing: this._easing,
         });
     }
 
     _calculateMarkerZooms(): void {
-        for (let i = 0; i < this._markers.length; i++) {
-            if (this._markers[i].data.location) {
-                const marker = this._markers[i];
-                let marker_location, calculated_zoom;
-
-                // MARKER LOCATION
-                if (marker.data.type && marker.data.type === "overview") {
-                    marker_location = this._getMapCenter(true);
-                } else {
-                    marker_location = marker.location();
-                }
-
-                // Fit-based zoom: zoom the view to this marker and neighbors
-                const prev_marker =
-                    i > 0 ? this._markers[i - 1].location() : this._getMapCenter(true);
-                const next_marker =
-                    i < this._markers.length - 1
-                        ? this._markers[i + 1].location()
-                        : this._getMapCenter(true);
-
-                const prev_marker_zoom = this._calculateZoomChange(prev_marker, marker_location);
-                const next_marker_zoom = this._calculateZoomChange(next_marker, marker_location);
-
-                if (prev_marker_zoom && prev_marker_zoom < next_marker_zoom) {
-                    calculated_zoom = prev_marker_zoom;
-                } else if (next_marker_zoom) {
-                    calculated_zoom = next_marker_zoom;
-                } else {
-                    calculated_zoom = prev_marker_zoom;
-                }
-
-                if (
-                    this.options.map_center_offset &&
-                    (this.options.map_center_offset.left !== 0 ||
-                        this.options.map_center_offset.top !== 0)
-                ) {
-                    calculated_zoom = calculated_zoom - 1;
-                }
-
-                marker.data.location.zoom = calculated_zoom;
+        const center = this._getMapCenter(true);
+        for (const [i, marker] of this._markers.entries()) {
+            // a marker with no location object at all is not navigable
+            if (!marker.data.location) {
+                continue;
             }
+            let calculated_zoom: number | undefined;
+
+            // MARKER LOCATION — the overview fits around the current view
+            // rather than a point on the map
+            const marker_location =
+                marker.data.type && marker.data.type === "overview" ? center : marker.location();
+            if (!marker_location) {
+                continue;
+            }
+
+            // Fit-based zoom: zoom the view to this marker and neighbors
+            const prev_marker = i > 0 ? this._markers[i - 1].location() : center;
+            const next_marker =
+                i < this._markers.length - 1 ? this._markers[i + 1].location() : center;
+
+            const prev_marker_zoom = prev_marker
+                ? this._calculateZoomChange(prev_marker, marker_location)
+                : undefined;
+            const next_marker_zoom = next_marker
+                ? this._calculateZoomChange(next_marker, marker_location)
+                : undefined;
+
+            if (prev_marker_zoom && prev_marker_zoom < (next_marker_zoom ?? Infinity)) {
+                calculated_zoom = prev_marker_zoom;
+            } else if (next_marker_zoom) {
+                calculated_zoom = next_marker_zoom;
+            } else {
+                calculated_zoom = prev_marker_zoom;
+            }
+
+            if (calculated_zoom === undefined) {
+                continue;
+            }
+
+            if (
+                this.options.map_center_offset &&
+                (this.options.map_center_offset.left !== 0 ||
+                    this.options.map_center_offset.top !== 0)
+            ) {
+                calculated_zoom = calculated_zoom - 1;
+            }
+
+            marker.data.location.zoom = calculated_zoom;
         }
     }
 
@@ -1270,25 +1316,32 @@ export default class OpenLayers extends Map {
         this._map.addLayer(line);
     }
 
-    _addToLine(line: VectorLayer, d: LinePoint): void {
+    _addToLine(line: VectorLayer, d: StorymapSlide): void {
         // Append a point to the line's geometry
         const source = line.getSource();
+        if (!source) {
+            return;
+        }
         let feature = source.getFeatures()[0];
         if (!feature) {
             feature = new Feature({ geometry: new LineString([]) });
             source.addFeature(feature);
         }
         const coords = feature.getGeometry().getCoordinates();
-        let lon = d.location.lon;
+        let lon = d.location?.lon;
+        const lat = d.location?.lat;
+        if (lat === undefined || lon === undefined) {
+            return;
+        }
         // unwrap dateline crossings against the previous point (issue #381).
         // NB: read the previous longitude straight from meters — toLonLat()
         // wraps into [-180, 180] and would collapse already-unwrapped values.
-        if (coords.length > 0 && lon !== undefined) {
+        if (coords.length > 0) {
             const last_lon = coords[coords.length - 1][0] / 111319.49079327358;
             while (lon - last_lon > 180) lon -= 360;
             while (lon - last_lon < -180) lon += 360;
         }
-        coords.push(this._toViewCoords({ lat: d.location.lat, lon }));
+        coords.push(this._toViewCoords({ lat, lon }));
         feature.getGeometry().setCoordinates(coords);
     }
 
@@ -1319,6 +1372,9 @@ export default class OpenLayers extends Map {
         const unwrapped = pts.map((p, i) => [lons[i], p[1]]);
         const view_coords = this._markerCoordsToViewCoords(unwrapped);
         const source = line.getSource();
+        if (!source) {
+            return;
+        }
 
         const setGeometry = (coords: number[][]) => {
             source.clear();
@@ -1388,7 +1444,7 @@ export default class OpenLayers extends Map {
         const suffix = grow_len >= 1 ? view_coords.slice(grow_len - 1) : null;
         const suffix_total = suffix ? this._pathLength(suffix) : 0;
 
-        const easing = this.options.ease as ((t: number) => number) | undefined;
+        const easing = this._easing;
         const start_time = performance.now();
         if (prefix) {
             // Seed the already-traveled prefix so it stays red from frame 0
@@ -1474,7 +1530,7 @@ export default class OpenLayers extends Map {
         this._map.getView().animate({
             center: this._toViewCoords(loc),
             duration: this.options.duration,
-            easing: this.options.ease as ((t: number) => number) | undefined,
+            easing: this._easing,
         });
     }
 
@@ -1482,7 +1538,7 @@ export default class OpenLayers extends Map {
         this._map.getView().animate({
             zoom: z,
             duration: this.options.duration,
-            easing: this.options.ease as ((t: number) => number) | undefined,
+            easing: this._easing,
         });
     }
 
@@ -1501,10 +1557,14 @@ export default class OpenLayers extends Map {
             return;
         }
 
+        const start = this._latLngOf(loc);
+        if (!start) {
+            return;
+        }
         let _animate = true,
             _duration = this.options.duration,
             _zoom = this._getMapZoom(),
-            _location: LatLngLiteral = { lat: loc.lat, lon: loc.lon };
+            _location: LatLngLiteral = start;
 
         // Show Active Line
         if (!this.options.map_as_image) {
@@ -1539,11 +1599,15 @@ export default class OpenLayers extends Map {
             center: this._toViewCoords(_location),
             zoom: _zoom,
             duration: _animate ? _duration : 0,
-            easing: this.options.ease as ((t: number) => number) | undefined,
+            easing: this._easing,
         });
 
         if (this._mini_map && this.options.width > this.options.skinny_size) {
-            if (_zoom - 1 <= this.zoom_min_max.min) {
+            // zoom_min_max stays null until the markers are measured (first
+            // loadend), and `_zoom - 1 <= null` coerces to `<= 0` — the
+            // minimap state was decided by an accidental coercion. Treat an
+            // unmeasured range as "not zoomed out", i.e. keep it expanded.
+            if (this.zoom_min_max.min !== null && _zoom - 1 <= this.zoom_min_max.min) {
                 this._mini_map.setCollapsed(true);
             } else {
                 this._mini_map.setCollapsed(false);
@@ -1574,7 +1638,7 @@ export default class OpenLayers extends Map {
             size: this._map.getSize(),
             padding: this._opaquePanelPadding(),
             duration: _animate ? _duration : 0,
-            easing: this.options.ease as ((t: number) => number) | undefined,
+            easing: this._easing,
         });
         if (this._mini_map && this.options.width > this.options.skinny_size) {
             this._mini_map.setCollapsed(true);
@@ -1594,24 +1658,25 @@ export default class OpenLayers extends Map {
     }
 
     _getMapCenter(offset?: boolean): LatLngLiteral {
-        const center = toLonLat(
-            this._map.getView().getCenter(),
-            this._map.getView().getProjection(),
-        );
-        return { lat: center[1], lon: center[0] };
+        const view = this._map.getView();
+        const center = view.getCenter() ?? [0, 0];
+        const [lon, lat] = toLonLat(center, view.getProjection());
+        return { lat: lat, lon: lon };
     }
 
     _getMapCenterOffset(location: LatLngLiteral, zoom: number): LatLngLiteral {
-        // Offset the center by map_center_offset pixels at the given zoom
+        // Offset the center by map_center_offset pixels at the given zoom.
+        // A null map_center_offset means "no offset" (the default).
+        const offset = this.options.map_center_offset;
+        if (!offset || (offset.left === 0 && offset.top === 0)) {
+            return location;
+        }
         const view = this._map.getView();
         const projection = view.getProjection();
         const center = this._toViewCoords(location);
         const resolution = view.getResolutionForZoom(zoom);
         return this._fromViewCoords(
-            [
-                center[0] - this.options.map_center_offset.left * resolution,
-                center[1] + this.options.map_center_offset.top * resolution,
-            ],
+            [center[0] - offset.left * resolution, center[1] + offset.top * resolution],
             projection,
         );
     }
@@ -1624,13 +1689,34 @@ export default class OpenLayers extends Map {
         return { lat: c[1], lon: (coord[0] / 6378137) * (180 / Math.PI) };
     }
 
+    /** A slide's {lat, lon} when both are real numbers, else null. */
+    private _latLngOf(loc: StorymapSlideLocation | null | undefined): LatLngLiteral | null {
+        if (!loc || typeof loc.lat !== "number" || typeof loc.lon !== "number") {
+            return null;
+        }
+        return { lat: loc.lat, lon: loc.lon };
+    }
+
+    /**
+     * The map's pixel size, with a never-zero fallback.
+     *
+     * `getSize()` returns undefined until the map has a size, so the six
+     * call sites that fitted an extent to the viewport all repeated the same
+     * `(size[0] || 1)` guard — which silently fitted against a 1px viewport
+     * rather than bailing out.
+     */
+    private _viewportSize(): [number, number] {
+        const size = this._map?.getSize();
+        return [size?.[0] || 1, size?.[1] || 1];
+    }
+
     _getBoundsZoom(
         origin: LatLngLiteral,
         destination: LatLngLiteral,
         correct_for_center?: boolean,
     ): number {
         const coords = [
-            [origin.lon !== undefined ? origin.lon : origin.lng, origin.lat],
+            [origin.lon, origin.lat],
             [destination.lon, destination.lat],
         ];
         const view_coords = this._markerCoordsToViewCoords(coords);
@@ -1714,7 +1800,7 @@ export default class OpenLayers extends Map {
                     center: center_view,
                     zoom: view_zoom,
                     duration: duration ?? this._transition_duration,
-                    easing: this.options.ease as ((t: number) => number) | undefined,
+                    easing: this._easing,
                 });
             }
         } else if (this.options.map_type === "iiif" && this.options.map_as_image) {
@@ -1730,12 +1816,12 @@ export default class OpenLayers extends Map {
                         // fit() followed by setCenter() would cancel the fit
                         // animation, issue #465)
                         const extent = grid.getExtent();
-                        const size = this._map.getSize();
-                        const resolution_x = (extent[2] - extent[0]) / (size[0] || 1);
-                        const resolution_y = (extent[3] - extent[1]) / (size[1] || 1);
+                        const size = this._viewportSize();
+                        const resolution_x = (extent[2] - extent[0]) / size[0];
+                        const resolution_y = (extent[3] - extent[1]) / size[1];
                         const resolution = Math.max(resolution_x, resolution_y);
                         const view = this._map.getView();
-                        const zoom = view.getZoomForResolution(resolution);
+                        const zoom = view.getZoomForResolution(resolution) ?? 0;
                         const overview_center = this.options.map_overview_center;
                         const center_px = overview_center
                             ? this._toViewCoords({
@@ -1750,7 +1836,7 @@ export default class OpenLayers extends Map {
                             center: this._toViewCoords(offset_location),
                             zoom: zoom,
                             duration: duration ?? this._transition_duration,
-                            easing: this.options.ease as ((t: number) => number) | undefined,
+                            easing: this._easing,
                         });
                     }
                 } catch (e) {
@@ -1774,14 +1860,14 @@ export default class OpenLayers extends Map {
             if (overview_center && this.bounds_array && this.bounds_array.length) {
                 const view_coords = this._markerCoordsToViewCoords(this.bounds_array);
                 const extent = boundingExtent(view_coords);
-                const size = this._map.getSize();
+                const size = this._viewportSize();
                 const resolution = Math.max(
-                    (extent[2] - extent[0]) / (size[0] || 1),
-                    (extent[3] - extent[1]) / (size[1] || 1),
+                    (extent[2] - extent[0]) / size[0],
+                    (extent[3] - extent[1]) / size[1],
                 );
                 const zoom = Math.max(
                     0,
-                    Math.round(this._map.getView().getZoomForResolution(resolution)) - 1,
+                    Math.round(this._map.getView().getZoomForResolution(resolution) ?? 0) - 1,
                 );
                 const offset_location = this._getMapCenterOffset(
                     { lat: overview_center.lat, lon: overview_center.lon },
@@ -1791,7 +1877,7 @@ export default class OpenLayers extends Map {
                     center: this._toViewCoords(offset_location),
                     zoom: zoom,
                     duration: duration ?? this._transition_duration,
-                    easing: this.options.ease as ((t: number) => number) | undefined,
+                    easing: this._easing,
                 });
             } else if (
                 this.options.map_center_offset &&
@@ -1801,13 +1887,13 @@ export default class OpenLayers extends Map {
                 if (this.bounds_array && this.bounds_array.length) {
                     const view_coords = this._markerCoordsToViewCoords(this.bounds_array);
                     const extent = boundingExtent(view_coords);
-                    const size = this._map.getSize();
-                    const resolution_x = (extent[2] - extent[0]) / (size[0] || 1);
-                    const resolution_y = (extent[3] - extent[1]) / (size[1] || 1);
+                    const size = this._viewportSize();
+                    const resolution_x = (extent[2] - extent[0]) / size[0];
+                    const resolution_y = (extent[3] - extent[1]) / size[1];
                     const resolution = Math.max(resolution_x, resolution_y);
                     const zoom = Math.max(
                         0,
-                        Math.round(this._map.getView().getZoomForResolution(resolution)) - 1,
+                        Math.round(this._map.getView().getZoomForResolution(resolution) ?? 0) - 1,
                     );
                     const center_px = [(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2];
                     const projection = this._map.getView().getProjection();
@@ -1817,7 +1903,7 @@ export default class OpenLayers extends Map {
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
                         duration: duration ?? this._transition_duration,
-                        easing: this.options.ease as ((t: number) => number) | undefined,
+                        easing: this._easing,
                     });
                 }
             } else {
@@ -1829,13 +1915,16 @@ export default class OpenLayers extends Map {
                 const view = this._map.getView();
                 const zoom = view.getZoom();
                 if (zoom !== undefined) {
-                    const center = this._fromViewCoords(view.getCenter(), view.getProjection());
+                    const center = this._fromViewCoords(
+                        view.getCenter() ?? [0, 0],
+                        view.getProjection(),
+                    );
                     const offset_location = this._getMapCenterOffset(center, zoom);
                     view.animate({
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
                         duration: duration ?? this._transition_duration,
-                        easing: this.options.ease as ((t: number) => number) | undefined,
+                        easing: this._easing,
                     });
                 }
             }
@@ -1938,19 +2027,33 @@ export default class OpenLayers extends Map {
                     break;
                 case "map_bbox": {
                     // recreate the view so the new extent constraint applies,
-                    // preserving center and zoom
+                    // preserving center and zoom. The replacement has to
+                    // rebuild the *same* view configuration _createMap() uses —
+                    // dropping constrainOnlyCenter (which _createMap sets
+                    // deliberately, see above), the image zoom ladder or the
+                    // legacy zoomify multiWorld flag silently reintroduced the
+                    // strict extent constraint this code went out of its way
+                    // to avoid, and broke image-mode zoom (issue #465).
                     const view = this._map.getView();
                     const center = view.getCenter();
                     const zoom = view.getZoom();
                     const extent = this._bboxExtent();
+                    const is_image_map = this.options.map_type === "iiif";
+                    const user_view = this.options.map_options?.view as
+                        Record<string, unknown> | undefined;
                     this._map.setView(
                         new View({
-                            projection: view.getProjection(),
+                            projection: is_image_map ? "EPSG:4326" : "EPSG:3857",
                             center: center,
                             zoom: zoom,
                             minZoom: view.getMinZoom(),
                             maxZoom: view.getMaxZoom(),
-                            ...(extent ? { extent: extent } : {}),
+                            ...(is_image_map
+                                ? { multiWorld: true, resolutions: IMAGE_RESOLUTIONS }
+                                : {}),
+                            ...(this.options.map_type === "zoomify" ? { multiWorld: true } : {}),
+                            ...(extent ? { extent: extent, constrainOnlyCenter: true } : {}),
+                            ...((user_view ?? {}) as Record<string, unknown>),
                         }),
                     );
                     break;
@@ -2029,7 +2132,11 @@ export default class OpenLayers extends Map {
      * stale positions after a size change.
      */
     _setViewInstant(loc: StorymapSlideLocation, zoom: number): void {
-        let _location: LatLngLiteral = { lat: loc.lat, lon: loc.lon };
+        const start = this._latLngOf(loc);
+        if (!start) {
+            return;
+        }
+        let _location: LatLngLiteral = start;
         if (this.options.map_center_offset) {
             _location = this._getMapCenterOffset(_location, zoom);
         }

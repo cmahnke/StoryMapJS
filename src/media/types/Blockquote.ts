@@ -1,6 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 import { sanitizeBlockquote } from "../EmbedUtil";
 
 /*	Media.Blockquote
@@ -13,7 +12,7 @@ export default class Blockquote extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -23,7 +22,7 @@ export default class Blockquote extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url;
+        this.media_id = this._url();
 
         // The url field holds user-pasted blockquote markup. Sanitize it
         // instead of injecting the raw markup, which would allow stored

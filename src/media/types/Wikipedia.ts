@@ -2,6 +2,7 @@ import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { Language } from "../../language/Language";
 import { getObjectAttributeByIndex } from "../../core/Util";
+import { sanitizeSlideText } from "../EmbedUtil";
 import { loadJSONP, uniqueGlobalName } from "../../core/Load";
 
 /*	Media.Wikipedia
@@ -45,7 +46,7 @@ export default class Wikipedia extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -55,7 +56,7 @@ export default class Wikipedia extends Media {
         );
 
         // Get Media ID
-        const { title, language } = parseWikipediaUrl(this.data.url);
+        const { title, language } = parseWikipediaUrl(this._url());
         this.media_id = title;
         // Claim a unique global slot: same-article concurrent loads must not
         // share one (the loser's script would call a deleted global).
@@ -86,9 +87,16 @@ export default class Wikipedia extends Media {
             };
 
             const pages = data.query as { pages: Record<string, unknown> };
-            wiki.entry = getObjectAttributeByIndex(pages.pages, 0) as Record<string, string>;
-            wiki.extract = wiki.entry.extract;
-            wiki.title = wiki.entry.title;
+            const first = getObjectAttributeByIndex(pages.pages, 0) as
+                Record<string, string> | undefined;
+            if (!first) {
+                this.loadErrorDisplay("Unable to load this article.");
+                return;
+            }
+            wiki.entry = first;
+            // a missing extract used to throw on the next line
+            wiki.extract = first.extract ?? "";
+            wiki.title = first.title ?? "";
 
             if (wiki.extract.match("<p>")) {
                 wiki.text_array = wiki.extract.split("<p>");
@@ -103,15 +111,17 @@ export default class Wikipedia extends Media {
             }
 
             content =
-                "<h4><a href='" + this.data.url + "' target='_blank'>" + wiki.title + "</a></h4>";
+                "<h4><a href='" + this._url() + "' target='_blank'>" + wiki.title + "</a></h4>";
             content += "<span class='wiki-source'>" + Language.messages.wikipedia + "</span>";
             content += wiki.text;
 
             if (wiki.extract.match("REDIRECT")) {
                 // redirect page: leave content empty
             } else {
-                // Add to DOM
-                this._el.content_item.innerHTML = content;
+                // Add to DOM. `wiki.text` is MediaWiki API output and
+                // the media URL is storymap JSON, so the assembled markup is
+                // untrusted — it goes through the sanitizer.
+                this._el.content_item?.appendChild(sanitizeSlideText(content));
                 // After Loaded
                 this.onLoaded();
             }

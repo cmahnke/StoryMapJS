@@ -44,8 +44,4 @@ export { validateStorymap, validateStorymapAndReport } from "./storymap/validate
 /**
  * Public data and options types for constructing a StoryMap.
  */
-export type {
-    StorymapSlide,
-    StorymapDataWrapper,
-    StorymapOptions,
-} from "./types";
+export type { StorymapSlide, StorymapDataWrapper, StorymapOptions } from "./types";

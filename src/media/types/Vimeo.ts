@@ -1,7 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
-import { ratio } from "../../core/Util";
 
 /*	Media.Vimeo
 ================================================== */
@@ -14,7 +12,7 @@ export default class Vimeo extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -24,17 +22,20 @@ export default class Vimeo extends Media {
         );
 
         // Get Media ID
-        const parts = this.data.url.split(/video\/|\/\/vimeo\.com\//);
+        const parts = this._url().split(/video\/|\/\/vimeo\.com\//);
         if (!parts[1]) {
             throw new Error("Invalid Vimeo URL");
         }
         this.media_id = parts[1].split(/[?&]/)[0];
 
-        // API URL
+        // API URL — plain `&` separators. The HTML entity `&amp;` is correct
+        // inside markup but is not decoded in a URL property, so Vimeo was
+        // receiving params literally named `amp;byline` / `amp;color` and
+        // ignoring them.
         const api_url =
             "https://player.vimeo.com/video/" +
             this.media_id +
-            "?api=1&title=0&amp;byline=0&amp;portrait=0&amp;color=ffffff";
+            "?api=1&title=0&byline=0&portrait=0&color=ffffff";
 
         this.player = Dom.create("iframe", "", this._el.content_item) as HTMLIFrameElement;
         this.player.width = "100%";
@@ -48,8 +49,7 @@ export default class Vimeo extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height =
-            ratio.r16_9({ w: this._el.content_item.offsetWidth }) + "px";
+        this._sizeContentItemTo16x9();
     }
 
     _stopMedia() {

@@ -1,6 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 
 /*	Media.Facebook
 	Embeds a Facebook post, video or reel via the plugins endpoint
@@ -12,7 +11,7 @@ export default class Facebook extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -21,7 +20,7 @@ export default class Facebook extends Media {
             this._el.content,
         );
 
-        const url = this.data.url;
+        const url = this._url();
         const href = encodeURIComponent(url);
         const embed =
             /\/videos?\//.test(url) || /\/watch/.test(url) || /\/reel\//.test(url)
@@ -36,6 +35,6 @@ export default class Facebook extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height = this.options.height + "px";
+        this._sizeContentItemToOptionHeight();
     }
 }

@@ -27,9 +27,10 @@ test("overlays stack above the base map with synced attribution", async ({ page 
     await waitForStoryMap(page);
     await page.waitForTimeout(1500);
 
-    const overlayCount = await page.evaluate(
-        () =>
-            (window as unknown as { __sm?: { _map?: { getOverlayCount(): number } } }).__sm?._map?.getOverlayCount(),
+    const overlayCount = await page.evaluate(() =>
+        (
+            window as unknown as { __sm?: { _map?: { getOverlayCount(): number } } }
+        ).__sm?._map?.getOverlayCount(),
     );
     expect(overlayCount).toBe(2);
 

@@ -16,7 +16,7 @@ import Animate from "morpheus";
 import Swipable from "../ui/Swipable";
 import Message from "../ui/Message";
 import { Browser } from "../core/Browser";
-import { Language } from "../language/Language";
+import { Language, isRtl } from "../language/Language";
 import { AnimationHandle, StorymapData, StorymapSlide } from "../types";
 
 /*	StorySlider
@@ -55,13 +55,27 @@ interface StorySliderOptions {
     [key: string]: unknown;
 }
 
+/**
+ * The slider's element cache. `live_region` only exists when the slide
+ * announcements are enabled (the `a11y` option), so it starts out null.
+ */
+type StorySliderElements = {
+    container: HTMLElement;
+    /** Created in `_initLayout`; the slide background layer. */
+    background: HTMLElement;
+    slider_container_mask: HTMLElement;
+    slider_container: HTMLElement;
+    slider_item_container: HTMLElement;
+    live_region: HTMLElement | null;
+};
+
 interface SlideBackgroundChange {
     color_value?: string;
     image?: boolean;
 }
 
 class StorySliderBase {
-    declare "_el": Record<string, HTMLElement>;
+    declare "_el": StorySliderElements;
     declare "_nav": { previous: SlideNav; next: SlideNav };
     declare "slide_spacing": number;
     declare "_slides": Slide[];
@@ -92,7 +106,8 @@ class StorySliderBase {
             slider_container_mask: {} as HTMLElement,
             slider_container: {} as HTMLElement,
             slider_item_container: {} as HTMLElement,
-            live_region: {} as HTMLElement,
+            background: {} as HTMLElement,
+            live_region: null,
         };
 
         this._nav = {
@@ -138,7 +153,11 @@ class StorySliderBase {
             this.options.id = unique_ID(6, "vco");
         } else {
             this.options.id = elem;
-            this._el.container = Dom.get(elem);
+            const found = Dom.get(elem);
+            if (!found) {
+                throw new Error("StoryMapJS: no element with id " + elem);
+            }
+            this._el.container = found;
         }
 
         if (!this._el.container.id) {
@@ -190,6 +209,11 @@ class StorySliderBase {
     /*	Create Slides
 	================================================== */
     _createSlides(array: StorymapData["slides"]) {
+        // a storymap with no slides array is a valid (if empty) document —
+        // the schema allows it and the map still renders
+        if (!array || array.length === 0) {
+            return;
+        }
         for (let i = 0; i < array.length; i++) {
             if (array[i].uniqueid === "") {
                 array[i].uniqueid = unique_ID(6, "vco-slide");
@@ -220,9 +244,14 @@ class StorySliderBase {
     /*	Navigation
 	================================================== */
     goToId(n: string | number, fast?: boolean, displayupdate?: boolean) {
-        let _n;
+        let _n: number;
         if (typeof n == "string" || (n as unknown) instanceof String) {
             _n = findArrayNumberByUniqueID(String(n), this._slides, "uniqueid");
+            if (_n === -1) {
+                // unknown id: stay where we are rather than jumping to slide 0
+                console.warn("StoryMapJS: no slide with uniqueid", n);
+                return;
+            }
         } else {
             _n = n;
         }
@@ -510,8 +539,6 @@ class StorySliderBase {
 
         this.options.layout = _layout;
 
-        this.slide_spacing = this.options.width * 2;
-
         if (width) {
             this.options.width = width;
         } else {
@@ -523,6 +550,13 @@ class StorySliderBase {
         } else {
             this.options.height = this._el.container.offsetHeight;
         }
+
+        // Slide positions and the goTo() translation are both derived from
+        // slide_spacing, so it has to be recomputed *after* the new width is
+        // known. Reading it before meant a bare updateDisplay() (no explicit
+        // width, i.e. after a container resize) positioned every slide for the
+        // previous width.
+        this.slide_spacing = this.options.width * 2;
 
         // position navigation
         const nav_pos = this.options.height / 2;
@@ -540,18 +574,19 @@ class StorySliderBase {
     }
 
     _introInterface() {
-        if (this.options.call_to_action) {
-            let _str = Language.messages.start;
-            if (this.options.call_to_action_text !== "") {
-                _str = this.options.call_to_action_text;
-            }
-            this._slides[0].addCallToAction(_str);
-            this._slides[0].on("call_to_action", this.next, this);
+        if (this.options.call_to_action && this._slides.length > 0) {
+            // `!== ""` treated an absent key as a custom string, so a
+            // standalone StorySlider rendered the literal text "undefined".
+            const _str =
+                typeof this.options.call_to_action_text === "string" &&
+                this.options.call_to_action_text !== ""
+                    ? this.options.call_to_action_text
+                    : Language.messages.start;
+            this._slides[0]?.addCallToAction(_str);
+            this._slides[0]?.on("call_to_action", this.next, this);
         }
 
-        if (this.options.width <= this.options.skinny_size) {
-            // hidden when skinny
-        } else {
+        if (!(this.options.width <= (this.options.skinny_size ?? 0))) {
             this._nav.next.updatePosition(
                 { right: "130" },
                 false,
@@ -633,7 +668,7 @@ class StorySliderBase {
 
             // Message
             // the swipe hint icon mirrors in right-to-left locales (issue #269)
-            const rtl = (Language as unknown as { direction?: string }).direction === "rtl";
+            const rtl = isRtl();
             this._message = new Message(
                 {},
                 {
@@ -689,7 +724,7 @@ class StorySliderBase {
 
     _initData() {
         // Create Slides and then add them
-        this._createSlides(this.data.slides);
+        this._createSlides(this.data.slides ?? []);
     }
 
     /*	Events

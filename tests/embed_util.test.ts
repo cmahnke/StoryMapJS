@@ -4,6 +4,15 @@ import { test, expect } from "vitest";
 const { buildIframe, sanitizeBlockquote, sanitizeSlideText, validateWebURL } =
     await import("../src/media/EmbedUtil");
 
+/** `expect(x).toBeTruthy()` does not narrow for the type checker. */
+function expectIframe(el: HTMLIFrameElement | null): HTMLIFrameElement {
+    expect(el).toBeTruthy();
+    if (!el) {
+        throw new Error("expected an iframe");
+    }
+    return el;
+}
+
 /*	validateWebURL
 ================================================== */
 
@@ -31,10 +40,11 @@ test("validateWebURL rejects non-web protocols and empty values", () => {
 ================================================== */
 
 test("buildIframe extracts src and presentation attributes from an embed code", () => {
-    const iframe = buildIframe(
-        '<iframe src="https://www.youtube.com/embed/abc123" width="560" height="315" frameborder="0" allowfullscreen></iframe>',
+    const iframe = expectIframe(
+        buildIframe(
+            '<iframe src="https://www.youtube.com/embed/abc123" width="560" height="315" frameborder="0" allowfullscreen></iframe>',
+        ),
     );
-    expect(iframe).toBeTruthy();
     expect(iframe.tagName).toBe("IFRAME");
     expect(iframe.getAttribute("src")).toBe("https://www.youtube.com/embed/abc123");
     expect(iframe.getAttribute("width")).toBe("560");
@@ -44,20 +54,22 @@ test("buildIframe extracts src and presentation attributes from an embed code", 
 });
 
 test("buildIframe strips event handlers and unknown attributes", () => {
-    const iframe = buildIframe(
-        '<iframe src="https://example.com/" onload="alert(1)" name="evil" srcdoc="<script>alert(1)</script>"></iframe>',
+    const iframe = expectIframe(
+        buildIframe(
+            '<iframe src="https://example.com/" onload="alert(1)" name="evil" srcdoc="<script>alert(1)</script>"></iframe>',
+        ),
     );
-    expect(iframe).toBeTruthy();
     expect(iframe.getAttribute("onload")).toBe(null);
     expect(iframe.getAttribute("name")).toBe(null);
     expect(iframe.getAttribute("srcdoc")).toBe(null);
 });
 
 test("buildIframe discards markup outside the iframe", () => {
-    const iframe = buildIframe(
-        '<img src=x onerror="alert(1)"><iframe src="https://example.com/"></iframe><script>alert(1)</script>',
+    const iframe = expectIframe(
+        buildIframe(
+            '<img src=x onerror="alert(1)"><iframe src="https://example.com/"></iframe><script>alert(1)</script>',
+        ),
     );
-    expect(iframe).toBeTruthy();
     expect(iframe.tagName).toBe("IFRAME");
     expect(iframe.getAttribute("src")).toBe("https://example.com/");
 });
@@ -71,8 +83,7 @@ test("buildIframe rejects an iframe with no src", () => {
 });
 
 test("buildIframe accepts a bare URL that routed to the iframe type", () => {
-    const iframe = buildIframe("https://example.com/iframe-demo");
-    expect(iframe).toBeTruthy();
+    const iframe = expectIframe(buildIframe("https://example.com/iframe-demo"));
     expect(iframe.getAttribute("src")).toBe("https://example.com/iframe-demo");
     expect(iframe.getAttribute("width")).toBe("100%");
 });
@@ -138,7 +149,7 @@ test("sanitizeBlockquote keeps links with valid href, drops javascript: href", (
         ) as Node,
     );
     expect(good).toBe(
-        '<blockquote><a href="https://example.com/" target="_blank">link</a></blockquote>',
+        '<blockquote><a href="https://example.com/" target="_blank" rel="noopener noreferrer">link</a></blockquote>',
     );
 
     const bad = renderedHTML(
@@ -194,4 +205,88 @@ test("sanitizeSlideText drops javascript: links but keeps the link text", () => 
     );
     expect(html).toContain("click");
     expect(html).not.toContain("javascript:");
+});
+
+/*	allowlist hardening
+	The slide-text sanitizer used to be a *denylist*: it dropped 18 tags and
+	copied every other attribute verbatim. These cases pin the closed holes.
+================================================== */
+
+test("sanitizeSlideText drops the style attribute (clickjacking overlay)", () => {
+    const html = renderedHTML(
+        sanitizeSlideText(
+            '<div style="position:fixed;inset:0;z-index:2147483647;background:#fff">cover</div>',
+        ) as Node,
+    );
+    expect(html).not.toContain("style=");
+    // the text is preserved: the element is unwrapped, not deleted
+    expect(html).toContain("cover");
+});
+
+test("sanitizeSlideText overwrites a pasted target so it cannot escape the viewer", () => {
+    const html = renderedHTML(
+        sanitizeSlideText('<a href="https://example.com/" target="_top">x</a>') as Node,
+    );
+    expect(html).toContain('target="_blank"');
+    expect(html).not.toContain("_top");
+});
+
+test("sanitizeSlideText drops id and name (DOM clobbering)", () => {
+    const html = renderedHTML(sanitizeSlideText('<p id="config" name="config">x</p>') as Node);
+    expect(html).not.toContain("id=");
+    expect(html).not.toContain("name=");
+});
+
+test("sanitizeSlideText validates every srcset candidate", () => {
+    const good = renderedHTML(
+        sanitizeSlideText(
+            '<img src="https://example.com/a.png" srcset="https://example.com/a-480.png 480w">',
+        ) as Node,
+    );
+    expect(good).toContain("https://example.com/a-480.png 480w");
+
+    // one non-web candidate invalidates the whole attribute. (A
+    // protocol-relative "//host/p.gif" is *not* a case here: it resolves
+    // against the document's own scheme, so it is a legitimate http(s) fetch.)
+    const beacon = renderedHTML(
+        sanitizeSlideText(
+            '<img src="https://example.com/a.png" srcset="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4= 1x">',
+        ) as Node,
+    );
+    expect(beacon).not.toContain("srcset");
+});
+
+test("sanitizeSlideText sandboxes rebuilt embeds", () => {
+    const html = renderedHTML(
+        sanitizeSlideText('<iframe src="https://example.com/embed/1"></iframe>') as Node,
+    );
+    expect(html).toContain("sandbox=");
+    expect(html).toContain("referrerpolicy=");
+});
+
+test("sanitizeSlideText unwraps tags outside the allowlist but keeps their text", () => {
+    // <details>/<dialog>/<marquee> slipped through the old denylist
+    const html = renderedHTML(
+        sanitizeSlideText(
+            "<details><summary>more</summary></details><marquee>scrolling</marquee>",
+        ) as Node,
+    );
+    expect(html).not.toContain("<details");
+    expect(html).not.toContain("<marquee");
+    expect(html).toContain("more");
+    expect(html).toContain("scrolling");
+});
+
+test("sanitizeSlideText keeps the table and media tags stories actually use", () => {
+    const html = renderedHTML(
+        sanitizeSlideText(
+            '<table><thead><tr><th scope="col">h</th></tr></thead><tbody><tr><td colspan="2">c</td></tr></tbody></table>' +
+                '<figure><img src="https://example.com/i.png" alt="alt text" loading="lazy"><figcaption>cap</figcaption></figure>',
+        ) as Node,
+    );
+    expect(html).toContain("<table>");
+    expect(html).toContain('scope="col"');
+    expect(html).toContain('colspan="2"');
+    expect(html).toContain('alt="alt text"');
+    expect(html).toContain("<figcaption>cap</figcaption>");
 });

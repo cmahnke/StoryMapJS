@@ -54,9 +54,7 @@ test("cropped edge tiles are padded onto a full tile canvas, top-left aligned", 
     expect(canvases[0].width).toBe(ZOOMIFY_TILE_SIZE);
     expect(canvases[0].height).toBe(ZOOMIFY_TILE_SIZE);
     expect(canvases[0].__drawImage).toHaveBeenCalledWith(image, 0, 0);
-    expect(tile.setImage as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(
-        canvases[0],
-    );
+    expect(tile.setImage as unknown as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(canvases[0]);
 });
 
 test("cropped right-column tiles are padded too", () => {

@@ -1,10 +1,12 @@
-import { unique_ID, getUrlVars, ratio } from "../../core/Util";
+import { unique_ID, getUrlVars, clearTimer } from "../../core/Util";
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 
 /*	Media.YouTube
 ================================================== */
+
+/** How long to wait for the IFrame API script before giving up (one second apart). */
+const YOUTUBE_API_ATTEMPTS = 10;
 
 /*	Minimal surface of the YouTube iframe API player used here. */
 interface YTPlayer {
@@ -35,14 +37,16 @@ export default class YouTube extends Media {
     declare "youtube_loaded": boolean;
     declare "media_id": YouTubeMediaID;
     declare "player": YTPlayer;
+    declare "_player_attempts": number;
 
     /*	Load the media
 	================================================== */
     async _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         this.youtube_loaded = false;
+        this._player_attempts = 0;
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -50,20 +54,20 @@ export default class YouTube extends Media {
             "vco-media-item vco-media-youtube vco-media-shadow",
             this._el.content,
         );
-        this._el.content_item.id = unique_ID(7);
+        (this._el.content_item as HTMLElement).id = unique_ID(7);
 
         // URL Vars
-        const url_vars = getUrlVars(this.data.url);
+        const url_vars = getUrlVars(this._url());
 
         // Get Media ID
         this.media_id = {};
 
-        if (this.data.url.match("v=")) {
+        if (this._url().match("v=")) {
             this.media_id.id = url_vars["v"];
-        } else if (this.data.url.match("/embed/")) {
-            this.media_id.id = this.data.url.split("embed/")[1].split(/[?&]/)[0];
-        } else if (this.data.url.match(/v\/|v=|youtu\.be\/|shorts\//)) {
-            this.media_id.id = this.data.url
+        } else if (this._url().match("/embed/")) {
+            this.media_id.id = this._url().split("embed/")[1].split(/[?&]/)[0];
+        } else if (this._url().match(/v\/|v=|youtu\.be\/|shorts\//)) {
+            this.media_id.id = this._url()
                 .split(/v\/|v=|youtu\.be\/|shorts\//)[1]
                 .split(/[?&]/)[0];
         } else {
@@ -85,13 +89,12 @@ export default class YouTube extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height =
-            ratio.r16_9({ w: this._el.content_item.offsetWidth }) + "px";
+        this._sizeContentItemTo16x9();
     }
 
     _stopMedia() {
         // cancel a pending API retry so a poll cannot outlive the slide
-        clearTimeout(this.timer);
+        clearTimer(this.timer);
         this.timer = null;
         if (this.youtube_loaded) {
             try {
@@ -135,11 +138,15 @@ export default class YouTube extends Media {
     }
 
     createPlayer() {
-        clearTimeout(this.timer);
+        clearTimer(this.timer);
         if (typeof YT != "undefined" && typeof YT.Player != "undefined") {
             // Create Player
             const yt = YT as YTGlobal;
-            this.player = new yt.Player(this._el.content_item.id, {
+            const mount_id = this._el.content_item?.id;
+            if (!mount_id) {
+                return;
+            }
+            this.player = new yt.Player(mount_id, {
                 playerVars: {
                     enablejsapi: 1,
                     color: "white",
@@ -154,18 +161,26 @@ export default class YouTube extends Media {
                 events: {
                     onReady: () => {
                         this.onPlayerReady();
-                        // After Loaded
-                        //this.onLoaded();
                     },
                     onStateChange: this.onStateChange,
                 },
             });
+            this.onLoaded();
         } else {
+            // The IFrame API script has not arrived yet. Poll for it, but cap
+            // the attempts — an unbounded setTimeout recursion kept a timer
+            // alive forever on any network failure, and the loading message
+            // used to be dismissed by an unconditional onLoaded() below even
+            // though nothing was playing.
+            this._player_attempts = (this._player_attempts ?? 0) + 1;
+            if (this._player_attempts > YOUTUBE_API_ATTEMPTS) {
+                this.loadErrorDisplay("The YouTube player could not be loaded.");
+                return;
+            }
             this.timer = setTimeout(() => {
                 this.createPlayer();
             }, 1000);
         }
-        this.onLoaded();
     }
 
     /*	Events
@@ -174,7 +189,8 @@ export default class YouTube extends Media {
         this.youtube_loaded = true;
         // the iframe replaces the placeholder div — re-resolve it, but a
         // slide removed in the meantime must not crash the display update
-        const el = document.getElementById(this._el.content_item.id);
+        const mount_id = this._el.content_item?.id;
+        const el = mount_id ? document.getElementById(mount_id) : null;
         if (el) {
             this._el.content_item = el;
         }

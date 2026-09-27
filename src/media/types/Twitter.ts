@@ -1,6 +1,6 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
+import { sanitizeSlideText } from "../EmbedUtil";
 import { loadJSONP, uniqueGlobalName } from "../../core/Load";
 
 /*	Media.Twitter
@@ -15,7 +15,7 @@ export default class Twitter extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create("div", "vco-media-twitter", this._el.content);
@@ -23,7 +23,7 @@ export default class Twitter extends Media {
         // Get Media ID
 
         const r = /(?:twitter\.com|x\.com)\/(.+?)\/status\/(\d+)/;
-        const match = r.exec(this.data.url);
+        const match = r.exec(this._url());
         if (match) {
             this.user_id = match[1];
             this.media_id = match[2];
@@ -43,17 +43,22 @@ export default class Twitter extends Media {
 
     createMedia(d: unknown) {
         const data = d as { html: string; author_url: string; author_name: string };
-        let tweet = "",
-            tweet_text;
+        if (!data?.html) {
+            this.loadErrorDisplay("Unable to load this post.");
+            return;
+        }
+        // The oEmbed markup is positional: the date link follows the tweet text
+        // after a "&mdash;" separator. Every step below is optional so a markup
+        // change upstream degrades to a missing date/link rather than throwing.
+        const afterText = data.html.split("</p>&mdash;")[1] ?? "";
+        const tweetuser = data.author_url.split(/twitter\.com|x\.com\//)[1] ?? "";
+        const statusLink = afterText.split('<a href="')[1] ?? "";
+        const tweet_status_url = statusLink.split('">')[0] ?? "";
+        const tweet_status_date = (statusLink.split('">')[1] ?? "").split("</a>")[0] ?? "";
 
+        let tweet = "";
         //	TWEET CONTENT
-        tweet_text = data.html.split("</p>&mdash;")[0] + "</p></blockquote>";
-        // the oembed endpoint returns x.com URLs since the rebrand — parse both
-        const tweetuser = data.author_url.split(/twitter\.com|x\.com\//)[1];
-        const tweet_status_temp = data.html.split("</p>&mdash;")[1].split('<a href="')[1];
-        const tweet_status_url = tweet_status_temp.split('">')[0];
-        const tweet_status_date = tweet_status_temp.split('">')[1].split("</a>")[0];
-
+        let tweet_text = afterText ? data.html.split("</p>&mdash;")[0] + "</p></blockquote>" : "";
         // Open links in new window
         tweet_text = tweet_text.replace(/<a href/gi, '<a target="_blank" href');
 
@@ -84,7 +89,13 @@ export default class Twitter extends Media {
         tweet += "</div>";
 
         // Add to DOM
-        this._el.content_item.innerHTML = tweet;
+        // The whole tweet is assembled from the oEmbed response's own HTML
+        // plus five string-concatenated fields, and that API does not escape
+        // HTML — so the result is untrusted third-party markup and goes
+        // through the sanitizer. It also repairs the four unguarded
+        // positional splits above: a markup change upstream now degrades to a
+        // missing date instead of throwing.
+        this._el.content_item?.appendChild(sanitizeSlideText(tweet));
 
         // After Loaded
         this.onLoaded();

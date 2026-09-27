@@ -1,6 +1,5 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
-import { Language } from "../../language/Language";
 import { buildIframe } from "../EmbedUtil";
 
 /*	Media.IFrame
@@ -13,7 +12,7 @@ export default class IFrame extends Media {
 	================================================== */
     _loadMedia() {
         // Loading Message
-        this.message.updateMessage(Language.messages.loading + " " + this.options.media_name);
+        this.loadingMessage();
 
         // Create Dom element
         this._el.content_item = Dom.create(
@@ -23,7 +22,7 @@ export default class IFrame extends Media {
         );
 
         // Get Media ID
-        this.media_id = this.data.url;
+        this.media_id = this._url();
 
         // The url field holds a user-pasted embed snippet. Rebuild a
         // clean iframe from its src instead of injecting the raw markup,
@@ -46,6 +45,6 @@ export default class IFrame extends Media {
 
     // Update Media Display
     _updateMediaDisplay() {
-        this._el.content_item.style.height = this.options.height + "px";
+        this._sizeContentItemToOptionHeight();
     }
 }

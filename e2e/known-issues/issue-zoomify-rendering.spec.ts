@@ -102,13 +102,15 @@ test("zoomify edge tiles are padded, not stretched", async ({ page }) => {
     });
 
     expect(tiles).not.toBeNull();
-    expect(tiles!.loaded).toBe(true);
+    if (!tiles || !tiles.loaded) {
+        throw new Error("no tile state");
+    }
     // the cropped 88x144 edge tile renders on a full padded canvas
-    expect(tiles!.edge.tag).toBe("CANVAS");
-    expect(tiles!.edge.w).toBe(256);
-    expect(tiles!.edge.h).toBe(256);
+    expect(tiles.edge?.tag).toBe("CANVAS");
+    expect(tiles.edge?.w).toBe(256);
+    expect(tiles.edge?.h).toBe(256);
     // full-size tiles keep their image element (OpenLayers' own handling)
-    expect(tiles!.inner.tag).toBe("IMG");
+    expect(tiles.inner?.tag).toBe("IMG");
 });
 
 test("zoomify minimap shows the whole image", async ({ page }) => {
@@ -124,13 +126,13 @@ test("zoomify minimap shows the whole image", async ({ page }) => {
         const view = mini.getView();
         const rawSize = mini.getSize();
         // collapsed minimap reports no layout size: same fallback as the fit
-        const size =
-            rawSize && rawSize[0] >= 50 && rawSize[1] >= 50 ? rawSize : [150, 100];
+        const size = rawSize && rawSize[0] >= 50 && rawSize[1] >= 50 ? rawSize : [150, 100];
         const [minX, minY, maxX, maxY] = pyramid.extent;
         const [ominX, ominY, omaxX, omaxY] = view.calculateExtent(size);
         return {
             // does the overview contain the whole image extent?
-            contains: ominX <= minX + 1 && ominY <= minY + 1 && omaxX >= maxX - 1 && omaxY >= maxY - 1,
+            contains:
+                ominX <= minX + 1 && ominY <= minY + 1 && omaxX >= maxX - 1 && omaxY >= maxY - 1,
             // is it fitted (not a zoomed crop): the image spans most of the box
             fillX: (maxX - minX) / view.getResolution() / size[0],
             fillY: (maxY - minY) / view.getResolution() / size[1],

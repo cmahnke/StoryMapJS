@@ -1,104 +1,79 @@
 // const debug = true;
 
-export function extend<T extends Record<string, unknown>>(
-    dest: T,
-    ...sources: (Record<string, unknown> | null | undefined)[]
-): T {
-    // merge src properties into dest
-    sources = sources.filter(Boolean);
-    for (let j = 0, len = sources.length, src; j < len; j++) {
-        src = sources[j] || {};
-        for (const i in src) {
-            if (Object.hasOwn(src, i)) {
-                (dest as Record<string, unknown>)[i] = src[i];
-            }
-        }
-    }
-    return dest;
-}
-
-export function convertUnixTime(str: string): string {
-    // created for Instagram. It's ISO8601-ish
-    // 2013-12-09 01:56:28
-    const pattern = /^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})/;
-    const date_parts = str.match(pattern)?.slice(1);
-    if (!date_parts) {
+/**
+ * Format an ISO-8601-ish timestamp (as found in `date.created_time`, originally
+ * from Instagram) as a short, locale-aware date, e.g. "Mar 3, 2013".
+ *
+ * Falls back to the raw input when it does not parse, so an unusual value
+ * shows as-is rather than "Invalid Date".
+ */
+export function convertUnixTime(str: string, locale?: string): string {
+    if (!str) {
         return str;
     }
-    const date_array = [];
-    for (let i = 0; i < date_parts.length; i++) {
-        let val = parseInt(date_parts[i]);
-        if (i === 1) {
-            val = val - 1;
-        } // stupid javascript months
-        date_array.push(val);
+    // "2013-12-09 01:56:28" is not valid ISO-8601 (space instead of "T"), so
+    // normalise it before parsing.
+    const parsed = new Date(/^\d{4}-\d{2}-\d{2} /.test(str) ? str.replace(" ", "T") : str);
+    if (Number.isNaN(parsed.getTime())) {
+        return str;
     }
-    const date = new Date(
-        date_array[0],
-        date_array[1],
-        date_array[2],
-        date_array[3],
-        date_array[4],
-        date_array[5],
-    );
-    const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-    ];
-    const year = date.getFullYear();
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const time = month + ", " + day + " " + year;
-    return time;
+    return parsed.toLocaleDateString(locale ?? "en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
 }
 
-export function setData(obj: { data?: unknown }, data: unknown): void {
-    obj.data = extend(
-        {} as Record<string, unknown>,
-        obj.data as Record<string, unknown> | undefined,
-        data as Record<string, unknown> | undefined,
-    );
-    const stored = obj.data as Record<string, unknown>;
-    if (stored.uniqueid === "") {
-        stored.uniqueid = unique_ID(6);
+/**
+ * Copy the own enumerable properties of `source` onto `target`, limited to
+ * `keys` (or all of the source's keys when omitted). Shared body for the two
+ * public merge helpers below.
+ */
+function copyOwn(
+    target: Record<string, unknown>,
+    source: Record<string, unknown> | null | undefined,
+    keys?: Iterable<string>,
+): void {
+    // `for...in` over a null/undefined source was a silent no-op, and several
+    // call sites pass optional values straight through — keep that behaviour.
+    if (source == null) {
+        return;
     }
-}
-
-export function mergeData<T extends object>(data_main: T, data_to_merge: object): T {
-    const target = data_main as Record<string, unknown>;
-    const source = data_to_merge as Record<string, unknown>;
-    let x;
-    for (x in source) {
-        if (Object.prototype.hasOwnProperty.call(source, x)) {
-            target[x] = source[x];
+    const names = keys ?? Object.keys(source);
+    for (const name of names) {
+        if (Object.prototype.hasOwnProperty.call(source, name)) {
+            target[name] = source[name];
         }
     }
+}
+
+/**
+ * Shallow-assign every own property of `data_to_merge` onto `data_main`.
+ *
+ * Despite the name this is *not* a deep merge, and it must not become one:
+ * every call site merges a partial options object over a defaults object, and
+ * a recursive merge would silently change how nested `map_options` and
+ * `overlays` values are combined.
+ */
+export function mergeData<T extends object>(data_main: T, data_to_merge?: object | null): T {
+    copyOwn(
+        data_main as Record<string, unknown>,
+        data_to_merge as Record<string, unknown> | null | undefined,
+    );
     return data_main;
 }
 
 /**
- *  Like mergeData, except will only try to copy data that already exists
- *  in data_main
+ * Like `mergeData`, but only copies keys that already exist in `data_main`.
+ * This is what lets storymap *data* override a known option without being able
+ * to introduce new ones.
  */
-export function updateData<T extends object>(data_main: T, data_to_merge: object): T {
-    const target = data_main as Record<string, unknown>;
-    const source = data_to_merge as Record<string, unknown>;
-    let x;
-    for (x in data_main) {
-        if (Object.prototype.hasOwnProperty.call(source, x)) {
-            target[x] = source[x];
-        }
-    }
+export function updateData<T extends object>(data_main: T, data_to_merge?: object | null): T {
+    copyOwn(
+        data_main as Record<string, unknown>,
+        data_to_merge as Record<string, unknown> | null | undefined,
+        Object.keys(data_main),
+    );
     return data_main;
 }
 
@@ -112,18 +87,36 @@ export function stamp(obj: object): number {
     return target[_stampKey] as number;
 }
 
+/**
+ * Index of the entry whose `data[prop]` equals `id`, or -1 when there is no
+ * match. Returning -1 matters: a "not found" result of 0 is indistinguishable
+ * from "the first slide", so a bad id silently jumped the story to the start
+ * (contrast StoryMap.goTo, which range-checks).
+ */
 export function findArrayNumberByUniqueID(
     id: unknown,
     array: { data: Record<string, unknown> }[],
     prop: string,
 ): number {
-    let _n = 0;
     for (let i = 0; i < array.length; i++) {
         if (array[i].data[prop] === id) {
-            _n = i;
+            return i;
         }
     }
-    return _n;
+    return -1;
+}
+
+/**
+ * Clear a timer that may be null/undefined and reset the variable.
+ *
+ * `clearTimeout(null)` is a harmless no-op at runtime but not assignable to
+ * the overloads, and forgetting to null the handle afterwards is what lets a
+ * cancelled timer be cleared twice (or, worse, not cleared at all).
+ */
+export function clearTimer(timer: ReturnType<typeof setTimeout> | null | undefined): void {
+    if (timer !== null && timer !== undefined) {
+        clearTimeout(timer);
+    }
 }
 
 export function unique_ID(size: number, prefix?: string): string {
@@ -404,47 +397,25 @@ export function getUrlVars(string: string): string[] & Record<string, string> {
 }
 
 export const ratio = {
+    /**
+     * The 16:9 height for a given width, or the 16:9 width for a given
+     * height. Returns 0 when neither is a usable number.
+     *
+     * The old guards were `!== null && !== ""`, which an `undefined` passes
+     * through — so a caller that omitted `w` computed `Math.round(NaN)` and
+     * wrote `height: "NaNpx"`. A `typeof === "number"` check is what the
+     * arithmetic actually needs.
+     */
     r16_9: function (size: { w?: number; h?: number }): number {
-        if (size.w !== null && (size.w as unknown as string) !== "") {
+        if (typeof size.w === "number" && isFinite(size.w)) {
             return Math.round((size.w / 16) * 9);
-        } else if (size.h !== null && (size.h as unknown as string) !== "") {
-            return Math.round((size.h / 9) * 16);
-        } else {
-            return 0;
         }
+        if (typeof size.h === "number" && isFinite(size.h)) {
+            return Math.round((size.h / 9) * 16);
+        }
+        return 0;
     },
 };
-
-export function urljoin(base_url: string, path: string): string {
-    if (base_url.length && base_url.at(-1) === "/") {
-        base_url = base_url.substring(0, base_url.length - 1);
-    }
-    if (path.length && path[0] === "/") {
-        path = path.substring(1);
-    }
-    const url1 = base_url.split("/");
-    const url2 = path.split("/");
-    const url3 = [];
-    for (let i = 0, l = url1.length; i < l; i++) {
-        if (url1[i] === "..") {
-            url3.pop();
-        } else if (url1[i] === ".") {
-            continue;
-        } else {
-            url3.push(url1[i]);
-        }
-    }
-    for (let i = 0, l = url2.length; i < l; i++) {
-        if (url2[i] === "..") {
-            url3.pop();
-        } else if (url2[i] === ".") {
-            continue;
-        } else {
-            url3.push(url2[i]);
-        }
-    }
-    return url3.join("/");
-}
 
 export function getObjectAttributeByIndex(
     obj: Record<string, unknown> | undefined,

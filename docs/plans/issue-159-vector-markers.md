@@ -56,7 +56,7 @@ requires handling the marker layer in OpenLayers first.
   `Icon({src, anchor: [0.5, 1]})` via `_customIconAnchor`, image-icon
   circle (48px, gray/inactive vs theme/active ring), active
   `zIndex 1000`, `Text`-style labels only when `marker_labels &&
-  active && headline` (nowrap, no hit).
+active && headline` (nowrap, no hit).
 - Interaction parity: `map.on("click")` +
   `getFeaturesAtPixel({hitTolerance})` → existing
   `markerclick{marker_number}` → `Map._onMarkerClick/goTo`;
@@ -71,7 +71,7 @@ requires handling the marker layer in OpenLayers first.
 ## 2. Phase 2 — clustering
 
 - OL `Cluster` source wrapping the vector source + `marker_clustering:
-  { distance }` option (off by default); cluster style = count bubble;
+{ distance }` option (off by default); cluster style = count bubble;
   cluster click = `view.animate` zoom-in centered (clusters never map
   to slides — display-only by design).
 - Un-`fixme` `e2e/known-issues/issue-159-marker-clustering.spec.ts`;

@@ -4,6 +4,7 @@ import { DomEvent } from "../dom/DomEvent";
 import Dom from "../dom/Dom";
 import { easeInSpline } from "../animation/easings";
 import MediaType from "../media/MediaType";
+import { sanitizeSlideText } from "../media/EmbedUtil";
 import Text from "../media/types/Text";
 import { Browser } from "../core/Browser";
 import { MediaTypeMatch, StorymapSlide, StorymapSlideBackground } from "../types";
@@ -26,6 +27,19 @@ interface SlideOptions {
     media_type?: string;
     [key: string]: unknown;
 }
+
+/**
+ * The slide's element cache. `call_to_action` is null until the slide is told
+ * to show one (`addCallToAction`).
+ */
+type SlideElements = {
+    container: HTMLElement;
+    scroll_container: HTMLElement;
+    background: HTMLElement;
+    content_container: HTMLElement;
+    content: HTMLElement;
+    call_to_action: HTMLElement | null;
+};
 
 /*	Media instance surface as used by Slide; instances are created
 	dynamically via the matched MediaTypeMatch.cls constructor. Media is
@@ -52,7 +66,8 @@ interface SlideHas {
 }
 
 class SlideBase {
-    declare "_el": Record<string, HTMLElement>;
+    /** `call_to_action` is only created when the slide shows one. */
+    declare "_el": SlideElements;
     declare "_media": MediaInstance | null;
     declare "_mediaclass": unknown;
     declare "_text": Text;
@@ -107,7 +122,7 @@ class SlideBase {
             },
         };
 
-        this.has.title = title_slide;
+        this.has.title = title_slide === true;
 
         this.title = "";
 
@@ -167,7 +182,7 @@ class SlideBase {
             // the active slide's images load eagerly: media built after this
             // point (the 1200ms load timer) honors the flag, already-built
             // images are upgraded below
-            if (this._media) {
+            if (this._media?._state) {
                 this._media._state.eager = true;
             }
             this.loadMedia();
@@ -290,8 +305,12 @@ class SlideBase {
             "vco-slide-calltoaction",
             this._el.content_container,
         );
-        this._el.call_to_action.innerHTML =
-            "<span class='vco-slide-calltoaction-button-text'>" + str + "</span>";
+        // The text comes from `call_to_action_text` in the storymap JSON, so
+        // it goes through the sanitizer like every other author string
+        // instead of being concatenated into markup.
+        const button_text = Dom.create("span", "vco-slide-calltoaction-button-text");
+        button_text.appendChild(sanitizeSlideText(str));
+        this._el.call_to_action?.appendChild(button_text);
         DomEvent.addListener(this._el.call_to_action, "click", this._onCallToAction, this);
     }
 
@@ -355,46 +374,45 @@ class SlideBase {
         if (this.data.text && this.data.text.text) {
             this.has.text = true;
         }
-        if (this.data.text && this.data.text.headline) {
+        if (this.data.text?.headline) {
             this.has.headline = true;
             this.title = this.data.text.headline;
         }
 
         // Create Media
-        if (this.has.media) {
+        const slide_media = this.data.media;
+        if (this.has.media && slide_media) {
             // Determine the media type
-            this.data.media.mediatype = MediaType(this.data.media) as MediaTypeMatch;
-            this.options.media_name = this.data.media.mediatype.name;
-            this.options.media_type = this.data.media.mediatype.type;
+            slide_media.mediatype = MediaType(slide_media) as MediaTypeMatch;
+            this.options.media_name = slide_media.mediatype.name;
+            this.options.media_type = slide_media.mediatype.type;
 
             // Create a media object using the matched class name
-            this._media = new this.data.media.mediatype.cls(
-                this.data.media,
-                this.options,
-            ) as MediaInstance;
+            this._media = new slide_media.mediatype.cls(slide_media, this.options) as MediaInstance;
             // loaded media changes the content height — the scroll hint
             // may appear or disappear
             this._media.on?.("media_loaded", () => this._updateScrollHint());
         }
 
         // Create Text
-        if (this.has.text || this.has.headline) {
+        if ((this.has.text || this.has.headline) && this.data.text) {
             this._text = new Text(this.data.text, {
                 title: this.has.title,
                 text_align: this.options.text_align as string | undefined,
             });
         }
 
-        // Add to DOM
+        // Add to DOM. Each branch has just established the members it uses
+        // (has.media -> _media, has.text/headline -> _text).
         if (!this.has.text && !this.has.headline && this.has.media) {
             this._el.container.className += " vco-slide-media-only";
-            this._media.addTo(this._el.content);
+            this._media?.addTo(this._el.content);
         } else if (this.has.headline && this.has.media && !this.has.text) {
             this._el.container.className += " vco-slide-media-only";
             this._text.addTo(this._el.content);
-            this._media.addTo(this._el.content);
+            this._media?.addTo(this._el.content);
         } else if (this.has.text && this.has.media) {
-            this._media.addTo(this._el.content);
+            this._media?.addTo(this._el.content);
             this._text.addTo(this._el.content);
         } else if (this.has.text || this.has.headline) {
             this._el.container.className += " vco-slide-text-only";

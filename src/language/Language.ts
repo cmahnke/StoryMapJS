@@ -1,3 +1,30 @@
+/**
+ * UI strings for the active locale.
+ *
+ * English is the fallback for every missing key (see `getLanguage`), so
+ * `messages` and `buttons` are guaranteed to be fully populated once a
+ * language has been set — they are typed as required here rather than as
+ * `Record<string, string> | undefined` so call sites do not need a null
+ * check on every one of the ~30 `Language.messages.*` reads.
+ *
+ * The locale JSON files themselves are *not* complete: only `en.json` defines
+ * every key (see `scripts/check-locales.mjs`, which fails CI when a locale
+ * drifts). `direction` is present on every entry that has a real translation.
+ */
+export interface LanguageEntry {
+    /** Display name of the language, e.g. "Deutsch". */
+    name?: string;
+    /** BCP 47 code, e.g. "de". */
+    lang?: string;
+    /** Writing direction; drives the `vco-rtl` layout. */
+    direction?: "ltr" | "rtl";
+    messages: Record<string, string>;
+    buttons: Record<string, string>;
+    [key: string]: unknown;
+}
+
+// Static locale map: the bundler-agnostic form of what `import.meta.glob`
+// with `{ eager: true }` desugars to (works in vite dev and rollup builds).
 import be from "./locale/be.json";
 import bg from "./locale/bg.json";
 import cs from "./locale/cs.json";
@@ -28,14 +55,6 @@ import ur from "./locale/ur.json";
 import zhCn from "./locale/zh-cn.json";
 import zhTw from "./locale/zh-tw.json";
 
-interface LanguageEntry {
-    buttons?: Record<string, string>;
-    messages?: Record<string, string>;
-    [key: string]: unknown;
-}
-
-// Static locale map: the bundler-agnostic form of what `import.meta.glob`
-// with `{ eager: true }` desugars to (works in vite dev and rollup builds).
 const localeModules: Record<string, { default?: unknown }> = {
     "./locale/be.json": { default: be },
     "./locale/bg.json": { default: bg },
@@ -68,12 +87,22 @@ const localeModules: Record<string, { default?: unknown }> = {
     "./locale/zh-tw.json": { default: zhTw },
 };
 
+/** The locale every other language falls back to, per key. */
 const EN: Record<string, unknown> =
     (localeModules["./locale/en.json"]?.default as Record<string, unknown> | undefined) || {};
 
-let Language: LanguageEntry = {};
+/** The strings the viewer reads before (or without) a `setLanguage` call. */
+const FALLBACK: LanguageEntry = {
+    name: "English",
+    lang: "en",
+    direction: "ltr",
+    messages: (EN.messages as Record<string, string>) ?? {},
+    buttons: (EN.buttons as Record<string, string>) ?? {},
+};
 
-function getLanguage(code: string): Record<string, unknown> {
+let Language: LanguageEntry = FALLBACK;
+
+function getLanguage(code: string): LanguageEntry {
     const lang = structuredClone(
         (localeModules[`./locale/${code}.json`]?.default as Record<string, unknown> | undefined) ||
             {},
@@ -90,7 +119,11 @@ function getLanguage(code: string): Record<string, unknown> {
             lang[k] = structuredClone(EN[k]);
         }
     }
-    return lang;
+    return {
+        ...(lang as Omit<LanguageEntry, "messages" | "buttons">),
+        messages: (lang.messages as Record<string, string>) ?? FALLBACK.messages,
+        buttons: (lang.buttons as Record<string, string>) ?? FALLBACK.buttons,
+    };
 }
 
 /**
@@ -104,4 +137,14 @@ function setLanguage(code: string): LanguageEntry {
     return Language;
 }
 
-export { setLanguage, Language };
+/** The active locale's BCP 47 code, for `Intl` formatting. */
+function currentLocale(): string {
+    return typeof Language.lang === "string" && Language.lang !== "" ? Language.lang : "en";
+}
+
+/** True when the active language is written right-to-left. */
+function isRtl(): boolean {
+    return Language.direction === "rtl";
+}
+
+export { setLanguage, Language, currentLocale, isRtl };

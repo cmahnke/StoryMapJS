@@ -51,15 +51,22 @@ export interface StorymapSlideBackground {
     opacity?: number;
 }
 
+/**
+ * One slide of a storymap.
+ *
+ * The nullable members (`| null`) are not decoration: the storymap JSON uses
+ * `null` to mean "explicitly absent" and the viewer seeds its own defaults
+ * with `null` before the data is merged in, so a plain `?` would not type.
+ */
 export interface StorymapSlide {
     type?: string;
     date?: string | Record<string, unknown> | null;
     group?: string;
-    location?: StorymapSlideLocation;
-    media?: StorymapSlideMedia;
-    text?: StorymapSlideText;
+    location?: StorymapSlideLocation | null;
+    media?: StorymapSlideMedia | null;
+    text?: StorymapSlideText | null;
     background?: StorymapSlideBackground | string | null;
-    uniqueid?: string;
+    uniqueid?: string | null;
     [key: string]: unknown;
 }
 
@@ -338,20 +345,29 @@ export interface StorymapMapOptions {
     [key: string]: unknown;
 }
 
+/**
+ * A resolved geographic coordinate.
+ *
+ * `lat`/`lon` are required: this type is for points the map can actually
+ * focus on. A *slide* may carry a `location` without coordinates (an image
+ * region, an icon only) — that is `StorymapSlideLocation`, which keeps them
+ * optional. `lng` is accepted as a legacy alias on input only.
+ */
 export interface LatLngLiteral {
-    lat: number | undefined;
-    lon?: number | undefined;
-    lng?: number | undefined;
+    lat: number;
+    lon: number;
+    lng?: number;
 }
 
-export interface MapMarkerData {
+/**
+ * A marker's data: the slide it was created from, plus the `real_marker` flag
+ * the marker sets once it has confirmed numeric lat/lon. A separate interface
+ * used to drift from `StorymapSlide` (narrower `text`, its own `location`),
+ * which then made `Map._createMarker(slide)` unassignable.
+ */
+export type MapMarkerData = StorymapSlide & {
     real_marker?: boolean;
-    location?: StorymapSlideLocation;
-    media?: StorymapSlideMedia & { mediatype?: MediaTypeMatch | null };
-    text?: { headline?: string };
-    type?: string;
-    [key: string]: unknown;
-}
+};
 
 export type IconSpec = {
     url: string;

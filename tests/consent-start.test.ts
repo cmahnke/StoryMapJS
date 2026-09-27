@@ -32,13 +32,19 @@ describe("start-of-story consent dialog", () => {
         const dialog = container.querySelector(".vco-consent-start");
         expect(dialog).not.toBeNull();
         expect(container.querySelectorAll(".vco-consent-service")).toHaveLength(3);
-        expect(container.querySelector(".vco-consent-start-actions .vco-consent-allow")?.textContent).toBe("Allow all");
-        expect(container.querySelector(".vco-consent-start-actions .vco-consent-deny")?.textContent).toBe("Decline all");
+        expect(
+            container.querySelector(".vco-consent-start-actions .vco-consent-allow")?.textContent,
+        ).toBe("Allow all");
+        expect(
+            container.querySelector(".vco-consent-start-actions .vco-consent-deny")?.textContent,
+        ).toBe("Decline all");
     });
 
     it("allow all grants every service and closes the dialog", () => {
         const { manager, container } = open();
-        (container.querySelector(".vco-consent-start-actions .vco-consent-allow") as HTMLElement).click();
+        (
+            container.querySelector(".vco-consent-start-actions .vco-consent-allow") as HTMLElement
+        ).click();
         expect(container.querySelector(".vco-consent-start")).toBeNull();
         for (const s of SERVICES) {
             expect(manager.isGranted(s.key)).toBe(true);
@@ -53,7 +59,9 @@ describe("start-of-story consent dialog", () => {
 
     it("decline all denies every service", () => {
         const { manager, container } = open();
-        (container.querySelector(".vco-consent-start-actions .vco-consent-deny") as HTMLElement).click();
+        (
+            container.querySelector(".vco-consent-start-actions .vco-consent-deny") as HTMLElement
+        ).click();
         expect(container.querySelector(".vco-consent-start")).toBeNull();
         for (const s of SERVICES) {
             expect(manager.isDenied(s.key)).toBe(true);
@@ -86,7 +94,9 @@ describe("start-of-story consent dialog", () => {
         const promise = manager.request("youtube", "youtube.com", slideAsk);
 
         // allow all resolves it
-        (container.querySelector(".vco-consent-start-actions .vco-consent-allow") as HTMLElement).click();
+        (
+            container.querySelector(".vco-consent-start-actions .vco-consent-allow") as HTMLElement
+        ).click();
         await expect(promise).resolves.toBe(true);
         expect(slideAsk.querySelector(".vco-consent")).toBeNull();
     });
