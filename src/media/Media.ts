@@ -105,6 +105,7 @@ export class MediaBase {
     declare "message": Message | null;
     declare "media_id": unknown;
     declare "_state": MediaState;
+    declare "_disposed": boolean;
     declare "data": MediaData;
     declare "options": MediaOptions;
     declare "animator": unknown;
@@ -148,6 +149,7 @@ export class MediaBase {
             show_meta: false,
             media_loaded: false,
         };
+        this._disposed = false;
 
         // Data
         this.data = {
@@ -340,6 +342,44 @@ export class MediaBase {
         this.onRemove();
     }
 
+    /**
+     * Terminal teardown: cancel pending work, stop playback, release the
+     * media-specific player and drop the DOM. Called by `Slide.dispose()`;
+     * the media must not be used afterwards.
+     */
+    dispose() {
+        if (this._disposed) {
+            return;
+        }
+        this._disposed = true;
+
+        // a load queued by loadMedia() that never started
+        if (this.load_timer) {
+            clearTimer(this.load_timer);
+            this.load_timer = null;
+        }
+        if (this.timer) {
+            clearTimer(this.timer);
+            this.timer = null;
+        }
+        // an external script still in flight (YouTube, Vimeo, Twitter, ...)
+        this.load_controller?.abort();
+        this.load_controller = null;
+
+        // let the concrete type tear down its player before the DOM goes away
+        this._disposeMedia();
+
+        this._el.container?.getAnimations?.().forEach((a) => a.cancel());
+        this.message?.dispose?.();
+        this.message = null;
+        this._el.container?.remove();
+    }
+
+    /**
+     * Media-specific teardown. Overridden by types that own a player, an
+     * embedded document or a listening widget.
+     */
+    _disposeMedia() {}
 
     // Update Display
     updateDisplay(w?: number, h?: number, l?: string) {

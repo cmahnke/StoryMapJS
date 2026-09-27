@@ -8,12 +8,13 @@ import { sanitizeSlideText } from "../EmbedUtil";
 /*	Minimal surface of the SoundCloud widget API used here. */
 interface SoundCloudWidget {
     pause: () => void;
+    unbind?: () => void;
 }
 
 export default class SoundCloud extends Media {
     declare "media_id": string;
     declare "soundCloudCreated": boolean;
-    declare "widget": SoundCloudWidget;
+    declare "widget": SoundCloudWidget | null;
 
     /*	Load the media
 	================================================== */
@@ -83,5 +84,16 @@ export default class SoundCloud extends Media {
         if (this.soundCloudCreated) {
             this.widget?.pause();
         }
+    }
+
+    /** Unbind the widget so it stops playing once the slide is gone. */
+    _disposeMedia() {
+        try {
+            this.widget?.unbind?.();
+        } catch (err) {
+            console.log(err);
+        }
+        this.widget = null;
+        this.soundCloudCreated = false;
     }
 }

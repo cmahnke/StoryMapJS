@@ -37,7 +37,7 @@ interface YouTubeMediaID {
 export default class YouTube extends Media {
     declare "youtube_loaded": boolean;
     declare "media_id": YouTubeMediaID;
-    declare "player": YTPlayer;
+    declare "player": YTPlayer | null;
     declare "_player_attempts": number;
 
     /*	Load the media
@@ -87,7 +87,7 @@ export default class YouTube extends Media {
         // cancel a pending API retry so a poll cannot outlive the slide
         clearTimer(this.timer);
         this.timer = null;
-        if (this.youtube_loaded) {
+        if (this.youtube_loaded && this.player) {
             try {
                 const yt = YT as YTGlobal;
                 if (this.player.getPlayerState() === yt.PlayerState.PLAYING) {
@@ -172,6 +172,25 @@ export default class YouTube extends Media {
                 this.createPlayer();
             }, 1000);
         }
+    }
+
+    /**
+     * Destroy the player, not just pause it: `stopMedia()` runs on every
+     * slide change, but teardown runs once and the iframe otherwise keeps
+     * the embedded video and its event listeners alive after disposal.
+     */
+    _disposeMedia() {
+        clearTimer(this.timer);
+        this.timer = null;
+        if (this.youtube_loaded) {
+            try {
+                this.player?.destroy?.();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        this.player = null;
+        this.youtube_loaded = false;
     }
 
     /*	Events

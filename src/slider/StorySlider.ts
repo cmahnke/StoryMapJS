@@ -80,7 +80,8 @@ class StorySliderBase {
     declare "slide_spacing": number;
     declare "_slides": Slide[];
     declare "_swipable": Swipable;
-    declare "preloadTimer": ReturnType<typeof setTimeout>;
+    declare "preloadTimer": ReturnType<typeof setTimeout> | undefined;
+    declare "preloadIdleHandle": number | undefined;
     declare "_message": Message;
     declare "current_slide": number;
     declare "current_bg_color": string | null;
@@ -167,6 +168,10 @@ class StorySliderBase {
         // Animation Object
         this.animator = null;
         this.animator_background = null;
+
+        // Preload scheduling handles, at most one of which is ever live
+        this.preloadTimer = undefined;
+        this.preloadIdleHandle = undefined;
 
         // Merge Data and Options
         mergeData(this.options, options);
@@ -259,17 +264,32 @@ class StorySliderBase {
     }
 
     /**
+     * Cancel the pending preload, whichever scheduling primitive queued it.
+     *
+     * The two handles are kept apart deliberately: they are both numbers, so
+     * calling `clearTimeout` on an idle-callback handle "works" by accident
+     * while actually leaking the callback, and the reverse leaves a live
+     * timeout behind.
+     */
+    _cancelPreload() {
+        if (this.preloadTimer !== undefined) {
+            clearTimeout(this.preloadTimer);
+            this.preloadTimer = undefined;
+        }
+        if (this.preloadIdleHandle !== undefined) {
+            (
+                window as unknown as { cancelIdleCallback?: (handle: number) => void }
+            ).cancelIdleCallback?.(this.preloadIdleHandle);
+            this.preloadIdleHandle = undefined;
+        }
+    }
+
+    /**
      * Release listeners, timers and running animations. Called by
      * `StoryMap.dispose()`; the slider must not be used afterwards.
      */
     dispose() {
-        if (this.preloadTimer) {
-            clearTimeout(this.preloadTimer);
-            (
-                window as unknown as { cancelIdleCallback?: (handle: number) => void }
-            ).cancelIdleCallback?.(this.preloadTimer as unknown as number);
-            this.preloadTimer = undefined as unknown as ReturnType<typeof setTimeout>;
-        }
+        this._cancelPreload();
         if (this._swipable) {
             this._swipable.dispose();
         }
@@ -279,19 +299,20 @@ class StorySliderBase {
         for (const el of [this._el.container, this._el.slider_container, this._el.background]) {
             el?.getAnimations?.().forEach((a) => a.cancel());
         }
+        for (const slide of this._slides) {
+            slide.dispose();
+        }
+        this._nav.previous?.dispose();
+        this._nav.next?.dispose();
+        this._message?.dispose();
+        this._slides = [];
     }
 
     goTo(n: number, fast?: boolean, displayupdate?: boolean) {
         this.changeBackground({ color_value: "", image: false });
 
-        // Clear Preloader Timer (covers both the setTimeout fallback and
-        // the requestIdleCallback handle below — both are numbers)
-        if (this.preloadTimer) {
-            clearTimeout(this.preloadTimer);
-            (
-                window as unknown as { cancelIdleCallback?: (handle: number) => void }
-            ).cancelIdleCallback?.(this.preloadTimer as unknown as number);
-        }
+        // Clear Preloader Timer
+        this._cancelPreload();
 
         // Set Slide Active State
         for (let i = 0; i < this._slides.length; i++) {
@@ -371,9 +392,9 @@ class StorySliderBase {
                 requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
             };
             if (w.requestIdleCallback) {
-                this.preloadTimer = w.requestIdleCallback(() => this.preloadSlides(), {
+                this.preloadIdleHandle = w.requestIdleCallback(() => this.preloadSlides(), {
                     timeout: this.options.duration,
-                }) as unknown as ReturnType<typeof setTimeout>;
+                });
             } else {
                 this.preloadTimer = setTimeout(() => {
                     this.preloadSlides();

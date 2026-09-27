@@ -28,6 +28,8 @@ function mimeSubtype(ext: string, spec: HtmlMediaSpec): string {
 /** The behaviour shared by the audio and video media types. */
 export class HtmlMediaBase extends Media {
     declare "player_element": HTMLMediaElement | null;
+    declare "_onCanPlay": (() => void) | null;
+    declare "_onSourceError": (() => void) | null;
 
     /**
      * The per-kind differences. Overridden by the Audio/Video subclasses; the
@@ -52,15 +54,18 @@ export class HtmlMediaBase extends Media {
         const source_item = Dom.create("source", "", media_item) as HTMLSourceElement;
         this._el.source_item = source_item;
 
-        // Media Loaded Event
-        media_item.addEventListener("canplay", () => {
+        // Media Loaded Event. The references are kept so dispose() can detach
+        // them: an inline arrow function has no other handle.
+        this._onCanPlay = () => {
             this.onLoaded();
-        });
+        };
+        media_item.addEventListener("canplay", this._onCanPlay);
 
         // Load Error Event (the source element fires it, not the media element)
-        source_item.addEventListener("error", () => {
+        this._onSourceError = () => {
             this.loadErrorDisplay(Language.messages.error + " " + this.options.media_name);
-        });
+        };
+        source_item.addEventListener("error", this._onSourceError);
 
         const url = this._url();
         source_item.src = url;
@@ -89,6 +94,35 @@ export class HtmlMediaBase extends Media {
 
     _stopMedia() {
         this.player_element?.pause();
+    }
+
+    /**
+     * Detach the media listeners and release the source, so a disposed audio
+     * or video element stops buffering instead of playing into a detached
+     * tree. Pausing alone (what `stopMedia()` does per slide change) is not
+     * enough for a full teardown.
+     */
+    _disposeMedia() {
+        if (this._onCanPlay) {
+            this.player_element?.removeEventListener("canplay", this._onCanPlay);
+            this._onCanPlay = null;
+        }
+        if (this._onSourceError) {
+            this._el.source_item?.removeEventListener("error", this._onSourceError);
+            this._onSourceError = null;
+        }
+        const el = this.player_element;
+        if (el) {
+            el.pause();
+            // dropping the source stops the network fetch immediately
+            el.removeAttribute("src");
+            el.load();
+        }
+        this.player_element = null;
+
+        this._onCanPlay = null;
+
+        this._onSourceError = null;
     }
 
     _getType(url: string, spec: HtmlMediaSpec): string {

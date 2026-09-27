@@ -100,6 +100,43 @@ describe("storymap dispose()", () => {
         // so the renderer can no longer paint into it
         expect(sm.map).toBeNull();
     });
+
+    it("empties the host container", () => {
+        const sm = storymap("sm-dispose-empty");
+        const host = document.getElementById("sm-dispose-empty") as HTMLElement;
+        // the viewer really did build its chrome in there
+        expect(host.children.length).toBeGreaterThan(0);
+        sm.dispose();
+        // the children owned their own listeners and players, so leaving the
+        // nodes behind would strand them in the document after teardown
+        expect(host.children.length).toBe(0);
+        expect(host.innerHTML).toBe("");
+    });
+
+    it("turns public method calls after dispose into no-ops", () => {
+        const sm = storymap("sm-dispose-noop");
+        sm.dispose();
+
+        // terminal teardown: these are guarded rather than left to throw on a
+        // dead map, so an SPA teardown racing a late click is harmless
+        expect(() => sm.goTo(1)).not.toThrow();
+        expect(() => sm.updateDisplay()).not.toThrow();
+        expect(() => sm.setMapOption("zoom", 4)).not.toThrow();
+        expect(() => sm.setMapOptions({ zoom: 5 })).not.toThrow();
+        expect(() => sm.setOverlayVisible(0, true)).not.toThrow();
+        expect(() => sm.setOverlayOpacity(0, 0.5)).not.toThrow();
+        expect(() => sm.createMiniMap()).not.toThrow();
+        expect(() => sm.setExtraAttributions(["x"])).not.toThrow();
+        expect(() => sm.refreshLanguage("de")).not.toThrow();
+
+        // the accessors degrade to empty/null rather than throwing
+        expect(sm.getMarkers()).toEqual([]);
+        expect(sm.getMarker(0)).toBeNull();
+        expect(sm.getMinimap()).toBeNull();
+        expect(sm.getLine()).toBeNull();
+        expect(sm.getLineActive()).toBeNull();
+        expect(sm.getOverlayLayers()).toEqual([]);
+    });
 });
 
 describe("storymap imageready", () => {

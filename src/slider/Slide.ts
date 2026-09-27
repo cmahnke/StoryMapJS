@@ -49,6 +49,7 @@ interface MediaInstance {
     loadMedia: () => void;
     stopMedia: () => void;
     updateDisplay: (w?: number, h?: number, l?: string) => void;
+    dispose?: () => void;
     on?: EventedInstance["on"];
     _state?: { loaded?: boolean; eager?: boolean };
 }
@@ -74,6 +75,7 @@ class SlideBase {
     declare "_state": { loaded: boolean };
     declare "_scroll_hint": HTMLElement | null;
     declare "_scroll_hint_dismissed": boolean;
+    declare "_onSlideScrollBound": EventListener;
     declare "has": SlideHas;
     declare "title": string;
     declare "data": StorymapSlide;
@@ -154,6 +156,8 @@ class SlideBase {
         // Animation Object
         this.animator = {};
 
+        this._onSlideScrollBound = null as unknown as EventListener;
+
         // Merge Data and Options
         mergeData(this.options, options);
         mergeData(this.data, data);
@@ -168,6 +172,30 @@ class SlideBase {
     }
 
     hide() {}
+
+    /**
+     * Release the slide's listeners, media and DOM. Called by
+     * `StorySlider.dispose()`; the slide must not be used afterwards.
+     */
+    dispose() {
+        // the scroll listener was registered against a bound copy, so this
+        // only works because that reference was kept
+        if (this._onSlideScrollBound) {
+            this._el.container?.removeEventListener("scroll", this._onSlideScrollBound);
+            this._onSlideScrollBound = null as unknown as EventListener;
+        }
+        if (this._el.call_to_action) {
+            DomEvent.removeListener(this._el.call_to_action, "click", this._onCallToAction, this);
+        }
+        if (this._scroll_hint) {
+            DomEvent.removeListener(this._scroll_hint, "click", this._onScrollHintClick, this);
+            this._scroll_hint = null;
+        }
+        this._el.container?.getAnimations?.().forEach((a) => a.cancel());
+        this._media?.dispose?.();
+        this._media = null;
+        this._el.container?.remove();
+    }
 
     setActive(is_active: boolean) {
         this.active = is_active;
@@ -341,8 +369,11 @@ class SlideBase {
         this._el.content = Dom.create("div", "vco-slide-content", this._el.content_container);
         this._el.background = Dom.create("div", "vco-slide-background", this._el.container);
         // first scroll of any kind hides the scroll hint (passive: the
-        // listener never prevents default)
-        this._el.container.addEventListener("scroll", this._onSlideScroll.bind(this), {
+        // listener never prevents default). The reference is kept because
+        // `.bind()` returns a new function each call, so the listener could
+        // otherwise never be removed again.
+        this._onSlideScrollBound = this._onSlideScroll.bind(this);
+        this._el.container.addEventListener("scroll", this._onSlideScrollBound, {
             passive: true,
         });
         // Style Slide Background

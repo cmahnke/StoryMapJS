@@ -338,6 +338,27 @@ class MenuBarBase {
             this.options.height = height;
         }
     }
+
+    /**
+     * Release the button listeners, the progress animation and the element.
+     * Called by `StoryMap.dispose()`; the menubar must not be used afterwards.
+     */
+    dispose(): void {
+        const buttons: [string, EventListener][] = [
+            ["button_overview", this._onButtonOverview as EventListener],
+            ["button_backtostart", this._onButtonBackToStart as EventListener],
+            ["button_fullscreen", this._onButtonFullscreen as EventListener],
+            ["button_collapse_toggle", this._onButtonCollapseMap as EventListener],
+        ];
+        for (const [key, handler] of buttons) {
+            const el = this._el[key];
+            if (el) {
+                DomEvent.removeListener(el, "click", handler, this);
+            }
+        }
+        this._el.container?.getAnimations?.().forEach((a) => a.cancel());
+        this._el.container?.remove();
+    }
 }
 
 export default class MenuBar extends DomMixed(Evented(MenuBarBase)) {

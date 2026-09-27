@@ -754,6 +754,12 @@ export default class OpenLayers extends Map {
             cancelAnimationFrame(this._line_animation);
             this._line_animation = null;
         }
+        // markers own their click listener and an overlay; disposing the
+        // collection releases both
+        for (const marker of this._markers) {
+            marker.dispose?.();
+        }
+        this._markers = [];
         // detach the viewport first: dispose() alone leaves the canvas in
         // the caller's DOM
         this._map.setTarget(undefined);

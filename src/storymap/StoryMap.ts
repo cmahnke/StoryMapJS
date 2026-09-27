@@ -491,6 +491,7 @@ class StoryMapBase {
     ================================================== */
 
     refreshLanguage(code: string): void {
+        if (this._disposed) return;
         this.options.language = code;
         setLanguage(code);
         this._applyLanguageLayout();
@@ -555,6 +556,7 @@ class StoryMapBase {
      *   `type: "overview"`, not by its index.
      */
     goTo(n: number) {
+        if (this._disposed) return;
         // out-of-range indices are ignored: they would desync the slider and
         // map (no active slide) and write a broken #slide-N bookmark
         if (n >= 0 && n < (this.data?.slides?.length ?? 0) && n !== this.current_slide) {
@@ -647,6 +649,7 @@ class StoryMapBase {
      * same call as `setMapOptions({ [name]: value })`.
      */
     setMapOption(name: string, value: unknown) {
+        if (this._disposed) return;
         this.setMapOptions({ [name]: value } as Partial<StorymapOptions>);
     }
 
@@ -656,6 +659,7 @@ class StoryMapBase {
      * wrapper also re-syncs the attribution line and the overlay blend mode.
      */
     setOverlayVisible(index: number, visible: boolean): void {
+        if (this._disposed) return;
         this._map.setOverlayVisible(index, visible);
     }
 
@@ -664,6 +668,7 @@ class StoryMapBase {
      * Alias: `getOverlayLayer(index)?.setOpacity(opacity)`.
      */
     setOverlayOpacity(index: number, opacity: number): void {
+        if (this._disposed) return;
         this._map.setOverlayOpacity(index, opacity);
     }
 
@@ -671,6 +676,7 @@ class StoryMapBase {
      * Change several map options at runtime (see setMapOption).
      */
     setMapOptions(options: Partial<StorymapOptions>) {
+        if (this._disposed) return;
         mergeData(this.options, options);
         if (this._map && this._map.options) {
             mergeData(this._map.options, options);
@@ -692,27 +698,27 @@ class StoryMapBase {
 
     /** The base tile layer, or `null` when deferred (tile consent not granted). */
     getBaseLayer(): OlLayer | null {
-        return this._map ? this._map.getBaseLayer() : null;
+        return !this._disposed && this._map ? this._map.getBaseLayer() : null;
     }
 
     /** The stacked `overlays[]` layers, in `overlays[]` order. */
     getOverlayLayers(): OlLayer[] {
-        return this._map ? this._map.getOverlayLayers() : [];
+        return !this._disposed && this._map ? this._map.getOverlayLayers() : [];
     }
 
     /** One stacked overlay layer by its `overlays[]` index, or `null`. */
     getOverlayLayer(index: number): OlLayer | null {
-        return this._map ? this._map.getOverlayLayer(index) : null;
+        return !this._disposed && this._map ? this._map.getOverlayLayer(index) : null;
     }
 
     /** The minimap's OpenLayers map (the `OverviewMap` control's inner map). */
     getMinimap(): OlMap | null {
-        return this._map ? this._map.getMinimap() : null;
+        return !this._disposed && this._map ? this._map.getMinimap() : null;
     }
 
     /** The full (inactive) route line layer. */
     getLine(): OlLayer | null {
-        return this._map ? this._map.getLine() : null;
+        return !this._disposed && this._map ? this._map.getLine() : null;
     }
 
     /**
@@ -725,7 +731,7 @@ class StoryMapBase {
      * is an ordinary mercator map.
      */
     isImageSpace(): boolean {
-        return this._map ? this._map.isImageSpace() : false;
+        return !this._disposed && this._map ? this._map.isImageSpace() : false;
     }
 
     /**
@@ -734,8 +740,11 @@ class StoryMapBase {
      * slider, the menubar, the map and the map markers. Use this when tearing
      * a storymap down (SPA route change, modal close).
      *
-     * The map container's child nodes are left in place; remove the element
-     * itself if it should disappear.
+     * Teardown is terminal: the host container is emptied, `map` becomes
+     * null, and the public methods (`goTo`, `setMapOptions`,
+     * `createMiniMap`, ...) become no-ops rather than throwing. There is no
+     * re-init path; build a new StoryMap on the same element instead.
+     * Calling `dispose()` twice is a no-op.
      */
     dispose(): void {
         if (this._disposed) {
@@ -782,25 +791,33 @@ class StoryMapBase {
         consentManagerOf(this.options)?.dispose();
 
         this._storyslider?.dispose?.();
+        this._menubar?.dispose?.();
         this._map?.dispose?.();
-        // kept as a disposed reference: like ol/Map, further calls throw a
-        // loud error rather than silently operating on a dead instance
+
+        // the public ol/Map handle. The viewer is terminal after dispose(), so
+        // this is null rather than a disposed instance; the public methods
+        // above are guarded and no-op instead of throwing.
         this.map = null;
+
+        // empty the host element: the children owned their own listeners and
+        // players, but their nodes (and the ol canvas) would otherwise stay
+        // in the document after teardown
+        this._el?.container?.replaceChildren();
     }
 
     /** The highlighted route line drawn up to the current slide. */
     getLineActive(): OlLayer | null {
-        return this._map ? this._map.getLineActive() : null;
+        return !this._disposed && this._map ? this._map.getLineActive() : null;
     }
 
     /** The map markers, indexed by slide. */
     getMarkers(): OpenLayersMapMarker[] {
-        return this._map ? this._map.getMarkers() : [];
+        return !this._disposed && this._map ? this._map.getMarkers() : [];
     }
 
     /** One map marker by slide index, or `null`. */
     getMarker(index: number): OpenLayersMapMarker | null {
-        return this._map ? this._map.getMarker(index) : null;
+        return !this._disposed && this._map ? this._map.getMarker(index) : null;
     }
 
     /**
@@ -809,6 +826,7 @@ class StoryMapBase {
      * or a deferred tile-consent grant.
      */
     createMiniMap(): void {
+        if (this._disposed) return;
         this._map.createMiniMap();
     }
 
@@ -817,6 +835,7 @@ class StoryMapBase {
      * custom layer added through `tile_source_factory`).
      */
     setExtraAttributions(parts: string[]): void {
+        if (this._disposed) return;
         this._map.setExtraAttributions(parts);
     }
 

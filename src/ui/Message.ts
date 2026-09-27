@@ -109,6 +109,15 @@ class MessageBase {
     _initEvents() {
         DomEvent.addListener(this._el.container, "click", this._onMouseClick, this);
     }
+
+    /**
+     * Release the click listener and drop the element. Called by
+     * `StorySlider.dispose()`; the message must not be used afterwards.
+     */
+    dispose() {
+        DomEvent.removeListener(this._el.container, "click", this._onMouseClick, this);
+        this._el.container.remove();
+    }
 }
 
 export default class Message extends DomMixed(Evented(MessageBase)) {

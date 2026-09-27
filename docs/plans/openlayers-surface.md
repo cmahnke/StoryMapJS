@@ -94,6 +94,23 @@ config.
   window `resize`/`hashchange`/`keydown`/`fullscreenchange` listeners and
   all timers. Today nothing does this: everything leaks.
 
+  Done in layers, each class releasing only what it owns:
+
+  | Class | Releases |
+  | --- | --- |
+  | `StoryMap` | window/document listeners, timers, resize observer, WAAPI; calls the children below; empties the host container |
+  | `StorySlider` | the preload handle (timeout *and* idle callback, tracked separately), swipable, keydown, WAAPI, slides, nav arrows, message |
+  | `Slide` | the bound scroll listener, call-to-action and scroll-hint listeners, its media, its DOM |
+  | `Media` | pending load/retry timers, an in-flight external script, the type's player, its message, its DOM; `_disposeMedia()` overridden by YouTube (destroy), SoundCloud (unbind), HtmlMedia (detach + drop the source) |
+  | `MapMarker` | the marker click listener, the overlay, the element |
+  | `MenuBar`, `SlideNav`, `Message` | their button listeners, animations and elements |
+  | `Consent` | settles every unanswered request, so `Media.loadMedia()`'s `await` is not left dangling |
+
+  Terminal by decision: the host container is emptied, `map` becomes `null`,
+  and the public methods and accessors are guarded so a late call after
+  teardown is a no-op rather than a throw. There is no re-init path — build a
+  new `StoryMap` on the same element.
+
 Gates: same, plus `npm run build` and `npm pack --dry-run`.
 
 ## 4. Phase 4 — space helpers and documentation (Effort S)

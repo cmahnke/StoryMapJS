@@ -14,6 +14,7 @@ import type { LatLngLiteral, MapMarkerData, StorymapOptions } from "../../types"
 
 export default class OpenLayersMapMarker extends MapMarker {
     declare "_overlay": Overlay;
+    declare "_onMarkerClickBound": ((e: Event) => void) | null;
 
     /*	Create Marker
     ================================================== */
@@ -33,10 +34,13 @@ export default class OpenLayersMapMarker extends MapMarker {
             }
 
             this._marker = this._createMarkerElement(d as MapMarkerData, o);
-            this._marker.addEventListener("click", (e) => {
+            // kept as a field so dispose() can detach it; the inline arrow
+            // had no other handle
+            this._onMarkerClickBound = (e: Event) => {
                 e.stopPropagation();
                 this._onMarkerClick(e);
-            });
+            };
+            this._marker.addEventListener("click", this._onMarkerClickBound);
         }
     }
 
@@ -118,6 +122,26 @@ export default class OpenLayersMapMarker extends MapMarker {
         if (this.data.real_marker && this._overlay) {
             m.removeOverlay(this._overlay);
         }
+    }
+
+    /**
+     * Terminal teardown: detach the click listener and drop the overlay and
+     * element. Called by the map's dispose(); the marker must not be used
+     * afterwards.
+     */
+    dispose(): void {
+        const marker = this._marker as unknown as HTMLElement | null;
+        if (this._onMarkerClickBound) {
+            marker?.removeEventListener?.("click", this._onMarkerClickBound);
+            this._onMarkerClickBound = null;
+        }
+        if (this._overlay) {
+            this._overlay.setElement(undefined);
+            this._overlay = null as unknown as Overlay;
+        }
+        // via the parent so a non-DOM stand-in (a test double) is tolerated
+        marker?.parentNode?.removeChild(marker);
+        this._marker = null as unknown as HTMLDivElement;
     }
 
     _active(a: boolean): void {

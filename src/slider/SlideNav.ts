@@ -223,6 +223,20 @@ class SlideNavBase {
             this._onMouseClick();
         }
     }
+
+    /**
+     * Release the listeners and the position animation. Called by
+     * `StorySlider.dispose()`; the nav must not be used afterwards.
+     */
+    dispose() {
+        if (this.animator_position) {
+            this.animator_position.stop();
+            this.animator_position = null;
+        }
+        DomEvent.removeListener(this._el.container, "click", this._onMouseClick, this);
+        DomEvent.removeListener(this._el.container, "keydown", this._onKeyDown, this);
+        this._el.container.remove();
+    }
 }
 
 export default class SlideNav extends DomMixed(Evented(SlideNavBase)) {
