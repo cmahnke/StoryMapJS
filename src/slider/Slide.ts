@@ -51,6 +51,7 @@ interface MediaInstance {
     updateDisplay: (w?: number, h?: number, l?: string) => void;
     dispose?: () => void;
     on?: EventedInstance["on"];
+    off?: EventedInstance["off"];
     _state?: { loaded?: boolean; eager?: boolean };
 }
 
@@ -76,6 +77,8 @@ class SlideBase {
     declare "_scroll_hint": HTMLElement | null;
     declare "_scroll_hint_dismissed": boolean;
     declare "_onSlideScrollBound": EventListener;
+    /** Every `media_ended` handler registered via `onMediaEnded`, kept so `dispose()` can remove them. */
+    declare "_media_ended_fns": (() => void)[];
     declare "has": SlideHas;
     declare "title": string;
     declare "data": StorymapSlide;
@@ -157,8 +160,7 @@ class SlideBase {
         this.animator = {};
 
         this._onSlideScrollBound = null as unknown as EventListener;
-
-        // Merge Data and Options
+        this._media_ended_fns = [];
         mergeData(this.options, options);
         mergeData(this.data, data);
 
@@ -192,6 +194,13 @@ class SlideBase {
             this._scroll_hint = null;
         }
         this._el.container?.getAnimations?.().forEach((a) => a.cancel());
+        // the media_ended handlers registered via onMediaEnded() live on the
+        // media object, which outlives this slide once nulled — remove them
+        // here or a disposed slide's advance closure fires on a later ended
+        for (const fn of this._media_ended_fns) {
+            this._media?.off?.("media_ended", fn);
+        }
+        this._media_ended_fns = [];
         this._media?.dispose?.();
         this._media = null;
         this._el.container?.remove();
@@ -291,6 +300,7 @@ class SlideBase {
     onMediaEnded(fn: () => void): void {
         if (!this.hasPlayableMedia() || !this._media?.on) return;
         this._media.on("media_ended", fn);
+        this._media_ended_fns.push(fn);
     }
 
     scrollToTop() {

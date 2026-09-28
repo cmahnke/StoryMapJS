@@ -915,6 +915,11 @@ class StoryMapBase {
         return !this._disposed && this._map ? this._map.getOverlayLayer(index) : null;
     }
 
+    /** Number of stacked overlay layers (see the `overlays` option). */
+    getOverlayCount(): number {
+        return !this._disposed && this._map ? this._map.getOverlayCount() : 0;
+    }
+
     /** The minimap's OpenLayers map (the `OverviewMap` control's inner map). */
     getMinimap(): OlMap | null {
         return !this._disposed && this._map ? this._map.getMinimap() : null;

@@ -153,6 +153,44 @@ describe("storymap dispose()", () => {
         expect(sm.ready).toBe(false);
     });
 
+    it("removes media_ended handlers when a slide is disposed", () => {
+        // onMediaEnded() subscribes on the media object, which outlives the
+        // slide once nulled — without removal the advance closure fires on a
+        // later ended event from a disposed slide's player
+        const el = document.createElement("div");
+        el.id = "sm-dispose-media-ended";
+        document.body.appendChild(el);
+        const sm = new StoryMap("sm-dispose-media-ended", {
+            storymap: {
+                map_type: "osm",
+                slides: [
+                    {
+                        date: "",
+                        text: { headline: "Audio", text: "" },
+                        media: { url: "https://example.org/a.mp3" },
+                    },
+                ],
+            },
+        } as unknown as StorymapDataWrapper);
+        const slide = (
+            sm as unknown as {
+                _storyslider: { _slides: { onMediaEnded(f: () => void): void; dispose(): void }[] };
+            }
+        )._storyslider._slides[0];
+        slide.onMediaEnded(() => {});
+        slide.onMediaEnded(() => {});
+        const media = (
+            slide as unknown as {
+                _media: { hasEventListeners(t: string): boolean };
+            }
+        )._media;
+        expect(media.hasEventListeners("media_ended")).toBe(true);
+
+        slide.dispose();
+
+        expect(media.hasEventListeners("media_ended")).toBe(false);
+    });
+
     it("turns public method calls after dispose into no-ops", () => {
         const sm = storymap("sm-dispose-noop");
         sm.dispose();

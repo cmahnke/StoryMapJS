@@ -59,10 +59,7 @@ describe("map marker numbering", () => {
 
     it("numbers a newly added marker after the current length", () => {
         const sm = storymap("sm-marker-append", 2);
-        const engine = (sm as unknown as { _map: { _markers: { marker_number: number }[] } })._map;
-        expect(engine._markers.map((m: { marker_number: number }) => m.marker_number)).toEqual([
-            0, 1, 2,
-        ]);
+        expect(sm.getMarkers().map((m) => m.marker_number)).toEqual([0, 1, 2]);
         sm.dispose();
     });
 });

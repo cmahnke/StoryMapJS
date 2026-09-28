@@ -1520,7 +1520,7 @@ export default class OpenLayers extends Map {
     }
 
     _calculateMarkerZooms(): void {
-        const center = this._getMapCenter(true);
+        const center = this._getMapCenter();
         for (const [i, marker] of this._markers.entries()) {
             // a marker with no location object at all is not navigable
             if (!marker.data.location) {
@@ -1951,7 +1951,10 @@ export default class OpenLayers extends Map {
         return this._map.getView().getZoom() || 0;
     }
 
-    _getMapCenter(offset?: boolean): LatLngLiteral {
+    // Note: there is deliberately no offset-aware variant. The exposed
+    // center is panel-shifted (see the migration guide); a previous
+    // `offset?: boolean` parameter promised a correction it never applied.
+    _getMapCenter(): LatLngLiteral {
         const view = this._map.getView();
         const center = view.getCenter() ?? [0, 0];
         const [lon, lat] = toLonLat(center, view.getProjection());

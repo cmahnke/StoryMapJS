@@ -54,10 +54,11 @@ test("the active line traces the route during the animation", async ({ page }) =
 
     const readPoints = () =>
         page.evaluate(() => {
-            const map = (window as unknown as { __sm?: { _map?: { _line_active?: unknown } } }).__sm
-                ?._map;
+            const line = (
+                window as unknown as { __sm?: { getLineActive?: () => unknown } }
+            ).__sm?.getLineActive?.();
             const source = (
-                map?._line_active as {
+                line as {
                     getSource?(): {
                         getFeatures?(): { getGeometry?(): { getCoordinates?(): unknown[] } }[];
                     };
