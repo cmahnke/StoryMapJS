@@ -1,5 +1,23 @@
 # OpenLayers surface: expose the full map API, keep our own thin
 
+> **Delivered.** Shipped in seven commits on `refactor/vite-typescript`:
+> `81db46c0` (typed exports, accessors, Layer passthrough, deprecations),
+> `fba2d8de` (map_bbox/attribution/data-mutation conflicts),
+> `39ba4b67` (`imageready`, `dispose()`), `6e5aaa82` (`isImageSpace()`),
+> `f432f680` (formatting), `5b41edea` (docs), `b79caefd` (`imageready`
+> once per source). Follow-up: `a4a570a3` restored the legacy
+> `addTo`/`removeFrom` container methods (mixin-inherited, made
+> OpenLayers-aware) and `marker.createPopup()` as a deprecated no-op, which
+> the "keep our own thin" constraint had wrongly documented as removed.
+> Kept as the record of why the surface looks the way it does; the code and
+> `docs/migration-from-knightlab.md` are the current reference.
+>
+> **Reading the line numbers below:** they are a snapshot of the tree as it
+> stood for those commits, and the conflict table in §4 deliberately cites
+> the _pre-fix_ code (e.g. `calculate_zoom` writing into `location.zoom`),
+> so some of them no longer match `src/` by design. Elsewhere, prefer the
+> symbol names, which are the stable handle.
+
 Goal: make `storymap.map` a genuinely usable, typed OpenLayers map —
 accessors for every internal object we keep private, events for image
 readiness, a real teardown path — while our own API stays a thin,
@@ -55,8 +73,8 @@ is additive with respect to it.
    `instanceof Layer` _before_ the `getSource` check, widen
    `_tile_layer`/`_overlay_layers`/`_tile_layer_mini` to `Layer`, guard
    `.getSource()` call sites with `"getSource" in layer`. Unblocks Allmaps
-   `WarpedMapLayer` (no `getSource`), i.e. the remaining item from
-   `iiif-geo-layers.md` §2.
+   `WarpedMapLayer` (no `getSource`), i.e. the remaining item in
+   `iiif-media-tours.md` §4.
 4. **Alias policy (decided: keep as aliases, no removals)** — JSDoc +
    typedoc "alias of" notes for `setMapOption`, `panTo`, `zoomTo`,
    `viewTo`, `markerOverview`, `calculateMarkerZooms`, `getBoundsZoom`,
