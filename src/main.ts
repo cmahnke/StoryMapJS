@@ -66,6 +66,24 @@ export {
 } from "./storymap/iiif";
 
 /**
+ * Convert a legacy storymap document into a IIIF Presentation 3 manifest —
+ * the writer counterpart of `manifestToStorymapData()`. Pure, so the same
+ * document always produces the same manifest.
+ */
+export { storymapToManifest } from "./storymap/to-iiif";
+
+/**
+ * The manifest shape `storymapToManifest()` produces, for a host that wants to
+ * consume or further annotate the result.
+ */
+export type {
+    StorymapDocument,
+    StorymapManifest,
+    StorymapManifestCanvas,
+    StorymapManifestService,
+} from "./storymap/to-iiif";
+
+/**
  * Re-exported OpenLayers types, so consumers can type the map reachable at
  * `storymap.map` without depending on `ol` themselves.
  */

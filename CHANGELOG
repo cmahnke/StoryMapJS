@@ -15,6 +15,11 @@ Added
   `map_type: ""` and an absent key still mean OpenStreetMap, and `map_type:
   null` is normalised to that default instead of throwing out of the
   constructor (the schema already allowed the key to be missing)
+- **`storymapToManifest()` is now a library export**, promoted out of the
+  `convert:iiif` script, so one function both writes and reads the IIIF format
+  and a host can produce a manifest in the browser. The CLI delegates to it
+  (via Node's own type stripping, so no new dependency and no build step), and
+  its output is unchanged byte for byte across all 49 fixtures
 - **Annotation-driven tour stops.** A IIIF manifest whose commenting,
   tagging, classifying or describing annotations carry a fragment target
   becomes one slide per annotation, each fitting the region it points at —
