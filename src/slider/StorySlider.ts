@@ -50,7 +50,6 @@ interface StorySliderOptions {
     skinny_size?: number;
     call_to_action?: boolean;
     call_to_action_text?: string;
-    dragging?: boolean;
     trackResize?: boolean;
     [key: string]: unknown;
 }
@@ -143,8 +142,6 @@ class StorySliderBase {
             // animation
             duration: 1000,
             ease: easeInOutQuint,
-            // interaction
-            dragging: true,
             trackResize: true,
         };
 

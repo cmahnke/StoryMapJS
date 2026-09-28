@@ -82,6 +82,26 @@ element, ... }` to configure the underlying OpenLayers map; `element`
 | `relative_date: true` (moment.js)             | removed — format dates in the story text                                                                                                                         |
 | `font_css: "stock:<name>"` (or a path)        | paths now resolve against the page URL (not the library location), plus the font files ship via `@fontsource-utils/scss`; no separate font CSS link needed       |
 
+## A story with no map
+
+`map_type: "none"` runs the storymap as text and media only. Nothing is
+constructed: no `ol/Map`, no tile layer, no tile consent row, and the overview
+control is hidden. The slider panel takes the full width, because there is no
+map behind it to fade over.
+
+This is the shape a photo essay or a transcript-led story wants, and it is the
+one the map engine's unconditional construction used to make impossible. Note
+that `map_type: ""` and an absent `map_type` both still mean OpenStreetMap, and
+`map_type: null` now falls back to that default instead of throwing out of the
+constructor — absence is not reinterpreted, so no existing document changes
+meaning. Map-derived accessors (`getBaseLayer()`, `getMarkers()`, …) return
+their neutral values, and the map setters are no-ops.
+
+| Old                                        | New                                   |
+| ------------------------------------------ | ------------------------------------- |
+| a text-only story with a dummy `map_type`  | `map_type: "none"`                    |
+| `map_type: null` (crashed the constructor) | normalised to the default, `""` → OSM |
+
 ## Removed globals and exports
 
 | Removed                           | Replacement                                           |

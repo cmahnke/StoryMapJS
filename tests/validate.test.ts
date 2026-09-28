@@ -1,4 +1,5 @@
 import { test, expect } from "vitest";
+import schema from "../schema/storymap.schema.json" with { type: "json" };
 import { validateStorymap } from "../src/storymap/validate";
 
 const valid = {
@@ -236,4 +237,85 @@ test("format: a malformed location icon URL is reported", () => {
     };
     const errors = validateStorymap(data);
     expect(errors.length).toBeGreaterThan(0);
+});
+
+/*	map_type
+	`map_type: ""` means OpenStreetMap, so an absent key cannot mean
+	"no map" without breaking every existing document. `none` is the
+	explicit sentinel for a storymap with no map at all (§2.4 of
+	docs/plans/iiif-internals.md).
+================================================= */
+
+test('accepts map_type: "none" — the explicit no-map sentinel', () => {
+    const data = {
+        storymap: {
+            map_type: "none",
+            slides: [{ text: { headline: "Text only", text: "No map here." } }],
+        },
+    };
+    expect(validateStorymap(data)).toEqual([]);
+});
+
+test("accepts a storymap with no map_type key at all", () => {
+    // the schema requires only `slides`, and the absent key still means OSM
+    expect(validateStorymap({ storymap: { slides: [] } })).toEqual([]);
+});
+
+test("rejects a bogus map_type", () => {
+    const data = { storymap: { map_type: "not-a-basemap", slides: [] } };
+    const errors = validateStorymap(data);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors.map((e) => e.path).join()).toContain("map_type");
+});
+
+test("map_type still accepts every keyword and custom template it used to", () => {
+    // a flat enum would reject the open-ended half of the format: a keyword
+    // with a style suffix, a tile URL template or a style JSON path
+    const accepted = [
+        "",
+        "osm",
+        "osm:bright",
+        "iiif",
+        "stamen",
+        "stadia",
+        "stadia:alidade_smooth",
+        "mapbox://styles/user/style",
+        "ch-watercolor",
+        "zoomify",
+        "https://tiles.example.org/{z}/{x}/{y}.png",
+        "http://apps.example.org/tiles/{z}/{x}/{y}.jpg",
+        "./tiles/{z}/{x}/{y}.png",
+        "/tiles/{z}/{x}/{y}.png",
+        "https://tiles.openfreemap.org/styles/bright",
+    ];
+    for (const map_type of accepted) {
+        expect(validateStorymap({ storymap: { map_type, slides: [] } }), map_type).toEqual([]);
+    }
+});
+
+test("map_type rejects a non-string", () => {
+    expect(validateStorymap({ storymap: { map_type: 42, slides: [] } }).length).toBeGreaterThan(0);
+    expect(validateStorymap({ storymap: { map_type: null, slides: [] } }).length).toBeGreaterThan(
+        0,
+    );
+});
+
+test("the dead option keys are gone from the schema", () => {
+    // they were accepted and inert; §2.6 deletes them rather than carrying
+    // them into a canonical form. The schema never closed the object, so a
+    // document still naming one is merely unchecked, not an error
+    const removed = [
+        "less_bounce",
+        "map_subdomains",
+        "map_popup",
+        "zoom_distance",
+        "dragging",
+        "path_gfx",
+    ];
+    const properties = (schema.properties as { storymap: { properties: Record<string, unknown> } })
+        .storymap.properties;
+    for (const key of removed) {
+        expect(properties[key], key).toBeUndefined();
+        expect(validateStorymap({ storymap: { [key]: null, slides: [] } }), key).toEqual([]);
+    }
 });

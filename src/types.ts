@@ -164,7 +164,6 @@ export interface StorymapOptions {
     default_bg_color: { r: number; g: number; b: number };
     map_size_sticky: number;
     map_center_offset: { left: number; top: number } | null;
-    less_bounce: boolean;
     start_at_slide: number;
     call_to_action: boolean;
     call_to_action_text: string;
@@ -178,7 +177,6 @@ export interface StorymapOptions {
     skinny_size: number;
     duration: number;
     ease: unknown;
-    dragging: boolean;
     trackResize: boolean;
     /**
      * Navigate slides with arrow keys anywhere on the page (default false:
@@ -224,7 +222,6 @@ export interface StorymapOptions {
      */
     overlays: StorymapOverlayLayer[];
     map_mini: boolean;
-    map_subdomains: string;
     map_as_image: boolean;
     map_access_token: string;
     map_background_color: string;
@@ -284,13 +281,6 @@ export interface StorymapOptions {
      * container div.
      */
     map_options: StorymapMapOptions;
-    /**
-     * Accepted for backwards compatibility but inert: the original viewer
-     * called `marker.createPopup()` when it was set, and that method was
-     * never implemented. Render slide text yourself.
-     */
-    map_popup: boolean;
-    zoom_distance: number;
     calculate_zoom: boolean;
     line_follows_path: boolean;
     line_color: string;
@@ -314,7 +304,6 @@ export interface StorymapOptions {
     slide_padding_lr: number;
     slide_default_fade: string;
     menubar_default_y: number;
-    path_gfx: string;
     script_path: string;
     font_css: string;
     language: string;

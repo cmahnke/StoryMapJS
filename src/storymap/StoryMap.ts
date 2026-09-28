@@ -134,11 +134,13 @@ class StoryMapBase {
     declare "_el": {
         container: HTMLElement;
         menubar: HTMLElement;
-        map: HTMLElement;
+        map: HTMLElement | null;
         storyslider: HTMLElement;
     };
     declare "_storyslider": StorySlider;
-    declare "_map": OpenLayersMap;
+    declare "_map": OpenLayersMap | null;
+    /** `map_type: "none"`: the story is text-and-media, with no map at all. */
+    declare "_map_disabled": boolean;
     /**
      * The raw OpenLayers map. `null` until the map is built (the
      * constructor assigns it during data load) — check it, or use the
@@ -283,8 +285,11 @@ class StoryMapBase {
         // Slider
         this._storyslider = {} as StorySlider;
 
-        // Map
-        this._map = {} as OpenLayersMap;
+        // Map. Genuinely null when the story has no map (map_type "none") or
+        // before the layout builds one: the accessor guards below read
+        // `!this._disposed && this._map`, which a `{}` stub would sail past
+        // and then call a method on.
+        this._map = null;
         // direct access to the OpenLayers map; null until it is built
         this.map = null;
 
@@ -311,7 +316,6 @@ class StoryMapBase {
             default_bg_color: { r: 255, g: 255, b: 255 },
             map_size_sticky: 2.5, // Set as division 1/3 etc
             map_center_offset: null, // takes object {top:0,left:0}
-            less_bounce: false, // Less map bounce when calculating zoom, false is good when there are clusters of tightly grouped markers
             start_at_slide: 0,
             call_to_action: false,
             call_to_action_text: "",
@@ -323,8 +327,6 @@ class StoryMapBase {
             // animation
             duration: 1000,
             ease: easeInOutQuint,
-            // interaction
-            dragging: true,
             trackResize: true,
             keyboard: false,
             nocache: false,
@@ -338,7 +340,6 @@ class StoryMapBase {
             tile_source_factory: null,
             attribution: "",
             map_mini: true,
-            map_subdomains: "",
             map_as_image: false,
             // no bundled credentials: pass map_access_token in the options
             // if you use Mapbox/Stadia tiles, api_key_flickr for flickr API
@@ -369,9 +370,6 @@ class StoryMapBase {
             slide_padding_lr: 45, // padding on slide of slide
             slide_default_fade: "0%", // landscape fade
             menubar_default_y: 0,
-            path_gfx: "gfx",
-            map_popup: false,
-            zoom_distance: 100,
             calculate_zoom: true, // Allow map to determine best zoom level between markers (recommended)
             line_follows_path: true, // Map history path follows default line, if false it will connect previous and current only
             line_color: "#c34528", //"#DA0000",
@@ -575,6 +573,18 @@ class StoryMapBase {
             }
         }
 
+        // `map_type` is optional in the schema, and a hand-written document
+        // can carry an explicit null. Normalise rather than guard: leaving a
+        // null in place only moves the crash to the map's own
+        // `map_type.split(":")`. "" is the documented default and means OSM.
+        if (typeof this.options.map_type !== "string") {
+            this.options.map_type = "";
+        }
+
+        // "none" is the only way to say there is no map. An absent key or ""
+        // keeps meaning OSM, so no existing document changes meaning.
+        this._map_disabled = this.options.map_type === "none";
+
         // handle Stamen change
         if (this.options.map_type.startsWith("stamen")) {
             const old_type = this.options.map_type;
@@ -738,7 +748,7 @@ class StoryMapBase {
             this._storyslider.goTo(this.current_slide);
         }
         if (navigate !== "map") {
-            this._map.goTo(this.current_slide);
+            this._map?.goTo(this.current_slide);
         }
         this._beginTransition(duration);
         if (!navigated) {
@@ -819,7 +829,7 @@ class StoryMapBase {
      */
     setOverlayVisible(index: number, visible: boolean): void {
         if (this._disposed) return;
-        this._map.setOverlayVisible(index, visible);
+        this._map?.setOverlayVisible(index, visible);
     }
 
     /**
@@ -828,7 +838,7 @@ class StoryMapBase {
      */
     setOverlayOpacity(index: number, opacity: number): void {
         if (this._disposed) return;
-        this._map.setOverlayOpacity(index, opacity);
+        this._map?.setOverlayOpacity(index, opacity);
     }
 
     /**
@@ -1094,7 +1104,7 @@ class StoryMapBase {
      */
     createMiniMap(): void {
         if (this._disposed) return;
-        this._map.createMiniMap();
+        this._map?.createMiniMap();
     }
 
     /**
@@ -1103,7 +1113,7 @@ class StoryMapBase {
      */
     setExtraAttributions(parts: string[]): void {
         if (this._disposed) return;
-        this._map.setExtraAttributions(parts);
+        this._map?.setExtraAttributions(parts);
     }
 
     /**
@@ -1137,29 +1147,47 @@ class StoryMapBase {
 
         // Create Layout
         this._el.menubar = Dom.create("div", "vco-menubar", this._el.container);
-        this._el.map =
-            this._resolveMapElement() ?? Dom.create("div", "vco-map", this._el.container);
+        this._el.map = this._map_disabled
+            ? null
+            : (this._resolveMapElement() ?? Dom.create("div", "vco-map", this._el.container));
         this._el.storyslider = Dom.create("div", "vco-storyslider", this._el.container);
 
         // Initial Default Layout
         this.options.width = this._el.container.offsetWidth;
         this.options.height = this._el.container.offsetHeight;
-        this._el.map.style.height = "1px";
+        if (this._el.map) {
+            this._el.map.style.height = "1px";
+        }
         this._el.storyslider.style.top = "1px";
 
-        // Create Map using preferred Map API
-        this._map = new OpenLayersMap(this._el.map, this.data, this.options);
-        this.map = this._map._map; // For access to the OpenLayers map.
-        this._map.on("loaded", this._onMapLoaded, this);
-        // image readiness (IIIF/zoomify sources attach asynchronously) is
-        // re-fired on the StoryMap, the coordination point for hosts that
-        // overlay or measure their own layers
-        this._map.on("imageready", (e: unknown) => {
-            this.fire("imageready", e);
-        });
+        if (this._map_disabled) {
+            // No map pane, so the map options have nothing to size. The
+            // slider takes the whole height below the menubar, and every
+            // map-derived option is set to something the layout code below
+            // does not need. Nothing is constructed - no ol/Map, no tile
+            // layer, no consent ask.
+            this.options.map_height = 0;
+            this.options.storyslider_height =
+                this.options.height - this._el.menubar.offsetHeight - 1;
+            // the overview control is a map control: with no map there is
+            // nothing for it to zoom out to, so it is hidden the same way
+            // `show_overview: false` hides it
+            this.options.show_overview = false;
+        } else {
+            // Create Map using preferred Map API
+            this._map = new OpenLayersMap(this._map_el(), this.data, this.options);
+            this.map = this._map._map; // For access to the OpenLayers map.
+            this._map.on("loaded", this._onMapLoaded, this);
+            // image readiness (IIIF/zoomify sources attach asynchronously) is
+            // re-fired on the StoryMap, the coordination point for hosts that
+            // overlay or measure their own layers
+            this._map.on("imageready", (e: unknown) => {
+                this.fire("imageready", e);
+            });
 
-        // Map Background Color
-        this._el.map.style.backgroundColor = this.options.map_background_color;
+            // Map Background Color
+            this._map_el().style.backgroundColor = this.options.map_background_color;
+        }
 
         // Create Menu Bar
         this._menubar = new MenuBar(this._el.menubar, this._el.container, this.options);
@@ -1171,7 +1199,12 @@ class StoryMapBase {
         this._storyslider.init();
 
         // LAYOUT
-        if (this.options.layout === "portrait") {
+        if (this._map_disabled) {
+            // one branch, both orientations: nothing to split the height
+            // with, and the menubar is the only thing above the slider
+            this.options.menubar_height = this._el.menubar.offsetHeight;
+            this._menubar.setSticky(this.options.menubar_height);
+        } else if (this.options.layout === "portrait") {
             // Set Default Component Sizes
             this.options.map_height = this.options.height / this.options.map_size_sticky;
             this.options.storyslider_height =
@@ -1205,7 +1238,7 @@ class StoryMapBase {
         this._storyslider.on("colorchange", this._onColorChange, this);
 
         // Map Events
-        this._map.on("change", this._onMapChange, this);
+        this._map?.on("change", this._onMapChange, this);
 
         // Global slide navigation (opt-in): the slider only listens on its
         // own panel, which needs focus.
@@ -1300,10 +1333,31 @@ class StoryMapBase {
         }
 
         // LAYOUT
-        if (this.options.layout === "portrait") {
+        if (this._map_disabled) {
+            // The mapless layout: the menubar on top, the slider filling
+            // everything below it, in both orientations. No map element to
+            // size, offset, animate or fit, so none of that runs, and
+            // `map_area` has nothing to narrow.
+            display_class += " vco-layout-no-map";
+            this.options.menubar_height = this._el.menubar.offsetHeight;
+            this.options.map_height = 0;
+            this.options.storyslider_height = this.options.height - 1;
+            this._menubar.setSticky(this.options.menubar_height);
+
+            this._el.storyslider.style.top = "0";
+            this._el.storyslider.style.height = this.options.storyslider_height + "px";
+
+            this._menubar.updateDisplay(this.options.width, this.options.height, animate);
+            this._storyslider.updateDisplay(
+                this.options.width,
+                this.options.storyslider_height,
+                animate,
+                this.options.layout,
+            );
+        } else if (this.options.layout === "portrait") {
             display_class += " vco-skinny";
             // Map Offset
-            this._map.setMapOffset(0, 0);
+            this._map_required().setMapOffset(0, 0);
 
             // Portrait split. The collapse toggle is only offered in portrait
             // (MenuBar hides it in landscape), so this branch used to
@@ -1321,7 +1375,7 @@ class StoryMapBase {
             // Portrait: the map spans the full width again (a landscape
             // map_area "left" pass narrowed it)
             display_class += " vco-layout-portrait";
-            this._el.map.style.width = "100%";
+            this._map_el().style.width = "100%";
 
             if (animate) {
                 // Animate Map
@@ -1329,12 +1383,12 @@ class StoryMapBase {
                     this.animator_map.stop();
                 }
 
-                this.animator_map = Animate(this._el.map, {
+                this.animator_map = Animate(this._map_el(), {
                     height: this.options.map_height + "px",
                     duration: duration,
                     easing: easeOutStrong,
                     complete: () => {
-                        this._map.updateDisplay(
+                        this._map_required().updateDisplay(
                             this.options.width,
                             this.options.map_height,
                             animate,
@@ -1355,7 +1409,7 @@ class StoryMapBase {
                 });
             } else {
                 // Map
-                this._el.map.style.height = Math.ceil(this.options.map_height) + "px";
+                this._map_el().style.height = Math.ceil(this.options.map_height) + "px";
 
                 // StorySlider
                 this._el.storyslider.style.height = this.options.storyslider_height + "px";
@@ -1363,7 +1417,7 @@ class StoryMapBase {
 
             // Update Component Displays
             this._menubar.updateDisplay(this.options.width, this.options.height, animate);
-            this._map.updateDisplay(this.options.width, this.options.height, false);
+            this._map_required().updateDisplay(this.options.width, this.options.height, false);
             this._storyslider.updateDisplay(
                 this.options.width,
                 this.options.storyslider_height,
@@ -1383,7 +1437,7 @@ class StoryMapBase {
             // Set Sticky state of MenuBar
             this._menubar.setSticky(this.options.menubar_height);
 
-            this._el.map.style.height = this.options.height + "px";
+            this._map_el().style.height = this.options.height + "px";
 
             // map_area "left": the map element is limited to the left, visible
             // half (the slide panel is opaque) — no view offset needed;
@@ -1391,11 +1445,11 @@ class StoryMapBase {
             // fading slide panel and the view is offset by a quarter width
             if (this.options.map_area === "left") {
                 display_class += " vco-map-area-left";
-                this._el.map.style.width = Math.floor(this.options.width / 2) + "px";
-                this._map.setMapOffset(0, 0);
+                this._map_el().style.width = Math.floor(this.options.width / 2) + "px";
+                this._map_required().setMapOffset(0, 0);
             } else {
-                this._el.map.style.width = "100%";
-                this._map.setMapOffset(-(this.options.width / 4), 0);
+                this._map_el().style.width = "100%";
+                this._map_required().setMapOffset(-(this.options.width / 4), 0);
             }
 
             // StorySlider
@@ -1403,7 +1457,7 @@ class StoryMapBase {
             this._el.storyslider.style.height = this.options.storyslider_height + "px";
 
             this._menubar.updateDisplay(this.options.width, this.options.height, animate);
-            this._map.updateDisplay(this.options.width, this.options.height, animate, d);
+            this._map_required().updateDisplay(this.options.width, this.options.height, animate, d);
             this._storyslider.updateDisplay(
                 this.options.width / 2,
                 this.options.storyslider_height,
@@ -1455,8 +1509,13 @@ class StoryMapBase {
             return;
         }
         const services: ConsentService[] = [];
-        // map tiles — the same service the map's layer code keys off
-        services.push(tileService());
+        // map tiles — the same service the map's layer code keys off. A story
+        // with no map asks about its media and fonts only: there is no tile
+        // request to consent to, so asking would be noise the visitor cannot
+        // act on.
+        if (!this._map_disabled) {
+            services.push(tileService());
+        }
         // media services with a real URL in the slides (a storymap is allowed
         // to have no slides at all)
         const seen = new Set<string>();
@@ -1788,6 +1847,34 @@ class StoryMapBase {
      * map container (given the vco-map class) and moved into place between
      * the menubar and the story slider.
      */
+    /**
+     * The map pane, for the code paths that only run when there is a map.
+     * `_el.map` is null exactly when the engine is; see `_map_required()`.
+     */
+    _map_el(): HTMLElement {
+        if (!this._el.map) {
+            throw new Error(
+                'StoryMapJS: this operation needs a map pane, but the story has none (map_type: "none").',
+            );
+        }
+        return this._el.map;
+    }
+
+    /**
+     * The map engine, for the code paths that only run when there is a map.
+     * Throws rather than returning null: reaching one of these from a mapless
+     * story is a bug in this class, and a loud one, rather than a layout that
+     * quietly misbehaves. Public entry points use `this._map?.` instead.
+     */
+    _map_required(): OpenLayersMap {
+        if (!this._map) {
+            throw new Error(
+                'StoryMapJS: this operation needs a map, but the story has none (map_type: "none").',
+            );
+        }
+        return this._map;
+    }
+
     _resolveMapElement(): HTMLElement | null {
         const element = this.options.map_options?.element;
         if (!element) {
@@ -1836,7 +1923,7 @@ class StoryMapBase {
     }
 
     _onOverview(e?: unknown) {
-        this._map.markerOverview();
+        this._map?.markerOverview();
     }
 
     /**
@@ -1900,7 +1987,7 @@ class StoryMapBase {
         if (!this.options.show_distance) {
             return;
         }
-        const km = this._map.getRouteDistance();
+        const km = this._map?.getRouteDistance() ?? 0;
         this._menubar.setDistance(km);
     }
 
@@ -1935,7 +2022,10 @@ class StoryMapBase {
 
     _onLoaded() {
         this._initHash();
-        if (this._loaded.storyslider && this._loaded.map) {
+        // the slider is always required; the map only if there is one, so a
+        // mapless story still fires `loaded` and gets its hash, progress and
+        // distance applied
+        if (this._loaded.storyslider && (this._map_disabled || this._loaded.map)) {
             this.fire("loaded", this.data);
             this._updateProgress();
             this._updateDistance();

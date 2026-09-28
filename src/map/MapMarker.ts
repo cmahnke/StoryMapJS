@@ -66,7 +66,6 @@ class MapMarkerBase {
             ease: easeInSpline,
             width: 600,
             height: 600,
-            map_popup: false,
         } as StorymapOptions;
 
         // Animation Object

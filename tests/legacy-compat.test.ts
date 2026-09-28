@@ -59,7 +59,7 @@ describe("legacy container methods", () => {
         )._map;
         const container = mapContainer(sm);
         const events: string[] = [];
-        sm._map.on("added", () => events.push("added"));
+        sm._map?.on("added", () => events.push("added"));
 
         const target = document.createElement("div");
         document.body.appendChild(target);
@@ -87,7 +87,7 @@ describe("legacy container methods", () => {
         )._map;
         const container = mapContainer(sm);
         const events: string[] = [];
-        sm._map.on("removed", () => events.push("removed"));
+        sm._map?.on("removed", () => events.push("removed"));
 
         const target = document.createElement("div");
         document.body.appendChild(target);

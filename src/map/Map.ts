@@ -138,7 +138,6 @@ class MapBase {
             map_as_image: false,
             map_mini: false,
             map_background_color: "#d9d9d9",
-            map_subdomains: "",
             map_access_token: "",
             overlays: [],
             overview_extent: null,
@@ -147,11 +146,7 @@ class MapBase {
                 attribution: "",
             },
             skinny_size: 650,
-            less_bounce: true,
-            path_gfx: "gfx",
             start_at_slide: 0,
-            map_popup: false,
-            zoom_distance: 100,
             calculate_zoom: true, // Allow map to determine best zoom level between markers (recommended)
             line_follows_path: true, // Map history path follows default line, if false it will connect previous and current only
             line_color: "#333",

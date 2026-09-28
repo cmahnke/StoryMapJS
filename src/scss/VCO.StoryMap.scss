@@ -103,6 +103,28 @@
     }
 }
 
+/* No map (map_type: "none")
+   The storyslider is the whole story: it takes the full width and height
+   under the menubar, and it is opaque, because there is no map behind it for
+   the panel to fade over. Landscape normally pins the panel to the right
+   half (`.vco-layout-landscape .vco-storyslider`), so the width, left and the
+   gradient background all have to be undone here.
+================================================== */
+.vco-layout-no-map {
+    .vco-storyslider {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: $color-background;
+
+        .vco-slider-background {
+            display: none;
+        }
+    }
+}
+
 /* Map area "left" (options.map_area): the map is limited to the left,
    visible half and the slide panel is opaque — no gradient fades over the
    map, so the view center is the visible center (no offset needed)

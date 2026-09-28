@@ -5,6 +5,16 @@ disabled type check that had been hiding them, and a dependency swap.
 
 Added
 -----
+- **`map_type: "none"`: a storymap with no map.** The text and the media are
+  the whole story, which the map's unconditional construction used to make
+  impossible. No `ol/Map` is built, so there is no tile request to consent to
+  and the consent dialog omits its tile row; the overview control is hidden;
+  the slider panel takes the full width, since there is no map to fade over;
+  and `loaded` fires without waiting for a map that will never load. The
+  accessors return their neutral values and the map setters are no-ops.
+  `map_type: ""` and an absent key still mean OpenStreetMap, and `map_type:
+  null` is normalised to that default instead of throwing out of the
+  constructor (the schema already allowed the key to be missing)
 - **Annotation-driven tour stops.** A IIIF manifest whose commenting,
   tagging, classifying or describing annotations carry a fragment target
   becomes one slide per annotation, each fitting the region it points at —
@@ -213,8 +223,22 @@ Security
   map_overview_center and the zoomify block were accepted completely
   unvalidated; `format` and `maxLength` are now honoured
 
+Removed
+-------
+- The inert option keys `less_bounce`, `map_subdomains`, `map_popup`,
+  `zoom_distance`, `dragging` and `path_gfx`: documented and accepted, but read
+  by nothing. They are gone from the schema, the types and the defaults, and
+  documents carrying them still validate, because the schema does not close
+  `additionalProperties`
+
 Changed
 -------
+- The map engine is genuinely optional. `StoryMap._map` is `null` rather than a
+  `{}` stub, so the accessors' `this._map ? … : neutral` guards mean what they
+  say instead of passing on a truthy object and then calling a method on it,
+  and the paths that only make sense with a map now throw a named error if they
+  are reached without one
+- `StoryMap._el.map` is `HTMLElement | null` rather than `HTMLElement`
 - A second viewer on a page asking for a different `language` now **throws**
   instead of silently repainting the first one. The UI strings are a single
   page-wide binding read while a viewer is constructed, so a conflict was
