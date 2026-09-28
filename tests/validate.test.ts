@@ -20,6 +20,8 @@ test("accepts a well-formed storymap", () => {
 });
 
 test("accepts an overview-only storymap with no slides content", () => {
+    // the schema requires only `slides`: no map_type key is fine, and the
+    // absent key still means OSM
     expect(validateStorymap({ storymap: { slides: [] } })).toEqual([]);
 });
 
@@ -254,11 +256,6 @@ test('accepts map_type: "none" — the explicit no-map sentinel', () => {
         },
     };
     expect(validateStorymap(data)).toEqual([]);
-});
-
-test("accepts a storymap with no map_type key at all", () => {
-    // the schema requires only `slides`, and the absent key still means OSM
-    expect(validateStorymap({ storymap: { slides: [] } })).toEqual([]);
 });
 
 test("rejects a bogus map_type", () => {

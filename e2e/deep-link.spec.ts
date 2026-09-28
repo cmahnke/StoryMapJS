@@ -110,13 +110,6 @@ test("an iiif-content naming a region opens that slide", async ({ page }) => {
         .toBe(true);
 });
 
-test("the index form of the hash still works", async ({ page }) => {
-    // links shared before ids were emitted must keep resolving
-    await page.goto(harnessUrl("katrina") + "#slide-2");
-    await waitForStoryMap(page);
-    await expect.poll(() => page.evaluate(CURRENT), PATIENT).toBe(2);
-});
-
 test("a storymap-JSON slide has no identity, so it keeps the index form", async ({ page }) => {
     await page.goto(harnessUrl("katrina"));
     await waitForStoryMap(page);

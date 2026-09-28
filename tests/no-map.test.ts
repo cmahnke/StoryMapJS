@@ -261,7 +261,6 @@ describe('map_type: "none"', () => {
 
         beforeEach(() => {
             warnings = [];
-            // eslint-disable-next-line @typescript-eslint/unbound-method
             const original = console.warn;
             console.warn = (...args: unknown[]) => {
                 warnings.push(args.map(String).join(" "));

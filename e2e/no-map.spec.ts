@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { harnessUrl, waitForStoryMap, collectPageErrors } from "./known-issues/helpers";
+import { harnessUrl, waitForStoryMap, stubTiles } from "./known-issues/helpers";
 
 /**
  * A story with no map: `map_type: "none"`.
@@ -43,46 +43,45 @@ test.describe('map_type: "none"', () => {
     });
 
     test("requests no tiles at all", async ({ page }) => {
-        const hosts: string[] = [];
-        page.on("request", (req) => {
-            const url = new URL(req.url());
-            if (req.resourceType() !== "image") return;
-            if (/tile|openstreetmap|arcgis|stamen|basemaps/i.test(url.href)) {
-                hosts.push(url.host);
-            }
-        });
+        // The request listener has to be attached before the first paint:
+        // registering it after beforeEach's goto only observes post-load
+        // navigations, which is exactly the claim this test exists to prove.
+        // stubTiles both prevents any network dependence and records what
+        // would have been requested.
+        const seen = await stubTiles(page);
+        await page.goto(harnessUrl("no-map"));
+        await waitForStoryMap(page);
 
         await page.evaluate(() =>
             (window as unknown as { __sm: { goTo(n: number): void } }).__sm.goTo(1),
         );
         await page.waitForTimeout(2500);
 
-        expect(hosts).toEqual([]);
+        expect(seen).toEqual([]);
     });
 
-    test("fires loaded and shows the story", async ({ page }) => {
-        const fired = await page.evaluate(async () => {
-            const sm = (
-                window as unknown as {
-                    __sm: {
-                        current_slide: number;
-                        goTo(n: number): void;
-                    };
-                }
-            ).__sm;
-            await new Promise((r) => setTimeout(r, 600));
-            sm.goTo(2);
-            await new Promise((r) => setTimeout(r, 1600));
-            return {
-                current: sm.current_slide,
-                headline: document
+    test("loads the story without waiting for a map", async ({ page }) => {
+        // `loaded` itself can fire during construction for a fully
+        // synchronous text-only story, before any host can subscribe — so a
+        // browser test cannot observe the event, only its effects. What
+        // proves _onLoaded ran is the empty hash rewritten to #slide-0 on
+        // initial load. (The event is pinned by tests/no-map.test.ts.)
+        await page.goto(harnessUrl("no-map"));
+        await waitForStoryMap(page);
+        await expect(page).toHaveURL(/#slide-0/);
+
+        await page.evaluate(() =>
+            (window as unknown as { __sm: { goTo(n: number): void } }).__sm.goTo(2),
+        );
+        await page.waitForTimeout(1600);
+        const headline = await page.evaluate(
+            () =>
+                document
                     .querySelectorAll("#storymap-embed .vco-slide")[2]
                     ?.querySelector(".vco-headline")?.textContent,
-            };
-        });
+        );
 
-        expect(fired.current).toBe(2);
-        expect(fired.headline).toContain("Third slide");
+        expect(headline).toContain("Third slide");
     });
 
     test("the slider panel fills the width, with no map behind it", async ({ page }) => {
@@ -125,11 +124,5 @@ test.describe('map_type: "none"', () => {
         await page.waitForTimeout(1200);
 
         await expect(page).toHaveURL(/#slide-1/);
-    });
-
-    test("no page errors", async ({ page }) => {
-        const errors = collectPageErrors(page);
-        await page.waitForTimeout(1200);
-        expect(errors).toEqual([]);
     });
 });

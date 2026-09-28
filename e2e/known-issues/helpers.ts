@@ -43,7 +43,7 @@ export async function getState(page: Page): Promise<StoryMapState> {
 }
 
 /** Any base-tile host the viewer might pick. */
-const TILE_HOST = /openfreemap|basemaps|osm|tile/i;
+export const TILE_HOST = /openfreemap|basemaps|osm|tile/i;
 
 /**
  * Intercept a tile host with a 1x1 transparent PNG, so a spec that is about

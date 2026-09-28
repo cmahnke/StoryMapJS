@@ -63,12 +63,11 @@ describe("consent service keys", () => {
         expect(Object.keys(afterEnglish)).toEqual([tileService().key]);
 
         // German has its own wording for the service; the stored key must not
-        // move, or the grant becomes invisible and the visitor is re-asked
+        // move, or the grant becomes invisible and the visitor is re-asked.
+        // (An earlier version of this test compared the key to itself, so it
+        // could never fail; what actually pins the contract is that a fresh
+        // manager in the other language still finds the decision.)
         setLanguage("de");
-        expect(tileService().key).toBe(
-            afterEnglish[Object.keys(afterEnglish)[0]] ? tileService().key : "moved",
-        );
-        expect(Object.keys(afterEnglish)).toEqual(["map:tiles"]);
 
         // a fresh manager in either language still finds the decision
         expect(new ConsentManager().isGranted(tileService().key)).toBe(true);

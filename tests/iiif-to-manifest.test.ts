@@ -489,7 +489,12 @@ describe("storymapToManifest: georeferenced overlays", () => {
     });
 
     test("a tile overlay is not a georeferencing annotation", () => {
+        // the fixture carries two overlays: a tile layer and a placed sheet.
+        // Only the sheet becomes an annotation; the tile layer stays in the
+        // mapconfig service, where a tile template belongs.
         expect(georeferencingAnnotations(0)).toHaveLength(1);
+        const overlays = mapConfig(manifest)?.["storymap:overlays"] as { map_type?: string }[];
+        expect(overlays?.some((entry) => entry.map_type === "osm:standard")).toBe(true);
     });
 
     test("the painting annotation and the placements share one page", () => {

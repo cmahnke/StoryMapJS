@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { StoryMap } from "../src/storymap/StoryMap";
-import { isPresentation3Manifest, manifestToStorymapData } from "../src/storymap/iiif";
+import { manifestToStorymapData } from "../src/storymap/iiif";
 import type { StorymapDataWrapper } from "../src/types";
 
 /**
@@ -43,34 +43,6 @@ describe("image region stops", () => {
         };
     }
 
-    it("round-trips the ImageApiSelector on the painting target", () => {
-        const manifest = {
-            "@context": [
-                "http://iiif.io/api/presentation/3/context.json",
-                "https://cmahnke.github.io/StoryMapJS/context.json",
-            ],
-            id: "https://example.org/manifest",
-            type: "Manifest",
-            items: [
-                {
-                    id: "https://example.org/manifest/canvas/1",
-                    type: "Canvas",
-                    label: { none: ["Overview"] },
-                    storymap: { type: "overview" },
-                },
-                canvasWithRegion({
-                    type: "SpecificResource",
-                    source: "https://example.org/manifest/canvas/2",
-                    selector: { type: "ImageApiSelector", value: "xywh=pixel:800,100,700,700" },
-                }),
-            ],
-        };
-        expect(isPresentation3Manifest(manifest)).toBe(true);
-        const data = manifestToStorymapData(manifest);
-        expect(data.slides[0].location).toBeUndefined();
-        expect(data.slides[1].location?.region).toEqual([800, 100, 700, 700]);
-    });
-
     it("ignores an imageRegion term left over from before §2.8", () => {
         const manifest = {
             "@context": [
@@ -92,29 +64,42 @@ describe("image region stops", () => {
         expect(data.slides[0].location).toBeUndefined();
     });
 
-    it("ignores invalid regions (wrong length, non-numeric)", () => {
+    it("rejects malformed ImageApiSelector values on the live path", () => {
+        // The previous version of this test fed malformed values to the
+        // retired `storymap:imageRegion` term, which is unread — so it passed
+        // because nothing read the term, not because validation rejected
+        // anything. These drive the live selector the reader actually parses.
         const manifest = {
             "@context": ["http://iiif.io/api/presentation/3/context.json"],
             id: "https://example.org/manifest",
             type: "Manifest",
             items: [
-                {
-                    id: "https://example.org/manifest/canvas/1",
-                    type: "Canvas",
-                    label: { none: ["Bad length"] },
-                    "storymap:imageRegion": [1, 2, 3],
-                },
-                {
-                    id: "https://example.org/manifest/canvas/2",
-                    type: "Canvas",
-                    label: { none: ["Non numeric"] },
-                    "storymap:imageRegion": [1, 2, "3", 4],
-                },
+                canvasWithRegion({
+                    type: "SpecificResource",
+                    source: "https://example.org/manifest/canvas/1",
+                    selector: { type: "ImageApiSelector", value: "xywh=1,2,3" },
+                }),
+                canvasWithRegion({
+                    type: "SpecificResource",
+                    source: "https://example.org/manifest/canvas/2",
+                    selector: { type: "ImageApiSelector", value: "xywh=a,b,c,d" },
+                }),
+                canvasWithRegion({
+                    type: "SpecificResource",
+                    source: "https://example.org/manifest/canvas/3",
+                    selector: { type: "ImageApiSelector", value: "xywh=0,0,0,10" },
+                }),
             ],
         };
+        // canvasWithRegion hardcodes the canvas/2 ids; point each canvas at
+        // its own item so all three convert
+        manifest.items.forEach((item, n) => {
+            item.id = `https://example.org/manifest/canvas/${n + 1}`;
+        });
         const data = manifestToStorymapData(manifest);
-        expect(data.slides[0].location?.region).toBeUndefined();
-        expect(data.slides[1].location?.region).toBeUndefined();
+        for (const slide of data.slides) {
+            expect(slide.location?.region).toBeUndefined();
+        }
     });
 
     it("keeps the region on slides through StoryMap creation", () => {

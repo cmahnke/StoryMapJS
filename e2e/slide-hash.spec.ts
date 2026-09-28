@@ -38,6 +38,8 @@ test("every navigation updates the hash", async ({ page }) => {
 });
 
 test("a #slide-N deep link opens that slide", async ({ page }) => {
+    // links shared before ids were emitted must keep resolving, so the index
+    // form is pinned here rather than only in e2e/deep-link.spec.ts
     await page.goto(harnessUrl("katrina") + "#slide-2");
     await waitForStoryMap(page);
 

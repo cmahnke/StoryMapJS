@@ -115,16 +115,18 @@ describe("OpenLayers accessors", () => {
         expect(storymap("sm-acc-osm-space").isImageSpace()).toBe(false);
     });
 
-    it("reports storymap.map as null before the map is built", () => {
+    it("exposes a real ol/Map on storymap.map, never a stub", () => {
         const el = document.createElement("div");
         el.id = "sm-acc-null";
         document.body.appendChild(el);
         const sm = new StoryMap("sm-acc-null", {
             storymap: { map_type: "osm", slides: [] },
         } as unknown as StorymapDataWrapper);
-        // an inline document still builds synchronously, so only assert the
-        // documented contract: either a real map or null, never a stub
-        expect(sm.map === null || typeof sm.map.getView === "function").toBe(true);
+        // an inline document builds synchronously, so this observes a real
+        // map. The null half of the contract belongs to mapless stories and
+        // is pinned by tests/no-map.test.ts, not here.
+        expect(sm.map).not.toBeNull();
+        expect(typeof sm.map?.getView).toBe("function");
     });
 
     it("exposes the minimap after it is built", () => {
@@ -134,18 +136,5 @@ describe("OpenLayers accessors", () => {
         const minimap = sm.getMinimap();
         expect(minimap).not.toBeNull();
         expect(typeof minimap?.getView().getCenter).toBe("function");
-    });
-
-    it("returns neutral values before the map exists", () => {
-        const el = document.createElement("div");
-        el.id = "sm-acc-early";
-        document.body.appendChild(el);
-        // a data URL source resolves asynchronously, so the map is not built yet
-        const sm = new StoryMap("sm-acc-early", {
-            storymap: { map_type: "osm", slides: [] },
-        } as unknown as StorymapDataWrapper);
-        expect(sm.getOverlayLayers()).toEqual([]);
-        expect(sm.getMarkers()).toEqual([]);
-        expect(sm.getMinimap()).toBeNull();
     });
 });

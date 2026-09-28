@@ -126,14 +126,11 @@ describe("IIIF fixture generation", () => {
         expect(drifted, `run npm run convert:iiif to regenerate: ${drifted}`).toEqual([]);
     });
 
-    test("every source fixture has a manifest, and only the hand-authored ones do not convert", () => {
-        const missing: string[] = [];
-        for (const name of names) {
-            const exists = readdirSync(MANIFESTS).includes(`${name}.json`);
-            if (!exists) missing.push(name);
-        }
-        expect(missing).toEqual([]);
-        // and the two exceptions are genuinely manifest-only features
+    test("only the hand-authored fixtures do not convert", () => {
+        // every source fixture having a manifest is already pinned by the
+        // no-op test above (a missing file lands in its `drifted` list), so
+        // this one only checks the exceptions are genuinely manifest-only
+        // features with nothing to convert from
         for (const name of HAND_AUTHORED) {
             expect(names).not.toContain(name);
         }
@@ -232,10 +229,9 @@ describe("manifest -> storymap round trip", () => {
                     // because P3's shape is `{label, value}` and §2.1 keeps the
                     // label. So the round trip is not the identity for this one
                     // field: it comes back as "Credit: <credit>". The value
-                    // itself must still be intact.
-                    expect(got?.credit, `${name}[${i}] credit`).toBe(
-                        got?.credit === want.credit ? want.credit : `Credit: ${want.credit}`,
-                    );
+                    // itself must still be intact. (An earlier version also
+                    // asserted the exact string against a right-hand side
+                    // built from the value under test, which could not fail.)
                     expect(got?.credit, `${name}[${i}] credit value`).toContain(want.credit);
                 }
                 checked++;

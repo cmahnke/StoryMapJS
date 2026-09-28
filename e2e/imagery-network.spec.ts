@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { harnessUrl, waitForStoryMap } from "./known-issues/helpers";
+import { harnessUrl, waitForStoryMap, TILE_HOST, stubTiles } from "./known-issues/helpers";
 
 /**
  * Proof that imagery actually reached the map, at the network level.
@@ -15,22 +15,6 @@ import { harnessUrl, waitForStoryMap } from "./known-issues/helpers";
  * and the layer's source reached a ready state with a sized canvas. That is
  * offline-friendly (the URLs are intercepted) and not pinned to pixels.
  */
-
-const OSM = /openfreemap|basemaps|osm|tile/i;
-
-/** Intercept a tile host with a 1x1 transparent PNG so the run is offline. */
-async function stubTiles(page: import("@playwright/test").Page): Promise<string[]> {
-    const seen: string[] = [];
-    const png = Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-        "base64",
-    );
-    await page.route(OSM, async (route) => {
-        seen.push(route.request().url());
-        await route.fulfill({ status: 200, contentType: "image/png", body: png });
-    });
-    return seen;
-}
 
 test("a georeferenced map fetches tiles and paints a sized canvas", async ({ page }) => {
     const tiles = await stubTiles(page);
@@ -95,7 +79,7 @@ test("an image-mode IIIF map fetches the image grid", async ({ page }) => {
     // the URLs are the service's own image grid, not an OSM tile grid
     for (const url of iiifTiles) {
         expect(url).toContain("iiif.io");
-        expect(OSM.test(url)).toBe(false);
+        expect(TILE_HOST.test(url)).toBe(false);
     }
     const state = await page.evaluate(() => {
         const sm = (
