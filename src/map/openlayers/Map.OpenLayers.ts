@@ -6,6 +6,7 @@ import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import Layer from "ol/layer/Layer";
 import VectorTileLayer from "ol/layer/VectorTile";
 import { XYZ, OSM, IIIF } from "ol/source";
+import type Source from "ol/source/Source";
 import VectorSource from "ol/source/Vector";
 import LineString from "ol/geom/LineString";
 import Feature from "ol/Feature";
@@ -59,14 +60,14 @@ const IMAGE_RESOLUTIONS = Array.from({ length: 25 }, (_, i) => 2 ** (16 - i));
 
 export default class OpenLayers extends Map {
     declare "_map": OlMap;
-    declare "_tile_layer": TileLayer;
+    declare "_tile_layer": Layer;
     declare "_line": VectorLayer;
     declare "_line_active": VectorLayer;
-    declare "_tile_layer_mini": TileLayer | null;
+    declare "_tile_layer_mini": Layer | null;
     declare "_mini_map": OverviewMap;
     declare "_markers": OpenLayersMapMarker[];
     /** App-level stacked overlays (see the `overlays` option) */
-    declare "_overlay_layers": TileLayer[];
+    declare "_overlay_layers": Layer[];
     /**
      * The `overlays[]` entries that produced a layer, parallel to
      * `_overlay_layers`: a malformed entry is skipped, so the two arrays
@@ -408,7 +409,7 @@ export default class OpenLayers extends Map {
         }
         const overlays = this.options.overlays ?? [];
         overlays.forEach((entry, i) => {
-            let layer: TileLayer | null = null;
+            let layer: Layer | null = null;
             if (entry.georeference) {
                 layer = this._createGeoreferencedOverlay(entry);
             } else if (entry.map_type) {
@@ -720,7 +721,7 @@ export default class OpenLayers extends Map {
         return { zoom, center };
     }
 
-    _createTileLayer(map_type: string): TileLayer {
+    _createTileLayer(map_type: string): Layer {
         // issue #473: custom OpenLayers tile layer/source factory first —
         // the base layer, overlays, minimap and runtime map_type switches
         // all funnel through here, so one check covers them
@@ -739,12 +740,25 @@ export default class OpenLayers extends Map {
                     custom instanceof Layer ||
                     typeof (custom as { getSource?: unknown }).getSource === "function"
                 ) {
-                    return custom as TileLayer;
+                    return custom as Layer;
                 }
                 return new TileLayer({ source: custom as unknown as XYZ });
             }
         }
         return this._createDefaultTileLayer(map_type);
+    }
+
+    /**
+     * A layer's source, or null when it has none. Custom `Layer` subclasses
+     * passed through `_createTileLayer` (e.g. Allmaps' `WarpedMapLayer`)
+     * deliberately have no `getSource`, so every read goes through here
+     * instead of calling the method directly.
+     */
+    _sourceOf(layer: Layer | null | undefined): Source | null {
+        if (!layer || typeof (layer as { getSource?: unknown }).getSource !== "function") {
+            return null;
+        }
+        return (layer as TileLayer).getSource();
     }
 
     /**
@@ -1289,7 +1303,7 @@ export default class OpenLayers extends Map {
         if (!this._tile_layer_mini) return;
         const fit_mini_image = () => {
             try {
-                const mini_source = this._tile_layer_mini?.getSource() as {
+                const mini_source = this._sourceOf(this._tile_layer_mini) as {
                     getTileGrid?: () => { getExtent(): number[] };
                 } | null;
                 const grid = mini_source?.getTileGrid?.();
@@ -1307,7 +1321,7 @@ export default class OpenLayers extends Map {
                 console.warn("IIIF minimap fit failed:", e);
             }
         };
-        const mini_source = this._tile_layer_mini.getSource();
+        const mini_source = this._sourceOf(this._tile_layer_mini);
         if (mini_source) {
             this._fireImageready(
                 mini_source,
@@ -1328,7 +1342,7 @@ export default class OpenLayers extends Map {
         } else {
             // the mini layer sets its source asynchronously
             this._tile_layer_mini.once("change:source", () => {
-                const src = this._tile_layer_mini?.getSource();
+                const src = this._sourceOf(this._tile_layer_mini);
                 if (!src) return;
                 if (src.getState() === "ready") {
                     fit_mini_image();
@@ -2115,13 +2129,19 @@ export default class OpenLayers extends Map {
                 });
             }
         } else if (this.isImageSpace()) {
-            const source = this._tile_layer?.getSource();
+            const source = this._sourceOf(this._tile_layer);
             if (!source) {
                 return;
             }
             const fit = () => {
                 try {
-                    const grid = source.getTileGrid();
+                    // a custom layer with a source is not necessarily a tile
+                    // source; only tile grids can supply a fit extent
+                    const grid = (
+                        source as {
+                            getTileGrid?: () => { getExtent(): number[] } | null;
+                        }
+                    ).getTileGrid?.();
                     if (grid) {
                         // compute the fit target directly and animate once (a
                         // fit() followed by setCenter() would cancel the fit

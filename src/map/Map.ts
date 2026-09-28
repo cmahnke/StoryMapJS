@@ -4,6 +4,7 @@ import Dom from "../dom/Dom";
 import { Browser } from "../core/Browser";
 import type { Map as OlMap } from "ol";
 import type { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import type Layer from "ol/layer/Layer";
 import type OverviewMap from "ol/control/OverviewMap";
 import type MapMarker from "./MapMarker";
 import type { LinePoint, ViewToOptions } from "./types";
@@ -49,8 +50,8 @@ class MapBase {
     declare "_line_active": VectorLayer | null;
     declare "current_marker": number;
     declare "bounds_array": number[][] | null;
-    declare "_tile_layer": TileLayer | null;
-    declare "_tile_layer_mini": TileLayer | null;
+    declare "_tile_layer": Layer | null;
+    declare "_tile_layer_mini": Layer | null;
     declare "_image_layer": TileLayer | null;
     declare "data": StorymapData;
     declare "options": StorymapOptions;

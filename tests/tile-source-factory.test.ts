@@ -132,4 +132,43 @@ describe("known issue #473: tile_source_factory", () => {
         expect(wrappedStorymap.getBaseLayer()).not.toBe(source);
         expect((wrappedStorymap.getBaseLayer() as TileLayer).getSource()).toBe(source);
     });
+
+    it("supports a sourceless custom layer as an image-mode base", () => {
+        // A Layer subclass with no source (Allmaps WarpedMapLayer shape)
+        // used as the base of an image-mode story. Every source read goes
+        // through a capability check, so the fit and overview paths skip
+        // gracefully instead of assuming a tile source.
+        container("sm-473-warped-image");
+        class WarpedLayer extends Layer {}
+        const custom = new WarpedLayer({});
+        const storymap = new StoryMap(
+            "sm-473-warped-image",
+            {
+                storymap: {
+                    map_type: "iiif",
+                    map_as_image: true,
+                    iiif: { url: "https://iiif.example.org/info.json", attribution: "" },
+                    slides: [
+                        { date: "", type: "overview", text: { headline: "Overview", text: "" } },
+                        {
+                            date: "",
+                            text: { headline: "Region", text: "" },
+                            location: { region: [0, 0, 100, 100] },
+                        },
+                    ],
+                },
+            } as unknown as StorymapDataWrapper,
+            { tile_source_factory: () => custom },
+        );
+        expect(storymap.getBaseLayer()).toBe(custom);
+        // the overview button fits the image via its tile grid in image
+        // mode — the path that called getSource() unconditionally and threw
+        // a TypeError on a layer without one
+        const overview = Array.from(
+            document.querySelectorAll("#sm-473-warped-image .vco-menubar-button"),
+        ).find((button) => button.textContent?.includes("Overview")) as HTMLElement;
+        expect(overview).toBeDefined();
+        expect(() => overview.click()).not.toThrow();
+        expect(storymap.getBaseLayer()).toBe(custom);
+    });
 });
