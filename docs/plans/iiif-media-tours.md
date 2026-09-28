@@ -1,31 +1,24 @@
 # IIIF: media tours, plus georeferenced layers (shipped)
 
-> **Media tours: delivered.** §1 shipped — `readSelector()`, the shared
+> **Status: §1, §2 and §4 shipped.** §1 — `readSelector()`, the shared
 > painting-body record, `readCommentingAnnotations()`, the
-> `annotated-image.json` fixture, `docs/iiif-authoring.md`, 28 unit + 6 e2e
-> tests. §2 shipped — `media.subtitles`, slide `narration` with a
-> `media:narration` consent service, `autoplay_media`, and per-slide `marker`
-> config with `marker.popup` and `marker.audioBadge`. §4 was already shipped.
+> `annotated-image.json` fixture, `docs/iiif-authoring.md`. §2 —
+> `media.subtitles`, slide `narration` with a `media:narration` consent
+> service, `autoplay_media`, and per-slide `marker` config with
+> `marker.popup` and `marker.audioBadge`. The two dependencies this plan
+> deferred to the interop plan have since landed there: `seeAlso` /
+> external annotation pages (`iiif-interop.md` §5.2, via
+> `StoryMap.loadAnnotations()`) and the nine dropped terms
+> (`iiif-interop.md` §2 — the standard body properties are now the only
+> source). §4 — affine georeferenced placement plus the OpenLayers extension
+> API — shipped, with the one item still open recorded there.
 >
-> **Left open, with the reason:**
->
-> - **`seeAlso` / external annotation pages.** §1 said this would come from
->   `iiif-interop.md` §5.2, which is not implemented; making the synchronous
->   converter fetch would be a load-path change, so stops must live on the
->   Canvas for now. The authoring guide says so.
-> - **The nine dropped terms.** `iiif-interop.md` §2 is a separate breaking
->   change. Until it lands the extension terms still win over the standard
->   body properties, which are read as fallbacks.
-> - **`markerIcon`/`markerLabel` terms** are not added, as decided: marker
->   presentation rides the `navPlace` properties bag, where `popup` and
->   `audioBadge` joined `icon`/`image`/`name`.
-> - **`TextQuoteSelector` resolution** and **`SvgSelector` outlines** are
->   accepted and preserved, not resolved or drawn.
-
-> **Status.** Affine georeferencing and the OpenLayers extension API both
-> shipped; §4 records what landed and the one item still open. What is
-> actually left to build is §1 (annotation-driven stops + authoring guide)
-> and §2 (marker config, popups, narration, media-aware autoplay).
+> **Genuinely left:** `TextQuoteSelector` resolution and `SvgSelector`
+> outlines (accepted and preserved, not resolved or drawn), and the
+> non-affine/rotated sheets recipe (§4 tail, a docs item). Decided against
+> and closed: `markerIcon` / `markerLabel` terms — marker presentation rides
+> the `navPlace` properties bag, where `popup` and `audioBadge` joined
+> `icon` / `image` / `name`.
 
 Goal: Storiiies/Micrio-style guided tours over IIIF images and geo maps —
 annotation-driven slides, per-stop marker presentation with popups, and

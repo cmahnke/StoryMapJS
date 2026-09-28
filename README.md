@@ -10,7 +10,9 @@ This fork is a **viewer-only library**: it renders existing StoryMap JSON
 files (or IIIF Presentation manifests) with TypeScript + Vite + OpenLayers.
 There is no authoring tool — create your storymap JSON by hand or with your
 own code, and see `docs/` for the migration notes from the original
-Knight Lab release.
+Knight Lab release. The library also exports `storymapToManifest()`, which
+produces a IIIF manifest from a storymap document (`npm run convert:iiif`
+does the same from the command line; see `docs/storymap-as-iiif-manifest.md`).
 
 ## Development
 
@@ -100,7 +102,8 @@ an opaque slide panel instead of the gradient over the map), set
 
 Any value containing `{z}` renders as a raster XYZ layer; a path without `{z}`
 that looks like a URL/path renders as a vector style layer; anything else falls
-back to classic OSM raster.
+back to classic OSM raster — except `"none"`, which builds no map at all and
+runs the story as text and media only.
 
 ### Switching the basemap at runtime
 
@@ -145,7 +148,8 @@ line. Still: only load storymaps from sources you trust.
 
 Set the `consent_required` option to `true` to ask for permission before
 anything is loaded from external services (media embeds such as YouTube,
-Twitter or SoundCloud, map tiles, and external font CSS):
+Twitter or SoundCloud, slide narration audio, map tiles, and external font
+CSS):
 
     {
         "consent_required": true,
@@ -158,20 +162,21 @@ instead of the media, and the map renders without tiles until they are
 allowed.
 
 Before the story loads, one dialog lists every external service it uses (map
-tiles, media services, external fonts) with three choices: **Allow all**,
-**Decline all**, or a decision per service. The dialog is skipped once every
-service has a stored decision; per-service panels still appear for services
-discovered later (e.g. a preloaded slide).
+tiles, media services including slide narration, external fonts) with three
+choices: **Allow all**, **Decline all**, or a decision per service. A story
+with no map (`map_type: "none"`) has no tile row to answer. The dialog is
+skipped once every service has a stored decision; per-service panels still
+appear for services discovered later (e.g. a preloaded slide).
 
 Decisions are stored in `localStorage` under `storymapjs-consent` and have no
 expiry — clearing site data asks again.
 
 The consent labels are **not** fully translated. `src/language/locale/en.json`
-defines every string; the other 28 bundled locales are each missing 8-10 of
-them (the per-service consent prompts and the fullscreen button labels),
-which fall back to English at runtime. Run `npm run check:locales` to see the
-current state — it reports the gap per locale and is expected to be runnable
-without failing.
+defines every string; 28 bundled locales fall back to English for the keys
+they lack — most are missing one, a handful are missing around ten (the
+per-service consent prompts and the fullscreen button labels). Run
+`npm run check:locales` to see the current state — it reports the gap per
+locale and is expected to be runnable without failing.
 
 ## Troubleshooting
 

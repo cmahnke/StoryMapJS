@@ -14,9 +14,13 @@ the fixtures in [`public/examples/`](../public/examples/) are real-world samples
 
 ## Contexts
 
-A manifest carries three context URLs: the Presentation 3.0 context, the
-official [navPlace extension](https://iiif.io/api/extension/navplace/) context,
-and the StoryMap extension context:
+A manifest declares four context URLs, in this order: the official
+[navPlace extension](https://iiif.io/api/extension/navplace/) context (which
+§3.1 of the extension requires before Presentation 3), the Presentation 3.0
+context, the navPlace properties context, and the StoryMap extension context.
+The last of the four resolves to the document below — shown inline here for
+reference; a manifest must reference it by URL, not paste it in (see the
+`@context` rule under "Validator interop"):
 
 ```json
 {
@@ -289,7 +293,7 @@ properties):
         {
             "id": "https://example.org/storymap/<name>/map-config",
             "type": "Service",
-            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:basemap": "osm:standard"
         }
     ]
@@ -310,7 +314,7 @@ object describes any other tile service in the standard's own terms. Only
         {
             "id": "https://example.org/storymap/<name>/map-config",
             "type": "Service",
-            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "tilejson": {
                 "tiles": ["https://tiles.example.org/{z}/{x}/{y}.png"],
                 "minzoom": 4,
@@ -319,6 +323,8 @@ object describes any other tile service in the standard's own terms. Only
                 "scheme": "tms",
                 "center": [4.4777, 51.9244, 12]
             }
+            // `tiles` may also be a single template string — that is what the
+            // converter writes. The reader accepts both forms.
         }
     ]
 }
@@ -377,9 +383,10 @@ offset, the same reason `map_bbox` works the way it does.
 ### Canvas level — direct properties
 
 Canvas objects are open for extension terms, so slide-specific StoryMap data is
-carried directly on the Canvas: only `storymap:type` (see the Canvas table
-above). A slide's date is the standard `navDate` and its background is the
-standard `background` annotation. The media caption, credit and alt
+carried directly on the Canvas: `storymap:type`, plus the two terms with no
+standard home, `storymap:mediaSrcset` and `storymap:mediaSizes` (see the
+Canvas table above). A slide's date is the standard `navDate` and its
+background is the standard `background` annotation. The media caption, credit and alt
 text are **not** terms any more: they are the painting annotation's own `label`,
 `requiredStatement` and `accessibilitySummary`, which is where Presentation 3
 defines them. A manifest written against the old terms still loads — the strings
@@ -413,20 +420,20 @@ and Micrio use for a guided tour of one image, and it is the subject of
 
 ## What the body record carries
 
-The painting annotation's body is read into one shared record, and the standard
-properties are used as **fallbacks** under the extension terms (dropping the
-terms and inverting that precedence is [docs/plans/iiif-interop.md](plans/iiif-interop.md)
-§2, a separate breaking change):
+The painting annotation's body is read into one shared record. The
+`storymap:mediaCaption` / `mediaCredit` / `mediaAlt` extension terms are
+dropped — a manifest still using them loads, but the strings are not read —
+and the standard properties are the only source:
 
-| Body property                                   | Slide media field                |
-| ----------------------------------------------- | -------------------------------- |
-| `label`                                         | `caption`                        |
-| `requiredStatement[]` (or `provider`)           | `credit`                         |
-| `accessibilitySummary`                          | `alt`                            |
-| `thumbnail`                                     | `thumb`                          |
-| `type`, `format`                                | player selection (`MediaType()`) |
-| `duration`, `start`, `end`                      | time-anchored stops              |
-| a sibling `TextualBody` with `format: text/vtt` | `subtitles`                      |
+| Body property                                                   | Slide media field                |
+| --------------------------------------------------------------- | -------------------------------- |
+| `label`                                                         | `caption`                        |
+| `requiredStatement` (one `{label, value}` object) or `provider` | `credit`                         |
+| `accessibilitySummary`                                          | `alt`                            |
+| `thumbnail`                                                     | `thumb`                          |
+| `type`, `format`                                                | player selection (`MediaType()`) |
+| `duration`, `start`, `end`                                      | time-anchored stops              |
+| a sibling `TextualBody` with `format: text/vtt`                 | `subtitles`                      |
 
 ## Native IIIF vs. the StoryMap extension
 
@@ -678,8 +685,9 @@ photo, and a slide with a YouTube video — full manifest:
 ```json
 {
     "@context": [
-        "http://iiif.io/api/presentation/3/context.json",
         "http://iiif.io/api/extension/navplace/context.json",
+        "http://iiif.io/api/presentation/3/context.json",
+        "https://cmahnke.github.io/StoryMapJS/navplace-properties.json",
         "https://cmahnke.github.io/StoryMapJS/context.json"
     ],
     "id": "https://example.org/storymap/storm",
@@ -697,7 +705,7 @@ photo, and a slide with a YouTube video — full manifest:
         {
             "id": "https://example.org/storymap/storm/map-config",
             "type": "Service",
-            "profile": "https://christianmahnke.de/iiif/storymap/mapconfig",
+            "profile": "https://cmahnke.github.io/StoryMapJS/context.json/mapconfig",
             "storymap:basemap": "osm:standard",
             "storymap:language": "en",
             "storymap:showLines": true,
@@ -905,8 +913,9 @@ photo, and a slide with a YouTube video — full manifest:
 
 ## Conversion
 
-`node scripts/convert-to-iiif.mjs` regenerates `public/examples-iiif/` from
-`public/examples/`. Ids are deterministic:
+`npm run convert:iiif` regenerates `public/examples-iiif/` from
+`public/examples/` (it needs Node 22.6+, since the script imports the
+TypeScript library source via type stripping). Ids are deterministic:
 
 - Manifest: `https://example.org/storymap/<name>`
 - Canvas: `<manifest-id>/canvas/<n>` (1-based, slide order)
@@ -914,8 +923,10 @@ photo, and a slide with a YouTube video — full manifest:
 - Annotation: `<canvas-id>/annotation/1`
 - FeatureCollection / Feature: `<canvas-id>/navplace[.../feature/1]`
 
-Two fixtures in `public/examples-iiif/` are hand-authored and not overwritten
-by a full run: `georeferenced-layer.json` and
+Three fixtures in `public/examples-iiif/` are hand-authored and not
+overwritten by a full run: `georeferenced-layer.json` and
 `georeferenced-layer-unsupported.json`, which exercise the Georeference
-Extension payloads (the legacy format cannot express ground control points, so
-there is nothing to convert from).
+Extension payloads (the legacy format cannot express ground control points,
+so there is nothing to convert from), and `annotated-image.json`, the
+annotation-driven tour (there is no storymap document to convert from —
+annotation stops only exist on the manifest side).

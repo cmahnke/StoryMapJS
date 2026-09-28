@@ -62,8 +62,9 @@ export interface StorymapSlideMedia {
 /**
  * Optional spoken narration for one slide, played through a dedicated audio
  * element rather than the slide's media frame — a tour stop usually has a
- * picture and a recording, not one media item. In a IIIF manifest it is a
- * `Sound` body on the stop's annotation, not a term.
+ * picture and a recording, not one media item. Storymap JSON only: the
+ * closest manifest spelling is a `Sound` body, which currently lands in
+ * `media.url` rather than here.
  */
 /**
  * Per-slide marker presentation, consolidated. `location.*` keeps working as

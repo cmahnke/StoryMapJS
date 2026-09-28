@@ -19,7 +19,7 @@ Added
   `convert:iiif` script, so one function both writes and reads the IIIF format
   and a host can produce a manifest in the browser. The CLI delegates to it
   (via Node's own type stripping, so no new dependency and no build step), and
-  its output is unchanged byte for byte across all 49 fixtures
+  its output is unchanged byte for byte across all 50 fixtures
 - **Annotation-driven tour stops.** A IIIF manifest whose commenting,
   tagging, classifying or describing annotations carry a fragment target
   becomes one slide per annotation, each fitting the region it points at —
@@ -34,10 +34,13 @@ Added
   `TimeState` and `SvgSelector` are all read, one level of `refinedBy` is
   followed, and a string target's `#xywh=` fragment counts. Quote and SVG
   selectors are preserved but not yet resolved or drawn — the guide says so
-- The painting body's standard fields are read as fallbacks under the
-  extension terms: `body.label` (caption), `body.requiredStatement` /
+- The painting body's standard fields are the only source for the slide
+  media record: `body.label` (caption), `body.requiredStatement` /
   `body.provider` (credit), `body.accessibilitySummary` (alt),
   `body.thumbnail` (thumb), and a `TextualBody` with `format: text/vtt`
+  (subtitles). The `storymap:mediaCaption` / `mediaCredit` / `mediaAlt`
+  extension terms are dropped; a manifest still using them loads, but the
+  strings are no longer read
   (subtitles)
 - `media.subtitles`: a WebVTT file rendered as a `<track kind="subtitles">`
   on the audio or video element

@@ -515,7 +515,7 @@
                 },
                 "narration": {
                     "type": ["object", "null"],
-                    "description": "Spoken narration for this slide, played through a dedicated audio element. In a IIIF manifest this is a Sound body on the stop annotation.",
+                    "description": "Spoken narration for this slide, played through a dedicated audio element. Storymap JSON only: in a IIIF manifest the closest spelling is a Sound body, which currently lands in media.url rather than here.",
                     "properties": {
                         "url": {
                             "type": "string",

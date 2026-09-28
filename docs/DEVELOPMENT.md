@@ -72,6 +72,7 @@ npm run typecheck          # tsc --noEmit
 npm run lint               # eslint + stylelint
 npm run validate           # validate storymap JSON fixtures against the schema
 npm run validate:iiif      # validate the IIIF manifest fixtures
+npm run convert:iiif       # storymap JSON -> IIIF manifests (needs node >= 22.6: the CLI imports the TypeScript library source via type stripping)
 npm run check:locales      # report translation gaps between en.json and the rest
 npm run docs:api           # typedoc -> public/docs/api (deployed by pages.yml)
 npm run format:check       # prettier --check .

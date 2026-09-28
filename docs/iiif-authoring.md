@@ -153,7 +153,10 @@ A stop's `body` may be one resource or an array.
   needs no type of its own beyond `id` and `format`.
 - A media body's `label` becomes the media caption,
   `accessibilitySummary` the alt text, and `requiredStatement` (or `provider`)
-  the credit. A `thumbnail` becomes the media thumb.
+  the credit. A `thumbnail` becomes the media thumb. A sibling `TextualBody`
+  with `format: "text/vtt"` and an `id` becomes the media's subtitle track —
+  IIIF has no subtitle term, so this is the one body the viewer reads for
+  that purpose.
 - An annotation with a region but **no** body is not a stop — a stop with
   nothing to say is just a focus change. Use it in a viewer that links
   annotations.
@@ -166,7 +169,11 @@ A stop's `body` may be one resource or an array.
   `image`, `name`, `line`, `zoom`, `use_custom_marker`) goes in the Feature's
   `properties`. All stops on a canvas share that canvas's `navPlace` — the
   extension does not allow it on an annotation, so there is no per-stop
-  override.
+  override. Two `properties` names are marker behaviour, not data:
+  `popup: true` gives the active marker a card with the slide's headline and
+  excerpt, and `audioBadge: true` dots a marker whose slide has narration or
+  audio. The nine names the reader copies — and the linked-data context that
+  describes them — are listed in `docs/storymap-as-iiif-manifest.md`.
 - **Chapters** — a `Range` with a `label` and no `start` groups the canvases
   it lists. A `Range` whose `items` order differs from canvas order becomes
   the slide order instead: a Range _is_ a storyboard.

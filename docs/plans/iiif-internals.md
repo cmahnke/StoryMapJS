@@ -299,8 +299,9 @@ Effort M. Port `scripts/convert-to-iiif.mjs` into
 update it to the standard forms interop's plan establishes, so the function
 emits what the interop reader reads:
 
-- `navDate` instead of the `storymap:date` term, `requiredStatement` as an
-  **array**, `accessibilitySummary` instead of `mediaAlt`, caption from
+- `navDate` instead of the `storymap:date` term, `requiredStatement` as a
+  single `{label, value}` object (the official validator rejects the array
+  form), `accessibilitySummary` instead of `mediaAlt`, caption from
   `body.label` and credit from `body.requiredStatement`/`provider`,
   `structures`/`Range` for `slide.group`, and georeferencing annotations for
   placed rasters.

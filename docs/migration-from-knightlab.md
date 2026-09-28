@@ -326,9 +326,17 @@ factory.
 - The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
   Python authoring server are gone — this is a viewer-only library.
 
-## Events (unchanged)
+## Events (unchanged, plus two new ones)
 
-`change` (with `current_slide`), `loaded`, `title`, `dataloaded`,
+`change` (with `current_slide`, and now also `current_id` — the slide's
+`uniqueid`, for deep-linking), `loaded`, `title`, `dataloaded`,
 `fontLoaded`, plus the listener map in the constructor — all work as before.
 `markerAdded`/`markerRemoved` still fire on the map object, and `imageready`
 is new (see above).
+
+Two additions for IIIF tours: `await storymap.loadAnnotations()` fetches a
+manifest's externally referenced annotation pages and appends them as stops,
+then fires `annotationsloaded` with `{ stops, searchService, failed }`. A
+slide's stable identity is available as `storymap.getSlideId(index)`, which
+is what the `#slide-N` hash and the `iiif-content` deep link resolve
+through.
