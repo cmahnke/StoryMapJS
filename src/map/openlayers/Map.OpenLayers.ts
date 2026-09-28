@@ -50,6 +50,20 @@ import { sanitizeSlideText } from "../../media/EmbedUtil";
 
 const MAX_ZOOM = 19;
 
+/** What kind of imagery an `imageready` source carries. */
+export type ImagereadyKind = "iiif" | "zoomify" | "tiles";
+
+/**
+ * Payload of the `imageready` event: the source that became usable, what
+ * kind of imagery it is, and the layer carrying it (`null` when the source
+ * outlives its layer).
+ */
+export interface ImagereadyPayload {
+    source: { getState?(): string };
+    kind: ImagereadyKind;
+    layer: Layer | null;
+}
+
 /**
  * Zoom ladder for image-space maps (issue #465): rung 0 shows any image fully
  * zoomed out, finer rungs reach sub-pixel detail. It keeps view zooms,
@@ -834,7 +848,7 @@ export default class OpenLayers extends Map {
      * imagery is really on the map; the `loaded` event can fire before the
      * source is attached at all.
      */
-    _fireImageready(source: { getState?(): string }, kind: string, layer?: Layer): void {
+    _fireImageready(source: { getState?(): string }, kind: ImagereadyKind, layer?: Layer): void {
         // one event per source: the base layer and the minimap can be asked
         // about the same source, and a host toggling layers should not have
         // to filter duplicates
@@ -1069,43 +1083,47 @@ export default class OpenLayers extends Map {
                 const gridX = (z: number) => Math.ceil(sizes[z][0] / 256);
                 const gridY = (z: number) => Math.ceil(sizes[z][1] / 256);
 
-                return new TileLayer({
-                    source: new XYZ({
-                        tileGrid: pyramid.tileGrid,
-                        crossOrigin: "anonymous",
-                        attributions: this._sourceAttributions(map_type),
-                        tileUrlFunction: (tile: number[]) => {
-                            const [tileZ, x, y] = tile;
-                            // the ladder is shifted one level down: mercator
-                            // zoom z serves the pyramid level max(0, z - 1)
-                            const z = Math.max(0, tileZ - 1);
-                            if (z > pyramidMaxZoom) return undefined;
-                            if (x < 0 || x >= gridX(z) || y < 0 || y >= gridY(z)) {
-                                return undefined;
-                            }
-                            // TileGroup index: the running tile number ÷ 256
-                            let num = 0;
-                            for (let zz = 0; zz < z; zz++) {
-                                num += gridX(zz) * gridY(zz);
-                            }
-                            num += y * gridX(z) + x;
-                            return `${path}TileGroup${Math.floor(num / 256)}/${z}-${x}-${y}.jpg`;
-                        },
-                        // Zoomify edge tiles are cropped to the image bounds
-                        // (e.g. a 256x19 bottom strip); OpenLayers draws the
-                        // loaded image over the whole 256x256 tile box, which
-                        // stretched those strips across the cell (the smeared
-                        // bottom in the Bosch overview, stretched right/bottom
-                        // edges in the Literary Trail). Pad them onto a full
-                        // tile canvas instead.
-                        tileLoadFunction: (tile, src) => {
-                            const imageTile = tile as ImageTile;
-                            const image = imageTile.getImage() as HTMLImageElement;
-                            image.onload = () => padCroppedZoomifyTile(imageTile, image);
-                            image.src = src;
-                        },
-                    }),
+                const zoomify_source = new XYZ({
+                    tileGrid: pyramid.tileGrid,
+                    crossOrigin: "anonymous",
+                    attributions: this._sourceAttributions(map_type),
+                    tileUrlFunction: (tile: number[]) => {
+                        const [tileZ, x, y] = tile;
+                        // the ladder is shifted one level down: mercator
+                        // zoom z serves the pyramid level max(0, z - 1)
+                        const z = Math.max(0, tileZ - 1);
+                        if (z > pyramidMaxZoom) return undefined;
+                        if (x < 0 || x >= gridX(z) || y < 0 || y >= gridY(z)) {
+                            return undefined;
+                        }
+                        // TileGroup index: the running tile number ÷ 256
+                        let num = 0;
+                        for (let zz = 0; zz < z; zz++) {
+                            num += gridX(zz) * gridY(zz);
+                        }
+                        num += y * gridX(z) + x;
+                        return `${path}TileGroup${Math.floor(num / 256)}/${z}-${x}-${y}.jpg`;
+                    },
+                    // Zoomify edge tiles are cropped to the image bounds
+                    // (e.g. a 256x19 bottom strip); OpenLayers draws the
+                    // loaded image over the whole 256x256 tile box, which
+                    // stretched those strips across the cell (the smeared
+                    // bottom in the Bosch overview, stretched right/bottom
+                    // edges in the Literary Trail). Pad them onto a full
+                    // tile canvas instead.
+                    tileLoadFunction: (tile, src) => {
+                        const imageTile = tile as ImageTile;
+                        const image = imageTile.getImage() as HTMLImageElement;
+                        image.onload = () => padCroppedZoomifyTile(imageTile, image);
+                        image.src = src;
+                    },
                 });
+                const zoomify_layer = new TileLayer({ source: zoomify_source });
+                // the zoomify base never announced itself, so a host waiting
+                // on imageready hung on exactly the legacy stories that need
+                // it most; the per-source dedup keeps this to one event
+                this._fireImageready(zoomify_source, "zoomify", zoomify_layer);
+                return zoomify_layer;
             }
 
             case "osm": {

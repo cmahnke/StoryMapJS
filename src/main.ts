@@ -94,3 +94,9 @@ export type { default as OlTileLayer } from "ol/layer/Tile";
 export type { default as OlVectorLayer } from "ol/layer/Vector";
 export type { default as OlSource } from "ol/source/Source";
 export type { default as OlProjection } from "ol/proj/Projection";
+
+/**
+ * Payload of the `imageready` event, fired when an image source is actually
+ * attached — the only outward signal that the imagery is really on the map.
+ */
+export type { ImagereadyKind, ImagereadyPayload } from "./map/openlayers/Map.OpenLayers";

@@ -1,6 +1,8 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { StoryMap } from "../src/storymap/StoryMap";
+import OpenLayersMap from "../src/map/openlayers/Map.OpenLayers";
 import type { StorymapDataWrapper } from "../src/types";
+import type { ImagereadyKind } from "../src/main";
 
 describe("storymap dispose()", () => {
     beforeAll(() => {
@@ -302,5 +304,47 @@ describe("storymap imageready", () => {
         expect(seen.length).toBe(1);
         expect(seen[0]).toMatchObject(payload);
         sm.dispose();
+    });
+
+    it("announces the zoomify base layer, which previously never fired", () => {
+        // The zoomify base case built its TileLayer and returned it without
+        // ever calling _fireImageready, so a host waiting on imageready hung
+        // on exactly the legacy stories that need it most. Spy the prototype
+        // before construction, because the call happens inside it.
+        const calls: { source: unknown; kind: unknown; layer: unknown }[] = [];
+        const spy = vi
+            .spyOn(OpenLayersMap.prototype, "_fireImageready")
+            .mockImplementation(function (
+                this: unknown,
+                source: { getState?(): string },
+                kind: ImagereadyKind,
+                layer?: object,
+            ) {
+                calls.push({ source, kind, layer });
+            });
+        try {
+            const el = document.createElement("div");
+            el.id = "sm-imageready-zoomify";
+            document.body.appendChild(el);
+            const sm = new StoryMap("sm-imageready-zoomify", {
+                storymap: {
+                    map_type: "zoomify",
+                    zoomify: {
+                        path: "https://example.org/tiles/",
+                        width: 6042,
+                        height: 2777,
+                    },
+                    slides: [
+                        { date: "", type: "overview", text: { headline: "Overview", text: "" } },
+                    ],
+                },
+            } as unknown as StorymapDataWrapper);
+            const zoomifyCalls = calls.filter((c) => c.kind === "zoomify");
+            expect(zoomifyCalls.length).toBeGreaterThan(0);
+            expect(zoomifyCalls[0].layer).not.toBeNull();
+            sm.dispose();
+        } finally {
+            spy.mockRestore();
+        }
     });
 });
