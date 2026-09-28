@@ -277,6 +277,11 @@ test("map_type still accepts every keyword and custom template it used to", () =
         "osm:bright",
         "iiif",
         "stamen",
+        // the suffix form is deprecated and remapped to OSM, not rejected:
+        // the schema's pattern lists stamen alongside the other keywords
+        "stamen:toner",
+        "stamen:toner-lite",
+        "stamen:terrain",
         "stadia",
         "stadia:alidade_smooth",
         "mapbox://styles/user/style",

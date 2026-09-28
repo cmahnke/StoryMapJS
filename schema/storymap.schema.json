@@ -31,7 +31,7 @@
                         },
                         {
                             "type": "string",
-                            "pattern": "^(?:osm|stadia|mapbox|ch|esri)(?::|$)|\\{|/|\\.json$"
+                            "pattern": "^(?:osm|stadia|mapbox|ch|esri|stamen)(?::|$)|\\{|/|\\.json$"
                         }
                     ]
                 },

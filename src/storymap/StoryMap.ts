@@ -1987,7 +1987,7 @@ class StoryMapBase {
         if (!this.options.show_distance) {
             return;
         }
-        const km = this._map?.getRouteDistance() ?? 0;
+        const km = this._map?.getRouteDistance();
         this._menubar.setDistance(km);
     }
 

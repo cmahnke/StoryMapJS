@@ -194,6 +194,67 @@ describe('map_type: "none"', () => {
         expect(data.map_type).toBe("none");
     });
 
+    describe("show_distance without a route", () => {
+        function distanceEl(sm: StoryMap): HTMLElement | null {
+            return (sm as unknown as { _menubar: { _el: Record<string, HTMLElement> } })._menubar
+                ._el.distance as HTMLElement | null;
+        }
+
+        it("hides the distance in a mapless story", () => {
+            const sm = make(storymapData({ map_type: "none", show_distance: true }));
+            sm.fire("dataloaded");
+            sm._onLoaded();
+
+            expect(distanceEl(sm)?.style.display).toBe("none");
+        });
+
+        it("hides the distance in a mapped story with one geolocated marker", () => {
+            // getRouteDistance() is undefined for fewer than two located
+            // markers, and setDistance(undefined) hides the element. A `?? 0`
+            // here would paint a fabricated "0.0 km".
+            const sm = make({
+                map_type: "osm",
+                show_distance: true,
+                slides: [
+                    {
+                        type: "overview",
+                        text: { headline: "One", text: "" },
+                        location: { lat: 47.6, lon: -122.3 },
+                    },
+                    { text: { headline: "Two", text: "" } },
+                ],
+            });
+            sm.fire("dataloaded");
+            sm._updateDistance();
+
+            expect(distanceEl(sm)?.style.display).toBe("none");
+        });
+
+        it("still shows the distance with two geolocated markers", () => {
+            const sm = make({
+                map_type: "osm",
+                show_distance: true,
+                slides: [
+                    {
+                        type: "overview",
+                        text: { headline: "One", text: "" },
+                        location: { lat: 47.6, lon: -122.3 },
+                    },
+                    {
+                        text: { headline: "Two", text: "" },
+                        location: { lat: 47.7, lon: -122.2 },
+                    },
+                ],
+            });
+            sm.fire("dataloaded");
+            sm._updateDistance();
+
+            const el = distanceEl(sm);
+            expect(el?.style.display).toBe("");
+            expect(el?.textContent).toMatch(/km/);
+        });
+    });
+
     it("keeps map_type: '' meaning OSM, so no existing document changes", () => {
         const sm = make(storymapData({ map_type: "" }));
 
