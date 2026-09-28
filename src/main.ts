@@ -41,18 +41,49 @@ export { setLanguage } from "./language/Language";
  */
 export { validateStorymap, validateStorymapAndReport } from "./storymap/validate";
 
+/** One problem `validateStorymap()` reports. */
+export type { StorymapError } from "./storymap/validate";
+
+/** `loadCSS()`'s options (currently the abort signal). */
+export type { LoadOptions } from "./core/Load";
+
+/** The shape of a bundled locale file, as `setLanguage()` reads it. */
+export type { LanguageEntry } from "./language/Language";
+
+/**
+ * A IIIF Content State 1.0 target: the canvas a deep link names, and the
+ * region within it when the link carries one.
+ */
+export type { ContentState } from "./storymap/content-state";
+
 /**
  * Public data and options types for constructing a StoryMap.
+ *
+ * The data types are exported rather than only referenced: they are what a host
+ * actually types its document and options with, and TypeDoc warns about a
+ * documented member whose type it cannot link.
  */
 export type {
     StorymapSlide,
+    StorymapSlideText,
+    StorymapSlideMedia,
+    StorymapSlideMarker,
+    StorymapSlideNarration,
+    StorymapSlideBackground,
+    StorymapSlideLocation,
+    StorymapData,
     StorymapDataWrapper,
     StorymapOptions,
     StorymapOverlayLayer,
+    StorymapTilejson,
+    StorymapGeoreference,
+    StorymapGeoreferenceBody,
+    StorymapGroundControlPoint,
     StorymapMapOptions,
-    StorymapSlideLocation,
     TileSourceFactory,
     LatLngLiteral,
+    MediaTypeMatch,
+    AnimationHandle,
 } from "./types";
 
 /**
@@ -81,6 +112,16 @@ export type {
     StorymapManifest,
     StorymapManifestCanvas,
     StorymapManifestService,
+    StorymapLanguageMap,
+    StorymapManifestAnnotation,
+    StorymapManifestBackground,
+    StorymapManifestContentResource,
+    StorymapManifestFeatureCollection,
+    StorymapManifestGeoreferencing,
+    StorymapManifestImageService,
+    StorymapManifestRange,
+    StorymapManifestSpecificResource,
+    StorymapManifestStatement,
 } from "./storymap/to-iiif";
 
 /**

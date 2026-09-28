@@ -7,8 +7,20 @@
     "excludeProtected": false,
     "hideGenerator": true,
     "customCss": "./typedoc-site.css",
+    "intentionallyNotExported": [
+        "src/map/openlayers/Map.OpenLayers.ts:default",
+        "src/map/openlayers/MapMarker.OpenLayers.ts:default",
+        "src/ui/MenuBar.ts:default",
+        "src/slider/StorySlider.ts:default",
+        "src/storymap/StoryMap.ts:StoryMapListener"
+    ],
     "navigation": {
         "includeCategories": true,
         "includeGroups": true
+    },
+    "externalSymbolLinkMappings": {
+        "@types/node": {
+            "__global.module": "#"
+        }
     }
 }

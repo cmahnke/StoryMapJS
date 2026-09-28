@@ -365,8 +365,8 @@ function readTerm(record: Record<string, unknown>, term: string): unknown {
  * `@context`. Detection used to accept anything with the P3 context, so a
  * Collection passed and its member Manifests were fed to `canvasToSlide` as if
  * they were Canvases — every member became a text-only slide, with no media, no
- * locations and no warning. `within`-style Collections are now handled by
- * {@link collectionToStorymapData}, and anything else is rejected here.
+ * locations and no warning. `within`-style Collections are now handled by the
+ * private `collectionToStorymapData` below, and anything else is rejected here.
  */
 export function isPresentation3Manifest(data: unknown): boolean {
     const record = asRecord(data);
