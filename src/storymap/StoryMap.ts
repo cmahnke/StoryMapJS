@@ -481,6 +481,13 @@ class StoryMapBase {
                 throw new Error("HTTP " + response.status + " " + response.statusText);
             }
             const result: unknown = await response.json();
+            // A teardown while the fetch was in flight must win: without
+            // this, a late-resolving response rebuilds the whole viewer into
+            // the container dispose() just emptied — menubar, slider, map,
+            // listeners, locale claim, autoplay — and sets ready = true.
+            if (this._disposed) {
+                return;
+            }
             if (isPresentation3Manifest(result) || isPresentation3Collection(result)) {
                 this._data_from_manifest = true;
                 this._raw_manifest = result;
@@ -795,6 +802,9 @@ class StoryMapBase {
      * Called automatically on resize (see the `trackResize` option).
      */
     updateDisplay() {
+        if (this._disposed) {
+            return;
+        }
         if (this.ready) {
             this._updateDisplay();
         }
@@ -1013,6 +1023,11 @@ class StoryMapBase {
             return;
         }
         this._disposed = true;
+        // `updateDisplay()` is gated on `ready`, not `_disposed`, so without
+        // this a post-teardown resize listener (or a stray host call) re-runs
+        // the whole layout — and reaches the map engine — against an emptied
+        // container and a disposed ol/Map.
+        this.ready = false;
 
         for (const timer of [this._transition_timer, this._autoplay_timer, this._resize_timer]) {
             if (timer !== null && timer !== undefined) {
@@ -1161,6 +1176,9 @@ class StoryMapBase {
 
     // Initialize the layout
     _initLayout() {
+        if (this._disposed) {
+            return;
+        }
         this._el.container.className += " vco-storymap";
         this.options.base_class = this._el.container.className;
 
@@ -1362,6 +1380,22 @@ class StoryMapBase {
             // size, offset, animate or fit, so none of that runs, and
             // `map_area` has nothing to narrow.
             display_class += " vco-layout-no-map";
+            // A narrow mapless story still needs the narrow-viewport slide
+            // layout: every rule that stacks the two-column slide (the
+            // 100px side padding, the floated 50% media block) keys on
+            // vco-skinny, and without it a phone-width story renders broken.
+            // The wide case needs nothing extra — the no-map rule already
+            // owns the full-width opaque panel.
+            if (this.options.layout === "portrait") {
+                display_class += " vco-skinny vco-layout-portrait";
+            }
+            // A narrow mapless story still needs the narrow-viewport slide
+            // layout: every rule that stacks the two-column slide (the
+            // 100px side padding, the floated 50% media block) keys on
+            // vco-skinny, and without it a phone-width story renders broken.
+            // The wide case needs nothing extra — the no-map rule already
+            // owns the full-width opaque panel.
+
             this.options.menubar_height = this._el.menubar.offsetHeight;
             this.options.map_height = 0;
             this.options.storyslider_height = this.options.height - 1;
@@ -1502,6 +1536,11 @@ class StoryMapBase {
 	================================================== */
 
     _onDataLoaded(e?: unknown) {
+        // Belt and braces with the _loadDataFromUrl guard: anything reaching
+        // this point after a teardown must not rebuild the layout.
+        if (this._disposed) {
+            return;
+        }
         // attach the consent manager BEFORE the layout is created, so the
         // slider/map/media options copies all share it
         (this.options as Record<string, unknown>).consent_manager = new ConsentManager();

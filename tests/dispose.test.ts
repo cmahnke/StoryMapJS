@@ -113,6 +113,46 @@ describe("storymap dispose()", () => {
         expect(host.innerHTML).toBe("");
     });
 
+    it("clears ready, so updateDisplay() after dispose does not reach the engine", () => {
+        const sm = storymap("sm-dispose-ready");
+        sm.fire("dataloaded");
+        expect(sm.ready).toBe(true);
+        sm.dispose();
+
+        expect(sm.ready).toBe(false);
+        // the body is gated on ready alone, and without the flag it re-ran
+        // the layout against an emptied container and a disposed engine
+        const calls: unknown[][] = [];
+        const engine = (sm as unknown as { _map: { updateDisplay: (...a: unknown[]) => void } })
+            ._map;
+        const original = engine.updateDisplay;
+        engine.updateDisplay = (...args: unknown[]) => {
+            calls.push(args);
+        };
+        sm.updateDisplay();
+        engine.updateDisplay = original;
+
+        expect(calls).toEqual([]);
+    });
+
+    it("does not rebuild the layout when data arrives after dispose", () => {
+        // A fetch resolving after teardown reaches _onDataLoaded, which
+        // would rebuild a menubar, a slider and a map into the emptied
+        // container, re-register the window listeners and set ready = true.
+        // (The full fetch-level chain does not reproduce under jsdom, so
+        // this drives the entry points directly; the _loadDataFromUrl guard
+        // stops the chain one frame earlier for the same reason.)
+        const sm = storymap("sm-dispose-late");
+        sm.dispose();
+        expect(document.getElementById("sm-dispose-late")?.children.length).toBe(0);
+
+        sm._onDataLoaded();
+        sm._initLayout();
+
+        expect(document.getElementById("sm-dispose-late")?.children.length).toBe(0);
+        expect(sm.ready).toBe(false);
+    });
+
     it("turns public method calls after dispose into no-ops", () => {
         const sm = storymap("sm-dispose-noop");
         sm.dispose();

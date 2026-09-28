@@ -106,6 +106,43 @@ test.describe('map_type: "none"', () => {
         }
     });
 
+    test("a narrow viewport gets the stacked slide layout, not the two-column one", async ({
+        page,
+    }) => {
+        // Without vco-skinny a phone-width mapless story keeps 100px side
+        // padding and a floated half-width media block inside a ~190px panel.
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.goto(harnessUrl("no-map"));
+        await waitForStoryMap(page);
+
+        const classes = await page.evaluate(
+            () =>
+                document.querySelector("#storymap-embed")?.className ??
+                (document.querySelector(".vco-storymap") as HTMLElement | null)?.className ??
+                "",
+        );
+        expect(classes).toContain("vco-skinny");
+
+        const layout = await page.evaluate(() => {
+            const text = document.querySelector("#storymap-embed .vco-text") as HTMLElement | null;
+            const container = document.querySelector("#storymap-embed") as HTMLElement | null;
+            if (!text || !container) return null;
+            return {
+                textWidth: text.getBoundingClientRect().width,
+                containerWidth: container.getBoundingClientRect().width,
+                overflow:
+                    document.documentElement.scrollWidth - document.documentElement.clientWidth,
+            };
+        });
+
+        expect(layout).not.toBeNull();
+        if (layout) {
+            // stacked: the text fills the panel instead of half of it
+            expect(layout.textWidth).toBeGreaterThan(layout.containerWidth * 0.7);
+            expect(layout.overflow).toBe(0);
+        }
+    });
+
     test("hides the overview control, which has no map to zoom out to", async ({ page }) => {
         const display = await page.evaluate(() => {
             const button = document.querySelector(

@@ -301,6 +301,34 @@ describe('map_type: "none"', () => {
         });
     });
 
+    it("emits the narrow-viewport classes for a mapless story", () => {
+        // Without vco-skinny the two-column slide layout survives: 100px side
+        // padding, a floated half-width media block, a 100px text column.
+        // jsdom defaults to 1024x768 with touch, so simulate a phone.
+        const originalWidth = window.innerWidth;
+        const originalHeight = window.innerHeight;
+        Object.defineProperty(window, "innerWidth", { value: 390, configurable: true });
+        Object.defineProperty(window, "innerHeight", { value: 844, configurable: true });
+        try {
+            const sm = make(storymapData({ map_type: "none" }));
+            sm.fire("dataloaded");
+
+            expect(sm.options.layout).toBe("portrait");
+            expect(sm._el.container.className).toContain("vco-skinny");
+            expect(sm._el.container.className).toContain("vco-layout-portrait");
+            expect(sm._el.container.className).toContain("vco-layout-no-map");
+        } finally {
+            Object.defineProperty(window, "innerWidth", {
+                value: originalWidth,
+                configurable: true,
+            });
+            Object.defineProperty(window, "innerHeight", {
+                value: originalHeight,
+                configurable: true,
+            });
+        }
+    });
+
     it("keeps map_type: '' meaning OSM, so no existing document changes", () => {
         const sm = make(storymapData({ map_type: "" }));
 
