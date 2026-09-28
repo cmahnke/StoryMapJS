@@ -58,13 +58,20 @@ jobs:
               run: npm run test:e2e
 
     e2e-matrix:
-        # Chromium/Firefox/WebKit. Deliberately NOT blocking: the suite has
-        # never run on anything but Chromium, so this surfaces pre-existing
+        # One leg per engine. Deliberately NOT blocking: the suite has never
+        # run on anything but Chromium, so this surfaces pre-existing
         # engine-specific failures that have nothing to do with the change
         # under review. Flip `continue-on-error` to false once the known ones
-        # are fixed and the engines stay green.
+        # are fixed and the legs stay green.
+        # fail-fast is off on purpose: a chromium failure must not cancel the
+        # firefox/webkit legs, whose comparison is the point of the job.
         runs-on: ubuntu-latest
         continue-on-error: true
+        strategy:
+            fail-fast: false
+            matrix:
+                browser: [chromium, firefox, webkit]
+        name: e2e-matrix (${{ matrix.browser }})
         steps:
             - uses: actions/checkout@v4
 
@@ -76,8 +83,11 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
-            - name: Install Playwright browsers
-              run: npx playwright install --with-deps chromium firefox webkit
+            - name: Install Playwright browser
+              run: npx playwright install --with-deps ${{ matrix.browser }}
 
-            - name: E2E tests (chromium + firefox + webkit)
-              run: npm run test:e2e:all
+            # E2E_ALL_BROWSERS=1 is what defines the firefox/webkit projects
+            # in playwright.config.ts; --project then selects this leg's
+            # engine instead of running all three in every leg.
+            - name: E2E tests (${{ matrix.browser }})
+              run: E2E_ALL_BROWSERS=1 npx playwright test --project=${{ matrix.browser }}
