@@ -177,10 +177,28 @@ A stop's `body` may be one resource or an array.
   The viewer renders the language it was configured with, and falls back to
   `none`.
 
+## Annotations in a separate file
+
+A Canvas can point at an `AnnotationCollection` with `seeAlso`, and the viewer
+follows it. Nothing is fetched while the story loads — that would put a network
+round trip in front of the first paint — so the stops on the canvas appear
+immediately, and a host asks for the rest afterwards:
+
+```js
+await sm.loadAnnotations();
+sm.on("annotationsloaded", (result) => {
+    console.log(`added ${result.added} stops`);
+});
+```
+
+One level is followed: a referenced `AnnotationPage` is read, but a `seeAlso`
+inside that page is not, and a `SearchService1` is recorded rather than
+followed. Stops from a referenced page are **appended** after the canvases
+already rendered, not placed after the canvas they annotate, because that canvas
+has been visited. A `uniqueid` is required, so a stop can be deep-linked.
+
 ## What this viewer does not read yet
 
-- `seeAlso` — annotations hosted in a separate `AnnotationCollection` are not
-  fetched. Put the stops on the canvas.
 - An `SvgSelector`'s true outline (see above).
 - A `TextQuoteSelector` is not resolved against a transcript.
 - `accessibilityFeature` beyond the alt-text mapping.
