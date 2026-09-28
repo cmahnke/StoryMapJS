@@ -92,9 +92,9 @@
         "vitest": "^5.0.2"
     },
     "scripts": {
-        "dev": "vite",
-        "build": "npm run clean && vite build --mode lib && vite build --mode pages",
-        "docs:api": "typedoc",
+        "dev": "npm run docs:api && vite",
+        "build": "npm run clean && npm run docs:api && vite build --mode lib && vite build --mode pages",
+        "docs:api": "node scripts/docs-api.mjs",
         "thumbs": "node tasks/build-thumbnails.mjs",
         "preview": "vite preview",
         "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",

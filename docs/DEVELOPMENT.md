@@ -63,8 +63,8 @@ plugins/
 
 ```
 npm install                # hydrate dependencies (node >= 22)
-npm run dev                # vite dev server with HMR at :8000
-npm run build              # vite: lib (js/storymap.js + storymap.d.ts + css), demo pages, fonts/docs
+npm run dev                # vite dev server with HMR at :8000; also generates the API docs once (~3.5s)
+npm run build              # vite: lib (js/storymap.js + storymap.d.ts + css), demo pages, fonts/docs, API docs
 npm run preview            # serve the built dist/ (what e2e tests run against)
 npm test                   # vitest unit tests
 npm run test:e2e           # playwright over all examples + embed page (builds first)
@@ -74,7 +74,7 @@ npm run validate           # validate storymap JSON fixtures against the schema
 npm run validate:iiif      # validate the IIIF manifest fixtures
 npm run convert:iiif       # storymap JSON -> IIIF manifests (needs node >= 22.6: the CLI imports the TypeScript library source via type stripping)
 npm run check:locales      # report translation gaps between en.json and the rest
-npm run docs:api           # typedoc -> public/docs/api (deployed by pages.yml)
+npm run docs:api           # typedoc -> public/docs/api (~3.5s); warns instead of failing
 npm run format:check       # prettier --check .
 ```
 
