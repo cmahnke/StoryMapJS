@@ -300,13 +300,11 @@ describe("context agreement", () => {
         const NOT_EXERCISED_BY_A_FIXTURE = new Set([
             // need a credential or a vendor style
             "storymap:mapAccessToken",
-            "storymap:mapSubdomains",
             // no fixture sets these; the code path is covered by unit tests
             "storymap:mapBackgroundColor",
             "storymap:mapCenterOffset",
             "storymap:callToActionText",
             "storymap:calculateZoom",
-            "storymap:lessBounce",
             "storymap:lineFollowsPath",
             "storymap:showHistoryLine",
             "storymap:lineColor",

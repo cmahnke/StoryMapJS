@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 // file-I/O shell around this function (tests/iiif-roundtrip.test.ts covers the
 // wrapper and the generated fixtures).
 import { storymapToManifest } from "../src/storymap/to-iiif";
+import { manifestToStorymapData } from "../src/storymap/iiif";
 import type { StorymapGeoreference, StorymapOverlayLayer } from "../src/types";
 
 /**
@@ -362,6 +363,36 @@ describe("storymapToManifest: map configuration", () => {
             icon: "https://example.org/pin.png",
             iconSize: [30, 40],
         });
+    });
+
+    test("marker presentation survives the round trip", () => {
+        // popup and audioBadge are marker presentation with no IIIF
+        // vocabulary of their own, so they ride the navPlace properties bag.
+        // The writer once omitted them while the reader read them, losing
+        // both on storymap -> manifest -> storymap.
+        const manifest = storymapToManifest("badged", {
+            storymap: {
+                slides: [
+                    {
+                        location: {
+                            lat: 48.86,
+                            lon: 2.34,
+                            popup: true,
+                            audioBadge: true,
+                        },
+                    },
+                ],
+            },
+        });
+        const properties = manifest.items[0]?.navPlace?.features[0]?.properties;
+        expect(properties?.popup).toBe(true);
+        expect(properties?.audioBadge).toBe(true);
+
+        const data = manifestToStorymapData(manifest) as {
+            slides: { location?: { popup?: boolean; audioBadge?: boolean } }[];
+        };
+        expect(data.slides[0]?.location?.popup).toBe(true);
+        expect(data.slides[0]?.location?.audioBadge).toBe(true);
     });
 
     test("a location without coordinates has no navPlace", () => {

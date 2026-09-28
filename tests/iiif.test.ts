@@ -633,14 +633,12 @@ test("maps the mapconfig service to storymap options fields", () => {
                 mapAccessToken: "token",
                 mapBackgroundColor: "#000",
                 mapCenterOffset: { left: -100, top: 20 },
-                mapSubdomains: "abc",
                 fontCss: "stock:bitter",
                 callToAction: true,
                 callToActionText: "Explore",
                 startAtSlide: 2,
                 language: "de",
                 calculateZoom: false,
-                lessBounce: true,
                 lineFollowsPath: false,
                 showLines: false,
                 showHistoryLine: false,
@@ -659,7 +657,6 @@ test("maps the mapconfig service to storymap options fields", () => {
     expect(data.map_access_token).toBe("token");
     expect(data.map_background_color).toBe("#000");
     expect(data.map_center_offset).toEqual({ left: -100, top: 20 });
-    expect(data.map_subdomains).toBe("abc");
     // iiif.url no longer comes from a mapconfig term, so a map_type that is
     // not an image map leaves it unset
     expect(data.iiif).toBeUndefined();
@@ -669,7 +666,6 @@ test("maps the mapconfig service to storymap options fields", () => {
     expect(data.start_at_slide).toBe(2);
     expect(data.language).toBe("de");
     expect(data.calculate_zoom).toBe(false);
-    expect(data.less_bounce).toBe(true);
     expect(data.line_follows_path).toBe(false);
     expect(data.show_lines).toBe(false);
     expect(data.show_history_line).toBe(false);

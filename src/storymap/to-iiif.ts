@@ -229,7 +229,12 @@ const IMAGE_FORMATS: Record<string, string> = {
 const VIDEO_HOSTS = ["youtube.com", "youtu.be", "vimeo.com", "dailymotion.com", "vine.co"];
 const SOUND_HOSTS = ["soundcloud.com"];
 
-/** Keys copied out of navPlace Feature properties, in the order they are written. */
+/**
+ * Keys copied out of navPlace Feature properties, in the order they are
+ * written. This list mirrors the reader's (`src/storymap/iiif.ts`): `popup`
+ * and `audioBadge` are marker presentation with no IIIF vocabulary of their
+ * own, and omitting them here silently drops them on the round trip.
+ */
 const LOCATION_PROPERTIES = [
     "name",
     "zoom",
@@ -238,6 +243,8 @@ const LOCATION_PROPERTIES = [
     "iconSize",
     "image",
     "use_custom_marker",
+    "popup",
+    "audioBadge",
 ] as const;
 
 function isHttpUrl(value: unknown): value is string {
@@ -448,9 +455,6 @@ function buildMapConfig(
     if (storymap.map_center_offset !== undefined) {
         config["storymap:mapCenterOffset"] = storymap.map_center_offset;
     }
-    if (present(storymap.map_subdomains)) {
-        config["storymap:mapSubdomains"] = storymap.map_subdomains;
-    }
     const fontCss: unknown = legacy.font_css || storymap.font_css;
     if (present(fontCss)) {
         config["storymap:fontCss"] = fontCss;
@@ -469,9 +473,6 @@ function buildMapConfig(
     }
     if (storymap.calculate_zoom !== undefined) {
         config["storymap:calculateZoom"] = storymap.calculate_zoom;
-    }
-    if (storymap.less_bounce !== undefined) {
-        config["storymap:lessBounce"] = storymap.less_bounce;
     }
     if (storymap.line_follows_path !== undefined) {
         config["storymap:lineFollowsPath"] = storymap.line_follows_path;

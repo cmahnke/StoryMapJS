@@ -1666,9 +1666,6 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
         if (left !== null && top !== null) data.map_center_offset = { left, top };
     }
 
-    const mapSubdomains = asString(readTerm(config, "mapSubdomains"));
-    if (mapSubdomains !== null) data.map_subdomains = mapSubdomains;
-
     const fontCss = asString(readTerm(config, "fontCss"));
     if (fontCss !== null) data.font_css = fontCss;
 
@@ -1686,9 +1683,6 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
 
     const calculateZoom = asBoolean(readTerm(config, "calculateZoom"));
     if (calculateZoom !== null) data.calculate_zoom = calculateZoom;
-
-    const lessBounce = asBoolean(readTerm(config, "lessBounce"));
-    if (lessBounce !== null) data.less_bounce = lessBounce;
 
     const lineFollowsPath = asBoolean(readTerm(config, "lineFollowsPath"));
     if (lineFollowsPath !== null) data.line_follows_path = lineFollowsPath;

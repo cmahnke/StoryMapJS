@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { manifestToStorymapData } from "../src/storymap/iiif";
 import { StoryMap } from "../src/storymap/StoryMap";
 import { mediaService, tileService } from "../src/storymap/Consent";
@@ -252,6 +252,53 @@ describe('map_type: "none"', () => {
             const el = distanceEl(sm);
             expect(el?.style.display).toBe("");
             expect(el?.textContent).toMatch(/km/);
+        });
+    });
+
+    describe("map_type at runtime", () => {
+        let warnings: string[];
+        let spy: { mockRestore: () => void };
+
+        beforeEach(() => {
+            warnings = [];
+            // eslint-disable-next-line @typescript-eslint/unbound-method
+            const original = console.warn;
+            console.warn = (...args: unknown[]) => {
+                warnings.push(args.map(String).join(" "));
+                original.apply(console, args as []);
+            };
+            spy = { mockRestore: () => (console.warn = original) };
+        });
+
+        afterEach(() => spy.mockRestore());
+
+        it("cannot add a map to a mapless story", () => {
+            const sm = make(storymapData({ map_type: "none" }));
+
+            sm.setMapOption("map_type", "osm");
+
+            expect(warnings.some((w) => w.includes("cannot add or remove"))).toBe(true);
+            expect(sm._map).toBeNull();
+            expect(sm.options.map_type).toBe("none");
+        });
+
+        it("cannot remove a built map, and does not install OSM instead", () => {
+            const sm = make(storymapData({ map_type: "osm" }));
+
+            sm.setMapOption("map_type", "none");
+
+            expect(warnings.some((w) => w.includes("cannot add or remove"))).toBe(true);
+            expect(sm._map).not.toBeNull();
+            expect(sm.options.map_type).toBe("osm");
+        });
+
+        it("normalises a non-string map_type instead of throwing", () => {
+            const sm = make(storymapData({ map_type: "osm" }));
+
+            expect(() => sm.setMapOption("map_type", null)).not.toThrow();
+
+            expect(warnings.some((w) => w.includes("non-string map_type"))).toBe(true);
+            expect(sm.options.map_type).toBe("");
         });
     });
 

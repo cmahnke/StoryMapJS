@@ -803,8 +803,10 @@ class StoryMapBase {
     /**
      * Change a single map option at runtime and apply its effect immediately.
      *
-     * Runtime-changeable options: `map_type` (rebuilds the main + minimap tile
-     * layers, keeping the overview fitted to the marker bounds), `overlays`
+     * Runtime-changeable options: `map_type` (swaps one basemap for another and
+     * rebuilds the main + minimap tile layers, keeping the overview fitted to
+     * the marker bounds; it cannot add or remove a map, and `"none"` and
+     * non-strings are declined), `overlays`
      * (rebuilds the stacked overlay layers), `show_lines`, `line_color`,
      * `line_color_inactive`, `line_weight`, `line_opacity`, `line_dash`,
      * `line_join`, `line_follows_path`, `show_history_line` (restyled
@@ -846,10 +848,31 @@ class StoryMapBase {
      */
     setMapOptions(options: Partial<StorymapOptions>) {
         if (this._disposed) return;
-        mergeData(this.options, options);
+        // `map_type` decides at construction time whether a map exists. The
+        // engine can swap one basemap for another, but it can neither grow a
+        // map onto a mapless story nor remove a built one — "none" has no
+        // basemap branch and would silently install OpenStreetMap, the exact
+        // inverse of its meaning — and a non-string crashes the layer
+        // builder. So both are declined here, loudly, rather than half-applied.
+        let effective = options;
+        if (options.map_type !== undefined) {
+            if (typeof options.map_type !== "string") {
+                console.warn(
+                    `StoryMapJS: setMapOptions ignores a non-string map_type (${String(options.map_type)}); pass "" for the default basemap.`,
+                );
+                effective = { ...options, map_type: "" };
+            } else if (options.map_type === "none" || this._map_disabled) {
+                console.warn(
+                    "StoryMapJS: setMapOptions cannot add or remove a map after construction; map_type is load-time only.",
+                );
+                effective = { ...options };
+                delete effective.map_type;
+            }
+        }
+        mergeData(this.options, effective);
         if (this._map && this._map.options) {
-            mergeData(this._map.options, options);
-            this._map.applyOptions(Object.keys(options));
+            mergeData(this._map.options, effective);
+            this._map.applyOptions(Object.keys(effective));
         }
         if (this.ready) {
             // text color theming follows runtime option changes (issue #177)

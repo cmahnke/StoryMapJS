@@ -28,14 +28,12 @@ and the StoryMap extension context:
         "mapAccessToken": "storymap:mapAccessToken",
         "mapBackgroundColor": "storymap:mapBackgroundColor",
         "mapCenterOffset": "storymap:mapCenterOffset",
-        "mapSubdomains": "storymap:mapSubdomains",
         "fontCss": "storymap:fontCss",
         "callToAction": "storymap:callToAction",
         "callToActionText": "storymap:callToActionText",
         "startAtSlide": "storymap:startAtSlide",
         "language": "storymap:language",
         "calculateZoom": "storymap:calculateZoom",
-        "lessBounce": "storymap:lessBounce",
         "lineFollowsPath": "storymap:lineFollowsPath",
         "showLines": "storymap:showLines",
         "showHistoryLine": "storymap:showHistoryLine",
@@ -96,14 +94,12 @@ what the fixtures reference. Content:
         "mapAccessToken": "storymap:mapAccessToken",
         "mapBackgroundColor": "storymap:mapBackgroundColor",
         "mapCenterOffset": "storymap:mapCenterOffset",
-        "mapSubdomains": "storymap:mapSubdomains",
         "fontCss": "storymap:fontCss",
         "callToAction": "storymap:callToAction",
         "callToActionText": "storymap:callToActionText",
         "startAtSlide": "storymap:startAtSlide",
         "language": "storymap:language",
         "calculateZoom": "storymap:calculateZoom",
-        "lessBounce": "storymap:lessBounce",
         "lineFollowsPath": "storymap:lineFollowsPath",
         "showLines": "storymap:showLines",
         "showHistoryLine": "storymap:showHistoryLine",
@@ -841,7 +837,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `map_type`                   | `service[0].storymap:basemap` (`zoomify` → `iiif`), or `tilejson.tiles` |
 | `map_as_image`               | `service[0].storymap:mapAsImage`                                        |
 | `map_mini`                   | _dropped_ (viewer setting, not part of the exchange format)             |
-| `map_subdomains`             | `service[0].storymap:mapSubdomains`                                     |
+| `map_subdomains`             | _dropped_ (inert, no reader)                                            |
 | `map_access_token`           | `service[0].storymap:mapAccessToken`                                    |
 | `map_background_color`       | `service[0].storymap:mapBackgroundColor`                                |
 | `map_center_offset`          | `service[0].storymap:mapCenterOffset`                                   |
@@ -853,7 +849,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `overlays` (georeference)    | Georeferencing annotation `target` + `body`                             |
 | `zoom_distance`              | _dropped_ (viewer setting)                                              |
 | `calculate_zoom`             | `service[0].storymap:calculateZoom`                                     |
-| `less_bounce`                | `service[0].storymap:lessBounce`                                        |
+| `less_bounce`                | _dropped_ (inert, no reader)                                            |
 | `line_follows_path`          | `service[0].storymap:lineFollowsPath`                                   |
 | `show_lines`                 | `service[0].storymap:showLines`                                         |
 | `show_history_line`          | `service[0].storymap:showHistoryLine`                                   |
