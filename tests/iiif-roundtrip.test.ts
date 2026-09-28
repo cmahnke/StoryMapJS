@@ -28,7 +28,24 @@ const EXAMPLES = join(process.cwd(), "public/examples");
 const MANIFESTS = join(process.cwd(), "public/examples-iiif");
 
 /** Hand-authored: a georeferenced layer is manifest-only, so nothing to convert from. */
-const HAND_AUTHORED = new Set(["georeferenced-layer", "georeferenced-layer-unsupported"]);
+const HAND_AUTHORED = new Set([
+    "georeferenced-layer",
+    "georeferenced-layer-unsupported",
+    "annotated-image",
+]);
+
+/**
+ * Every manifest we ship: the generated ones plus the hand-authored ones.
+ * The sweep tests below must iterate this list, not the directory, so a
+ * stray file landing in public/examples-iiif/ (a one-off CLI run, an editor
+ * backup) cannot be swept into the suite or the validator unnoticed.
+ */
+function shippedManifests(): string[] {
+    return [
+        ...sourceFixtures().map((n) => n + ".json"),
+        ...[...HAND_AUTHORED].map((n) => n + ".json"),
+    ];
+}
 
 /** Canonical JSON, so comparison is structural and ignores key order. */
 function canon(value: unknown): string {
@@ -393,8 +410,7 @@ describe("context agreement", () => {
         const NAVPLACE = "navplace/context.json";
         const P3 = "presentation/3/context.json";
         const wrong: string[] = [];
-        for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
-            if (!file.endsWith(".json")) continue;
+        for (const file of shippedManifests()) {
             const context = (
                 JSON.parse(
                     readFileSync(join(process.cwd(), "public/examples-iiif", file), "utf8"),
@@ -414,8 +430,7 @@ describe("context agreement", () => {
     test("every manifest that uses navPlace properties names the context", () => {
         const CONTEXT_URL = "https://cmahnke.github.io/StoryMapJS/navplace-properties.json";
         const missing: string[] = [];
-        for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
-            if (!file.endsWith(".json")) continue;
+        for (const file of shippedManifests()) {
             const raw = readFileSync(join(process.cwd(), "public/examples-iiif", file), "utf8");
             if (!raw.includes('"properties"')) continue;
             if (!raw.includes(CONTEXT_URL)) missing.push(file);
@@ -441,8 +456,7 @@ describe("context agreement", () => {
             "storymap:mapType",
         ];
         const offenders: string[] = [];
-        for (const file of readdirSync(join(process.cwd(), "public/examples-iiif"))) {
-            if (!file.endsWith(".json")) continue;
+        for (const file of shippedManifests()) {
             const raw = readFileSync(join(process.cwd(), "public/examples-iiif", file), "utf8");
             for (const term of DROPPED) {
                 if (raw.includes(`"${term}"`)) offenders.push(`${file} still carries ${term}`);

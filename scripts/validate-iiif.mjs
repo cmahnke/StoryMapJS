@@ -4,7 +4,7 @@
 // Usage: node scripts/validate-iiif.mjs [files...]
 // With no arguments, validates all public/examples-iiif/*.json fixtures.
 import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const VALIDATOR_URL = "https://presentation-validator.iiif.io/validate?version=3.0&format=json";
 const REQUEST_DELAY_MS = 500;
@@ -81,7 +81,7 @@ async function validate(manifest, attempts = 3) {
 
 let failed = 0;
 for (const file of files) {
-    const name = file.split("/").pop();
+    const name = basename(file);
     let manifest;
     try {
         manifest = JSON.parse(readFileSync(file, "utf8"));
@@ -120,7 +120,7 @@ for (const file of files) {
     await new Promise((resolve) => setTimeout(resolve, REQUEST_DELAY_MS));
 }
 
-const notCovered = files.filter((f) => EXTENSION_NOT_IN_BASE_SCHEMA.has(f.split("/").pop())).length;
+const notCovered = files.filter((f) => EXTENSION_NOT_IN_BASE_SCHEMA.has(basename(f))).length;
 console.log(
     `\n${files.length - failed - notCovered}/${files.length - notCovered} manifest(s) passed the official IIIF validator` +
         (notCovered > 0 ? `, ${notCovered} not covered by the base schema.` : "."),

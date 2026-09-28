@@ -5,11 +5,12 @@
 // Usage: node scripts/convert-to-iiif.mjs [files...]
 // With no arguments, converts all public/examples/*.json fixtures.
 //
-// Every fixture in public/examples-iiif/ is generated here except
-// georeferenced-layer.json and georeferenced-layer-unsupported.json, which
-// are hand-authored: a georeferenced layer is a manifest-only feature
-// (storymap JSON cannot express ground control points), so there is nothing
-// to convert from.
+// Every fixture in public/examples-iiif/ is generated here except the three
+// hand-authored ones — georeferenced-layer.json,
+// georeferenced-layer-unsupported.json (a georeferenced layer is a
+// manifest-only feature; storymap JSON cannot express ground control points,
+// so there is nothing to convert from) and annotated-image.json (annotation
+// stops only exist on the manifest side).
 //
 // The mapping itself is **not** here: it is the library's
 // `storymapToManifest()` (src/storymap/to-iiif.ts), the counterpart of the
@@ -25,7 +26,7 @@
 // stripping, which is on by default from Node 22.18 and Node 23.6; `npm run
 // convert:iiif` passes `--experimental-strip-types` for Node 22.6-22.17.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { basename, extname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { storymapToManifest } from "../src/storymap/to-iiif.ts";
 
@@ -48,22 +49,45 @@ function main() {
     }
 
     const outDir = join(process.cwd(), "public/examples-iiif");
-    mkdirSync(outDir, { recursive: true });
 
-    let converted = 0;
+    // Read and convert everything before writing anything: a failure on file
+    // 2 must not leave file 1 on disk, and two inputs with the same basename
+    // (`one/x.json`, `two/x.json`) would otherwise overwrite each other
+    // silently — both would print ✓ for a single surviving output.
+    const planned = [];
+    const seen = new Map();
+    let failed = false;
     for (const file of files) {
-        const name = file
-            .split("/")
-            .pop()
-            .replace(/\.json$/, "");
-        const legacy = JSON.parse(readFileSync(file, "utf8"));
-        const manifest = storymapToManifest(name, legacy);
+        // basename, not a split on "/": a Windows path would otherwise become
+        // a filename containing backslashes and a drive letter.
+        const name = basename(file, extname(file));
         const outPath = join(outDir, `${name}.json`);
+        if (seen.has(outPath)) {
+            console.error(`✗ ${file}: writes the same ${name}.json as ${seen.get(outPath)}`);
+            failed = true;
+            continue;
+        }
+        seen.set(outPath, file);
+        try {
+            const legacy = JSON.parse(readFileSync(file, "utf8"));
+            const manifest = storymapToManifest(name, legacy);
+            planned.push({ outPath, manifest });
+        } catch (err) {
+            console.error(`✗ ${file}: ${err instanceof Error ? err.message : err}`);
+            failed = true;
+        }
+    }
+    if (failed) {
+        process.exitCode = 1;
+        return;
+    }
+
+    mkdirSync(outDir, { recursive: true });
+    for (const { outPath, manifest } of planned) {
         writeFileSync(outPath, `${JSON.stringify(manifest, null, 4)}\n`);
-        converted++;
         console.log(`✓ ${outPath} (${manifest.items.length} canvas(es))`);
     }
-    console.log(`Converted ${converted} storymap(s) to ${outDir}/`);
+    console.log(`Converted ${planned.length} storymap(s) to ${outDir}/`);
 }
 
 if (invokedDirectly) {

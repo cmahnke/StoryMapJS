@@ -654,4 +654,123 @@ describe("storymapToManifest: resilience", () => {
         );
         expect(manifest.items[0]?.["storymap:mediaSizes"]).toBe("100vw");
     });
+
+    test("non-object slides are skipped, not painted or crashed on", () => {
+        // A hand-built document can carry anything here. null used to throw
+        // a raw TypeError on slide.text; 42 painted an empty canvas.
+        const manifest = storymapToManifest("junk", {
+            storymap: {
+                slides: [null, 42, { text: { headline: "Real", text: "" } }] as unknown as never[],
+            },
+        });
+        expect(manifest.items).toHaveLength(1);
+    });
+
+    test("a non-string media.url emits an empty body, not the caption", () => {
+        // Painting the caption as the body claims it IS the content — and the
+        // summary already carries it, so the reader would read it back as
+        // media.url, silently changing its type.
+        const manifest = storymapToManifest("bad-url", {
+            storymap: {
+                slides: [{ text: { text: "<p>hello</p>" }, media: { url: 42 } } as never],
+            },
+        });
+        expect(annotation(manifest, 0).body).toEqual({
+            type: "TextualBody",
+            format: "text/html",
+            value: "",
+        });
+    });
+
+    test("a malformed georeference is not emitted", () => {
+        // A string width or an infinite height would reach the annotation
+        // target, which declares numbers — on the branch the validator
+        // whitelists out, so nothing downstream would catch it.
+        for (const georeference of [
+            { url: "https://iiif.example.org/s", width: "10", height: 100 },
+            { url: "https://iiif.example.org/s", width: 10, height: Infinity },
+            { url: "https://iiif.example.org/s", width: 0, height: 100 },
+        ]) {
+            const manifest = storymapToManifest("bad-geo", {
+                storymap: {
+                    overlays: [{ georeference } as never],
+                    slides: [{ text: { headline: "One" } }],
+                },
+            });
+            const canvas = manifest.items[0] as unknown as { items: { items: unknown[] }[] };
+            expect(
+                canvas.items[0].items.filter(
+                    (entry) => (entry as { motivation?: string }).motivation === "georeferencing",
+                ),
+            ).toEqual([]);
+        }
+    });
+
+    test("an infinite coordinate does not reach navPlace", () => {
+        const manifest = storymapToManifest("inf", {
+            storymap: {
+                slides: [{ location: { lat: Infinity, lon: 10 } }] as never[],
+            },
+        });
+        expect(manifest.items[0]?.navPlace).toBeUndefined();
+    });
+
+    test("a .constructor URL is not an Image", () => {
+        // A bare object lookup hits Object.prototype, which is truthy.
+        const manifest = storymapToManifest("ctor", {
+            storymap: { slides: [{ media: { url: "https://example.org/a.constructor" } }] },
+        });
+        expect(annotation(manifest, 0).body).toEqual({
+            id: "https://example.org/a.constructor",
+            type: "Text",
+            format: "text/html",
+        });
+    });
+
+    test("each manifest gets its own @context array", () => {
+        const a = storymapToManifest("a", { storymap: { slides: [] } });
+        const b = storymapToManifest("b", { storymap: { slides: [] } });
+        expect(a["@context"]).not.toBe(b["@context"]);
+        expect(a["@context"]).toEqual(b["@context"]);
+        (a["@context"] as string[]).push("BOGUS");
+        expect(b["@context"]).not.toContain("BOGUS");
+    });
+
+    test("an overlay with map_type and georeference is emitted once", () => {
+        const manifest = storymapToManifest("dual", {
+            storymap: {
+                overlays: [
+                    {
+                        map_type: "osm:standard",
+                        georeference: {
+                            url: "https://iiif.example.org/s",
+                            width: 2000,
+                            height: 1500,
+                            body: { type: "FeatureCollection", features: [] },
+                        },
+                    },
+                ],
+                slides: [{ text: { headline: "One" } }],
+            },
+        });
+        // the georeference rides the annotation, not the service entry
+        const overlays = (
+            manifest.service?.[0] as unknown as { "storymap:overlays"?: Record<string, unknown>[] }
+        )?.["storymap:overlays"];
+        expect(overlays?.[0]).not.toHaveProperty("georeference");
+        const canvas = manifest.items[0] as unknown as {
+            items: { items: { motivation?: string }[] }[];
+        };
+        expect(
+            canvas.items[0].items.filter((entry) => entry.motivation === "georeferencing"),
+        ).toHaveLength(1);
+    });
+
+    test("a non-string map_type is coerced before writing", () => {
+        const manifest = storymapToManifest("num", {
+            storymap: { map_type: 5, slides: [] } as never,
+        });
+        const service = manifest.service?.[0] as unknown as Record<string, unknown>;
+        expect(service["storymap:basemap"]).toBe("5");
+    });
 });

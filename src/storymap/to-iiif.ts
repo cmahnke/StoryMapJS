@@ -209,12 +209,15 @@ const STORYMAP_CONTEXT = "https://cmahnke.github.io/StoryMapJS/context.json";
 // the properties one describes the terms inside the navPlace Feature bag, which
 // §3.2 allows only via "a registered IIIF API extension or a local linked data
 // context" — there is no extension for marker presentation, so it is local.
-const CONTEXTS = [
+// Frozen, and copied per manifest below: this array used to be handed out by
+// reference, so a host mutating one manifest's @context corrupted every later
+// call in the process.
+const CONTEXTS: readonly string[] = Object.freeze([
     "http://iiif.io/api/extension/navplace/context.json",
     "http://iiif.io/api/presentation/3/context.json",
     `${STORYMAP_CONTEXT.replace(/context\.json$/, "")}navplace-properties.json`,
     STORYMAP_CONTEXT,
-];
+]);
 
 const IMAGE_FORMATS: Record<string, string> = {
     jpg: "image/jpeg",
@@ -253,7 +256,9 @@ function isHttpUrl(value: unknown): value is string {
 
 function classifyMediaUrl(url: string): { type: string; format?: string } {
     const ext = url.split(/[?#]/)[0].split(".").pop()?.toLowerCase();
-    if (ext && IMAGE_FORMATS[ext]) {
+    // Own-property check: a bare lookup hits Object.prototype, so a URL
+    // ending in `.constructor` (or `.__proto__`) classifies as an Image.
+    if (ext && Object.hasOwn(IMAGE_FORMATS, ext)) {
         return { type: "Image", format: IMAGE_FORMATS[ext] };
     }
     let host: string;
@@ -323,7 +328,12 @@ export function storymapToManifest(name: string, legacy: StorymapDocument): Stor
     // document is a `Partial<StorymapData>`; the two are the same thing at
     // runtime and every field below is read the way the reader reads one.
     const storymap = (legacy.storymap ?? {}) as Partial<StorymapData>;
-    const slides = asArray<StorymapSlide>(storymap.slides);
+    // A hand-built document can carry anything in this array. A non-object
+    // has no text, no media and no location, so it is skipped rather than
+    // painted as an empty canvas — or crashing on `slide.text`.
+    const slides = asArray<StorymapSlide>(storymap.slides).filter(
+        (slide): slide is StorymapSlide => asRecord(slide) !== null,
+    );
     const isZoomify = storymap.map_type === "zoomify";
     const isImageMap = isZoomify || storymap.map_type === "iiif";
     const manifestId = `https://example.org/storymap/${name}`;
@@ -339,7 +349,7 @@ export function storymapToManifest(name: string, legacy: StorymapDocument): Stor
     );
 
     const manifest: StorymapManifest = {
-        "@context": CONTEXTS,
+        "@context": [...CONTEXTS],
         id: manifestId,
         type: "Manifest",
         label: languageMap(name),
@@ -437,10 +447,13 @@ function buildMapConfig(
         // thing, and `mapType` used to be both. A keyword the viewer knows how
         // to configure is a `storymap:basemap`; anything with a {z} in it is
         // TileJSON's `tiles`, which is where a tile service belongs (§2.9).
-        if (String(mapType).includes("{z}")) {
-            config.tilejson = { tiles: mapType };
+        // The check coerces but the write must too: a non-string map_type
+        // would otherwise land verbatim in a slot the reader types as string.
+        const mapTypeString = String(mapType);
+        if (mapTypeString.includes("{z}")) {
+            config.tilejson = { tiles: mapTypeString };
         } else {
-            config["storymap:basemap"] = mapType;
+            config["storymap:basemap"] = mapTypeString;
         }
     }
     if (storymap.map_as_image !== undefined) {
@@ -515,8 +528,20 @@ function buildMapConfig(
     }
     const overlays = asArray<StorymapOverlayLayer>(storymap.overlays);
     if (overlays.length > 0) {
-        // entries without a map_type are dropped on the way back in
-        config["storymap:overlays"] = overlays.filter((entry) => entry && present(entry.map_type));
+        // entries without a map_type are dropped on the way back in; an
+        // entry carrying both map_type and georeference keeps only the
+        // former here, because the georeference is also emitted as an
+        // annotation — and the reader would otherwise return two overlays
+        // for one source layer.
+        config["storymap:overlays"] = overlays
+            .filter((entry) => entry && present(entry.map_type))
+            .map((entry) => {
+                if (!entry.georeference) {
+                    return entry;
+                }
+                const { georeference: _dropped, ...rest } = entry;
+                return rest;
+            });
     }
     return config;
 }
@@ -609,7 +634,27 @@ function buildCanvas(
 function hasGeoreference(
     entry: StorymapOverlayLayer,
 ): entry is StorymapOverlayLayer & { georeference: StorymapGeoreference } {
-    return Boolean(entry && entry.georeference);
+    // Truthiness alone lets a string width or an Infinity height reach the
+    // annotation target, which declares them as numbers — on the one branch
+    // the validator whitelists out. Mirror the reader's shape check.
+    if (!entry || !entry.georeference) {
+        return false;
+    }
+    const { url, width, height } = entry.georeference as {
+        url?: unknown;
+        width?: unknown;
+        height?: unknown;
+    };
+    return (
+        typeof url === "string" &&
+        url !== "" &&
+        typeof width === "number" &&
+        typeof height === "number" &&
+        Number.isFinite(width) &&
+        Number.isFinite(height) &&
+        width > 0 &&
+        height > 0
+    );
 }
 
 function buildGeoreferencing(
@@ -781,6 +826,15 @@ function buildBody(slide: StorymapSlide, isImageMap: boolean): StorymapManifestC
         }
         return body;
     }
+    // A media block with a wrong-typed url is not a text-only slide: painting
+    // the caption here would claim it IS the content (and the summary already
+    // carries it, so the reader would read it back as media.url). Emit an
+    // empty body instead of a plausible lie. An empty string is not
+    // wrong-typed — it is the idiomatic "no media" marker — so it keeps the
+    // old path, as does a missing url.
+    if (url !== undefined && url !== null && url !== "" && typeof url !== "string") {
+        return { type: "TextualBody", format: "text/html", value: "" };
+    }
     // Text-only slide (or a media value that is not a URL): paint the HTML.
     const html = typeof url === "string" && url !== "" ? url : slide.text?.text || "";
     return {
@@ -833,7 +887,17 @@ function buildNavPlace(
     slide: StorymapSlide,
 ): StorymapManifestFeatureCollection | null {
     const location = slide.location || {};
-    if (typeof location.lat !== "number" || typeof location.lon !== "number") {
+    // typeof narrows for the compiler, isFinite for the runtime: a typeof
+    // check alone lets Infinity through, which serialises as null — invalid
+    // GeoJSON the reader then drops silently. Same guard as the bbox and
+    // region paths.
+    const { lat, lon } = location;
+    if (
+        typeof lat !== "number" ||
+        typeof lon !== "number" ||
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lon)
+    ) {
         return null;
     }
     const properties: Record<string, unknown> = {};
@@ -849,7 +913,7 @@ function buildNavPlace(
             {
                 id: `${canvasId}/navplace/feature/1`,
                 type: "Feature",
-                geometry: { type: "Point", coordinates: [location.lon, location.lat] },
+                geometry: { type: "Point", coordinates: [lon, lat] },
                 properties,
             },
         ],
