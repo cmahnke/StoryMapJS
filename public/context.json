@@ -4,6 +4,7 @@
         "storymap": "https://christianmahnke.de/iiif/storymap#",
         "mapAsImage": "storymap:mapAsImage",
         "basemap": "storymap:basemap",
+        "tilejson": "storymap:tilejson",
         "mapAccessToken": "storymap:mapAccessToken",
         "mapBackgroundColor": "storymap:mapBackgroundColor",
         "mapCenterOffset": "storymap:mapCenterOffset",

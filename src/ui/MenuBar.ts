@@ -230,7 +230,12 @@ class MenuBarBase {
         if (this.collapsed) {
             this.collapsed = false;
             this.show();
-            this._el.button_overview.style.display = "inline";
+            // Restore from the option, not unconditionally: a story with
+            // show_overview false (including every mapless story, which the
+            // viewer forces off) would otherwise resurrect a dead overview
+            // button on every un-collapse.
+            this._el.button_overview.style.display =
+                this.options.show_overview === false ? "none" : "inline";
             // `collapsed` is the authoritative signal: `y` is the menubar
             // position, and reading it back as a map height made the
             // un-collapse pass shrink the map to the menubar's pixel height.
@@ -324,7 +329,10 @@ class MenuBarBase {
                 Language.buttons.fullscreen + " <span class='vco-icon-resize-full'></span>";
         }
 
-        if (this.options.layout === "landscape") {
+        if (this.options.layout === "landscape" || this.options.map_type === "none") {
+            // Landscape has no map split to collapse; a mapless story has no
+            // map at all, so the toggle would flip its label while nothing
+            // on screen changes.
             this._el.button_collapse_toggle.style.display = "none";
         }
     }

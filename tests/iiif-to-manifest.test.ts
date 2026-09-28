@@ -773,4 +773,22 @@ describe("storymapToManifest: resilience", () => {
         const service = manifest.service?.[0] as unknown as Record<string, unknown>;
         expect(service["storymap:basemap"]).toBe("5");
     });
+
+    test("a wrong-typed mapconfig term is copied, then dropped on read-back", () => {
+        // The writer is a faithful copy of the storymap — even schema-invalid
+        // values — and the reader narrows each term with asString/asNumber/
+        // asBoolean, which return null on a type mismatch. So line_weight
+        // "2" survives the manifest but not the round trip. That input was
+        // already invalid per the schema; this pins the behaviour as a
+        // decision rather than leaving it an accident.
+        const manifest = storymapToManifest("mistyped", {
+            storymap: { line_weight: "2", slides: [] } as never,
+        });
+        const service = manifest.service?.[0] as unknown as Record<string, unknown>;
+        expect(service["storymap:lineWeight"]).toBe("2");
+
+        const data = manifestToStorymapData(manifest) as { line_weight?: unknown };
+        expect(data.line_weight).toBeUndefined();
+        expect("line_weight" in data).toBe(false);
+    });
 });

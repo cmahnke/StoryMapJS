@@ -277,6 +277,8 @@ describe("context agreement", () => {
 
         // Derived from what the converter actually produces, not from a list
         // in the source — otherwise the two could agree while both are wrong.
+        // The one bare key the writer emits, tilejson, resolves through its
+        // context declaration to storymap:tilejson, so it counts as that IRI.
         const emitted = new Set<string>();
         const walk = (node: unknown) => {
             if (Array.isArray(node)) {
@@ -286,6 +288,7 @@ describe("context agreement", () => {
             if (node === null || typeof node !== "object") return;
             for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
                 if (key.startsWith("storymap:")) emitted.add(key);
+                if (key === "tilejson") emitted.add("storymap:tilejson");
                 walk(value);
             }
         };

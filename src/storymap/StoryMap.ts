@@ -263,11 +263,13 @@ class StoryMapBase {
         // Ready
         this.ready = false;
 
-        // DOM ELEMENTS
+        // DOM ELEMENTS. Only map may legitimately stay null: a mapless story
+        // never builds the pane, so unlike its siblings it gets a real null
+        // rather than a stub that would read truthy before _initLayout runs.
         this._el = {
             container: {} as HTMLElement,
             storyslider: {} as HTMLElement,
-            map: {} as HTMLElement,
+            map: null,
             menubar: {} as HTMLElement,
         };
 
@@ -1206,10 +1208,9 @@ class StoryMapBase {
             // slider takes the whole height below the menubar, and every
             // map-derived option is set to something the layout code below
             // does not need. Nothing is constructed - no ol/Map, no tile
-            // layer, no consent ask.
+            // layer, no consent ask. storyslider_height is set by the
+            // _updateDisplay call below, so assigning it here would be dead.
             this.options.map_height = 0;
-            this.options.storyslider_height =
-                this.options.height - this._el.menubar.offsetHeight - 1;
             // the overview control is a map control: with no map there is
             // nothing for it to zoom out to, so it is hidden the same way
             // `show_overview: false` hides it
