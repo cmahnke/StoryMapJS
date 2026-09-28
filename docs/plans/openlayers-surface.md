@@ -17,6 +17,30 @@
 > the _pre-fix_ code (e.g. `calculate_zoom` writing into `location.zoom`),
 > so some of them no longer match `src/` by design. Elsewhere, prefer the
 > symbol names, which are the stable handle.
+>
+> **What did not ship as written.** Four claims in this plan turned out to
+> be wrong, and the code is right in each case, so the plan stays a record
+> and these stand corrected here:
+>
+> - §1.3 said `imageready` _replaces_ seven `source.once("change")` sites.
+>   It was five sites before and five after — the event was added alongside
+>   them, and the count was never seven. The zoomify _base_ layer did not
+>   fire the event at all until a later fix; only its minimap did.
+> - §2 C1 prescribed `view.setExtent()` in place of reconstructing the
+>   `View` for `map_bbox`. That method does not exist on `ol/View`, and
+>   `extent`/`constrainOnlyCenter` are constructor-only inputs captured once
+>   (`View.js` keeps exactly three observables: `center`, `resolution`,
+>   `rotation`), so a soft extent constraint cannot be applied to a live
+>   view. The faithful reconstruction that shipped is the only correct
+>   implementation.
+> - §1.1 named bare OL exports (`Map`, `View`, `Layer`, …). They shipped as
+>   `OlMap`, `OlView`, `OlLayer`, … — a deliberate rename against consumer
+>   collisions, so the plan's `const view: View` example does not typecheck
+>   as written. Layer accessors are likewise `Layer`-typed throughout
+>   rather than `TileLayer`-typed.
+> - §1.4 said the `Map.show()`/`hide()` stubs go and §1.2 implied
+>   `getOverlayCount()` on `StoryMap`. The stubs were deprecated instead of
+>   removed, and `getOverlayCount()` landed later, on the engine first.
 
 Goal: make `storymap.map` a genuinely usable, typed OpenLayers map —
 accessors for every internal object we keep private, events for image

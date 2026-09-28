@@ -190,7 +190,8 @@ export default class OpenLayers extends Map {
             this._addTileLayer();
         }
 
-        // Create Overall Connection Line
+        // Create Overall Connection Line (reserved z-range 10/11 for the
+        // route lines; see the stack-order note at _addTileLayer)
         this._line = this._createLine();
         this._line.setStyle(this._lineStyle(this.options.line_color_inactive));
         this._addLineToMap(this._line);
@@ -437,6 +438,8 @@ export default class OpenLayers extends Map {
             if (!layer) {
                 return;
             }
+            // reserved z-range 1..n for stacked overlays (base tiles 0,
+            // route lines 10/11; see _addTileLayer)
             layer.setZIndex(1 + i);
             if (entry.opacity !== undefined) {
                 layer.setOpacity(entry.opacity);

@@ -86,10 +86,16 @@ Added
   `getMinimap()`, `getLine()`/`getLineActive()`, `getMarker(n)`/`getMarkers()`
   and `setExtraAttributions()`; underscore internals are no longer needed
 - `tile_source_factory` may return a full `ol/layer/Layer`, not only a source,
-  so a custom layer can carry its own opacity, z-index and events
-- `imageready` event (`{ source, kind, layer }`) fired once an image source is
-  actually ready, and re-fired on the storymap: `loaded` can fire before the
-  imagery exists
+  so a custom layer can carry its own opacity, z-index and events. A layer
+  without a source (Allmaps' `WarpedMapLayer`) passes through untouched —
+  the engine fields are `Layer`-typed and source reads go through a
+  capability check instead of assuming a tile source
+- `imageready` event (`{ source, kind, layer }`, now a typed
+  `ImagereadyPayload` export with `kind: "iiif" | "zoomify" | "tiles"`)
+  fired once an image source is actually ready, and re-fired on the
+  storymap: `loaded` can fire before the imagery exists. The zoomify base
+  layer never announced itself — only its minimap did — so a host waiting
+  on the event hung on legacy stories; it fires now
 - `storymap.dispose()` releases timers, the resize observer, window/document
   listeners, running slide animations, the slider and the OpenLayers map
 - `isImageSpace()` tells an IIIF image presented as a picture of the world

@@ -168,7 +168,7 @@ call syntax changes:
 
 | Leaflet                                    | OpenLayers                                                                |
 | ------------------------------------------ | ------------------------------------------------------------------------- |
-| `map.getCenter()`                          | `map.getView().getCenter()`                                               |
+| `map.getCenter()`                          | `map.getView().getCenter()` — panel-shifted, see below                    |
 | `map.getZoom()`                            | `map.getView().getZoom()`                                                 |
 | `map.setView(c, z)` / `map.fitBounds(b)`   | `map.getView().fit(extent, { size: map.getSize() })`                      |
 | `map.panTo(c)` / `map.flyTo(c, z)`         | `map.getView().animate({ center: c, duration: 300 })`                     |
@@ -180,7 +180,15 @@ call syntax changes:
 | `map.getPane("overlayPane")`               | `map.getOverlayContainer()` (markers are DOM siblings, not OL features)   |
 | `map.invalidateSize()`                     | `map.updateSize()`                                                        |
 | `map.remove()`                             | `map.setTarget(undefined); map.dispose();` (or `storymap.dispose()`)      |
-| `map.options.crs` / `map.getPixelOrigin()` | `map.getView().getProjection()` / `map.getPixelFromCoordinate(coord)`     |
+
+The exposed center is deliberately panel-shifted: in landscape the view is
+offset so the visible map sits left of the slide panel, which means
+`getView().getCenter()` does **not** equal the current slide's location.
+That is a display concern, not a data one — read the location from the
+slide, not from the view. There is intentionally no offset-aware getter;
+an earlier `_getMapCenter(offset)` parameter promised that correction and
+never applied it, so it was removed rather than left to mislead.
+| `map.options.crs` / `map.getPixelOrigin()` | `map.getView().getProjection()` / `map.getPixelFromCoordinate(coord)` |
 
 Marker positions are still DOM elements, so `marker.getLatLng()` has no
 equivalent — read the slide data (`storymap.data.stlides[n].location`) or use
@@ -229,7 +237,16 @@ viewer keeps internally is available through accessors on `storymap` (and on
 
 `tile_source_factory` may return a full `ol/layer/Layer` (not just a source)
 anywhere a layer is built, so custom layers can carry their own opacity,
-z-index and events.
+z-index and events. A custom layer without a source (Allmaps'
+`WarpedMapLayer`) passes through untouched; source reads go through a
+capability check, so it simply skips the tile-grid fits.
+
+The viewer reserves three z-index ranges and custom layers should stay out
+of them: **0** for the base tiles, **1..n** for the stacked `overlays[]`
+entries in order, and **10/11** for the full and travelled route lines. A
+custom layer with no explicit z-index lands wherever OpenLayers puts it,
+which is above the lines — set one explicitly if the layer must sit inside
+the stack.
 
 ### Image space vs. georeferenced
 
