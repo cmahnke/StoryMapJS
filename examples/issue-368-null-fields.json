@@ -1,0 +1,60 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Null fields",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "No location",
+                    "text": "This slide has no location at all."
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Null location",
+                    "text": "This slide has a null location."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Normal",
+                    "text": "A normal slide."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6,
+                    "line": true
+                }
+            }
+        ]
+    }
+}

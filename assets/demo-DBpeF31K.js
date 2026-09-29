@@ -1,0 +1,1 @@
+import"./modulepreload-polyfill-P2Xu9kJm.js";import{t as e}from"./main-DXalctuR.js";function t(e){document.title=`StoryMapJS: `+e.title}window.storymap=new e(`storymap-embed`,`./demo.json`,{},{title:t});

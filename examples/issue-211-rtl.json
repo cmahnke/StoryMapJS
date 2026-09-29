@@ -1,0 +1,44 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "מסלול בנגב",
+                    "text": "סקירה כללית"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "באר שבע",
+                    "text": "העיר הגדולה בנגב."
+                },
+                "location": {
+                    "lat": 31.25,
+                    "lon": 34.79
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "עין גדי",
+                    "text": "נווה מדבר על חוף ים המלח."
+                },
+                "location": {
+                    "lat": 31.45,
+                    "lon": 35.39
+                }
+            }
+        ]
+    }
+}

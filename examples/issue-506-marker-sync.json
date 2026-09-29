@@ -1,0 +1,77 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Marker sync",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Paris",
+                    "text": "First point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Rome",
+                    "text": "Second point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 41.9,
+                    "lon": 12.49,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Madrid",
+                    "text": "Third point."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 40.42,
+                    "lon": -3.7,
+                    "zoom": 6,
+                    "line": true
+                }
+            }
+        ]
+    }
+}

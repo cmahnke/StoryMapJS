@@ -1,0 +1,592 @@
+/*
+ * Site chrome for the landing/docs pages (index.html, demo.html, docs/*).
+ *
+ * Recreates the Knight Lab product page look with our own SCSS (no Knight
+ * Lab assets). It shares nothing with the StoryMap widget styles (which
+ * live behind the .vco-* namespace and, on the landing page, inside the
+ * demo iframe). Everything is scoped under .sm-site so the chrome can
+ * never collide with the widget CSS.
+ */
+.sm-site {
+  margin: 0;
+  font-family: georgia, "Times New Roman", times, serif;
+  font-size: 18px;
+  line-height: 1.618;
+  color: #222;
+  background-color: #fff;
+}
+.sm-site *,
+.sm-site *::before,
+.sm-site *::after {
+  box-sizing: border-box;
+}
+.sm-site a {
+  color: #13a4df;
+}
+.sm-site a:hover {
+  color: #df4e13;
+}
+.sm-site code,
+.sm-site pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+}
+.sm-site code {
+  padding: 1px 5px;
+}
+.sm-site pre {
+  padding: 12px 16px;
+  overflow-x: auto;
+}
+.sm-site pre code {
+  padding: 0;
+  background: none;
+}
+.sm-site h2 {
+  font-family: georgia, "Times New Roman", times, serif;
+  font-style: italic;
+  font-size: 2.55rem;
+  font-weight: 700;
+  margin: 1.3rem 0 0.6rem;
+}
+.sm-site h3 {
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 1.44rem;
+  font-weight: 700;
+  margin: 1rem 0 0.4rem;
+}
+.sm-site h5 {
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+}
+.sm-site .product-logo {
+  font-family: georgia, "Times New Roman", times, serif;
+  font-style: italic;
+  font-weight: normal;
+  font-size: 3.82rem;
+  color: #222;
+  margin: 0;
+}
+@media (width <= 767px) {
+  .sm-site .product-logo {
+    font-size: 2.55rem;
+  }
+}
+.sm-site .product-logo span {
+  display: inline-block;
+  position: relative;
+  vertical-align: text-top;
+  overflow: hidden;
+  background-color: #13a4df;
+  border-radius: 4px;
+  color: #f3fbfe;
+  font-size: 0.4em;
+  font-style: normal;
+  line-height: 0.5em;
+  margin: 5px 5px 0 -10px;
+  padding: 0.4em 0.45em 0.3em;
+  text-shadow: 0 0 0 #108cbe, -1px 1px 0 #108cbe, -2px 2px 0 #108cbe, -3px 3px 0 #108cbe;
+}
+.sm-site .product-logo.product-logo-small {
+  font-size: 2.55rem;
+}
+.sm-site .product-tagline {
+  font-family: georgia, "Times New Roman", times, serif;
+  font-style: italic;
+  color: #df4e13;
+  margin: 0;
+}
+.sm-site .button {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  padding: 0.89rem 1.78rem 0.94rem;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #646464;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.89rem;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.15), 0 2px 2px 0 rgba(0, 0, 0, 0.14);
+}
+.sm-site .button:hover {
+  background-color: #fdfdfd;
+  border-color: #d7d7d7;
+  color: #646464;
+  text-decoration: none;
+}
+.sm-site .button:focus-visible {
+  outline: 2px solid #13a4df;
+  outline-offset: 2px;
+}
+.sm-site .button.button-dark {
+  background-color: #484848;
+  border-color: #3b3b3b;
+  color: #e1e1e1;
+}
+.sm-site .button.button-dark:hover {
+  background-color: rgb(20.2352941176%, 20.2352941176%, 20.2352941176%);
+  color: #fff;
+}
+.sm-site .button.button-secondary {
+  background-color: #24a549;
+  border-color: #1f9040;
+  color: #fdfffd;
+  font-weight: 600;
+}
+.sm-site .button.button-secondary:hover {
+  background-color: rgb(11.9683933275%, 54.8551360843%, 24.2692420252%);
+  border-color: #1f9040;
+  color: #fff;
+}
+.sm-site .button.button-large {
+  padding: 1.11rem 2.22rem;
+  font-size: 1.11rem;
+}
+.sm-site .button.button-small {
+  padding: 0.5rem 1.6rem;
+  font-size: 0.7rem;
+}
+.sm-site .navbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 1rem;
+}
+.sm-site .navbar ul {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sm-site .navbar ul.nav-right {
+  margin-left: auto;
+}
+.sm-site .navbar li {
+  display: block;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+.sm-site .navbar .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0.5rem 1rem;
+}
+.sm-site .navbar .logo a {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+.sm-site .navbar .logo a:hover {
+  color: #df4e13;
+}
+.sm-site .navbar .logo a span {
+  color: #df4e13;
+}
+.sm-site .navbar .button {
+  margin: 0;
+  border-width: 1px;
+  border-width: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0.9rem 1rem;
+}
+.sm-site .navbar .button.button-dark {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.sm-site .navbar .button-active {
+  background-color: #d4d4d4;
+  color: #222;
+}
+.sm-site .navbar .button-active:hover {
+  background-color: #d4d4d4;
+}
+.sm-site .navbar-dark {
+  background-color: #484848;
+}
+@media (width <= 767px) {
+  .sm-site .navbar-dark ul.nav-right {
+    display: none;
+  }
+}
+.sm-site .header-product {
+  padding: 2rem 2rem 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid #b8b8b8;
+  background-color: #f0f0f0;
+  text-align: center;
+}
+.sm-site .header-product .product-tagline {
+  font-size: 1.92rem;
+  margin-bottom: 1.5rem;
+}
+@media (width <= 767px) {
+  .sm-site .header-product .product-tagline {
+    font-size: 1.2rem;
+  }
+}
+.sm-site .header-product.header-product-docs {
+  padding: 0;
+}
+.sm-site .navbar-subnav {
+  margin-top: 1rem;
+  background-color: #f0f0f0;
+}
+@media (width <= 767px) {
+  .sm-site .navbar-subnav {
+    display: none;
+  }
+}
+.sm-site .navbar-subnav .button {
+  border-color: #d4d4d4;
+  box-shadow: none;
+  color: #646464;
+}
+.sm-site .navbar-subnav .button:hover {
+  color: #222;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+.sm-site .container {
+  max-width: 992px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.sm-site .container-fluid {
+  max-width: none;
+  padding: 0;
+}
+.sm-site .grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  text-align: left;
+}
+.sm-site .grid > .grid-item {
+  flex: 1;
+  max-width: 100%;
+  padding: 1rem;
+}
+.sm-site .grid-size-2 > .grid-item {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+@media (width <= 767px) {
+  .sm-site .grid-size-2 > .grid-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+.sm-site .section {
+  padding-top: 2rem;
+  margin-bottom: 4rem;
+}
+.sm-site .section-color {
+  padding: 2rem 0 3rem;
+  margin-bottom: 0;
+}
+.sm-site .fill-color-grey {
+  background-color: #f0f0f0;
+}
+.sm-site .note {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  color: #9c9c9c;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9em;
+  font-style: italic;
+  line-height: 1.2em;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.sm-site .text-align-center {
+  text-align: center;
+}
+.sm-site .demo-frame {
+  display: block;
+  width: 100%;
+  border: 0;
+  background-color: #f0f0f0;
+}
+.sm-site .cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+@media (width <= 1200px) {
+  .sm-site .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (width <= 900px) {
+  .sm-site .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (width <= 600px) {
+  .sm-site .cards {
+    grid-template-columns: 1fr;
+  }
+}
+.sm-site .cards .card {
+  padding: 0;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: hidden;
+}
+.sm-site .cards .card > a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+.sm-site .cards .card .header-image {
+  height: 200px;
+  margin: 0;
+  display: block;
+}
+.sm-site .cards .card .header-image-background {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-color: #646464;
+  transition: filter 0.3s ease;
+}
+.sm-site .cards .card .header-image-background.bw {
+  filter: grayscale(100%);
+}
+.sm-site .cards .card article.card-content {
+  padding: 0.8rem 1rem 0.4rem;
+}
+.sm-site .cards .card article.card-content h3 {
+  font-size: 1rem;
+  margin: 0;
+  color: #222;
+}
+.sm-site .cards .card footer {
+  margin-top: auto;
+  padding: 0.6rem 1rem 0.8rem;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.75em;
+  color: #9c9c9c;
+}
+.sm-site .cards .card:hover {
+  border-color: #222;
+}
+.sm-site .cards .card:hover .header-image-background.bw {
+  filter: grayscale(0%);
+}
+.sm-site ul.accordion {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 1rem;
+}
+.sm-site ul.accordion li {
+  position: relative;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: #f8f8f8;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+}
+.sm-site ul.accordion li:hover {
+  border-color: #484848;
+}
+.sm-site ul.accordion li:hover h3 {
+  color: #222;
+}
+.sm-site ul.accordion li input[type=checkbox] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+  cursor: pointer;
+}
+.sm-site ul.accordion li i {
+  position: absolute;
+  right: 0.9rem;
+  top: 1.05rem;
+  width: 12px;
+  height: 12px;
+}
+.sm-site ul.accordion li i::before, .sm-site ul.accordion li i::after {
+  content: "";
+  position: absolute;
+  background-color: #484848;
+  width: 3px;
+  height: 9px;
+  transition: transform 0.3s ease;
+}
+.sm-site ul.accordion li i::before {
+  transform: translate(3px, 1px) rotate(45deg);
+}
+.sm-site ul.accordion li i::after {
+  transform: translate(6px, 1px) rotate(-45deg);
+}
+.sm-site ul.accordion li h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0.4rem 1.5rem 0.4rem 0.6rem;
+  color: #222;
+}
+.sm-site ul.accordion li .accordion-content {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  max-height: 800px;
+  opacity: 1;
+  margin: 0.5rem 0 0.5rem 1rem;
+  font-size: 0.85em;
+  color: #484848;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-site ul.accordion li .accordion-content p {
+  margin: 0.4rem 0;
+}
+.sm-site ul.accordion li input[type=checkbox]:not(:checked) ~ .accordion-content {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.sm-site ul.accordion li input[type=checkbox]:not(:checked) ~ i::before {
+  transform: translate(3px, 1px) rotate(-45deg);
+}
+.sm-site ul.accordion li input[type=checkbox]:not(:checked) ~ i::after {
+  transform: translate(6px, 1px) rotate(45deg);
+}
+.sm-site .sm-docs {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1rem 1rem 3rem;
+  text-align: left;
+}
+.sm-site .sm-docs h1 {
+  font-family: georgia, "Times New Roman", times, serif;
+  font-style: italic;
+  font-size: 2.55rem;
+  margin: 1.3rem 0 0.6rem;
+}
+.sm-site .sm-docs table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.85em;
+}
+.sm-site .sm-docs table th,
+.sm-site .sm-docs table td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d4d4d4;
+  text-align: left;
+  vertical-align: top;
+}
+.sm-site .sm-docs table th {
+  background-color: #f0f0f0;
+}
+.sm-site .sm-docs table code {
+  background: none;
+  padding: 0;
+}
+.sm-site .sm-docs blockquote {
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+  border-left: 4px solid #d4d4d4;
+  color: #646464;
+}
+.sm-site .sm-docs img {
+  max-width: 100%;
+}
+.sm-site .sm-docs [id] {
+  scroll-margin-top: 1rem;
+}
+.sm-site .footer-knightlab {
+  padding: 60px 80px 30px;
+  font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.85em;
+  background-color: #f0f0f0;
+  border-top: 1px solid #b8b8b8;
+}
+.sm-site .footer-knightlab .footer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+}
+@media (width <= 767px) {
+  .sm-site .footer-knightlab .footer-grid {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+.sm-site .footer-knightlab .footer-brand {
+  font-weight: 700;
+  font-size: 1.4em;
+}
+.sm-site .footer-knightlab .footer-brand span {
+  color: #df4e13;
+}
+.sm-site .footer-knightlab .footer-description {
+  max-width: 480px;
+}
+.sm-site .footer-knightlab address,
+.sm-site .footer-knightlab .copyright {
+  display: block;
+  margin-top: 1.5rem;
+  font-style: normal;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.sm-site .footer-knightlab ul.list-social {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+.sm-site .footer-knightlab ul.list-social a {
+  color: #646464;
+  font-size: 1.1em;
+  font-weight: 700;
+}
+.sm-site .footer-knightlab ul.list-social a:hover {
+  color: #df4e13;
+}

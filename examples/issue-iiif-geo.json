@@ -1,0 +1,32 @@
+{
+    "storymap": {
+        "map_type": "iiif",
+        "map_bbox": [2.29, 48.85, 2.38, 48.9],
+        "slides": [
+            {
+                "date": "",
+                "text": {
+                    "headline": "Georeferenced IIIF",
+                    "text": "<p>The same IIIF Image API service as <code>iiif-wellcome</code>, but georeferenced: <code>map_bbox</code> instead of <code>map_as_image</code>, so slide locations are real coordinates. This is the case <code>isImageSpace()</code> must report <code>false</code> for.</p>"
+                },
+                "type": "overview"
+            },
+            {
+                "date": "2026",
+                "location": {
+                    "lat": 48.858,
+                    "lon": 2.294,
+                    "text": "<p>A real coordinate, not a pixel offset.</p>"
+                },
+                "text": {
+                    "headline": "A located slide",
+                    "text": "<p>Paris.</p>"
+                }
+            }
+        ],
+        "iiif": {
+            "url": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+            "attribution": "IIIF fixture repository"
+        }
+    }
+}

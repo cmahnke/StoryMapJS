@@ -1,0 +1,49 @@
+{
+    "storymap": {
+        "map_type": "zoomify",
+        "map_as_image": true,
+        "zoomify": {
+            "path": "/examples/assets/zoomify-clamp/",
+            "width": 600,
+            "height": 400,
+            "tolerance": 0.9,
+            "attribution": ""
+        },
+        "slides": [
+            {
+                "type": "overview",
+                "date": "",
+                "text": {
+                    "headline": "Zoomify clamp fixture",
+                    "text": "Local 600x400 image pyramid with cropped edge tiles."
+                },
+                "location": {
+                    "line": true
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Bottom-right detail",
+                    "text": "Marker over the cropped right/bottom edge tiles."
+                },
+                "location": {
+                    "lat": 59.5343180010956,
+                    "lon": -21.796875000000007,
+                    "zoom": 5,
+                    "line": true
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

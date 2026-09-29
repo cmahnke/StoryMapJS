@@ -1,0 +1,44 @@
+{
+    "storymap": {
+        "map_type": "none",
+        "slides": [
+            {
+                "type": "overview",
+                "date": "",
+                "text": {
+                    "headline": "A story with no map",
+                    "text": "The text and the media are the whole story."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Second slide",
+                    "text": "<p>Navigation, the progress bar and the hash all work without a map.</p>"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Third slide",
+                    "text": "<p>Nothing here was ever put on a tile server.</p>"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}
