@@ -1,4 +1,4 @@
-0.10.8 (unreleased)
+0.10.8 (2026-09-29)
 ------------------------
 Code audit: one regression, a set of latent bugs, seven stored-XSS sinks, a
 disabled type check that had been hiding them, and a dependency swap.
