@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import * as sass from "sass";
 import { defineConfig, type Plugin } from "vite";
 import dts from "unplugin-dts/vite";
-import { sitegen } from "./plugins/sitegen";
+import { sitegen } from "./plugins/sitegen.ts";
 
 // Single vite config for everything (replaces rollup.config.mjs).
 // - `vite` / `vite preview`         -> dev + preview servers (sitegen only)
@@ -19,6 +19,14 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const req = createRequire(import.meta.url);
 /** Kept in step with StoryMap.version, which is defined from it at build time. */
 const pkg = req("./package.json") as { version: string };
+
+/**
+ * Rolldown's plugin-timing report fires whenever plugin hooks take a
+ * meaningful share of the build, which unplugin-dts and sitegen always do
+ * here. It is a perf hint, not a build problem, and it buries the warnings
+ * that do matter.
+ */
+const rolldownChecks = { pluginTimings: false } as const;
 
 /**
  * Swallow style imports in the JS graph: the widget stylesheet is compiled
@@ -131,6 +139,7 @@ export default defineConfig(({ mode }) => {
                 emptyOutDir: true,
                 sourcemap: true,
                 copyPublicDir: true,
+                rolldownOptions: { checks: rolldownChecks },
                 lib: {
                     entry: resolve(ROOT, "src/main.ts"),
                     name: "StoryMap",
@@ -152,7 +161,19 @@ export default defineConfig(({ mode }) => {
                 emptyOutDir: false,
                 copyPublicDir: true,
                 sourcemap: false,
-                rollupOptions: {
+                // OpenLayers alone puts the shared main chunk at ~730 kB. Only
+                // the pages build is size-checked at all (Vite skips the check
+                // for `build.lib`, whose single-file output is a hard contract),
+                // so raise the bar just above today's size instead of
+                // pretending the demo bundle is small.
+                chunkSizeWarningLimit: 1000,
+                // NOT `rollupOptions`: Vite's compat shim resolves
+                // `rolldownOptions ??= rollupOptions`, so setting both keeps
+                // only the former and silently drops the `input` map below —
+                // which builds index.html alone and loses the demo/harness
+                // pages. `rollupOptions` is a deprecated alias anyway.
+                rolldownOptions: {
+                    checks: rolldownChecks,
                     input: {
                         index: resolve(ROOT, "index.html"),
                         demo: resolve(ROOT, "demo.html"),

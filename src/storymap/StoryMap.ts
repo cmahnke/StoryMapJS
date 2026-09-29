@@ -80,7 +80,8 @@ export function resolveFontCssUrl(font: string): string {
                 "StoryMapJS: ignoring font_css with an invalid stock theme name",
                 font_name,
             );
-            return new URL("../css/fonts/font.default.css", import.meta.url).href;
+            return new URL(/* @vite-ignore */ "../css/fonts/font.default.css", import.meta.url)
+                .href;
         }
         // resolved against the library location: one directory up from
         // src/main.ts (dev) and js/storymap.js (build) in both cases
@@ -2107,7 +2108,7 @@ export default class StoryMap extends Evented(StoryMapBase) {
      * Derived from `import.meta.url`, which works both for the source module
      * (src/main.ts) and the built ESM bundle (js/storymap.js).
      */
-    static SCRIPT_PATH = new URL("../", import.meta.url).href;
+    static SCRIPT_PATH = new URL(/* @vite-ignore */ "../", import.meta.url).href;
 
     constructor(...args: ConstructorParameters<typeof StoryMapBase>) {
         super(...args);
