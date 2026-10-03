@@ -686,6 +686,15 @@ export default class OpenLayers extends Map {
     }
 
     /**
+     * The built overlay entries, parallel to `getOverlayLayers()`: malformed
+     * entries are skipped, so this is what a control must iterate to stay on
+     * the same index space as `setOverlayVisible()`.
+     */
+    getOverlayEntries(): StorymapOverlayLayer[] {
+        return [...this._overlay_entries];
+    }
+
+    /**
      * Show or hide a stacked overlay by index (re-syncs attribution). The
      * index counts built layers, i.e. it skips malformed entries.
      *
@@ -721,6 +730,7 @@ export default class OpenLayers extends Map {
     _onTilesAllowed(): void {
         this._addTileLayer();
         this._buildOverlays();
+        this.fire("tilesallowed");
         if (!this._tile_layer_mini) {
             this._tile_layer_mini = this._createTileLayer(this.options.map_type);
         }

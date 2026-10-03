@@ -17,6 +17,18 @@ Added
   bundler consumers that import it themselves; the consent dialog lists no
   font service for it, and a failing theme load warns with its URL. The
   IIIF `storymap:fontCss` term round-trips `false`
+- Layer switcher: `show_layers_control: true` adds a menubar disclosure
+  button with basemap radios (`basemaps[]`, entry 0 initial unless
+  `map_type` says otherwise) and overlay checkboxes (rows track built
+  layers, so malformed entries never appear). Overlay `label` (string or
+  function), `locked` (checked and disabled) and `control: false` (hidden
+  row) annotate entries; cross-projection basemaps are refused with a
+  warning. Fires `basemapchange` / `overlaychange`, also on the viewer
+- Typed events: every emitter has an `*Events` map (exported from the
+  library), so `storymap.on("chnage", …)` is a compile error and handlers
+  infer their payload. `fire()` can no longer be handed a `type`/`target`
+  in the payload, `off()` removes all matches, and teardowns detach
+  their listeners
 - Full XYZ templates naming a known provider are credited to it
   (`tile.openstreetmap.org` and subdomains, `stadiamaps.com`,
   `openmaptiles.org`, `mapbox.com`, `arcgisonline.com`/`esri.com`,

@@ -26,7 +26,10 @@
         "uncollapse_toggle": "Show Map",
         "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
         "fullscreen": "Full Screen",
-        "exit_fullscreen": "Exit Full Screen"
+        "exit_fullscreen": "Exit Full Screen",
+        "layers": "Layers",
+        "layers_basemaps": "Basemaps",
+        "layers_overlays": "Overlays"
     },
     "direction": "ltr"
 }

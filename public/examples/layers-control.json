@@ -1,0 +1,60 @@
+{
+    "storymap": {
+        "map_type": "osm",
+        "keyboard": true,
+        "overlays": [
+            {
+                "map_type": "./tiles/historic/{z}/{x}/{y}.png",
+                "opacity": 0.6,
+                "attribution": "Historic sheet (demo overlay)"
+            },
+            {
+                "map_type": "./tiles/railway/{z}/{x}/{y}.png",
+                "visible": false,
+                "attribution": "Railway lines (demo overlay)"
+            }
+        ],
+        "slides": [
+            {
+                "type": "overview",
+                "date": "1890",
+                "text": {
+                    "headline": "Layers control",
+                    "text": "A menubar disclosure button lists the overlays above so the visitor can toggle them. Arrow keys navigate the story."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": { "lat": 51.5074, "lon": -0.1278, "zoom": 10 }
+            },
+            {
+                "date": "1900",
+                "text": {
+                    "headline": "The historic sheet",
+                    "text": "The first overlay starts visible; unchecking its row hides the layer and drops its credit."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": { "lat": 51.5155, "lon": -0.0922, "zoom": 12, "line": true }
+            },
+            {
+                "date": "1910",
+                "text": {
+                    "headline": "The railway lines",
+                    "text": "The second overlay starts hidden; checking its row paints it above the basemap."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": { "lat": 51.4818, "lon": -0.0046, "zoom": 11, "line": true }
+            }
+        ]
+    }
+}

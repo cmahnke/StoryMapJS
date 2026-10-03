@@ -84,6 +84,10 @@ via `storymap.openMarkerPopup(n)`, and the narration/audio dot) and
 against `schema/storymap.schema.json` — read it (or `src/types.ts`) for the
 full list with defaults.
 
+`show_layers_control: true` adds a menubar disclosure button listing the
+`overlays[]` as checkboxes and `basemaps[]` as basemap radios, so the
+visitor can switch layers without touching code.
+
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with
 `use_custom_marker: true` in the location object (or set `use_custom_markers:

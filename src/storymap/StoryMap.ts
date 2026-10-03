@@ -43,6 +43,7 @@ import { Evented, type EventedInstance, type FiredEvent } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
 import type { ImagereadyPayload } from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
+import type { LayersRow } from "../ui/LayersControl";
 import StorySlider from "../slider/StorySlider";
 import { Browser } from "../core/Browser";
 import Animate from "../animation/tween";
@@ -53,6 +54,7 @@ export { resolveFontCssUrl, isExternalUrl, fontCssOriginal } from "./font-css";
 import { resolveFontCssUrl, isExternalUrl, fontCssOriginal } from "./font-css";
 import type {
     AnimationHandle,
+    StorymapBasemap,
     StorymapData,
     StorymapDataWrapper,
     StorymapOptions,
@@ -80,6 +82,8 @@ export interface StoryMapEvents {
     markerclick: { marker_number: number; current_slide: number };
     popupopen: { marker_number: number; current_slide: number };
     popupclose: { marker_number: number; current_slide: number };
+    basemapchange: { map_type: string; previous: string };
+    overlaychange: { index: number; visible: boolean };
 }
 
 type StoryMapListener<K extends keyof StoryMapEvents = keyof StoryMapEvents> = (
@@ -324,6 +328,8 @@ class StoryMapBase {
             // that already exist here, so storymap JSON could not reach them
             overview_extent: null,
             overlays: [],
+            show_layers_control: false,
+            basemaps: undefined,
             // TileJSON 2.1 metadata for a tile-source basemap; a keyword
             // basemap has none (interop §2.9)
             tilejson: undefined,
@@ -558,6 +564,21 @@ class StoryMapBase {
         // `map_type.split(":")`. "" is the documented default and means OSM.
         if (typeof this.options.map_type !== "string") {
             this.options.map_type = "";
+        }
+
+        // Entry 0 of `basemaps` is the initial basemap unless `map_type` says
+        // otherwise ("" counts as "not saying": it is the default, not a
+        // choice). Omit `basemaps` for an overlays-only control.
+        const basemaps = this.options.basemaps;
+        if (
+            this.options.map_type === "" &&
+            Array.isArray(basemaps) &&
+            basemaps.length > 0 &&
+            typeof basemaps[0]?.map_type === "string" &&
+            basemaps[0].map_type !== "" &&
+            basemaps[0].map_type !== "none"
+        ) {
+            this.options.map_type = basemaps[0].map_type;
         }
 
         // "none" is the only way to say there is no map. An absent key or ""
@@ -861,6 +882,8 @@ class StoryMapBase {
         if (this.ready) {
             // text color theming follows runtime option changes (issue #177)
             this._applyTextColors();
+            // layers may have been added, removed or re-projected
+            this._menubar.refreshLayers();
             this.updateDisplay();
         }
     }
@@ -1060,6 +1083,7 @@ class StoryMapBase {
         this._map?.off("popupopen", this._onMarkerPopupOpen, this);
         this._map?.off("popupclose", this._onMarkerPopupClose, this);
         this._map?.off("markerclick", this._onMarkerClick, this);
+        this._map?.off("tilesallowed", this._onTilesAllowed, this);
         this._storyslider?.off("loaded", this._onStorySliderLoaded, this);
         this._storyslider?.off("title", this._onTitle, this);
         this._storyslider?.off("change", this._onSlideChange, this);
@@ -1068,6 +1092,8 @@ class StoryMapBase {
         this._menubar?.off("back_to_start", this._onBackToStart, this);
         this._menubar?.off("overview", this._onOverview, this);
         this._menubar?.off("fullscreen", this._onFullscreenToggle, this);
+        this._menubar?.off("basemapchange", this._onLayersBasemap, this);
+        this._menubar?.off("overlaychange", this._onLayersOverlay, this);
         this._storyslider?.dispose?.();
         this._menubar?.dispose?.();
         this._map?.dispose?.();
@@ -1323,6 +1349,11 @@ class StoryMapBase {
         this._map?.on("popupopen", this._onMarkerPopupOpen, this);
         this._map?.on("popupclose", this._onMarkerPopupClose, this);
         this._map?.on("markerclick", this._onMarkerClick, this);
+        this._map?.on("tilesallowed", this._onTilesAllowed, this);
+        this._menubar.on("basemapchange", this._onLayersBasemap, this);
+        this._menubar.on("overlaychange", this._onLayersOverlay, this);
+        this._menubar.setLayersDelegate({ rows: () => this._layersRows() });
+        this._menubar.refreshLayers();
 
         // Global slide navigation (opt-in): the slider only listens on its
         // own panel, which needs focus.
@@ -2051,6 +2082,101 @@ class StoryMapBase {
             marker_number: e.marker_number,
             current_slide: this.current_slide,
         });
+    }
+
+    _onLayersBasemap(e: { map_type: string }) {
+        const previous = this.options.map_type;
+        this.setMapOption("map_type", e.map_type);
+        this._menubar.refreshLayers();
+        this.fire("basemapchange", { map_type: e.map_type, previous });
+    }
+
+    _onLayersOverlay(e: { index: number; visible: boolean }) {
+        // setOverlayVisible re-syncs the attribution line; the checkbox
+        // already shows the new state, so no refresh (which would steal
+        // keyboard focus from the row just toggled)
+        this.setOverlayVisible(e.index, e.visible);
+        this.fire("overlaychange", { index: e.index, visible: e.visible });
+    }
+
+    _onTilesAllowed() {
+        this._menubar.refreshLayers();
+    }
+
+    /**
+     * The layer switcher rows: allowed basemaps first, then built overlays.
+     * Empty while there is nothing to switch (mapless story, consent-denied
+     * tiles), in which case the control hides itself.
+     */
+    _layersRows(): LayersRow[] {
+        if (this._map_disabled || !this._map || !this._tilesAllowed()) {
+            return [];
+        }
+        const rows: LayersRow[] = [];
+        for (const basemap of this._allowedBasemaps()) {
+            const label = basemap.label;
+            rows.push({
+                kind: "basemap",
+                map_type: basemap.map_type,
+                label: typeof label === "function" ? label() : (label ?? basemap.map_type),
+                checked: basemap.map_type === this.options.map_type,
+            });
+        }
+        const entries = this._map.getOverlayEntries();
+        const layers = this._map.getOverlayLayers();
+        entries.forEach((entry, index) => {
+            if (entry.control === false) return;
+            const label = entry.label;
+            rows.push({
+                kind: "overlay",
+                index,
+                label: typeof label === "function" ? label() : (label ?? entry.map_type ?? ""),
+                checked: layers[index]?.getVisible() ?? entry.visible ?? true,
+                locked: entry.locked === true,
+            });
+        });
+        return rows;
+    }
+
+    /**
+     * Basemap candidates compatible with the live view. A runtime basemap
+     * swap rebuilds layers but never the view, so an image-space candidate
+     * (`iiif` with `map_as_image`) on a mercator view — or the reverse —
+     * would wrap the wrong projection around the tiles: markers land in the
+     * wrong place and zoom is meaningless. Refused candidates are dropped
+     * with a warning, like the existing `setMapOptions` declines.
+     */
+    _allowedBasemaps(): StorymapBasemap[] {
+        const basemaps = this.options.basemaps;
+        if (!Array.isArray(basemaps)) return [];
+        const live = this.map?.getView()?.getProjection()?.getCode() ?? null;
+        return basemaps.filter((entry) => {
+            const map_type = entry?.map_type;
+            if (typeof map_type !== "string" || map_type === "" || map_type === "none") {
+                console.warn(
+                    `StoryMapJS: ignoring basemaps entry without a usable map_type: ${String(map_type)}`,
+                );
+                return false;
+            }
+            // the same rule `_createMap` builds the view by: image-space is
+            // `iiif` with `map_as_image`, everything else is mercator
+            const candidate =
+                map_type === "iiif" && this.options.map_as_image ? "EPSG:4326" : "EPSG:3857";
+            if (live !== null && candidate !== live) {
+                console.warn(
+                    `StoryMapJS: ignoring basemap ${map_type}: it needs a ${candidate} view but the live view is ${live}`,
+                );
+                return false;
+            }
+            return true;
+        });
+    }
+
+    /** Whether deferred tile layers may attach (no consent gate, or granted). */
+    _tilesAllowed(): boolean {
+        if (!this.options.consent_required) return true;
+        const manager = consentManagerOf(this.options);
+        return manager ? manager.isGranted(tileService().key) : true;
     }
 
     _updateProgress() {

@@ -89,10 +89,7 @@ export function Evented<M, T extends Constructor>(Base: T) {
             >;
             events[type] = events[type].filter(
                 (listener) =>
-                    !(
-                        listener.action === fn &&
-                        (!context || listener.context === context)
-                    ),
+                    !(listener.action === fn && (!context || listener.context === context)),
             );
             if (events[type].length === 0) {
                 delete events[type];
@@ -100,10 +97,7 @@ export function Evented<M, T extends Constructor>(Base: T) {
             return this;
         }
 
-        fire(
-            /*String*/ type: string,
-            /*(optional) Object*/ data?: unknown,
-        ): this {
+        fire(/*String*/ type: string, /*(optional) Object*/ data?: unknown): this {
             if (!this.hasEventListeners(type)) {
                 return this;
             }

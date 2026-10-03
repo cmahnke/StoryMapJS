@@ -25,7 +25,10 @@
         "uncollapse_toggle": "Karte anzeigen",
         "swipe_to_navigate": "Swipe to Navigate<br><span class='vco-button'>OK</span>",
         "fullscreen": "Vollbild",
-        "exit_fullscreen": "Vollbild beenden"
+        "exit_fullscreen": "Vollbild beenden",
+        "layers": "Ebenen",
+        "layers_basemaps": "Grundkarten",
+        "layers_overlays": "Overlays"
     },
     "direction": "ltr"
 }

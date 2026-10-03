@@ -222,6 +222,15 @@ export interface StorymapOptions {
      * (default) means base map only.
      */
     overlays: StorymapOverlayLayer[];
+    /** Show the basemap/overlay switcher in the menubar (default false) */
+    show_layers_control: boolean;
+    /**
+     * Selectable base maps for the layer switcher. Entry 0 is the initial
+     * basemap unless `map_type` says otherwise; omit for an overlays-only
+     * control. Constructor- and runtime-only when labels are functions
+     * (functions cannot ride storymap JSON — see `label`).
+     */
+    basemaps?: StorymapBasemap[];
     map_mini: boolean;
     map_as_image: boolean;
     map_access_token: string;
@@ -358,6 +367,20 @@ export interface StorymapTilejson {
 }
 
 /**
+ * A selectable base map for the layer switcher (`StorymapOptions.basemaps`).
+ */
+export interface StorymapBasemap {
+    /** Any `map_type` value. */
+    map_type: string;
+    /**
+     * Control row label. Defaults to `map_type`. A function is re-invoked
+     * on every `refreshLabels()` for host i18n (constructor options only —
+     * see `StorymapOverlayLayer.label`).
+     */
+    label?: string | (() => string);
+}
+
+/**
  * A stacked raster overlay above the base map (StorymapOptions.overlays).
  * Presentation is declarative: hosts no longer need to reach into the
  * layer objects for blend modes, clips or stacking tweaks.
@@ -385,6 +408,23 @@ export interface StorymapOverlayLayer {
     className?: string;
     /** CSS mix-blend-mode for the layer container (needs className) */
     blendMode?: string;
+    /**
+     * Control row label for the layer switcher (`show_layers_control`).
+     * Defaults to `map_type`. A function is re-invoked on every
+     * `refreshLabels()` for host i18n — but only when the entry comes from
+     * constructor options: `mergeData()` overwrites option keys with the
+     * storymap JSON, so a document carrying `overlays` replaces function
+     * labels with its own strings.
+     */
+    label?: string | (() => string);
+    /**
+     * Render the row checked and disabled: an overlay the visitor may add
+     * back but not remove (e.g. a georeferenced scan the story is built on).
+     * The control never toggles a locked entry.
+     */
+    locked?: boolean;
+    /** false hides the row from the control without removing the overlay. */
+    control?: boolean;
     /** Clip box `[west, south, east, north]` in lon/lat (mercator maps) */
     extent?: [number, number, number, number];
     /**

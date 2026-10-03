@@ -138,6 +138,18 @@
                             "attribution": {
                                 "type": "string"
                             },
+                            "label": {
+                                "type": "string",
+                                "description": "Layer switcher row label (defaults to map_type)"
+                            },
+                            "locked": {
+                                "type": "boolean",
+                                "description": "Render the switcher row checked and disabled"
+                            },
+                            "control": {
+                                "type": "boolean",
+                                "description": "False hides the row from the switcher without removing the overlay"
+                            },
                             "className": {
                                 "type": "string",
                                 "description": "CSS class of the layer container, isolating it from the shared ol-layer canvas (e.g. for blend modes)"
@@ -286,6 +298,28 @@
                 },
                 "show_progress": {
                     "type": "boolean"
+                },
+                "show_layers_control": {
+                    "type": "boolean",
+                    "description": "Show the basemap/overlay switcher in the menubar"
+                },
+                "basemaps": {
+                    "type": "array",
+                    "description": "Selectable base maps for the layer switcher; entry 0 is the initial basemap unless map_type says otherwise",
+                    "items": {
+                        "type": "object",
+                        "required": ["map_type"],
+                        "properties": {
+                            "map_type": {
+                                "type": "string",
+                                "description": "Any map_type value"
+                            },
+                            "label": {
+                                "type": "string",
+                                "description": "Control row label (defaults to map_type)"
+                            }
+                        }
+                    }
                 },
                 "show_distance": {
                     "type": "boolean"

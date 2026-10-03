@@ -27,6 +27,8 @@ origin (a payload carrying its own `type`/`target` cannot displace them).
 | `annotationsloaded`                 | `{ stops, searchService, failed }`                                       | `loadAnnotations()` appended external stops                                                           |
 | `markerclick`                       | `{ marker_number, current_slide }`                                       | a marker is clicked (`change` alone does not say _how_ the story moved)                               |
 | `popupopen` / `popupclose`          | `{ marker_number, current_slide }`                                       | a marker card opens / closes (button, Escape, deactivation, dispose)                                  |
+| `basemapchange`                     | `{ map_type, previous }`                                                 | the layer switcher swapped the basemap                                                                |
+| `overlaychange`                     | `{ index, visible }`                                                     | the layer switcher toggled an overlay                                                                 |
 
 ## `Map` (engine) — subscribe on `storymap._map`
 
@@ -46,22 +48,17 @@ origin (a payload carrying its own `type`/`target` cannot displace them).
 Consumed inside the viewer; a host generally observes their effects through
 the `StoryMap` events above.
 
-| Emitter       | Events                                                                                                                                             |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `StorySlider` | `change {current_slide, uniqueid}`, `loaded`, `title {title}`, `colorchange`, `slideAdded`, `nav_next` / `nav_previous` / `nav_left` / `nav_right` |
-| `Slide`       | `background_change`, `call_to_action`, `loaded`, `added`, `removed`                                                                                |
-| `SlideNav`    | `clicked`, `loaded`, `added`, `removed`                                                                                                            |
-| `Media`       | `loaded`, `media_loaded`, `media_ended` (what `autoplay_media` waits for), `added`, `removed`                                                      |
-| `Text`        | `loaded`, `added`, `removed`                                                                                                                       |
-| `MapMarker`   | `markerclick`, `popupopen`, `popupclose` (all `{marker_number}`; consumed by the engine)                                                           |
-| `MenuBar`     | `overview`, `back_to_start`, `fullscreen`, `collapse {y, collapsed}` (all consumed by the viewer; never re-fired)                                  |
-| `Message`     | `clicked` (consumed by the slider), `loaded`, `added`, `removed`                                                                                   |
-| `Swipable`    | `dragstart`, `dragend`, `dragmove`, `momentum`, `swipe_left` / `swipe_right` / `swipe_up` / `swipe_down`, `swipe_nodirection`                      |
+| Emitter       | Events                                                                                                                                                                                                         |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `StorySlider` | `change {current_slide, uniqueid}`, `loaded`, `title {title}`, `colorchange`, `slideAdded`, `nav_next` / `nav_previous` / `nav_left` / `nav_right`                                                             |
+| `Slide`       | `background_change`, `call_to_action`, `loaded`, `added`, `removed`                                                                                                                                            |
+| `SlideNav`    | `clicked`, `loaded`, `added`, `removed`                                                                                                                                                                        |
+| `Media`       | `loaded`, `media_loaded`, `media_ended` (what `autoplay_media` waits for), `added`, `removed`                                                                                                                  |
+| `Text`        | `loaded`, `added`, `removed`                                                                                                                                                                                   |
+| `MapMarker`   | `markerclick`, `popupopen`, `popupclose` (all `{marker_number}`; consumed by the engine)                                                                                                                       |
+| `MenuBar`     | `overview`, `back_to_start`, `fullscreen`, `collapse {y, collapsed}`, `basemapchange {map_type}`, `overlaychange {index, visible}` (the last two forwarded from the layer switcher and re-fired on the viewer) |
+| `Message`     | `clicked` (consumed by the slider), `loaded`, `added`, `removed`                                                                                                                                               |
+| `Swipable`    | `dragstart`, `dragend`, `dragmove`, `momentum`, `swipe_left` / `swipe_right` / `swipe_up` / `swipe_down`, `swipe_nodirection`                                                                                  |
 
 `loaded` / `added` / `removed` come from the `DomMixed` mixin (`onLoaded` /
 `onAdd` / `onRemove`); some emitters provide them without ever firing them.
-
-## Planned
-
-- `basemapchange {map_type, previous}` and `overlaychange {index, visible}`
-  for the layer switcher (`docs/plans/layers-control.md`) — not implemented.

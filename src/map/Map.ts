@@ -39,6 +39,8 @@ export interface MapEvents {
     popupopen: MarkerEventPayload;
     popupclose: MarkerEventPayload;
     imageready: ImagereadyPayload;
+    /** Deferred tile layers attached after a tile consent grant. */
+    tilesallowed: undefined;
 }
 
 /** Wheel/scroll zoom bookkeeping (handles cleared via clearTimeout). */

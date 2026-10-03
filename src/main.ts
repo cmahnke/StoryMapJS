@@ -153,6 +153,7 @@ export type { SwipeDirection } from "./ui/Swipable";
  */
 export type { StoryMapEvents } from "./storymap/StoryMap";
 export type { StorySliderEvents } from "./slider/StorySlider";
+export type { StorymapBasemap } from "./types";
 export type { SlideEvents, SlideBackgroundState } from "./slider/Slide";
 export type { SlideNavEvents } from "./slider/SlideNav";
 export type { MediaEvents } from "./media/Media";

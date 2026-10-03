@@ -567,7 +567,9 @@ class SlideBase {
 
 const EventedSlideBase = Evented<SlideEvents, typeof SlideBase>(SlideBase);
 
-export default class Slide extends DomMixed<SlideEvents, typeof EventedSlideBase>(EventedSlideBase) {
+export default class Slide extends DomMixed<SlideEvents, typeof EventedSlideBase>(
+    EventedSlideBase,
+) {
     constructor(...args: ConstructorParameters<typeof SlideBase>) {
         super(...args);
     }

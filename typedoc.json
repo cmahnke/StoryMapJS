@@ -9,10 +9,21 @@
     "customCss": "./typedoc-site.css",
     "intentionallyNotExported": [
         "src/map/openlayers/Map.OpenLayers.ts:default",
-        "src/map/openlayers/MapMarker.OpenLayers.ts:default",
         "src/ui/MenuBar.ts:default",
         "src/slider/StorySlider.ts:default",
-        "src/storymap/StoryMap.ts:StoryMapListener"
+        "src/storymap/StoryMap.ts:StoryMapListener",
+        "src/map/MapMarker.ts:default",
+        "src/map/openlayers/MapMarker.OpenLayers.ts:MarkerPresentation",
+        "src/types.ts:IconSpec",
+        "src/types.ts:MapMarkerData",
+        "src/media/Media.ts:MediaData",
+        "src/media/types/Text.ts:TextData",
+        "src/slider/SlideNav.ts:SlideNavData",
+        "src/slider/SlideNav.ts:SlideNavOptions",
+        "src/slider/StorySlider.ts:SlideBackgroundChange",
+        "src/ui/Message.ts:MessageOptions",
+        "src/ui/Swipable.ts:DragData",
+        "src/ui/LayersControl.ts:LayersRow"
     ],
     "navigation": {
         "includeCategories": true,

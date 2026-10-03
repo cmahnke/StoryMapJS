@@ -251,6 +251,22 @@ custom layer with no explicit z-index lands wherever OpenLayers puts it,
 which is above the lines — set one explicitly if the layer must sit inside
 the stack.
 
+### Layer switcher
+
+`show_layers_control: true` adds a disclosure button to the menubar with
+basemap radios and overlay checkboxes. Basemap candidates come from
+`basemaps[]` (entry 0 is the initial basemap unless `map_type` says
+otherwise; omit for an overlays-only control); overlay rows come from the
+built `overlays[]` entries, so a malformed entry never gets a row and row
+_i_ is always layer _i_. `label` may be a function for host i18n (re-invoked
+on `refreshLabels()`), `locked: true` renders a row checked and disabled,
+`control: false` hides a row without removing the overlay — but function
+labels survive only in constructor options, because `mergeData()` lets
+storymap JSON overwrite same-named option keys. A runtime basemap swap
+rebuilds layers but never the view, so candidates needing another
+projection are refused with a warning; switching fires `basemapchange` /
+`overlaychange`, and the visitor's choice is never persisted.
+
 ### Image space vs. georeferenced
 
 `map_type: "iiif"` is a mercator map by default. With `map_as_image: true` the

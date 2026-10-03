@@ -349,38 +349,39 @@ The `center` is the initial view only, and `bounds` constrains the center
 without pinning the resolution — a hard extent constraint would fight the panel
 offset, the same reason `map_bbox` works the way it does.
 
-| Service property (storymap:)  | StoryMap field                      | Values                                                                                                                               |
-| ----------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `basemap`                     | `map_type`                          | A keyword the viewer configures itself: `osm:standard`, `mapbox://styles/...`, `stadia:...`, `iiif`. `zoomify` is replaced by `iiif` |
-| _(unprefixed)_ `tilejson`     | `map_type` + `tilejson`             | TileJSON 2.1 for an arbitrary tile service — see below                                                                               |
-| `mapAsImage`                  | `map_as_image`                      | `true` when the image itself is the map                                                                                              |
-| `mapAccessToken`              | `map_access_token`                  | Mapbox/Stadia token from the storymap data, never the repository                                                                     |
-| `mapBackgroundColor`          | `map_background_color`              | CSS color                                                                                                                            |
-| `mapCenterOffset`             | `map_center_offset`                 | `{left, top}`                                                                                                                        |
-| `mapSubdomains`               | `map_subdomains`                    | Tile URL subdomains                                                                                                                  |
-| _(none)_                      | `iiif.url`                          | From the Image API `service[]` a painting body carries, plus `/info.json`; see below                                                 |
-| `fontCss`                     | `font_css`                          | e.g. `stock:dancing-ledger`, or `false` for no injected theme                                                                        |
-| `callToAction`                | `call_to_action`                    | boolean                                                                                                                              |
-| `callToActionText`            | `call_to_action_text`               | string                                                                                                                               |
-| `startAtSlide`                | `start_at_slide`                    | 0-based slide index                                                                                                                  |
-| `language`                    | `language`                          | IETF language tag                                                                                                                    |
-| `calculateZoom`               | `calculate_zoom`                    | boolean                                                                                                                              |
-| `lessBounce`                  | `less_bounce`                       | boolean                                                                                                                              |
-| `lineFollowsPath`             | `line_follows_path`                 | boolean                                                                                                                              |
-| `showLines`                   | `show_lines`                        | boolean                                                                                                                              |
-| `showHistoryLine`             | `show_history_line`                 | boolean                                                                                                                              |
-| `lineColor`                   | `line_color`                        | CSS color                                                                                                                            |
-| `lineColorInactive`           | `line_color_inactive`               | CSS color                                                                                                                            |
-| `lineWeight`                  | `line_weight`                       | number (px)                                                                                                                          |
-| `lineOpacity`                 | `line_opacity`                      | 0–1                                                                                                                                  |
-| `lineDash`                    | `line_dash`                         | CSS dash pattern                                                                                                                     |
-| `lineJoin`                    | `line_join`                         | CSS line join                                                                                                                        |
-| `useCustomMarkers`            | `use_custom_markers`                | boolean                                                                                                                              |
-| `mapArea`                     | `map_area`                          | `"full"` (default) or `"left"`                                                                                                       |
-| `overviewExtent`              | `overview_extent`                   | `[west, south, east, north]` lon/lat box for the minimap overview                                                                    |
-| `keyboard`                    | `keyboard`                          | boolean: arrow keys navigate the story from anywhere                                                                                 |
-| `overlays`                    | `overlays`                          | array of stacked layers (see below)                                                                                                  |
-| _(georeferencing annotation)_ | `overlays[]` (georeference entries) | IIIF images placed from ground control points — see "Geo-referenced layers"                                                          |
+| Service property (storymap:)  | StoryMap field                      | Values                                                                                                                                          |
+| ----------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `basemap`                     | `map_type`                          | A keyword the viewer configures itself: `osm:standard`, `mapbox://styles/...`, `stadia:...`, `iiif`. `zoomify` is replaced by `iiif`            |
+| _(unprefixed)_ `tilejson`     | `map_type` + `tilejson`             | TileJSON 2.1 for an arbitrary tile service — see below                                                                                          |
+| `mapAsImage`                  | `map_as_image`                      | `true` when the image itself is the map                                                                                                         |
+| `mapAccessToken`              | `map_access_token`                  | Mapbox/Stadia token from the storymap data, never the repository                                                                                |
+| `mapBackgroundColor`          | `map_background_color`              | CSS color                                                                                                                                       |
+| `mapCenterOffset`             | `map_center_offset`                 | `{left, top}`                                                                                                                                   |
+| `mapSubdomains`               | `map_subdomains`                    | Tile URL subdomains                                                                                                                             |
+| _(none)_                      | `iiif.url`                          | From the Image API `service[]` a painting body carries, plus `/info.json`; see below                                                            |
+| `fontCss`                     | `font_css`                          | e.g. `stock:dancing-ledger`, or `false` for no injected theme                                                                                   |
+| `callToAction`                | `call_to_action`                    | boolean                                                                                                                                         |
+| `callToActionText`            | `call_to_action_text`               | string                                                                                                                                          |
+| `startAtSlide`                | `start_at_slide`                    | 0-based slide index                                                                                                                             |
+| `language`                    | `language`                          | IETF language tag                                                                                                                               |
+| `calculateZoom`               | `calculate_zoom`                    | boolean                                                                                                                                         |
+| `lessBounce`                  | `less_bounce`                       | boolean                                                                                                                                         |
+| `lineFollowsPath`             | `line_follows_path`                 | boolean                                                                                                                                         |
+| `showLines`                   | `show_lines`                        | boolean                                                                                                                                         |
+| `showHistoryLine`             | `show_history_line`                 | boolean                                                                                                                                         |
+| `lineColor`                   | `line_color`                        | CSS color                                                                                                                                       |
+| `lineColorInactive`           | `line_color_inactive`               | CSS color                                                                                                                                       |
+| `lineWeight`                  | `line_weight`                       | number (px)                                                                                                                                     |
+| `lineOpacity`                 | `line_opacity`                      | 0–1                                                                                                                                             |
+| `lineDash`                    | `line_dash`                         | CSS dash pattern                                                                                                                                |
+| `lineJoin`                    | `line_join`                         | CSS line join                                                                                                                                   |
+| `useCustomMarkers`            | `use_custom_markers`                | boolean                                                                                                                                         |
+| `mapArea`                     | `map_area`                          | `"full"` (default) or `"left"`                                                                                                                  |
+| `overviewExtent`              | `overview_extent`                   | `[west, south, east, north]` lon/lat box for the minimap overview                                                                               |
+| `keyboard`                    | `keyboard`                          | boolean: arrow keys navigate the story from anywhere                                                                                            |
+| `overlays`                    | `overlays`                          | array of stacked layers (see below)                                                                                                             |
+| _(georeferencing annotation)_ | `overlays[]` (georeference entries) | IIIF images placed from ground control points — see "Geo-referenced layers"                                                                     |
+| _(viewer option)_             | `show_layers_control`, `basemaps`   | the layer switcher and its basemap list: viewer-side only, never read from a manifest; `label` functions likewise never cross the JSON boundary |
 
 ### Canvas level — direct properties
 

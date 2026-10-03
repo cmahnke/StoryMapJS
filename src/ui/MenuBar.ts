@@ -6,6 +6,7 @@ import { easeInOutQuint } from "../animation/easings";
 import { DomEvent } from "../dom/DomEvent";
 import { Browser } from "../core/Browser";
 import { Language, currentLocale } from "../language/Language";
+import LayersControl, { type LayersControlDelegate } from "./LayersControl";
 
 /*	MenuBar
 	Buttons, progress and distance display for the storymap
@@ -25,6 +26,8 @@ export interface MenuBarEvents {
     back_to_start: Event;
     fullscreen: Event;
     collapse: { y: number; collapsed: boolean };
+    basemapchange: { map_type: string };
+    overlaychange: { index: number; visible: boolean };
     loaded: undefined;
     added: undefined;
     removed: undefined;
@@ -37,6 +40,8 @@ class MenuBarBase {
     declare "animator": Record<string, unknown>;
     declare "fire": EventedInstance<MenuBarEvents>["fire"];
     _fullscreenActive = false;
+    /** The layer switcher, if `show_layers_control` is on. */
+    declare "_layersControl": LayersControl | null;
 
     /*	Constructor
 	================================================== */
@@ -85,6 +90,8 @@ class MenuBarBase {
 
         // Animation
         this.animator = {};
+
+        this._layersControl = null;
 
         // Merge Data and Options
         mergeData(this.options, options);
@@ -169,6 +176,9 @@ class MenuBarBase {
      * Icon-only mobile buttons carry no text and are left untouched.
      */
     refreshLabels(): void {
+        // panel rows are always text, so the control repaints even where
+        // the buttons below go icon-only
+        this._layersControl?.refreshLabels();
         if (Browser.mobile) {
             return;
         }
@@ -176,6 +186,16 @@ class MenuBarBase {
         this._renderBackToStartLabel();
         this.setFullscreenState(this._fullscreenActive);
         this._renderCollapseLabel(this.collapsed);
+    }
+
+    /** Hand the layer switcher its state source (StoryMap wires this). */
+    setLayersDelegate(delegate: LayersControlDelegate): void {
+        this._layersControl?.setDelegate(delegate);
+    }
+
+    /** Re-pull the switcher rows (overlays, basemaps, consent state). */
+    refreshLayers(): void {
+        this._layersControl?.refresh();
     }
 
     /**
@@ -234,6 +254,14 @@ class MenuBarBase {
 
     _onButtonFullscreen(e: Event) {
         this.fire("fullscreen", e);
+    }
+
+    _onLayersBasemap(e: { map_type: string }) {
+        this.fire("basemapchange", { map_type: e.map_type });
+    }
+
+    _onLayersOverlay(e: { index: number; visible: boolean }) {
+        this.fire("overlaychange", { index: e.index, visible: e.visible });
     }
 
     _onButtonCollapseMap(e: Event) {
@@ -345,6 +373,15 @@ class MenuBarBase {
             // on screen changes.
             this._el.button_collapse_toggle.style.display = "none";
         }
+
+        // Layer switcher (opt-in): the control renders nothing until a
+        // delegate hands it rows, so consent-denied and mapless stories
+        // show no button at all
+        if (this.options.show_layers_control) {
+            this._layersControl = new LayersControl(this._el.container);
+            this._layersControl.on("basemapchange", this._onLayersBasemap, this);
+            this._layersControl.on("overlaychange", this._onLayersOverlay, this);
+        }
     }
 
     // Update Display
@@ -373,6 +410,12 @@ class MenuBarBase {
             if (el) {
                 DomEvent.removeListener(el, "click", handler, this);
             }
+        }
+        if (this._layersControl) {
+            this._layersControl.off("basemapchange", this._onLayersBasemap, this);
+            this._layersControl.off("overlaychange", this._onLayersOverlay, this);
+            this._layersControl.dispose();
+            this._layersControl = null;
         }
         this._el.container?.getAnimations?.().forEach((a) => a.cancel());
         this._el.container?.remove();
