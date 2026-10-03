@@ -662,6 +662,18 @@ class MapBase {
         if (this.current_marker !== e.marker_number) {
             this.goTo(e.marker_number, false);
         }
+        // Re-fired (after navigation) so hosts can tell a marker click
+        // apart from programmatic navigation: `change` alone does not say
+        // *how* the story moved.
+        this.fire("markerclick", { marker_number: e.marker_number });
+    }
+
+    _onMarkerPopupOpen(e: { marker_number: number }): void {
+        this.fire("popupopen", { marker_number: e.marker_number });
+    }
+
+    _onMarkerPopupClose(e: { marker_number: number }): void {
+        this.fire("popupclose", { marker_number: e.marker_number });
     }
 
     _onMapLoaded(e?: unknown): void {

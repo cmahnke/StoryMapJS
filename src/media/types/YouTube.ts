@@ -94,7 +94,7 @@ export default class YouTube extends Media {
                     this.player.pauseVideo();
                 }
             } catch (err) {
-                console.log(err);
+                console.warn("StoryMapJS: error pausing YouTube player.", err);
             }
         }
     }
@@ -186,7 +186,7 @@ export default class YouTube extends Media {
             try {
                 this.player?.destroy?.();
             } catch (err) {
-                console.log(err);
+                console.warn("StoryMapJS: error destroying YouTube player.", err);
             }
         }
         this.player = null;

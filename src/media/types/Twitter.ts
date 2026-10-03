@@ -1,6 +1,7 @@
 import { Media } from "../Media";
 import Dom from "../../dom/Dom";
 import { sanitizeSlideText } from "../EmbedUtil";
+import { tweetAuthor, tweetId } from "../embedId";
 import { loadJSONP, uniqueGlobalName } from "../../core/Load";
 
 /*	Media.Twitter
@@ -20,13 +21,14 @@ export default class Twitter extends Media {
         // Create Dom element
         this._el.content_item = Dom.create("div", "vco-media-twitter", this._el.content);
 
-        // Get Media ID
-
-        const r = /(?:twitter\.com|x\.com)\/(.+?)\/status\/(\d+)/;
-        const match = r.exec(this._url());
-        if (match) {
-            this.user_id = match[1];
-            this.media_id = match[2];
+        // Get Media ID — routed here by MediaType, extracted by the shared
+        // helpers so the accepted shapes cannot diverge again. The id stays
+        // numeric-only, as before: anything else is not a status URL.
+        const media_id = tweetId(this._url());
+        const user_id = tweetAuthor(this._url());
+        if (media_id && user_id && /^\d+$/.test(media_id)) {
+            this.user_id = user_id;
+            this.media_id = media_id;
         } else {
             throw new Error("Invalid Twitter URL");
         }

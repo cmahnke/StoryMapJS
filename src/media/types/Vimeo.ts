@@ -59,7 +59,7 @@ export default class Vimeo extends Media {
                 "https://player.vimeo.com",
             );
         } catch (err) {
-            console.log(err);
+            console.warn("StoryMapJS: error pausing Vimeo player.", err);
         }
     }
 }

@@ -140,15 +140,16 @@ describe("marker popup", () => {
     type MarkerInternals = {
         _marker: HTMLElement;
         popupOpen: boolean;
-        _togglePopup(): void;
-        _closePopup(): void;
+        openPopup(): boolean;
+        togglePopup(): boolean;
+        closePopup(): void;
         dispose(): void;
     };
 
     it("stays closed when the marker has no popup", () => {
         const sm = storymap("sm-popup-off", false);
         const marker = sm.getMarker(1) as unknown as MarkerInternals;
-        marker._togglePopup();
+        expect(marker.togglePopup()).toBe(false);
         expect(marker.popupOpen).toBe(false);
         expect(marker._marker.querySelector(".vco-marker-popup")).toBeNull();
         sm.dispose();
@@ -157,7 +158,7 @@ describe("marker popup", () => {
     it("toggles a card with a sanitized headline, excerpt and thumb", () => {
         const sm = storymap("sm-popup-on", true);
         const marker = sm.getMarker(1) as unknown as MarkerInternals;
-        marker._togglePopup();
+        marker.togglePopup();
         expect(marker.popupOpen).toBe(true);
 
         const card = marker._marker.querySelector(".vco-marker-popup") as HTMLElement;
@@ -197,7 +198,7 @@ describe("marker popup", () => {
             },
         } as unknown as StorymapDataWrapper);
         const marker = sm.getMarker(1) as unknown as MarkerInternals;
-        marker._togglePopup();
+        marker.togglePopup();
         const card = marker._marker.querySelector(".vco-marker-popup") as HTMLElement;
         expect(card.querySelector("[onerror]")).toBeNull();
         expect(card.querySelector("script")).toBeNull();
@@ -208,13 +209,13 @@ describe("marker popup", () => {
     it("closes on deactivate and on Escape", () => {
         const sm = storymap("sm-popup-close", true);
         const marker = sm.getMarker(1) as unknown as MarkerInternals;
-        marker._togglePopup();
+        marker.togglePopup();
         expect(marker.popupOpen).toBe(true);
 
-        marker._togglePopup();
+        marker.togglePopup();
         expect(marker.popupOpen).toBe(false);
 
-        marker._togglePopup();
+        marker.togglePopup();
         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
         expect(marker.popupOpen).toBe(false);
         sm.dispose();
@@ -223,13 +224,131 @@ describe("marker popup", () => {
     it("is released by dispose(), listener included", () => {
         const sm = storymap("sm-popup-dispose", true);
         const marker = sm.getMarker(1) as unknown as MarkerInternals;
-        marker._togglePopup();
+        marker.togglePopup();
         expect(marker.popupOpen).toBe(true);
         marker.dispose();
         expect(marker.popupOpen).toBe(false);
         // the keydown listener is gone: opening again is impossible, and no
         // stale handler survives to touch a dead marker
         document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+        sm.dispose();
+    });
+});
+
+describe("StoryMap marker popup API", () => {
+    beforeAll(() => {
+        class ResizeObserverStub {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        }
+        (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
+    });
+
+    function storymap(id: string, popup: boolean): StoryMap {
+        // Each test builds its own viewer on a shared jsdom page, and every
+        // navigation rewrites `#slide-N` into the URL — which the next
+        // constructor would read as a deep link. Clear it so every viewer
+        // starts on the overview.
+        window.location.hash = "";
+        const el = document.createElement("div");
+        el.id = id;
+        document.body.appendChild(el);
+        return new StoryMap(id, {
+            storymap: {
+                map_type: "osm",
+                slides: [
+                    { date: "", type: "overview", text: { headline: "Overview", text: "" } },
+                    {
+                        date: "",
+                        text: { headline: "Paris", text: "<p>Body.</p>" },
+                        location: { lat: 48.85, lon: 2.35 },
+                        marker: { popup },
+                    },
+                ],
+            },
+        } as unknown as StorymapDataWrapper);
+    }
+
+    function eventsOf(sm: StoryMap, type: string): unknown[] {
+        const seen: unknown[] = [];
+        (sm as unknown as { on(t: string, fn: (e: unknown) => void): void }).on(type, (e) =>
+            seen.push(e),
+        );
+        return seen;
+    }
+
+    it("openMarkerPopup navigates to the slide and opens the card", () => {
+        const sm = storymap("sm-api-open", true);
+        expect(sm.openMarkerPopup(1)).toBe(true);
+        expect(sm.current_slide).toBe(1);
+        expect(sm.isPopupOpen(1)).toBe(true);
+        const marker = sm.getMarker(1) as unknown as { _marker: HTMLElement };
+        expect(marker._marker.querySelector(".vco-marker-popup")).not.toBeNull();
+        sm.dispose();
+    });
+
+    it("openMarkerPopup returns false without navigating when disabled", () => {
+        const sm = storymap("sm-api-disabled", false);
+        expect(sm.openMarkerPopup(1)).toBe(false);
+        // ... and changes nothing: still on the overview, nothing open
+        expect(sm.current_slide).toBe(0);
+        expect(sm.isPopupOpen(1)).toBe(false);
+        sm.dispose();
+    });
+
+    it("openMarkerPopup returns false for out-of-range and overview slides", () => {
+        const sm = storymap("sm-api-range", true);
+        expect(sm.openMarkerPopup(99)).toBe(false);
+        expect(sm.openMarkerPopup(-1)).toBe(false);
+        expect(sm.openMarkerPopup(1.5)).toBe(false);
+        // slide 0 is the overview: no real marker, no card
+        expect(sm.openMarkerPopup(0)).toBe(false);
+        expect(sm.current_slide).toBe(0);
+        sm.dispose();
+    });
+
+    it("closeMarkerPopup closes one card, or all when omitted", () => {
+        const sm = storymap("sm-api-close", true);
+        expect(sm.openMarkerPopup(1)).toBe(true);
+        sm.closeMarkerPopup(1);
+        expect(sm.isPopupOpen(1)).toBe(false);
+        expect(sm.openMarkerPopup(1)).toBe(true);
+        sm.closeMarkerPopup();
+        expect(sm.isPopupOpen(1)).toBe(false);
+        sm.dispose();
+    });
+
+    it("closing on deactivate fires popupclose", () => {
+        const sm = storymap("sm-api-deactivate", true);
+        const closed = eventsOf(sm, "popupclose");
+        expect(sm.openMarkerPopup(1)).toBe(true);
+        sm.goTo(0);
+        expect(sm.isPopupOpen(1)).toBe(false);
+        expect(closed.length).toBe(1);
+        expect((closed[0] as { marker_number: number }).marker_number).toBe(1);
+        sm.dispose();
+    });
+
+    it("fires popupopen with the marker number and current slide", () => {
+        const sm = storymap("sm-api-events", true);
+        const opened = eventsOf(sm, "popupopen");
+        expect(sm.openMarkerPopup(1)).toBe(true);
+        expect(opened.length).toBe(1);
+        expect(opened[0]).toMatchObject({ marker_number: 1, current_slide: 1 });
+        sm.dispose();
+    });
+
+    it("re-fires markerclick from a marker click", () => {
+        const sm = storymap("sm-api-click", true);
+        expect(sm.current_slide).toBe(0);
+        const clicked = eventsOf(sm, "markerclick");
+        // marker 1 is inactive, so the click navigates (rather than toggling
+        // the popup, which is what a click on the *active* marker does)
+        const marker = sm.getMarker(1) as unknown as { _marker: HTMLElement };
+        marker._marker.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        expect(clicked.length).toBe(1);
+        expect((clicked[0] as { marker_number: number }).marker_number).toBe(1);
         sm.dispose();
     });
 });

@@ -172,8 +172,11 @@ A stop's `body` may be one resource or an array.
   override. Two `properties` names are marker behaviour, not data:
   `popup: true` gives the active marker a card with the slide's headline and
   excerpt, and `audioBadge: true` dots a marker whose slide has narration or
-  audio. The nine names the reader copies — and the linked-data context that
-  describes them — are listed in `docs/storymap-as-iiif-manifest.md`.
+  audio. Open the card from code with `storymap.openMarkerPopup(n)` (it
+  navigates to the stop first) and listen for `popupopen` / `popupclose`
+  with `{ marker_number, current_slide }`. The nine names the reader
+  copies — and the linked-data context that describes them — are listed
+  in `docs/storymap-as-iiif-manifest.md`.
 - **Chapters** — a `Range` with a `label` and no `start` groups the canvases
   it lists. A `Range` whose `items` order differs from canvas order becomes
   the slide order instead: a Range _is_ a storyboard.

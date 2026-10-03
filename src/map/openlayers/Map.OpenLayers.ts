@@ -315,6 +315,54 @@ export default class OpenLayers extends Map {
         }
     }
 
+    /**
+     * Provider credit for a `map_type`, in both renderings: the linked HTML
+     * for our own `.vco-map-attribution` line and the plain text for the
+     * OpenLayers source `attributions`. One table — the two previous
+     * functions repeated the same `osm/stadia/mapbox/esri` switch and could
+     * drift apart, leaving a provider credited in one place but not the other
+     * (which their terms of service require).
+     */
+    _providerCredit(map_type: string): { html: string; text: string } {
+        // Emitting provider credit only for OSM left Stadia, Mapbox and the
+        // OL XYZ template providers uncredited, which their terms of service
+        // require. The credit is keyed off the resolved map_type, so a custom
+        // `{z}` template gets the generic "map data" line and the author can
+        // still override it with the `attribution` option.
+        const table: { test: (t: string) => boolean; html: string; text: string }[] = [
+            {
+                test: (t) => t === "" || t.startsWith("osm"),
+                html: "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+                text: "© OpenStreetMap contributors",
+            },
+            {
+                test: (t) => t.startsWith("stadia") || t === "stamen",
+                html:
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://stadiamaps.com/">Stadia Maps</a>, ' +
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://openmaptiles.org/">OpenMapTiles</a> ' +
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                text: "© Stadia Maps, © OpenMapTiles © OpenStreetMap contributors",
+            },
+            {
+                test: (t) => t.startsWith("mapbox://"),
+                html: '© <a target="_blank" href="https://www.mapbox.com/about/maps/">Mapbox</a>',
+                text: "© Mapbox",
+            },
+            {
+                test: (t) => t.startsWith("ch-") || t.startsWith("esri"),
+                html: 'Map data © <a target="_blank" href="https://www.esri.com/">Esri</a>',
+                text: "Map data © Esri",
+            },
+            {
+                test: () => true,
+                html: "Map data",
+                text: "Map data",
+            },
+        ];
+        const entry = table.find((row) => row.test(map_type)) ?? table[table.length - 1];
+        return { html: entry.html, text: entry.text };
+    }
+
     _getAttribution(map_type: string): string[] {
         const parts = [
             "<a href='https://storymap.knightlab.com/' target='_blank' class='vco-knightlab-brand'><span>&#x25a0;</span> StoryMapJS</a>",
@@ -324,29 +372,7 @@ export default class OpenLayers extends Map {
         // what the visitor sees. Sources additionally carry the plain-text
         // credit from `_sourceAttributions`, so `source.getAttributions()`
         // and a consumer's own Attribution control are not left empty.
-        // Emitting provider credit
-        // only for OSM left Stadia, Mapbox and the OL XYZ template providers
-        // uncredited, which their terms of service require. The credit is
-        // keyed off the resolved map_type, so a custom `{z}` template gets
-        // the generic "map data" line and the author can still override it
-        // with the `attribution` option.
-        if (map_type === "" || map_type.startsWith("osm")) {
-            parts.push(
-                "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-            );
-        } else if (map_type.startsWith("stadia") || map_type === "stamen") {
-            parts.push(
-                '© <a target="_blank" rel="noopener noreferrer" href="https://stadiamaps.com/">Stadia Maps</a>, ' +
-                    '© <a target="_blank" rel="noopener noreferrer" href="https://openmaptiles.org/">OpenMapTiles</a> ' +
-                    '© <a target="_blank" rel="noopener noreferrer" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            );
-        } else if (map_type.startsWith("mapbox://")) {
-            parts.push('© <a target="_blank" href="https://www.mapbox.com/about/maps/">Mapbox</a>');
-        } else if (map_type.startsWith("ch-") || map_type.startsWith("esri")) {
-            parts.push('Map data © <a target="_blank" href="https://www.esri.com/">Esri</a>');
-        } else {
-            parts.push("Map data");
-        }
+        parts.push(this._providerCredit(map_type).html);
         if (this.options.attribution) {
             parts.push(this.options.attribution);
         }
@@ -361,18 +387,7 @@ export default class OpenLayers extends Map {
      * `ol/control/Attribution`) work instead of returning nothing.
      */
     _sourceAttributions(map_type: string): string[] {
-        const parts: string[] = [];
-        if (map_type === "" || map_type.startsWith("osm")) {
-            parts.push("© OpenStreetMap contributors");
-        } else if (map_type.startsWith("stadia") || map_type === "stamen") {
-            parts.push("© Stadia Maps, © OpenMapTiles © OpenStreetMap contributors");
-        } else if (map_type.startsWith("mapbox://")) {
-            parts.push("© Mapbox");
-        } else if (map_type.startsWith("ch-") || map_type.startsWith("esri")) {
-            parts.push("Map data © Esri");
-        } else {
-            parts.push("Map data");
-        }
+        const parts: string[] = [this._providerCredit(map_type).text];
         if (this.options.attribution) {
             parts.push(this.options.attribution);
         }
@@ -1381,6 +1396,10 @@ export default class OpenLayers extends Map {
     _createMarker(d: StorymapSlide): void {
         const marker = new OpenLayersMapMarker(d, this.options);
         marker.on("markerclick", this._onMarkerClick, this);
+        // Forward popup cards to the map surface (fresh payloads, so the
+        // marker stays the event target of the original, not the re-fire).
+        marker.on("popupopen", this._onMarkerPopupOpen, this);
+        marker.on("popupclose", this._onMarkerPopupClose, this);
         this._addMarker(marker);
         this._markers.push(marker);
         marker.marker_number = this._markers.length - 1;

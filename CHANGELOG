@@ -1,3 +1,31 @@
+Unreleased
+------------------------
+Added
+-----
+- Programmatic popup cards: `storymap.openMarkerPopup(n)` navigates to the
+  stop and opens its card (false and no navigation when disabled, out of
+  range, disposed or mapless), plus `closeMarkerPopup(n?)` and
+  `isPopupOpen(n)`. The marker itself exposes `openPopup()` /
+  `closePopup()` / `togglePopup()` / `isPopupEnabled()` / `popupOpen`,
+  and the `StoryMapMarker` type is exported for hosts
+- `popupopen` / `popupclose` (`{ marker_number, current_slide }`) and a
+  viewer-level `markerclick` re-fire, so hosts can tell marker clicks apart
+  from programmatic navigation
+- `tweetAuthor()` next to `tweetId()`: `Twitter` extracts both through the
+  shared helpers instead of its own regex
+
+Changed
+-------
+- The IIIF reader/writer share `src/storymap/iiif-shared.ts`
+  (`LOCATION_PROPERTIES`, JSON guards, bbox and URL checks) instead of
+  three copies; the writer's Node CLI import carries an explicit `.ts`
+  extension, which type-stripping resolution requires
+- Map attribution comes from one provider-credit table (linked HTML and
+  plain text cannot drift apart); font-theme URL helpers live in
+  `src/storymap/font-css.ts` (re-exported from `StoryMap`)
+- Error paths log with `console.warn`, prefixed `StoryMapJS:`, instead of
+  `console.log`
+
 0.10.8 (2026-09-29)
 ------------------------
 Code audit: one regression, a set of latent bugs, seven stored-XSS sinks, a

@@ -72,6 +72,18 @@ More config options available to do what you want with the line:
 
 To disable zoom calculation/edit zoom level set calculate_zoom to false in the config options.
 
+### More data options
+
+Beyond the map options above, the storymap data takes `overlays[]`
+(stacked raster layers over the basemap), `tilejson` (a TileJSON source for
+the base layer), `overview_extent` (the overview slide's bounds),
+`keyboard` (page-wide arrow-key navigation for multi-viewer pages),
+per-slide `marker: { popup, audioBadge }` (the active marker's card, openable
+via `storymap.openMarkerPopup(n)`, and the narration/audio dot) and
+`narration: { url }` with `autoplay_media` per slide. All are validated
+against `schema/storymap.schema.json` — read it (or `src/types.ts`) for the
+full list with defaults.
+
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with
 `use_custom_marker: true` in the location object (or set `use_custom_markers:

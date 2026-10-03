@@ -91,7 +91,7 @@ export default class SoundCloud extends Media {
         try {
             this.widget?.unbind?.();
         } catch (err) {
-            console.log(err);
+            console.warn("StoryMapJS: error unbinding SoundCloud widget.", err);
         }
         this.widget = null;
         this.soundCloudCreated = false;

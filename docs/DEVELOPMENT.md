@@ -151,6 +151,10 @@ StoryMapJS reads two input formats, both accepted by `StoryMap._initData`
   on `document.createElement`. It is not a copy of rgrove/lazyload.
 - Locales are imported statically. The viewer resolves its labels while it is
   being constructed, so an async locale would silently render in English.
+  `npm run check:locales` reports the expected gaps against `en.json`;
+  CI additionally gates `npm run check:locales:strict` (zero unexpected
+  gaps vs `.expected-gaps.json` — update the baseline with
+  `npm run check:locales:baseline` when adding strings).
 
 ## Multiple instances on one page
 

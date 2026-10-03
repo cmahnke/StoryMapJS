@@ -15,53 +15,19 @@ import type {
     StorymapSlideMedia,
 } from "../types";
 import { readGroundControlPoints } from "../map/georeference";
+import {
+    LOCATION_PROPERTIES,
+    asBoolean,
+    asNumber,
+    asRecord,
+    asString,
+    asStringArray,
+    isLonLatBox,
+} from "./iiif-shared";
 
 const PRESENTATION_3_CONTEXT = "iiif.io/api/presentation/3/context.json";
 const MAPCONFIG_PROFILE = "mapconfig";
 const STORYMAP_PREFIX = "storymap:";
-
-/** Keys copied verbatim from navPlace Feature properties onto the location. */
-const LOCATION_PROPERTIES = [
-    "name",
-    "zoom",
-    "line",
-    "icon",
-    "iconSize",
-    "image",
-    "use_custom_marker",
-    // marker presentation with no IIIF vocabulary of its own: a GeoJSON
-    // foreign member needs no registration, which is why these live here
-    // rather than in a storymap: term (docs/plans/iiif-media-tours.md §2)
-    "popup",
-    "audioBadge",
-] as const;
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-    if (typeof value !== "object" || value === null || Array.isArray(value)) {
-        return null;
-    }
-    return value as Record<string, unknown>;
-}
-
-function asString(value: unknown): string | null {
-    return typeof value === "string" && value !== "" ? value : null;
-}
-
-function asNumber(value: unknown): number | null {
-    return typeof value === "number" && !isNaN(value) ? value : null;
-}
-
-function asBoolean(value: unknown): boolean | null {
-    return typeof value === "boolean" ? value : null;
-}
-
-function asStringArray(value: unknown): string[] {
-    if (typeof value === "string") return [value];
-    if (Array.isArray(value)) {
-        return value.filter((entry): entry is string => typeof entry === "string");
-    }
-    return [];
-}
 
 /**
  * Reads a IIIF xywh image region (`storymap:imageRegion`): an array of
@@ -1731,9 +1697,8 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
 
 /** Reads a `[west, south, east, north]` lon/lat box of four finite numbers. */
 function readLonLatBox(value: unknown): [number, number, number, number] | null {
-    if (!Array.isArray(value) || value.length !== 4) return null;
-    if (!value.every((n) => typeof n === "number" && Number.isFinite(n))) return null;
-    const [west, south, east, north] = value as number[];
+    if (!isLonLatBox(value)) return null;
+    const [west, south, east, north] = value;
     if (east <= west || north <= south) return null;
     return [west, south, east, north];
 }

@@ -264,7 +264,7 @@ class SlideBase {
                 if (
                     (e as Error).message === "this._el.content_item.querySelector is not a function"
                 ) {
-                    console.log("Ignoring error in editor context: " + (e as Error).message);
+                    console.warn("Ignoring error in editor context: " + (e as Error).message);
                 } else {
                     throw e;
                 }

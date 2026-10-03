@@ -48,6 +48,8 @@ import Animate from "../animation/tween";
 import type { Map as OlMap } from "ol";
 import type OlLayer from "ol/layer/Layer";
 import type OpenLayersMapMarker from "../map/openlayers/MapMarker.OpenLayers";
+export { resolveFontCssUrl, isExternalUrl } from "./font-css";
+import { resolveFontCssUrl, isExternalUrl } from "./font-css";
 import type {
     AnimationHandle,
     StorymapData,
@@ -60,57 +62,6 @@ import type {
 const COLLAPSED_MAP_HEIGHT = 1;
 
 type StoryMapListener = (e: unknown) => void;
-
-/**
- * Resolve a `font_css` value to an absolute stylesheet URL.
- *
- * - `stock:<name>` resolves against the library location.
- * - Absolute URLs pass through untouched.
- * - Anything else resolves against the page URL, so hosts can reference
- *   themes vendored into their own public dir (e.g. "fonts/font.css").
- */
-export function resolveFontCssUrl(font: string): string {
-    if (font.startsWith("stock:")) {
-        const font_name = font.split(":")[1] || "default";
-        // A crafted name ("stock:../../secret") would otherwise resolve to an
-        // arbitrary same-origin file next to the bundle, because the name is
-        // concatenated into a URL path. Only accept a bare theme name.
-        if (!/^[a-z0-9-]+$/i.test(font_name)) {
-            console.warn(
-                "StoryMapJS: ignoring font_css with an invalid stock theme name",
-                font_name,
-            );
-            return new URL(/* @vite-ignore */ "../css/fonts/font.default.css", import.meta.url)
-                .href;
-        }
-        // resolved against the library location: one directory up from
-        // src/main.ts (dev) and js/storymap.js (build) in both cases
-        return new URL("../css/fonts/font." + font_name + ".css", import.meta.url).href;
-    }
-    // Absolute URL, protocol-relative, or a data: URL. Note this must be a
-    // real URL test, not a `/^(http|https|\/\/)/` prefix check: the old prefix
-    // test false-positived on a relative path that merely *starts* with those
-    // letters (e.g. "httpfonts.css"), which raised a spurious consent prompt
-    // for a same-origin file.
-    if (/^[a-z][a-z0-9+.-]*:/i.test(font) || font.startsWith("//")) {
-        return font;
-    }
-    return new URL(font, document.baseURI).href;
-}
-
-/** True when `url` points off-origin (or at a data: URL) and needs a consent ask. */
-export function isExternalUrl(url: string): boolean {
-    // data:/blob: are not off-origin but are not a theme stylesheet either
-    if (/^(data|blob):/i.test(url)) {
-        return true;
-    }
-    try {
-        return new URL(url, document.baseURI).origin !== window.location.origin;
-    } catch {
-        // unparseable: treat as external, so we err towards asking
-        return true;
-    }
-}
 
 /**
  * Interactive StoryMap viewer.
@@ -242,7 +193,7 @@ class StoryMapBase {
                     if (typeof callbacks[idx] == "function") {
                         this.on(key, callbacks[idx]);
                     } else {
-                        console.log(
+                        console.warn(
                             "WARNING: Ignoring invalid callback '" +
                                 callbacks[idx] +
                                 "' defined for " +
@@ -603,7 +554,7 @@ class StoryMapBase {
             } else {
                 this.options.map_type = "osm:standard";
             }
-            console.log(`Deprecated map_type ${old_type}; using ${this.options.map_type}`);
+            console.warn(`Deprecated map_type ${old_type}; using ${this.options.map_type}`);
         }
 
         this._loadLanguage();
@@ -1144,6 +1095,53 @@ class StoryMapBase {
     }
 
     /**
+     * Open the popup card for slide `n`'s marker, navigating there first
+     * when it is not the current slide.
+     *
+     * Returns false (and changes nothing) when the viewer is disposed,
+     * has no map (`map_type: "none"`), `n` is out of range, or the marker
+     * has popups disabled. Navigating fires the usual `change` (and
+     * transition) events; a successful open fires `popupopen`.
+     */
+    openMarkerPopup(n: number): boolean {
+        if (this._disposed) return false;
+        if (!Number.isInteger(n) || n < 0 || n >= (this.data?.slides?.length ?? 0)) {
+            return false;
+        }
+        if (this._map === null || this._map === undefined) return false;
+        const marker = this._map.getMarker(n);
+        if (!marker || !marker.isPopupEnabled()) return false;
+        if (n !== this.current_slide) {
+            this.goTo(n);
+        }
+        return marker.openPopup();
+    }
+
+    /**
+     * Close one marker's popup card (`n` given) or every open card
+     * (omitted). No-op when the viewer is disposed or mapless. Fires
+     * `popupclose` per card actually closed.
+     */
+    closeMarkerPopup(n?: number): void {
+        if (this._disposed) return;
+        if (this._map === null || this._map === undefined) return;
+        if (n === undefined) {
+            for (const marker of this._map.getMarkers()) {
+                marker.closePopup();
+            }
+            return;
+        }
+        this._map.getMarker(n)?.closePopup();
+    }
+
+    /** Whether slide `n`'s marker card is currently open. */
+    isPopupOpen(n: number): boolean {
+        if (this._disposed) return false;
+        if (this._map === null || this._map === undefined) return false;
+        return this._map.getMarker(n)?.popupOpen ?? false;
+    }
+
+    /**
      * Rebuild the minimap (`OverviewMap` control). The constructor already
      * builds it; this is for hosts that recreate it after a `map_type` swap
      * or a deferred tile-consent grant.
@@ -1287,6 +1285,9 @@ class StoryMapBase {
 
         // Map Events
         this._map?.on("change", this._onMapChange, this);
+        this._map?.on("popupopen", this._onMarkerPopupOpen, this);
+        this._map?.on("popupclose", this._onMarkerPopupClose, this);
+        this._map?.on("markerclick", this._onMarkerClick, this);
 
         // Global slide navigation (opt-in): the slider only listens on its
         // own panel, which needs focus.
@@ -1983,6 +1984,32 @@ class StoryMapBase {
             // the map already moved itself
             this._navigate(e.current_marker, { navigate: "map" });
         }
+    }
+
+    _onMarkerPopupOpen(e: { marker_number: number }) {
+        this.fire(
+            "popupopen",
+            { marker_number: e.marker_number, current_slide: this.current_slide },
+            this,
+        );
+    }
+
+    _onMarkerPopupClose(e: { marker_number: number }) {
+        this.fire(
+            "popupclose",
+            { marker_number: e.marker_number, current_slide: this.current_slide },
+            this,
+        );
+    }
+
+    _onMarkerClick(e: { marker_number: number }) {
+        // Re-fired from the map surface so a host listening on the viewer
+        // sees marker clicks; the map already navigated itself.
+        this.fire(
+            "markerclick",
+            { marker_number: e.marker_number, current_slide: this.current_slide },
+            this,
+        );
     }
 
     _updateProgress() {

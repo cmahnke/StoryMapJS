@@ -137,6 +137,12 @@ export type { default as OlSource } from "ol/source/Source";
 export type { default as OlProjection } from "ol/proj/Projection";
 
 /**
+ * A map marker as returned by `storymap.getMarker(n)` / `getMarkers()` —
+ * the handle for `openPopup()` / `closePopup()` / `popupOpen`.
+ */
+export type { default as StoryMapMarker } from "./map/openlayers/MapMarker.OpenLayers";
+
+/**
  * Payload of the `imageready` event, fired when an image source is actually
  * attached — the only outward signal that the imagery is really on the map.
  */

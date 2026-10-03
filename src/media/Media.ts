@@ -230,8 +230,7 @@ export class MediaBase {
                 this._state.loaded = true;
                 this._updateDisplay();
             } catch (e) {
-                console.log("Error loading media for ", this._media);
-                console.log(e);
+                console.warn("StoryMapJS: error loading media.", e);
                 this.loadErrorDisplay("Error loading media.");
             }
         }, 1200);

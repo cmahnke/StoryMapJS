@@ -210,23 +210,63 @@ export default class OpenLayersMapMarker extends MapMarker {
      * marker's, and that is `latLon()`.
      */
     _togglePopup(): void {
-        if (!this._popup_enabled) return;
-        if (this._popup_el) {
-            this._closePopup();
-            return;
-        }
-        const el = this._createPopupElement();
-        if (el === null) return;
-        this._marker.appendChild(el);
-        this._popup_el = el;
-        this._marker.classList.add("vco-mapmarker-popup-open");
+        this.togglePopup();
     }
 
     _closePopup(): void {
+        this.closePopup();
+    }
+
+    /** True when this marker is configured to show a popup card. */
+    isPopupEnabled(): boolean {
+        return this._popup_enabled === true;
+    }
+
+    /**
+     * Open the popup card for this marker.
+     *
+     * Returns false (and opens nothing) when popups are disabled for the
+     * marker or it is not a real map marker — e.g. an overview slide. A
+     * click on an inactive marker navigates instead of opening (see the
+     * click handler in `_createMarker`); programmatic callers that want the
+     * card on another stop should navigate first (`StoryMap.openMarkerPopup`
+     * does exactly that). Fires `popupopen` on success.
+     */
+    openPopup(): boolean {
+        if (!this._popup_enabled) return false;
+        if (!this.data.real_marker) return false;
+        if (this._popup_el) return true;
+        const el = this._createPopupElement();
+        if (el === null) return false;
+        this._marker.appendChild(el);
+        this._popup_el = el;
+        this._marker.classList.add("vco-mapmarker-popup-open");
+        this.fire("popupopen", { marker_number: this.marker_number });
+        return true;
+    }
+
+    /**
+     * Close the popup card if it is open. Fires `popupclose`. Also runs on
+     * Escape, the card's close button, deactivation and `dispose()`.
+     */
+    closePopup(): void {
         if (!this._popup_el) return;
         this._popup_el.parentNode?.removeChild(this._popup_el);
         this._popup_el = null;
         this._marker?.classList?.remove("vco-mapmarker-popup-open");
+        this.fire("popupclose", { marker_number: this.marker_number });
+    }
+
+    /**
+     * Open the card when closed, close it when open. Returns whether the
+     * card is open afterwards (false when popups are disabled).
+     */
+    togglePopup(): boolean {
+        if (this._popup_el) {
+            this.closePopup();
+            return false;
+        }
+        return this.openPopup();
     }
 
     get popupOpen(): boolean {

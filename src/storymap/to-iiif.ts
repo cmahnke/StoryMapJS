@@ -18,6 +18,17 @@ import type {
     StorymapSlide,
     StorymapSlideLocation,
 } from "../types";
+// Explicit `.ts` extension: scripts/convert-to-iiif.mjs imports this module
+// straight into node --experimental-strip-types, whose ESM resolution does
+// not try extensions. Extensionless (repo style) breaks `npm run convert:iiif`
+// and tests/convert-cli.test.ts catches it.
+import {
+    LOCATION_PROPERTIES,
+    asRecord,
+    isHttpUrl,
+    isLonLatBox,
+    languageMap,
+} from "./iiif-shared.ts";
 
 /**
  * The document {@link storymapToManifest} reads: the `{ "storymap": {...} }`
@@ -232,28 +243,6 @@ const IMAGE_FORMATS: Record<string, string> = {
 const VIDEO_HOSTS = ["youtube.com", "youtu.be", "vimeo.com", "dailymotion.com", "vine.co"];
 const SOUND_HOSTS = ["soundcloud.com"];
 
-/**
- * Keys copied out of navPlace Feature properties, in the order they are
- * written. This list mirrors the reader's (`src/storymap/iiif.ts`): `popup`
- * and `audioBadge` are marker presentation with no IIIF vocabulary of their
- * own, and omitting them here silently drops them on the round trip.
- */
-const LOCATION_PROPERTIES = [
-    "name",
-    "zoom",
-    "line",
-    "icon",
-    "iconSize",
-    "image",
-    "use_custom_marker",
-    "popup",
-    "audioBadge",
-] as const;
-
-function isHttpUrl(value: unknown): value is string {
-    return typeof value === "string" && /^https?:\/\//i.test(value);
-}
-
 function classifyMediaUrl(url: string): { type: string; format?: string } {
     const ext = url.split(/[?#]/)[0].split(".").pop()?.toLowerCase();
     // Own-property check: a bare lookup hits Object.prototype, so a URL
@@ -278,10 +267,6 @@ function classifyMediaUrl(url: string): { type: string; format?: string } {
     return { type: "Text", format: "text/html" };
 }
 
-function languageMap(value: string): StorymapLanguageMap {
-    return { none: [value] };
-}
-
 /**
  * A value worth writing: neither absent nor the empty string. A type guard, so
  * a declared `string | null` member narrows to the string it is.
@@ -290,26 +275,9 @@ function present<T>(value: T | null | undefined): value is T {
     return value !== undefined && value !== null && value !== "";
 }
 
-/** A plain object, or null for anything else (arrays included). */
-function asRecord(value: unknown): Record<string, unknown> | null {
-    if (typeof value !== "object" || value === null || Array.isArray(value)) {
-        return null;
-    }
-    return value as Record<string, unknown>;
-}
-
 /** An array of `T`, or an empty one. */
 function asArray<T>(value: unknown): T[] {
     return Array.isArray(value) ? (value as T[]) : [];
-}
-
-/** A `[west, south, east, north]` box of four finite numbers. */
-function isLonLatBox(value: unknown): value is [number, number, number, number] {
-    return (
-        Array.isArray(value) &&
-        value.length === 4 &&
-        value.every((n) => typeof n === "number" && Number.isFinite(n))
-    );
 }
 
 /**

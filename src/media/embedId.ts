@@ -102,3 +102,9 @@ export function flickrId(url: string): string | null {
 export function tweetId(url: string): string | null {
     return segmentAfter(url, /\/status(?:es)?\//i);
 }
+
+/** Tweet author (the profile segment before `/status/<id>`), or null. */
+export function tweetAuthor(url: string): string | null {
+    const match = /(?:twitter\.com|x\.com)\/([^\s/?#]+)\/status(?:es)?\//i.exec(url);
+    return match ? match[1] : null;
+}

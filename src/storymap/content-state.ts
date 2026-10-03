@@ -1,3 +1,5 @@
+import { asRecord, isHttpUrl } from "./iiif-shared";
+
 /**
  * IIIF Content State 1.0 — the `iiif-content` initialization parameter.
  *
@@ -61,11 +63,6 @@ export function decodeContentState(encoded: string): string {
     }
     const base64url = pad === 0 ? encoded : encoded + "====".slice(0, 4 - pad);
     return decodeURIComponent(atob(base64url.replace(/-/g, "+").replace(/_/g, "/")));
-}
-
-function asRecord(value: unknown): Json | null {
-    if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
-    return value as Json;
 }
 
 /** `[x, y, w, h]` from an `xywh=` / `xywh=pixel:` fragment, or null. */
@@ -136,7 +133,7 @@ export function parseContentState(value: string | null | undefined): ContentStat
         return stateFromJson(trimmed);
     }
 
-    if (/^https?:\/\//i.test(trimmed)) {
+    if (isHttpUrl(trimmed)) {
         // 2.2.2 or 2.2.4: a plain URI, never encoded. It is either the target
         // itself or a content state Annotation we would have to dereference,
         // and dereferencing is the host's call, not ours.

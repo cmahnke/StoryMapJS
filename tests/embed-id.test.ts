@@ -4,6 +4,7 @@ import {
     flickrId,
     queryParam,
     segmentAfter,
+    tweetAuthor,
     tweetId,
     vimeoId,
     youtubeId,
@@ -125,5 +126,17 @@ describe("tweetId", () => {
 
     it("returns null for a profile URL", () => {
         expect(tweetId("https://twitter.com/zed")).toBe(null);
+    });
+});
+
+describe("tweetAuthor", () => {
+    it("extracts the profile segment before /status/", () => {
+        expect(tweetAuthor("https://twitter.com/zed/status/1234567890")).toBe("zed");
+        expect(tweetAuthor("https://x.com/zed/statuses/1234567890")).toBe("zed");
+    });
+
+    it("returns null without a status path", () => {
+        expect(tweetAuthor("https://twitter.com/zed")).toBe(null);
+        expect(tweetAuthor("https://example.com/zed/status/123")).toBe(null);
     });
 });
