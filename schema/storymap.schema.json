@@ -266,7 +266,8 @@
                     }
                 },
                 "font_css": {
-                    "type": "string"
+                    "anyOf": [{ "type": "string" }, { "const": false }],
+                    "description": "Font theme stylesheet (stock:<name> or URL); false disables the injected stylesheet because the host bundles the theme itself"
                 },
                 "call_to_action": {
                     "type": "boolean"

@@ -436,7 +436,12 @@ function buildMapConfig(
     if (storymap.map_center_offset !== undefined) {
         config["storymap:mapCenterOffset"] = storymap.map_center_offset;
     }
-    const fontCss: unknown = legacy.font_css || storymap.font_css;
+    // false is meaningful (no injected theme) and must survive the legacy
+    // fallback; everything else keeps the previous `||` semantics.
+    const fontCss: unknown =
+        legacy.font_css === false || storymap.font_css === false
+            ? false
+            : legacy.font_css || storymap.font_css;
     if (present(fontCss)) {
         config["storymap:fontCss"] = fontCss;
     }

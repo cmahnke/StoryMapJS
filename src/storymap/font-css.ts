@@ -7,14 +7,28 @@
  */
 
 /**
- * Resolve a `font_css` value to an absolute stylesheet URL.
+ * The configured theme source, or null when the host bundles the theme
+ * itself (`font_css: false`, or `"none"` for JSON-friendliness): the viewer
+ * injects no stylesheet in that case. Empty/absent falls back to
+ * `"stock:default"`, as before.
+ */
+export function fontCssOriginal(configured: string | false | undefined | null): string | null {
+    if (configured === false || configured === "none") return null;
+    return configured || "stock:default";
+}
+
+/**
+ * Resolve a `font_css` value to an absolute stylesheet URL, or null when
+ * there is no theme stylesheet to inject (`font_css: false` / `"none"`).
  *
  * - `stock:<name>` resolves against the library location.
  * - Absolute URLs pass through untouched.
  * - Anything else resolves against the page URL, so hosts can reference
  *   themes vendored into their own public dir (e.g. "fonts/font.css").
  */
-export function resolveFontCssUrl(font: string): string {
+export function resolveFontCssUrl(font: string | false): string | null {
+    // the theme ships in the host bundle: nothing for the viewer to inject
+    if (font === false || font === "none") return null;
     if (font.startsWith("stock:")) {
         const font_name = font.split(":")[1] || "default";
         // A crafted name ("stock:../../secret") would otherwise resolve to an

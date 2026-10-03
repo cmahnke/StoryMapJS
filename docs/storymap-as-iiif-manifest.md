@@ -359,7 +359,7 @@ offset, the same reason `map_bbox` works the way it does.
 | `mapCenterOffset`             | `map_center_offset`                 | `{left, top}`                                                                                                                        |
 | `mapSubdomains`               | `map_subdomains`                    | Tile URL subdomains                                                                                                                  |
 | _(none)_                      | `iiif.url`                          | From the Image API `service[]` a painting body carries, plus `/info.json`; see below                                                 |
-| `fontCss`                     | `font_css`                          | e.g. `stock:dancing-ledger`                                                                                                          |
+| `fontCss`                     | `font_css`                          | e.g. `stock:dancing-ledger`, or `false` for no injected theme                                                                        |
 | `callToAction`                | `call_to_action`                    | boolean                                                                                                                              |
 | `callToActionText`            | `call_to_action_text`               | string                                                                                                                               |
 | `startAtSlide`                | `start_at_slide`                    | 0-based slide index                                                                                                                  |
@@ -872,7 +872,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `iiif.url`                   | Canvas Image annotation `service[0].id` + `/info.json`                  |
 | `iiif.attribution`           | `requiredStatement`                                                     |
 | `zoomify`                    | _dropped_ (zoomify is replaced by the IIIF reference image)             |
-| `font_css`                   | `service[0].storymap:fontCss`                                           |
+| `font_css`                   | `service[0].storymap:fontCss` (`false` disables the injected theme)     |
 | `call_to_action`             | `service[0].storymap:callToAction`                                      |
 | `call_to_action_text`        | `service[0].storymap:callToActionText`                                  |
 | `relative_date`              | _dropped_ (viewer setting)                                              |

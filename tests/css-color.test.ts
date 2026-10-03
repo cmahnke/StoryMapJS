@@ -44,3 +44,37 @@ describe("resolveFontCssUrl", () => {
         );
     });
 });
+
+describe("resolveFontCssUrl opt-out", () => {
+    it("returns null when font loading is disabled with false", () => {
+        expect(resolveFontCssUrl(false)).toBeNull();
+    });
+
+    it("returns null for the none keyword", () => {
+        expect(resolveFontCssUrl("none")).toBeNull();
+    });
+
+    it("resolves the default stock theme", () => {
+        expect(resolveFontCssUrl("stock:default")).toMatch(/css\/fonts\/font\.default\.css$/);
+    });
+
+    it("resolves the pt stock theme", () => {
+        expect(resolveFontCssUrl("stock:pt")).toContain("font.pt.css");
+    });
+
+    it("falls back to the default theme for unsafe stock names", () => {
+        expect(resolveFontCssUrl("stock:../secret")).toContain("font.default.css");
+    });
+
+    it("resolves relative paths to absolute URLs", () => {
+        expect(resolveFontCssUrl("fonts/font.css")).toMatch(/^http/);
+    });
+
+    it("passes protocol-relative URLs through unchanged", () => {
+        expect(resolveFontCssUrl("//cdn/x.css")).toBe("//cdn/x.css");
+    });
+
+    it("passes data URLs through unchanged", () => {
+        expect(resolveFontCssUrl("data:text/css,body{}")).toBe("data:text/css,body{}");
+    });
+});

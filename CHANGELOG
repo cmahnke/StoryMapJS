@@ -13,6 +13,10 @@ Added
   from programmatic navigation
 - `tweetAuthor()` next to `tweetId()`: `Twitter` extracts both through the
   shared helpers instead of its own regex
+- `font_css: false` (or `"none"`) injects no theme stylesheet for
+  bundler consumers that import it themselves; the consent dialog lists no
+  font service for it, and a failing theme load warns with its URL. The
+  IIIF `storymap:fontCss` term round-trips `false`
 - Full XYZ templates naming a known provider are credited to it
   (`tile.openstreetmap.org` and subdomains, `stadiamaps.com`,
   `openmaptiles.org`, `mapbox.com`, `arcgisonline.com`/`esri.com`,

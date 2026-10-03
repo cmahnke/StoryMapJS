@@ -306,7 +306,11 @@ export interface StorymapOptions {
     slide_default_fade: string;
     menubar_default_y: number;
     script_path: string;
-    font_css: string;
+    /**
+     * Font theme stylesheet: `stock:<name>`, a URL/path, or `false` for no
+     * injected stylesheet (the host bundles the theme itself).
+     */
+    font_css: string | false;
     language: string;
     api_key_flickr: string;
     [key: string]: unknown;

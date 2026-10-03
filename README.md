@@ -132,6 +132,11 @@ current slide is re-fitted after the swap.
 Default pins use the bundled `vco-icons` font (`dist/css/icons/`, referenced via
 relative `./icons/...` URLs from `dist/css/storymap.css`), so pins render on
 subpath deploys, bundler consumers (Vite leaves absolute `/css/...` untouched)
+Font themes (`font_css: "stock:<name>"`) resolve via `import.meta.url`, so they
+only work script-tagged, unbundled. A bundler consumer imports the theme
+instead (`import "@projektemacher/storymapjs/css/fonts/font.default.css"`)
+and passes `font_css: false` for no injected `<link>`.
+
 and `file://`/Electron hosts without extra configuration. Import the stylesheet
 once (`import "@projektemacher/storymapjs/css/storymap.css"`).
 

@@ -48,8 +48,8 @@ import Animate from "../animation/tween";
 import type { Map as OlMap } from "ol";
 import type OlLayer from "ol/layer/Layer";
 import type OpenLayersMapMarker from "../map/openlayers/MapMarker.OpenLayers";
-export { resolveFontCssUrl, isExternalUrl } from "./font-css";
-import { resolveFontCssUrl, isExternalUrl } from "./font-css";
+export { resolveFontCssUrl, isExternalUrl, fontCssOriginal } from "./font-css";
+import { resolveFontCssUrl, isExternalUrl, fontCssOriginal } from "./font-css";
 import type {
     AnimationHandle,
     StorymapData,
@@ -635,8 +635,14 @@ class StoryMapBase {
     async _loadFontCss() {
         // only genuinely external URLs ask for consent: stock: themes and
         // relative paths resolve to same-origin / library assets
-        const original = this.options.font_css || "stock:default";
+        const original = fontCssOriginal(this.options.font_css);
+        if (original === null) {
+            // the theme ships in the host bundle (font_css: false): nothing
+            // to inject and no consent row for it
+            return;
+        }
         const font = resolveFontCssUrl(original);
+        if (font === null) return; // only "none" maps to null, handled above
         const manager = consentManagerOf(this.options);
         const external = /^(http|https|\/\/)/.test(original);
         if (external && this.options.consent_required && manager) {
@@ -1612,9 +1618,14 @@ class StoryMapBase {
         // origin, not by a prefix test on the resolved URL: resolveFontCssUrl
         // has already turned a relative path into an absolute one, so testing
         // that for "http" made every relative font_css look external.
-        const font = resolveFontCssUrl(this.options.font_css || "stock:default");
-        if (isExternalUrl(font)) {
-            services.push(fontService());
+        // A host-bundled theme (font_css: false) loads no stylesheet, so it
+        // contributes no font service either.
+        const originalFontCss = fontCssOriginal(this.options.font_css);
+        if (originalFontCss !== null) {
+            const font = resolveFontCssUrl(originalFontCss);
+            if (font !== null && isExternalUrl(font)) {
+                services.push(fontService());
+            }
         }
         manager.requestAll(services, this._el.container);
     }

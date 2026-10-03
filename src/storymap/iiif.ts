@@ -1632,8 +1632,15 @@ function applyMapConfig(data: StorymapData, config: Record<string, unknown>): vo
         if (left !== null && top !== null) data.map_center_offset = { left, top };
     }
 
-    const fontCss = asString(readTerm(config, "fontCss"));
-    if (fontCss !== null) data.font_css = fontCss;
+    const fontCssRaw = readTerm(config, "fontCss");
+    if (fontCssRaw === false) {
+        // a manifest can disable the injected theme exactly like storymap
+        // JSON with font_css: false (the host bundles the theme itself)
+        data.font_css = false;
+    } else {
+        const fontCss = asString(fontCssRaw);
+        if (fontCss !== null) data.font_css = fontCss;
+    }
 
     const callToAction = asBoolean(readTerm(config, "callToAction"));
     if (callToAction !== null) data.call_to_action = callToAction;
