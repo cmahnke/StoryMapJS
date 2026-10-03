@@ -270,10 +270,13 @@ describe("StoryMap marker popup API", () => {
         } as unknown as StorymapDataWrapper);
     }
 
-    function eventsOf(sm: StoryMap, type: string): unknown[] {
-        const seen: unknown[] = [];
-        (sm as unknown as { on(t: string, fn: (e: unknown) => void): void }).on(type, (e) =>
-            seen.push(e),
+    function eventsOf(
+        sm: StoryMap,
+        type: "popupopen" | "popupclose" | "markerclick",
+    ): { marker_number: number; current_slide: number }[] {
+        const seen: { marker_number: number; current_slide: number }[] = [];
+        sm.on(type, (e) =>
+            seen.push({ marker_number: e.marker_number, current_slide: e.current_slide }),
         );
         return seen;
     }
@@ -326,7 +329,7 @@ describe("StoryMap marker popup API", () => {
         sm.goTo(0);
         expect(sm.isPopupOpen(1)).toBe(false);
         expect(closed.length).toBe(1);
-        expect((closed[0] as { marker_number: number }).marker_number).toBe(1);
+        expect(closed[0]?.marker_number).toBe(1);
         sm.dispose();
     });
 
@@ -348,7 +351,7 @@ describe("StoryMap marker popup API", () => {
         const marker = sm.getMarker(1) as unknown as { _marker: HTMLElement };
         marker._marker.dispatchEvent(new MouseEvent("click", { bubbles: true }));
         expect(clicked.length).toBe(1);
-        expect((clicked[0] as { marker_number: number }).marker_number).toBe(1);
+        expect(clicked[0]?.marker_number).toBe(1);
         sm.dispose();
     });
 });

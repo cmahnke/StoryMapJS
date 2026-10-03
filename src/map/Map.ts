@@ -7,6 +7,8 @@ import type { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import type Layer from "ol/layer/Layer";
 import type OverviewMap from "ol/control/OverviewMap";
 import type MapMarker from "./MapMarker";
+import type { MarkerEventPayload } from "./MapMarker";
+import type { ImagereadyPayload } from "./openlayers/Map.OpenLayers";
 import type { LinePoint, ViewToOptions } from "./types";
 import type {
     AnimationHandle,
@@ -25,6 +27,19 @@ import type {
 
 
 ================================================ */
+
+export interface MapEvents {
+    change: { current_marker: number };
+    loaded: StorymapData;
+    added: StorymapData;
+    removed: StorymapData;
+    markerAdded: MapMarker;
+    markerRemoved: MapMarker;
+    markerclick: MarkerEventPayload;
+    popupopen: MarkerEventPayload;
+    popupclose: MarkerEventPayload;
+    imageready: ImagereadyPayload;
+}
 
 /** Wheel/scroll zoom bookkeeping (handles cleared via clearTimeout). */
 interface ScrollState {
@@ -49,6 +64,8 @@ class MapBase {
     declare "_line": VectorLayer | null;
     declare "_line_active": VectorLayer | null;
     declare "current_marker": number;
+    /** The wheel handler on the map element, stored for dispose(). */
+    declare "_onWheelBound": ((e: WheelEvent) => void) | null;
     declare "bounds_array": number[][] | null;
     declare "_tile_layer": Layer | null;
     declare "_tile_layer_mini": Layer | null;
@@ -60,7 +77,7 @@ class MapBase {
     declare "timer": ReturnType<typeof setTimeout> | null;
     declare "touch_scale": number;
     declare "scroll": ScrollState;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<MapEvents>["fire"];
     constructor(
         elem: string | HTMLElement,
         data?: Partial<StorymapData>,
@@ -789,15 +806,18 @@ class MapBase {
     _afterCreateMarkers(): void {}
 
     _initEvents(): void {
-        this._el.map.addEventListener("wheel", (e) => {
+        // stored so the engine's dispose() can detach it (an inline arrow
+        // would have no other handle)
+        this._onWheelBound = (e: WheelEvent) => {
             this._onWheel(e);
-        });
-
-        //this.on("wheel", this._onWheel, this);
+        };
+        this._el.map.addEventListener("wheel", this._onWheelBound);
     }
 }
 
-export default class Map extends DomMixed(Evented(MapBase)) {
+const EventedMapBase = Evented<MapEvents, typeof MapBase>(MapBase);
+
+export default class Map extends DomMixed<MapEvents, typeof EventedMapBase>(EventedMapBase) {
     constructor(...args: ConstructorParameters<typeof MapBase>) {
         super(...args);
     }

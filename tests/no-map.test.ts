@@ -121,7 +121,7 @@ describe('map_type: "none"', () => {
             sm.createMiniMap();
             sm.setExtraAttributions(["nope"]);
             sm.setMapOptions({ calculate_zoom: false });
-            sm.fire("overview");
+            sm.fire("dataloaded");
         }).not.toThrow();
     });
 

@@ -49,7 +49,7 @@ interface SwipableOptions {
 
 interface DragData {
     sliding: boolean;
-    direction: string | null;
+    direction: SwipeDirection | null;
     pagex: { start: number; end: number };
     pagey: { start: number; end: number };
     pos: { start: { x: number; y: number }; end: { x: number; y: number } };
@@ -57,6 +57,23 @@ interface DragData {
     new_pos_parent: { x: number; y: number };
     time: { start: number; end: number };
     touch: boolean;
+}
+
+/** The four swipe directions. `"none"` is not one: an undecided gesture
+ *  carries `null`, and the truthiness guard at the fire site treats it as
+ *  "no swipe" rather than a fifth direction. */
+export type SwipeDirection = "left" | "right" | "up" | "down";
+
+export interface SwipableEvents {
+    dragstart: DragData;
+    dragend: DragData;
+    dragmove: DragData;
+    momentum: DragData;
+    swipe_left: DragData;
+    swipe_right: DragData;
+    swipe_up: DragData;
+    swipe_down: DragData;
+    swipe_nodirection: DragData;
 }
 
 class SwipableBase {
@@ -67,7 +84,7 @@ class SwipableBase {
     declare "animator": AnimationHandle | null;
     declare "dragevent": DragEventNames;
     declare "data": DragData;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<SwipableEvents>["fire"];
 
     //_el: {},
 
@@ -124,7 +141,7 @@ class SwipableBase {
         // Draggable Data
         this.data = {
             sliding: false,
-            direction: "none",
+            direction: null,
             pagex: {
                 start: 0,
                 end: 0,
@@ -405,9 +422,10 @@ class SwipableBase {
             }
         }
         this._animateMomentum();
-        if (swipe && this.data.direction) {
-            this.fire("swipe_" + this.data.direction, this.data);
-        } else if (this.data.direction) {
+        const direction = this.data.direction;
+        if (swipe && direction) {
+            this.fire(`swipe_${direction}`, this.data);
+        } else if (direction) {
             this.fire("swipe_nodirection", this.data);
         } else if (this.options.snap) {
             this.animator?.stop();
@@ -448,7 +466,7 @@ class SwipableBase {
     }
 }
 
-export default class Swipable extends Evented(SwipableBase) {
+export default class Swipable extends Evented<SwipableEvents, typeof SwipableBase>(SwipableBase) {
     constructor(...args: ConstructorParameters<typeof SwipableBase>) {
         super(...args);
     }

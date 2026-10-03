@@ -33,6 +33,9 @@ export function iiifSizedUrl(url: string | null, width: number): string | null {
 ================================================== */
 
 export default class Image extends Media {
+    /** The `load` handler on the image, stored so dispose() can detach it. */
+    declare "_onLoad": (() => void) | null;
+
     /*	Load the media
 	================================================== */
     _loadMedia() {
@@ -61,10 +64,12 @@ export default class Image extends Media {
             );
         }
 
-        // Media Loaded Event
-        this._el.content_item.addEventListener("load", (e) => {
+        // Media Loaded Event. The reference is kept so dispose() can detach
+        // it: an inline arrow function has no other handle.
+        this._onLoad = () => {
             this.onMediaLoaded();
-        });
+        };
+        this._el.content_item.addEventListener("load", this._onLoad);
 
         const img = this._el.content_item as HTMLImageElement;
         // offscreen/preloaded slides stay lazy (the active slide is
@@ -111,5 +116,12 @@ export default class Image extends Media {
 
     _updateMediaDisplay(layout?: string) {
         // modern browsers size media correctly without engine-specific fixes
+    }
+
+    _disposeMedia(): void {
+        if (this._onLoad) {
+            this._el.content_item?.removeEventListener("load", this._onLoad);
+            this._onLoad = null;
+        }
     }
 }

@@ -219,7 +219,9 @@ visitor interacted with most recently.
   an async setup has to check it.
 - **Two lifecycle hooks**: `imageready` (`{ source, kind, layer }`) fires
   once a tile/IIIF/zoomify source is ready — `loaded` fires earlier, while
-  the source may still be attaching — and `storymap.dispose()` tears
+  the source may still be attaching, which is why the event exists — and
+  `e.target` is the viewer that fired it, not the map engine, and
+  `storymap.dispose()` tears
   everything down (timers, resize observer, window/document listeners, WAAPI
   animations, slider, OL map). Listener references are stored on the
   instance (`_on_resize`, `_on_keydown_global`, `_on_fullscreen`,

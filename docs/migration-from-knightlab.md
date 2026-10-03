@@ -348,20 +348,13 @@ factory.
 
 ## Events (unchanged, plus new ones)
 
-`change` (with `current_slide`, and now also `current_id` — the slide's
-`uniqueid`, for deep-linking), `loaded`, `title`, `dataloaded`,
-`fontLoaded`, `transitionstart`/`transitionend` (around slide glides),
-`error` (fetch/validation failures and language conflicts), plus the
-listener map in the constructor — all work as before.
-`markerAdded`/`markerRemoved` still fire on the map object, and `imageready`
-is new (see above).
-
-Marker interaction: a click on an inactive marker navigates and re-fires
-`markerclick` with `{ marker_number, current_slide }` on the viewer (the
-map already navigated itself); `change` alone does not say _how_ the story
-moved. Popup cards (`marker: { popup: true }`) fire `popupopen` /
-`popupclose` with `{ marker_number, current_slide }` on open, close-button,
-Escape, deactivation and `dispose()`.
+The canonical reference is [docs/events.md](events.md) — one table per
+emitter, with payloads. What changed in migration terms: `change` gains
+`current_id`, `loaded`, `title`, `dataloaded`, `fontLoaded`,
+`transitionstart`/`transitionend`, `error` and the constructor listener map
+all work as before; `markerAdded`/`markerRemoved` still fire on the map
+object; `imageready`, `markerclick` and `popupopen`/`popupclose` are new
+(see above).
 
 Two additions for IIIF tours: `await storymap.loadAnnotations()` fetches a
 manifest's externally referenced annotation pages and appends them as stops,

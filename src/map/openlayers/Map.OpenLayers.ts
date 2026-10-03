@@ -1,5 +1,6 @@
 import OlMap from "ol/Map";
 import View from "ol/View";
+import { unByKey } from "ol/Observable";
 import type { Control } from "ol/control";
 import type { Interaction } from "ol/interaction";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
@@ -92,6 +93,8 @@ export default class OpenLayers extends Map {
     declare "_line_animation": number | null;
     /** Sources `imageready` has already been fired for. */
     declare "_imageready_fired": WeakSet<object>;
+    /** The `loadend` subscription key, stored so dispose() can detach it. */
+    declare "_loadend_key": Parameters<typeof unByKey>[0] | null;
 
     /*	Create the Map
 	================================================== */
@@ -161,7 +164,7 @@ export default class OpenLayers extends Map {
             }),
         });
 
-        this._map.on("loadend", () => {
+        this._loadend_key = this._map.on("loadend", () => {
             this._onMapLoaded(undefined);
         });
 
@@ -417,7 +420,8 @@ export default class OpenLayers extends Map {
             },
             {
                 hosts: ["carto.com", "basemaps.cartocdn.com"],
-                html: "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors © " +
+                html:
+                    "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors © " +
                     '<a target="_blank" href="https://carto.com/">CARTO</a>',
                 text: "© OpenStreetMap contributors © CARTO",
             },
@@ -911,6 +915,14 @@ export default class OpenLayers extends Map {
         if (this._line_animation !== null) {
             cancelAnimationFrame(this._line_animation);
             this._line_animation = null;
+        }
+        if (this._loadend_key) {
+            unByKey(this._loadend_key);
+            this._loadend_key = null;
+        }
+        if (this._onWheelBound) {
+            this._el.map?.removeEventListener("wheel", this._onWheelBound);
+            this._onWheelBound = null;
         }
         // markers own their click listener and an overlay; disposing the
         // collection releases both

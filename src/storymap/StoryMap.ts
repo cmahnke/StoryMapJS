@@ -39,8 +39,9 @@ import {
     unregisterParticipant,
 } from "../core/viewers";
 import MediaType from "../media/MediaType";
-import { Evented, type EventedInstance } from "../core/mixins";
+import { Evented, type EventedInstance, type FiredEvent } from "../core/mixins";
 import OpenLayersMap from "../map/openlayers/Map.OpenLayers";
+import type { ImagereadyPayload } from "../map/openlayers/Map.OpenLayers";
 import MenuBar from "../ui/MenuBar";
 import StorySlider from "../slider/StorySlider";
 import { Browser } from "../core/Browser";
@@ -61,7 +62,29 @@ import type {
 /** Map height in pixels while the menubar has collapsed the map (portrait only). */
 const COLLAPSED_MAP_HEIGHT = 1;
 
-type StoryMapListener = (e: unknown) => void;
+export interface StoryMapEvents {
+    change: { current_slide: number; current_id: string | null };
+    loaded: StorymapData;
+    title: { title: string };
+    dataloaded: undefined;
+    fontLoaded: { font: string };
+    transitionstart: { current_slide: number; duration: number };
+    transitionend: { current_slide: number };
+    error: { message: string; source: string; conflict?: boolean };
+    imageready: ImagereadyPayload;
+    annotationsloaded: {
+        stops: StorymapSlide[];
+        searchService: string | null;
+        failed: string[];
+    };
+    markerclick: { marker_number: number; current_slide: number };
+    popupopen: { marker_number: number; current_slide: number };
+    popupclose: { marker_number: number; current_slide: number };
+}
+
+type StoryMapListener<K extends keyof StoryMapEvents = keyof StoryMapEvents> = (
+    e: FiredEvent<StoryMapEvents, K>,
+) => void;
 
 /**
  * Interactive StoryMap viewer.
@@ -80,7 +103,7 @@ type StoryMapListener = (e: unknown) => void;
  */
 class StoryMapBase {
     declare "_loaded": { storyslider: boolean; map: boolean };
-    declare "on": EventedInstance["on"];
+    declare "on": EventedInstance<StoryMapEvents>["on"];
     declare "version": string;
     declare "ready": boolean;
     declare "_el": {
@@ -158,11 +181,7 @@ class StoryMapBase {
     declare "_interaction": number;
     declare "_onInteraction": (() => void) | null;
     declare "_resize_timer": ReturnType<typeof setTimeout> | null;
-    declare "fire": EventedInstance["fire"];
-    declare "hasEventListeners": EventedInstance["hasEventListeners"];
-
-    // TODO: mixin
-    // includes: VCO.Events,
+    declare "fire": EventedInstance<StoryMapEvents>["fire"];
 
     /*	Private Methods
 	================================================== */
@@ -182,26 +201,25 @@ class StoryMapBase {
         elem: string | HTMLElement,
         data: string | StorymapDataWrapper | Record<string, unknown>,
         options?: Partial<StorymapOptions>,
-        listeners?: Record<string, StoryMapListener | StoryMapListener[]>,
+        listeners?: { [K in keyof StoryMapEvents]?: StoryMapListener<K> | StoryMapListener<K>[] },
     ) {
         for (const key in listeners) {
-            const callbacks = listeners[key];
-            if (typeof callbacks == "function") {
-                this.on(key, callbacks);
-            } else {
-                for (const idx in callbacks) {
-                    if (typeof callbacks[idx] == "function") {
-                        this.on(key, callbacks[idx]);
-                    } else {
-                        console.warn(
-                            "WARNING: Ignoring invalid callback '" +
-                                callbacks[idx] +
-                                "' defined for " +
-                                "listener '" +
-                                key +
-                                "' in StoryMap constructor",
-                        );
-                    }
+            const type = key as keyof StoryMapEvents;
+            const callbacks = listeners[type];
+            if (callbacks === undefined) continue;
+            const list = typeof callbacks == "function" ? [callbacks] : callbacks;
+            for (const callback of list) {
+                if (typeof callback == "function") {
+                    this.on(type, callback as StoryMapListener);
+                } else {
+                    console.warn(
+                        "WARNING: Ignoring invalid callback '" +
+                            callback +
+                            "' defined for " +
+                            "listener '" +
+                            key +
+                            "' in StoryMap constructor",
+                    );
                 }
             }
         }
@@ -725,14 +743,10 @@ class StoryMapBase {
             // `current_id` so a host can tell *which stop* it is on, not just
             // how far along it is: an index moves when a slide is inserted, an
             // id does not (§5.1)
-            this.fire(
-                "change",
-                {
-                    current_slide: this.current_slide,
-                    current_id: this._currentSlideId(),
-                },
-                this,
-            );
+            this.fire("change", {
+                current_slide: this.current_slide,
+                current_id: this._currentSlideId(),
+            });
         }
         this._syncHash();
         this._playNarration(this.data.slides?.[this.current_slide]);
@@ -750,10 +764,10 @@ class StoryMapBase {
         if (this._transition_timer) {
             clearTimeout(this._transition_timer);
         }
-        this.fire("transitionstart", { current_slide: this.current_slide, duration }, this);
+        this.fire("transitionstart", { current_slide: this.current_slide, duration });
         this._transition_timer = setTimeout(() => {
             this._transition_timer = null;
-            this.fire("transitionend", { current_slide: this.current_slide }, this);
+            this.fire("transitionend", { current_slide: this.current_slide });
         }, duration);
     }
 
@@ -967,7 +981,7 @@ class StoryMapBase {
             this._updateDistance();
         }
         const result = { stops: added, searchService: loaded.searchService, failed: loaded.failed };
-        this.fire("annotationsloaded", result, this);
+        this.fire("annotationsloaded", result);
         return result;
     }
 
@@ -1037,6 +1051,23 @@ class StoryMapBase {
             this._narration_el.src = "";
             this._narration_el = null;
         }
+        // detach the child subscriptions so a host holding a documented
+        // child handle (storymap._map) cannot keep this viewer alive
+        // through the listener contexts
+        this._map?.off("loaded", this._onMapLoaded, this);
+        this._map?.off("change", this._onMapChange, this);
+        this._map?.off("imageready", this._onImageReady, this);
+        this._map?.off("popupopen", this._onMarkerPopupOpen, this);
+        this._map?.off("popupclose", this._onMarkerPopupClose, this);
+        this._map?.off("markerclick", this._onMarkerClick, this);
+        this._storyslider?.off("loaded", this._onStorySliderLoaded, this);
+        this._storyslider?.off("title", this._onTitle, this);
+        this._storyslider?.off("change", this._onSlideChange, this);
+        this._storyslider?.off("colorchange", this._onColorChange, this);
+        this._menubar?.off("collapse", this._onMenuBarCollapse, this);
+        this._menubar?.off("back_to_start", this._onBackToStart, this);
+        this._menubar?.off("overview", this._onOverview, this);
+        this._menubar?.off("fullscreen", this._onFullscreenToggle, this);
         this._storyslider?.dispose?.();
         this._menubar?.dispose?.();
         this._map?.dispose?.();
@@ -1233,9 +1264,7 @@ class StoryMapBase {
             // image readiness (IIIF/zoomify sources attach asynchronously) is
             // re-fired on the StoryMap, the coordination point for hosts that
             // overlay or measure their own layers
-            this._map.on("imageready", (e: unknown) => {
-                this.fire("imageready", e);
-            });
+            this._map.on("imageready", this._onImageReady, this);
 
             // Map Background Color
             this._map_el().style.backgroundColor = this.options.map_background_color;
@@ -1971,7 +2000,7 @@ class StoryMapBase {
         return el;
     }
 
-    _onTitle(e: unknown) {
+    _onTitle(e: { title: string }) {
         this.fire("title", e);
     }
 
@@ -1997,30 +2026,31 @@ class StoryMapBase {
         }
     }
 
+    _onImageReady(e: ImagereadyPayload) {
+        this.fire("imageready", e);
+    }
+
     _onMarkerPopupOpen(e: { marker_number: number }) {
-        this.fire(
-            "popupopen",
-            { marker_number: e.marker_number, current_slide: this.current_slide },
-            this,
-        );
+        this.fire("popupopen", {
+            marker_number: e.marker_number,
+            current_slide: this.current_slide,
+        });
     }
 
     _onMarkerPopupClose(e: { marker_number: number }) {
-        this.fire(
-            "popupclose",
-            { marker_number: e.marker_number, current_slide: this.current_slide },
-            this,
-        );
+        this.fire("popupclose", {
+            marker_number: e.marker_number,
+            current_slide: this.current_slide,
+        });
     }
 
     _onMarkerClick(e: { marker_number: number }) {
         // Re-fired from the map surface so a host listening on the viewer
         // sees marker clicks; the map already navigated itself.
-        this.fire(
-            "markerclick",
-            { marker_number: e.marker_number, current_slide: this.current_slide },
-            this,
-        );
+        this.fire("markerclick", {
+            marker_number: e.marker_number,
+            current_slide: this.current_slide,
+        });
     }
 
     _updateProgress() {
@@ -2140,7 +2170,7 @@ class StoryMapBase {
     }
 }
 
-export default class StoryMap extends Evented(StoryMapBase) {
+export default class StoryMap extends Evented<StoryMapEvents, typeof StoryMapBase>(StoryMapBase) {
     /**
      * The library base path (the directory containing the module).
      * Derived from `import.meta.url`, which works both for the source module

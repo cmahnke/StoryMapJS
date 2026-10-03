@@ -8,12 +8,29 @@
 /** Constructor shape accepted by the mixin functions. */
 export type Constructor<T = object> = new (...args: any[]) => T;
 
+/** What a listener receives: the payload, plus the framework's own fields.
+ *
+ * Kept as an intersection because `fire` merges them into one object — that
+ * is what a handler gets. As a side effect it also fixes the `type`
+ * clobbering at the type level: intersecting `type: "loaded"` with
+ * `type?: string` yields `"loaded"`.
+ */
+export type FiredEvent<M, K extends keyof M & string> = M[K] & { type: K; target: unknown };
+
 /** Eventing members provided by the Evented mixin. */
-export interface EventedInstance {
-    on: (type: string, fn: unknown, context?: unknown) => unknown;
-    off: (type: string, fn: unknown, context?: unknown) => unknown;
-    fire: (type: string, data?: unknown, target?: unknown) => unknown;
-    hasEventListeners: (type: string) => boolean;
+export interface EventedInstance<M = Record<string, unknown>> {
+    on<K extends keyof M & string>(
+        type: K,
+        fn: (e: FiredEvent<M, K>) => void,
+        context?: unknown,
+    ): this;
+    off<K extends keyof M & string>(
+        type: K,
+        fn: (e: FiredEvent<M, K>) => void,
+        context?: unknown,
+    ): this;
+    fire<K extends keyof M & string>(type: K, data?: M[K]): this;
+    hasEventListeners<K extends keyof M & string>(type: K): boolean;
 }
 
 /**
@@ -25,7 +42,7 @@ export interface EventedInstance {
  * slider's live region). Requiring `Record<string, HTMLElement>` here would
  * force every one of those back into an `{} as HTMLElement` placeholder.
  */
-export interface DomMixedInstance extends EventedInstance {
+export interface DomMixedInstance<M = Record<string, unknown>> extends EventedInstance<M> {
     _el: Record<string, unknown>;
     data?: unknown;
 }
@@ -36,7 +53,7 @@ export interface DomMixedInstance extends EventedInstance {
 ================================================== */
 
 /** Adds eventing (on/off/fire/hasEventListeners) to a class. */
-export function Evented<T extends Constructor>(Base: T) {
+export function Evented<M, T extends Constructor>(Base: T) {
     return class extends Base {
         declare "_vco_events"?: Record<string, { action: unknown; context: unknown }[]>;
 
@@ -70,14 +87,15 @@ export function Evented<T extends Constructor>(Base: T) {
                 string,
                 { action: unknown; context: unknown }[]
             >;
-            for (let i = 0, len = events[type].length; i < len; i++) {
-                if (
-                    events[type][i].action === fn &&
-                    (!context || events[type][i].context === context)
-                ) {
-                    events[type].splice(i, 1);
-                    return this;
-                }
+            events[type] = events[type].filter(
+                (listener) =>
+                    !(
+                        listener.action === fn &&
+                        (!context || listener.context === context)
+                    ),
+            );
+            if (events[type].length === 0) {
+                delete events[type];
             }
             return this;
         }
@@ -85,16 +103,15 @@ export function Evented<T extends Constructor>(Base: T) {
         fire(
             /*String*/ type: string,
             /*(optional) Object*/ data?: unknown,
-            target?: unknown,
         ): this {
             if (!this.hasEventListeners(type)) {
                 return this;
             }
 
             const event = {
-                type: type,
-                target: target || this,
                 ...(data as Record<string, unknown> | undefined),
+                type,
+                target: this,
             };
 
             const listeners = (
@@ -111,7 +128,7 @@ export function Evented<T extends Constructor>(Base: T) {
         constructor(...args: any[]) {
             super(...args);
         }
-    };
+    } as Constructor<EventedInstance<M>> & T;
 }
 
 /*	DomMixed
@@ -121,7 +138,10 @@ export function Evented<T extends Constructor>(Base: T) {
 
 /** Adds DOM container conveniences (addTo/removeFrom/setPosition/show/hide
  *  and the onAdd/onRemove/onLoaded lifecycle events) to a class. */
-export function DomMixed<T extends Constructor<DomMixedInstance>>(Base: T) {
+export function DomMixed<
+    M extends { loaded: unknown; added: unknown; removed: unknown },
+    T extends Constructor<DomMixedInstance<M>>,
+>(Base: T) {
     return class extends Base {
         /**
          * The host element. Every DomMixed consumer keeps its root element
@@ -168,17 +188,17 @@ export function DomMixed<T extends Constructor<DomMixedInstance>>(Base: T) {
         }
 
         /*	Lifecycle events
-        ================================================== */
+	================================================== */
         onLoaded(): void {
-            this.fire("loaded", this.data);
+            this.fire("loaded", this.data as M["loaded"]);
         }
 
         onAdd(): void {
-            this.fire("added", this.data);
+            this.fire("added", this.data as M["added"]);
         }
 
         onRemove(): void {
-            this.fire("removed", this.data);
+            this.fire("removed", this.data as M["removed"]);
         }
 
         constructor(...args: any[]) {

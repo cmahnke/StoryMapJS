@@ -11,7 +11,18 @@ import type {
 /*	MapMarker
 	Creates a marker. Takes a data object and
 	populates the marker with content.
-================================================= */
+================================================== */
+
+/** A marker event payload: the marker by slide index. */
+export interface MarkerEventPayload {
+    marker_number: number;
+}
+
+export interface MapMarkerEvents {
+    markerclick: MarkerEventPayload;
+    popupopen: MarkerEventPayload;
+    popupclose: MarkerEventPayload;
+}
 
 class MapMarkerBase {
     declare "_el": Record<string, HTMLElement>;
@@ -26,7 +37,7 @@ class MapMarkerBase {
     declare "data": MapMarkerData;
     declare "options": StorymapOptions;
     declare "animator": AnimationHandle | null;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<MapMarkerEvents>["fire"];
 
     /*	Constructor
 	================================================== */
@@ -163,7 +174,9 @@ class MapMarkerBase {
     _updateDisplay(width: number, height: number, animate?: boolean): void {}
 }
 
-export default class MapMarker extends Evented(MapMarkerBase) {
+export default class MapMarker extends Evented<MapMarkerEvents, typeof MapMarkerBase>(
+    MapMarkerBase,
+) {
     constructor(...args: ConstructorParameters<typeof MapMarkerBase>) {
         super(...args);
     }

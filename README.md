@@ -202,7 +202,8 @@ locale and is expected to be runnable without failing.
 
 If a storymap fails to render, open the browser console: the viewer logs
 fetch and validation errors (e.g. "could not load storymap data from ...").
-The `error` event also fires for programmatic consumers.
+The `error` event also fires for programmatic consumers. The full event
+reference (payloads included) is [docs/events.md](docs/events.md).
 
 ## Bundled credentials
 

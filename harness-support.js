@@ -106,16 +106,25 @@ function safeGet(target, key) {
  * This is the contract `imageready` exists to provide: a host that overlays or
  * measures its own layers needs a *sized viewport and a resolved view* the
  * instant the event arrives, because `loaded` can fire earlier. Recording it
- * here is the only way a spec can check that without racing the event — the
- * test attaches long after construction.
+ * here — synchronously inside the listener, before the spec reads
+ * `window.__events` — is the only way a spec can check that without racing
+ * the event; reading `window.__sm.map` afterwards would pass while no longer
+ * testing measurability at fire time.
  *
- * The `target` is the map *engine* (our `OpenLayers` wrapper), not the raw
- * `ol/Map`, because the engine is the one that fires the event. Reach through
- * to `_map` for the real thing, the same way the rest of this suite reaches
- * engine internals.
+ * The `target` is the `StoryMap` viewer itself (`fire()` stamps
+ * `target: this`, so the re-fired `imageready` carries the viewer, not the
+ * engine that first raised it). Reach through to the public `.map` for the
+ * raw `ol/Map`, falling back to the engine's `_map` for events subscribed on
+ * the engine directly.
  */
 function summarizeMap(target) {
-    const map = isOlMap(target) ? target : isOlMap(target?._map) ? target._map : null;
+    const map = isOlMap(target)
+        ? target
+        : isOlMap(target?.map)
+          ? target.map
+          : isOlMap(target?._map)
+            ? target._map
+            : null;
     if (!map) {
         return { type: target?.constructor?.name ?? null };
     }

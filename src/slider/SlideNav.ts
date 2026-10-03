@@ -22,6 +22,13 @@ interface SlideNavOptions {
     [key: string]: unknown;
 }
 
+export interface SlideNavEvents {
+    clicked: SlideNavOptions;
+    loaded: SlideNavData;
+    added: SlideNavData;
+    removed: SlideNavData;
+}
+
 class SlideNavBase {
     declare "_el": Record<string, HTMLElement>;
     declare "mediatype": unknown;
@@ -29,7 +36,7 @@ class SlideNavBase {
     declare "options": SlideNavOptions;
     declare "animator": AnimationHandle | null;
     declare "animator_position": AnimationHandle | null;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<SlideNavEvents>["fire"];
 
     //_el: {},
 
@@ -239,7 +246,11 @@ class SlideNavBase {
     }
 }
 
-export default class SlideNav extends DomMixed(Evented(SlideNavBase)) {
+const EventedSlideNavBase = Evented<SlideNavEvents, typeof SlideNavBase>(SlideNavBase);
+
+export default class SlideNav extends DomMixed<SlideNavEvents, typeof EventedSlideNavBase>(
+    EventedSlideNavBase,
+) {
     constructor(...args: ConstructorParameters<typeof SlideNavBase>) {
         super(...args);
     }

@@ -137,6 +137,33 @@ export type { default as OlSource } from "ol/source/Source";
 export type { default as OlProjection } from "ol/proj/Projection";
 
 /**
+ * What a listener receives: the event payload plus the framework's `type`
+ * and `target` fields.
+ */
+export type { FiredEvent } from "./core/mixins";
+
+/** The swipe directions a `Swipable` reports. */
+export type { SwipeDirection } from "./ui/Swipable";
+
+/**
+ * Per-emitter event maps (`event name → payload`), for typed subscriptions:
+ * `storymap.on("change", (e) => ...)` now infers `e` instead of `unknown`.
+ *
+ * @remarks Each map lists exactly the events its emitter fires.
+ */
+export type { StoryMapEvents } from "./storymap/StoryMap";
+export type { StorySliderEvents } from "./slider/StorySlider";
+export type { SlideEvents, SlideBackgroundState } from "./slider/Slide";
+export type { SlideNavEvents } from "./slider/SlideNav";
+export type { MediaEvents } from "./media/Media";
+export type { TextEvents } from "./media/types/Text";
+export type { MapEvents } from "./map/Map";
+export type { MapMarkerEvents, MarkerEventPayload } from "./map/MapMarker";
+export type { MenuBarEvents } from "./ui/MenuBar";
+export type { MessageEvents } from "./ui/Message";
+export type { SwipableEvents } from "./ui/Swipable";
+
+/**
  * A map marker as returned by `storymap.getMarker(n)` / `getMarkers()` —
  * the handle for `openPopup()` / `closePopup()` / `popupOpen`.
  */

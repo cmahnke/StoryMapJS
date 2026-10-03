@@ -197,7 +197,7 @@ immediately, and a host asks for the rest afterwards:
 ```js
 await sm.loadAnnotations();
 sm.on("annotationsloaded", (result) => {
-    console.log(`added ${result.added} stops`);
+    console.log(`added ${result.stops.length} stops`);
 });
 ```
 

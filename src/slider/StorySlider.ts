@@ -73,6 +73,18 @@ interface SlideBackgroundChange {
     image?: boolean;
 }
 
+export interface StorySliderEvents {
+    colorchange: SlideBackgroundChange;
+    nav_next: Partial<StorymapData>;
+    nav_previous: Partial<StorymapData>;
+    nav_left: Partial<StorymapData>;
+    nav_right: Partial<StorymapData>;
+    slideAdded: Partial<StorymapData>;
+    change: { current_slide: number; uniqueid: string | null | undefined };
+    loaded: Partial<StorymapData>;
+    title: { title: string };
+}
+
 class StorySliderBase {
     declare "_el": StorySliderElements;
     declare "_nav": { previous: SlideNav; next: SlideNav };
@@ -88,9 +100,8 @@ class StorySliderBase {
     declare "options": StorySliderOptions;
     declare "animator": AnimationHandle | null;
     declare "animator_background": AnimationHandle | null;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<StorySliderEvents>["fire"];
     declare "_loaded": boolean;
-    declare "hasEventListeners": EventedInstance["hasEventListeners"];
 
     /*	Private Methods
 	================================================== */
@@ -796,13 +807,16 @@ class StorySliderBase {
         this.goTo(this.current_slide);
     }
 
-    _onNavigation(e: { direction: string }) {
-        if (e.direction === "next" || e.direction === "left") {
+    _onNavigation(e: { direction: string | null }) {
+        const direction = e.direction;
+        if (direction === "next" || direction === "left") {
             this.next();
-        } else if (e.direction === "previous" || e.direction === "right") {
+        } else if (direction === "previous" || direction === "right") {
             this.previous();
+        } else {
+            return;
         }
-        this.fire("nav_" + e.direction, this.data);
+        this.fire(`nav_${direction}`, this.data);
     }
 
     _onSlideAdded(e?: unknown) {
@@ -826,7 +840,9 @@ class StorySliderBase {
     }
 }
 
-export default class StorySlider extends Evented(StorySliderBase) {
+export default class StorySlider extends Evented<StorySliderEvents, typeof StorySliderBase>(
+    StorySliderBase,
+) {
     constructor(...args: ConstructorParameters<typeof StorySliderBase>) {
         super(...args);
     }

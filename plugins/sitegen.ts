@@ -140,6 +140,7 @@ const DOCS: DocEntry[] = [
         title: "StoryMap data as IIIF manifests",
     },
     { md: "docs/iiif-authoring.md", out: "authoring.html", title: "Authoring IIIF stories" },
+    { md: "docs/events.md", out: "events.html", title: "Event reference" },
 ];
 
 const NAV = /* html */ `
@@ -171,6 +172,7 @@ const NAV = /* html */ `
                 <li><a class="button" href="./migration.html">Migration guide</a></li>
                 <li><a class="button" href="./iiif.html">IIIF docs</a></li>
                 <li><a class="button" href="./authoring.html">Authoring</a></li>
+                <li><a class="button" href="./events.html">Events</a></li>
                 <li><a class="button" href="./api/index.html">API docs</a></li>
                 <li><a class="button" href="../index.html#help">Help</a></li>
             </ul>
@@ -235,6 +237,7 @@ function rewriteLinks(html: string): string {
             .replace(/href="[^"]*?storymap-as-iiif-manifest\.md/g, 'href="./iiif.html')
             .replace(/href="[^"]*?migration-from-knightlab\.md/g, 'href="./migration.html')
             .replace(/href="[^"]*?iiif-authoring\.md/g, 'href="./authoring.html"')
+            .replace(/href="[^"]*?events\.md/g, 'href="./events.html')
             // a plan file has no published page; point at it in the repo, and
             // keep the filename — a directory link 404s on GitHub too
             .replace(

@@ -8,6 +8,8 @@ import Dom from "../../dom/Dom";
 
 export default class Flickr extends Media {
     declare "media_id": string;
+    /** The `load` handler on the image, stored so dispose() can detach it. */
+    declare "_onLoad": (() => void) | null;
 
     /*	Load the media
 	================================================== */
@@ -22,10 +24,12 @@ export default class Flickr extends Media {
             this._el.content,
         );
 
-        // Media Loaded Event
-        this._el.content_item.addEventListener("load", (e) => {
+        // Media Loaded Event. The reference is kept so dispose() can detach
+        // it: an inline arrow function has no other handle.
+        this._onLoad = () => {
             this.onMediaLoaded();
-        });
+        };
+        this._el.content_item.addEventListener("load", this._onLoad);
 
         // Get Media ID
         this.establishMediaID();
@@ -111,5 +115,12 @@ export default class Flickr extends Media {
         }
 
         return _size;
+    }
+
+    _disposeMedia(): void {
+        if (this._onLoad) {
+            this._el.content_item?.removeEventListener("load", this._onLoad);
+            this._onLoad = null;
+        }
     }
 }

@@ -15,12 +15,19 @@ interface MessageOptions {
     [key: string]: unknown;
 }
 
+export interface MessageEvents {
+    clicked: MessageOptions;
+    loaded: Record<string, unknown>;
+    added: Record<string, unknown>;
+    removed: Record<string, unknown>;
+}
+
 class MessageBase {
     declare "_el": Record<string, HTMLElement>;
     declare "options": MessageOptions;
     "data": Record<string, unknown>;
     declare "animator": Record<string, unknown>;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<MessageEvents>["fire"];
 
     /*	Constructor
 	================================================== */
@@ -120,7 +127,11 @@ class MessageBase {
     }
 }
 
-export default class Message extends DomMixed(Evented(MessageBase)) {
+const EventedMessageBase = Evented<MessageEvents, typeof MessageBase>(MessageBase);
+
+export default class Message extends DomMixed<MessageEvents, typeof EventedMessageBase>(
+    EventedMessageBase,
+) {
     constructor(...args: ConstructorParameters<typeof MessageBase>) {
         super(...args);
     }

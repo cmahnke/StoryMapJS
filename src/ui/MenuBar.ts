@@ -20,12 +20,22 @@ interface MenuBarOptions {
     [key: string]: unknown;
 }
 
+export interface MenuBarEvents {
+    overview: Event;
+    back_to_start: Event;
+    fullscreen: Event;
+    collapse: { y: number; collapsed: boolean };
+    loaded: undefined;
+    added: undefined;
+    removed: undefined;
+}
+
 class MenuBarBase {
     declare "_el": Record<string, HTMLElement>;
     declare "collapsed": boolean;
     declare "options": MenuBarOptions;
     declare "animator": Record<string, unknown>;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<MenuBarEvents>["fire"];
     _fullscreenActive = false;
 
     /*	Constructor
@@ -369,7 +379,11 @@ class MenuBarBase {
     }
 }
 
-export default class MenuBar extends DomMixed(Evented(MenuBarBase)) {
+const EventedMenuBarBase = Evented<MenuBarEvents, typeof MenuBarBase>(MenuBarBase);
+
+export default class MenuBar extends DomMixed<MenuBarEvents, typeof EventedMenuBarBase>(
+    EventedMenuBarBase,
+) {
     constructor(...args: ConstructorParameters<typeof MenuBarBase>) {
         super(...args);
     }

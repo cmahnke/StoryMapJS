@@ -300,7 +300,8 @@ describe("storymap imageready", () => {
         const payload = { source: {}, kind: "iiif", layer: {} };
         engine.fire("imageready", payload);
 
-        // ol's Observable#fire passes the payload on with its own `type`
+        // fire() stamps its own `type`/`target` last, so the relayed engine
+        // payload rides along without displacing them
         expect(seen.length).toBe(1);
         expect(seen[0]).toMatchObject(payload);
         sm.dispose();

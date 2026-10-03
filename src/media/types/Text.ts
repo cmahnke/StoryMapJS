@@ -16,11 +16,17 @@ interface TextOptions {
     text_align?: string;
 }
 
+export interface TextEvents {
+    loaded: TextData;
+    added: TextData;
+    removed: TextData;
+}
+
 class TextBase {
     declare "_el": Record<string, HTMLElement>;
     declare "data": TextData;
     declare "options": TextOptions;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<TextEvents>["fire"];
 
     /*	Constructor
 	================================================== */
@@ -171,7 +177,7 @@ class TextBase {
     }
 }
 
-export default class Text extends Evented(TextBase) {
+export default class Text extends Evented<TextEvents, typeof TextBase>(TextBase) {
     constructor(...args: ConstructorParameters<typeof TextBase>) {
         super(...args);
     }

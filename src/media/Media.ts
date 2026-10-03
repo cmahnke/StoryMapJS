@@ -74,6 +74,14 @@ export interface MediaData extends StorymapSlideMedia {
     [key: string]: unknown;
 }
 
+export interface MediaEvents {
+    loaded: MediaData;
+    media_loaded: MediaData;
+    media_ended: MediaData;
+    added: MediaData;
+    removed: MediaData;
+}
+
 /**
  * The media element cache.
  *
@@ -110,7 +118,7 @@ export class MediaBase {
     declare "options": MediaOptions;
     declare "animator": unknown;
     declare "_media": unknown;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<MediaEvents>["fire"];
 
     /*	Constructor
 	================================================== */
@@ -589,7 +597,7 @@ export class MediaBase {
     _stopMedia() {}
 }
 
-export class Media extends Evented(MediaBase) {
+export class Media extends Evented<MediaEvents, typeof MediaBase>(MediaBase) {
     constructor(...args: ConstructorParameters<typeof MediaBase>) {
         super(...args);
     }

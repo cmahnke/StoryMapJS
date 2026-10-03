@@ -4,6 +4,7 @@ import { DomEvent } from "../dom/DomEvent";
 import Dom from "../dom/Dom";
 import { easeInSpline } from "../animation/easings";
 import MediaType from "../media/MediaType";
+import type { MediaEvents } from "../media/Media";
 import { sanitizeSlideText } from "../media/EmbedUtil";
 import Text from "../media/types/Text";
 import { Browser } from "../core/Browser";
@@ -50,9 +51,23 @@ interface MediaInstance {
     stopMedia: () => void;
     updateDisplay: (w?: number, h?: number, l?: string) => void;
     dispose?: () => void;
-    on?: EventedInstance["on"];
-    off?: EventedInstance["off"];
+    on?: EventedInstance<MediaEvents>["on"];
+    off?: EventedInstance<MediaEvents>["off"];
     _state?: { loaded?: boolean; eager?: boolean };
+}
+
+export interface SlideBackgroundState {
+    image: boolean;
+    color: boolean;
+    color_value: string;
+}
+
+export interface SlideEvents {
+    background_change: SlideBackgroundState;
+    call_to_action: Event;
+    loaded: StorymapSlide;
+    added: StorymapSlide;
+    removed: StorymapSlide;
 }
 
 interface SlideHas {
@@ -60,11 +75,7 @@ interface SlideHas {
     text: boolean;
     media: boolean;
     title: boolean;
-    background: {
-        image: boolean;
-        color: boolean;
-        color_value: string;
-    };
+    background: SlideBackgroundState;
 }
 
 class SlideBase {
@@ -79,13 +90,15 @@ class SlideBase {
     declare "_onSlideScrollBound": EventListener;
     /** Every `media_ended` handler registered via `onMediaEnded`, kept so `dispose()` can remove them. */
     declare "_media_ended_fns": (() => void)[];
+    /** The `media_loaded` handler below, kept for the same reason. */
+    declare "_media_loaded_fn": (() => void) | null;
     declare "has": SlideHas;
     declare "title": string;
     declare "data": StorymapSlide;
     declare "options": SlideOptions;
     declare "active": boolean;
     declare "animator": unknown;
-    declare "fire": EventedInstance["fire"];
+    declare "fire": EventedInstance<SlideEvents>["fire"];
     declare "onLoaded": () => void;
 
     //_el: {},
@@ -201,6 +214,10 @@ class SlideBase {
             this._media?.off?.("media_ended", fn);
         }
         this._media_ended_fns = [];
+        if (this._media_loaded_fn) {
+            this._media?.off?.("media_loaded", this._media_loaded_fn);
+            this._media_loaded_fn = null;
+        }
         this._media?.dispose?.();
         this._media = null;
         this._el.container?.remove();
@@ -453,7 +470,8 @@ class SlideBase {
             this._media = new slide_media.mediatype.cls(slide_media, this.options) as MediaInstance;
             // loaded media changes the content height — the scroll hint
             // may appear or disappear
-            this._media.on?.("media_loaded", () => this._updateScrollHint());
+            this._media_loaded_fn = () => this._updateScrollHint();
+            this._media.on?.("media_loaded", this._media_loaded_fn);
         }
 
         // Create Text
@@ -547,7 +565,9 @@ class SlideBase {
     }
 }
 
-export default class Slide extends DomMixed(Evented(SlideBase)) {
+const EventedSlideBase = Evented<SlideEvents, typeof SlideBase>(SlideBase);
+
+export default class Slide extends DomMixed<SlideEvents, typeof EventedSlideBase>(EventedSlideBase) {
     constructor(...args: ConstructorParameters<typeof SlideBase>) {
         super(...args);
     }
