@@ -1,0 +1,36 @@
+{
+    "storymap": {
+        "map_type": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "slides": [
+            {
+                "type": "overview",
+                "date": "",
+                "text": {
+                    "headline": "A longhand OSM template",
+                    "text": "The base layer names OpenStreetMap by its full tile template, and the credit line still credits it."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Paris",
+                    "text": "<p>A stop on a template-credited map.</p>"
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

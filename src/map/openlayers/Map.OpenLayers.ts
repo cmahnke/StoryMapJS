@@ -324,6 +324,12 @@ export default class OpenLayers extends Map {
      * (which their terms of service require).
      */
     _providerCredit(map_type: string): { html: string; text: string } {
+        // A full XYZ template naming a known provider
+        // (https://tile.openstreetmap.org/{z}/{x}/{y}.png) is not the `osm`
+        // map type, so match its host as well as the type prefix — otherwise
+        // both renderings fall through to the generic "Map data" line.
+        const byHost = this._hostCredit(map_type);
+        if (byHost) return byHost;
         // Emitting provider credit only for OSM left Stadia, Mapbox and the
         // OL XYZ template providers uncredited, which their terms of service
         // require. The credit is keyed off the resolved map_type, so a custom
@@ -361,6 +367,65 @@ export default class OpenLayers extends Map {
         ];
         const entry = table.find((row) => row.test(map_type)) ?? table[table.length - 1];
         return { html: entry.html, text: entry.text };
+    }
+
+    /**
+     * The table row for an absolute tile template's host, or null when the
+     * template is relative (a host serving its own tiles credits itself via
+     * `attribution`) or unknown. Subdomains match their parent, so
+     * `a.tile.openstreetmap.org` credits OSM.
+     */
+    _hostCredit(map_type: string): { html: string; text: string } | null {
+        let host: string | null = null;
+        try {
+            host = new URL(map_type).hostname;
+        } catch {
+            // Not absolute: only a protocol-relative template (`//host/...`)
+            // still names a host. A relative template resolves against the
+            // dummy base below and is rejected by the host check.
+            try {
+                const resolved = new URL(map_type, "https://storymap.invalid").hostname;
+                host = resolved === "storymap.invalid" ? null : resolved;
+            } catch {
+                host = null;
+            }
+        }
+        if (!host) return null;
+        const rows: { hosts: string[]; html: string; text: string }[] = [
+            {
+                hosts: ["openstreetmap.org", "osm.org"],
+                html: "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+                text: "© OpenStreetMap contributors",
+            },
+            {
+                hosts: ["stadiamaps.com", "openmaptiles.org"],
+                html:
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://stadiamaps.com/">Stadia Maps</a>, ' +
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://openmaptiles.org/">OpenMapTiles</a> ' +
+                    '© <a target="_blank" rel="noopener noreferrer" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                text: "© Stadia Maps, © OpenMapTiles © OpenStreetMap contributors",
+            },
+            {
+                hosts: ["mapbox.com"],
+                html: '© <a target="_blank" href="https://www.mapbox.com/about/maps/">Mapbox</a>',
+                text: "© Mapbox",
+            },
+            {
+                hosts: ["arcgisonline.com", "esri.com"],
+                html: 'Map data © <a target="_blank" href="https://www.esri.com/">Esri</a>',
+                text: "Map data © Esri",
+            },
+            {
+                hosts: ["carto.com", "basemaps.cartocdn.com"],
+                html: "© <a target='_blank' href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors © " +
+                    '<a target="_blank" href="https://carto.com/">CARTO</a>',
+                text: "© OpenStreetMap contributors © CARTO",
+            },
+        ];
+        const row = rows.find(({ hosts }) =>
+            hosts.some((h) => host === h || host.endsWith(`.${h}`)),
+        );
+        return row ? { html: row.html, text: row.text } : null;
     }
 
     _getAttribution(map_type: string): string[] {
@@ -2392,6 +2457,14 @@ export default class OpenLayers extends Map {
                     // legacy zoomify multiWorld flag silently reintroduced the
                     // strict extent constraint this code went out of its way
                     // to avoid, and broke image-mode zoom (issue #465).
+                    // Reconstructing is the only option: `ol/View` has no
+                    // setExtent(), and `extent`/`constrainOnlyCenter` are
+                    // constructor-only — View.js keeps exactly three
+                    // observables (center, resolution, rotation), so neither
+                    // can be applied to a live view. Generalising this rebuild
+                    // is also the route to fixing a projection change; see
+                    // docs/plans/layers-control.md §2, which refuses a
+                    // runtime basemap swap across image space for it.
                     const view = this._map.getView();
                     const center = view.getCenter();
                     const zoom = view.getZoom();

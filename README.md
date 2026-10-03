@@ -115,7 +115,10 @@ an opaque slide panel instead of the gradient over the map), set
 Any value containing `{z}` renders as a raster XYZ layer; a path without `{z}`
 that looks like a URL/path renders as a vector style layer; anything else falls
 back to classic OSM raster — except `"none"`, which builds no map at all and
-runs the story as text and media only.
+runs the story as text and media only. A full template naming a known provider
+(`https://tile.openstreetmap.org/{z}/{x}/{y}.png`) is credited to that
+provider; anything else gets the generic "Map data" line (add your own via
+`attribution`).
 
 ### Switching the basemap at runtime
 
