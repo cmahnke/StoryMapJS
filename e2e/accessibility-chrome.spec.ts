@@ -5,11 +5,18 @@ import { getState, harnessUrl, waitForStoryMap } from "./known-issues/helpers";
  * Accessibility chrome: the skip link jumps to the slides, the autoplay
  * toggle pauses advancement, and map pins are keyboard-operable.
  */
-test("skip link jumps to the slide content", async ({ page }) => {
+test("skip link jumps to the slide content", async ({ page, browserName }) => {
     await page.goto(harnessUrl("katrina"));
     await waitForStoryMap(page);
 
-    // the skip link is the first tab stop inside the widget
+    // the skip link is the first tab stop inside the widget. WebKit only
+    // tabs through form controls without full keyboard access enabled, so
+    // the Tab-order half is skipped there; the jump itself is covered below
+    // on every engine.
+    test.skip(
+        browserName === "webkit",
+        "WebKit does not Tab to links without full keyboard access",
+    );
     await page.keyboard.press("Tab");
     const link = page.locator("#storymap-embed a.vco-skip-link:focus");
     await expect.poll(() => link.count()).toBe(1);
@@ -19,6 +26,24 @@ test("skip link jumps to the slide content", async ({ page }) => {
     await link.press("Enter");
     await expect.poll(() => page.evaluate(() => window.location.hash)).toBe(href);
     expect(href).not.toBe(before);
+});
+
+test("skip link target exists and is reachable by focus", async ({ page }) => {
+    await page.goto(harnessUrl("katrina"));
+    await waitForStoryMap(page);
+
+    // engine-independent half of the coverage: the target exists and
+    // activating the link moves the hash there on every engine
+    const link = page.locator("#storymap-embed a.vco-skip-link");
+    await expect.poll(() => link.count()).toBe(1);
+    const href = await link.getAttribute("href");
+    expect(href).toMatch(/#.+slides$/);
+    await expect
+        .poll(() => page.evaluate((h) => !!document.querySelector(h as string), href))
+        .toBe(true);
+    await link.focus();
+    await link.press("Enter");
+    await expect.poll(() => page.evaluate(() => window.location.hash)).toBe(href);
 });
 
 test("autoplay toggle pauses and resumes", async ({ page }) => {

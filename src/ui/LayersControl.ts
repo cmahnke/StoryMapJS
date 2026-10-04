@@ -189,12 +189,14 @@ class LayersControlBase {
 
     _onPanelKeyDown(e: KeyboardEvent): void {
         if (e.key !== "Escape" || !this._open) return;
-        // only while focused inside the panel: an open panel must not
-        // swallow page-level Escape handling from elsewhere
-        if (!this._el.panel.contains(document.activeElement)) return;
-        e.stopPropagation();
+        // Close from anywhere while open: Safari/WebKit does not move focus
+        // on mouse clicks, so a focus-scoped handler would strand mouse
+        // visitors. No stopPropagation — a host Escape handler may run too.
+        // Focus returns to the button only when it was inside the panel;
+        // a mouse visitor's focus (body) is left alone.
+        const inside = this._el.panel.contains(document.activeElement);
         this.close();
-        this._el.button.focus();
+        if (inside) this._el.button.focus();
     }
 
     _onDocumentPointerDown(e: Event): void {
