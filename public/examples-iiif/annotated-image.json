@@ -179,6 +179,22 @@
                                     "y": 1500
                                 }
                             }
+                        },
+                        {
+                            "id": "https://example.org/storymap/annotated-image/canvas/1/annotation/105",
+                            "type": "Annotation",
+                            "motivation": "supplementing",
+                            "body": {
+                                "id": "https://example.org/audio/tour-narration.mp3",
+                                "type": "Sound",
+                                "format": "audio/mpeg",
+                                "label": {
+                                    "none": [
+                                        "Spoken tour of the panel"
+                                    ]
+                                }
+                            },
+                            "target": "https://example.org/storymap/annotated-image/canvas/1"
                         }
                     ]
                 }

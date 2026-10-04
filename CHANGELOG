@@ -36,6 +36,11 @@ Added
   function), `locked` (checked and disabled) and `control: false` (hidden
   row) annotate entries; cross-projection basemaps are refused with a
   warning. Fires `basemapchange` / `overlaychange`, also on the viewer
+- IIIF narration (V1 of #358): a `motivation: "supplementing"` Sound/Video
+  body plays as `slide.narration`, and the writer emits one back. Array
+  `motivation` values are honored everywhere — previously an array read as
+  "no motivation" and was accepted as the canvas painting, shadowing the
+  real media
 - Typed events: every emitter has an `*Events` map (exported from the
   library), so `storymap.on("chnage", …)` is a compile error and handlers
   infer their payload. `fire()` can no longer be handed a `type`/`target`

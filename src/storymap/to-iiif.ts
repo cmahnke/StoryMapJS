@@ -564,6 +564,11 @@ function buildCanvas(
                         body: buildBody(slide, isImageMap),
                         target: buildRegionTarget(canvasId, slide.location?.region) ?? canvasId,
                     },
+                    // Narration is a supplementing Sound body (V1 of #358):
+                    // "additional to the painting", with no rendering rules
+                    // attached — exactly what the dedicated audio element
+                    // plays. Skipped when it duplicates the painting URL.
+                    ...buildNarration(canvasId, slide),
                     // Georeference Extension annotations for the placed rasters
                     // (§2.10). The layers are map-wide but an annotation is
                     // canvas-scoped, so they are written on the first canvas and
@@ -588,6 +593,27 @@ function buildCanvas(
         canvas.navPlace = navPlace;
     }
     return canvas;
+}
+
+/**
+ * A slide narration as a `motivation: "supplementing"` annotation (V1 of
+ * #358). The body is always a `Sound`: narration plays through the
+ * dedicated audio element, which never renders video.
+ */
+function buildNarration(canvasId: string, slide: StorymapSlide): StorymapManifestAnnotation[] {
+    const url = slide.narration?.url;
+    if (typeof url !== "string" || url === "" || url === slide.media?.url) {
+        return [];
+    }
+    return [
+        {
+            id: `${canvasId}/annotation/narration`,
+            type: "Annotation",
+            motivation: "supplementing",
+            body: { id: url, type: "Sound" },
+            target: canvasId,
+        },
+    ];
 }
 
 /**

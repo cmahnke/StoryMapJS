@@ -179,3 +179,20 @@ test("a Sound body becomes slide media, resolved to the native audio type", asyn
     });
     expect(type).toEqual({ type: "audio", name: "Audio" });
 });
+
+test("a supplementing Sound body plays as the canvas slide narration", async ({ page }) => {
+    const pageErrors = await openFixture(page);
+
+    const narration = await page.evaluate(() => {
+        const sm = (
+            window as unknown as {
+                __sm: { data: { slides: { narration?: { url?: string } }[] } };
+            }
+        ).__sm;
+        return sm.data.slides.map((s) => s.narration?.url ?? null);
+    });
+    expect(pageErrors, "uncaught exceptions").toEqual([]);
+    // the canvas slide carries the tour narration; annotation stops do not
+    expect(narration[0]).toBe("https://example.org/audio/tour-narration.mp3");
+    expect(narration.slice(1)).toEqual([null, null, null, null]);
+});

@@ -627,8 +627,17 @@ function readPainting(
         for (const annotation of annotations) {
             const annotationRecord = asRecord(annotation);
             if (!annotationRecord) continue;
-            const motivation = asString(annotationRecord.motivation);
-            if (motivation !== null && motivation !== "painting") continue;
+            // motivation may be an array (notably ["painting","supplementing"]):
+            // accept when any entry names painting. An absent or unparsable
+            // motivation stays lenient (treated as painting), as before — only
+            // the array form is new.
+            const rawMotivation = annotationRecord.motivation;
+            const motivations = Array.isArray(rawMotivation) ? rawMotivation : [rawMotivation];
+            const isPainting = motivations.some((m) => {
+                const s = asString(m);
+                return s === null || s === "painting";
+            });
+            if (!isPainting) continue;
             const body = readFirstTypedBody(annotationRecord.body);
             if (body === null) continue;
             return {
@@ -654,6 +663,36 @@ function readPainting(
                 end: asNumber(body.end),
                 subtitles: readBodySubtitles(annotationRecord.body),
             };
+        }
+    }
+    return null;
+}
+
+/**
+ * Reads a slide narration from `motivation: "supplementing"` annotations:
+ * the first `Sound`/`Video` body wins. Painting bodies are skipped here —
+ * the painting reader owns them, including the array-motivation form — and
+ * anything else (commenting, tagging, …) belongs to the annotation stops.
+ */
+function readSupplementing(canvas: Record<string, unknown>): { url: string } | null {
+    const annotationPages = Array.isArray(canvas.items) ? canvas.items : [];
+    for (const page of annotationPages) {
+        const pageRecord = asRecord(page);
+        if (!pageRecord) continue;
+        const annotations = Array.isArray(pageRecord.items) ? pageRecord.items : [];
+        for (const annotation of annotations) {
+            const annotationRecord = asRecord(annotation);
+            if (!annotationRecord) continue;
+            const rawMotivation = annotationRecord.motivation;
+            const motivations = Array.isArray(rawMotivation) ? rawMotivation : [rawMotivation];
+            if (!motivations.some((m) => asString(m) === "supplementing")) continue;
+            const body = readFirstTypedBody(annotationRecord.body);
+            if (body === null) continue;
+            const type = asString(body.type);
+            if (type !== "Sound" && type !== "Video") continue;
+            const url = asString(body.id) ?? asString(body.value);
+            if (url === null) continue;
+            return { url };
         }
     }
     return null;
@@ -950,6 +989,14 @@ function canvasToSlide(
         if (thumbnail !== null) media.thumb = thumbnail;
         if (painting?.subtitles != null) media.subtitles = painting.subtitles;
         slide.media = media;
+    }
+
+    // narration: a supplementing Sound/Video body plays as the slide's
+    // narration (V1 of #358). Skipped when it duplicates the painting URL —
+    // a body carrying both motivations is already the slide's media.
+    const supplement = readSupplementing(record);
+    if (supplement !== null && supplement.url !== slide.media?.url) {
+        slide.narration = { url: supplement.url };
     }
 
     // location: canvas navPlace, falling back to a manifest-level navPlace
