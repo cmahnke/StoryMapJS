@@ -55,8 +55,7 @@ interface StorySliderOptions {
 }
 
 /**
- * The slider's element cache. `live_region` only exists when the slide
- * announcements are enabled (the `a11y` option), so it starts out null.
+ * The slider's element cache.
  */
 type StorySliderElements = {
     container: HTMLElement;
