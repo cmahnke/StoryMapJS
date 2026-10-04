@@ -2487,15 +2487,6 @@ export default class OpenLayers extends Map {
                     // legacy zoomify multiWorld flag silently reintroduced the
                     // strict extent constraint this code went out of its way
                     // to avoid, and broke image-mode zoom (issue #465).
-                    // Reconstructing is the only option: `ol/View` has no
-                    // setExtent(), and `extent`/`constrainOnlyCenter` are
-                    // constructor-only — View.js keeps exactly three
-                    // observables (center, resolution, rotation), so neither
-                    // can be applied to a live view. Generalising this rebuild
-                    // is also the route to fixing a projection change; see
-                    // docs/migration-from-knightlab.md ("Layer switcher"),
-                    // which refuses a runtime basemap swap across image
-                    // space for it.
                     const view = this._map.getView();
                     const center = view.getCenter();
                     const zoom = view.getZoom();
