@@ -41,6 +41,13 @@ Added
   `motivation` values are honored everywhere — previously an array read as
   "no motivation" and was accepted as the canvas painting, shadowing the
   real media
+- Second visible media slot (V2 of #358): `media_extra` renders further media
+  items after the primary one (`media_layout: "stack"`, the default, or
+  `"row"` for two side-by-side items); documents without it render
+  identically. Extra `painting` annotations read as `media_extra` and are
+  written back, so the slot round-trips — only the layout stays viewer-side,
+  IIIF has no term for it. Consent, the audio badge and the popup thumbnail
+  all see every item
 - Dark theme without a second stylesheet: every widget colour is a
   `--vco-*` custom property (Sass values kept as fallbacks, so the default
   render is unchanged); `theme: "dark"` forces the dark palette, `"light"`

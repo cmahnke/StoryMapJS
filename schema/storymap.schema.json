@@ -404,6 +404,40 @@
         }
     },
     "$defs": {
+        "media": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": ["string", "null"]
+                },
+                "caption": {
+                    "type": ["string", "null"]
+                },
+                "credit": {
+                    "type": ["string", "null"]
+                },
+                "thumb": {
+                    "type": "string"
+                },
+                "alt": {
+                    "type": "string"
+                },
+                "srcset": {
+                    "type": "string"
+                },
+                "sizes": {
+                    "type": "string"
+                },
+                "subtitles": {
+                    "type": ["string", "null"],
+                    "format": "uri",
+                    "description": "WebVTT subtitle file for an audio or video slide, rendered as a <track kind=\"subtitles\">."
+                },
+                "mediatype": {
+                    "type": ["object", "null"]
+                }
+            }
+        },
         "slide": {
             "type": "object",
             "properties": {
@@ -472,38 +506,19 @@
                     }
                 },
                 "media": {
-                    "type": "object",
-                    "properties": {
-                        "url": {
-                            "type": ["string", "null"]
-                        },
-                        "caption": {
-                            "type": ["string", "null"]
-                        },
-                        "credit": {
-                            "type": ["string", "null"]
-                        },
-                        "thumb": {
-                            "type": "string"
-                        },
-                        "alt": {
-                            "type": "string"
-                        },
-                        "srcset": {
-                            "type": "string"
-                        },
-                        "sizes": {
-                            "type": "string"
-                        },
-                        "subtitles": {
-                            "type": ["string", "null"],
-                            "format": "uri",
-                            "description": "WebVTT subtitle file for an audio or video slide, rendered as a <track kind=\"subtitles\">."
-                        },
-                        "mediatype": {
-                            "type": ["object", "null"]
-                        }
+                    "$ref": "#/$defs/media"
+                },
+                "media_extra": {
+                    "type": ["array", "null"],
+                    "description": "Additional visible media for this slide (#358), rendered after media in order. Items without a non-empty url are skipped. In a IIIF manifest these are further painting annotations on the canvas.",
+                    "items": {
+                        "$ref": "#/$defs/media"
                     }
+                },
+                "media_layout": {
+                    "type": "string",
+                    "enum": ["stack", "row"],
+                    "description": "Layout of a multi-media slide (#358): stack piles the items vertically (the panel scrolls), row puts two items side by side. Defaults to stack; row with anything but two items falls back to stack."
                 },
                 "text": {
                     "type": "object",
@@ -555,7 +570,7 @@
                 },
                 "narration": {
                     "type": ["object", "null"],
-                    "description": "Spoken narration for this slide, played through a dedicated audio element. Storymap JSON only: in a IIIF manifest the closest spelling is a Sound body, which currently lands in media.url rather than here.",
+                    "description": "Spoken narration for this slide, played through a dedicated audio element. In a IIIF manifest this is a motivation: supplementing Sound/Video body, read and written alongside the painting annotation.",
                     "properties": {
                         "url": {
                             "type": "string",

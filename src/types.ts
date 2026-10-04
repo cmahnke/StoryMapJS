@@ -84,9 +84,9 @@ export interface StorymapSlideMarker {
 /**
  * Optional spoken narration for one slide, played through a dedicated audio
  * element rather than the slide's media frame — a tour stop usually has a
- * picture and a recording, not one media item. Storymap JSON only: the
- * closest manifest spelling is a `Sound` body, which currently lands in
- * `media.url` rather than here.
+ * picture and a recording, not one media item. In a IIIF manifest this is a
+ * `motivation: "supplementing"` Sound/Video body, read and written alongside
+ * the painting annotation.
  */
 export interface StorymapSlideNarration {
     url: string;
@@ -120,6 +120,21 @@ export interface StorymapSlide {
     language?: string;
     location?: StorymapSlideLocation | null;
     media?: StorymapSlideMedia | null;
+    /**
+     * Additional visible media for this slide (#358), rendered after `media`
+     * in order. Items without a non-empty `url` are skipped, so a document
+     * without this field renders identically. In a IIIF manifest these are
+     * further `painting` annotations on the canvas; the slide layout
+     * (`media_layout`) has no IIIF term and stays viewer-side.
+     */
+    media_extra?: StorymapSlideMedia[] | null;
+    /**
+     * Layout of a multi-media slide (#358): `stack` piles the items
+     * vertically (the panel scrolls), `row` puts two items side by side.
+     * Defaults to `stack`; `row` with anything but two items falls back to
+     * `stack`. Ignored for a single media item.
+     */
+    media_layout?: "stack" | "row";
     marker?: StorymapSlideMarker | null;
     narration?: StorymapSlideNarration | null;
     text?: StorymapSlideText | null;

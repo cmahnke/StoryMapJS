@@ -54,6 +54,9 @@ interface MediaInstance {
     on?: EventedInstance<MediaEvents>["on"];
     off?: EventedInstance<MediaEvents>["off"];
     _state?: { loaded?: boolean; eager?: boolean };
+    /** Per-item consent identity: each item is built with its own
+        `media_name`/`media_type`, which `hasPlayableMedia` reads back (#358). */
+    options?: { media_type?: string };
 }
 
 export interface SlideBackgroundState {
@@ -81,17 +84,20 @@ interface SlideHas {
 class SlideBase {
     /** `call_to_action` is only created when the slide shows one. */
     declare "_el": SlideElements;
+    /** The primary media item; always `_medias[0]` when present (#358). */
     declare "_media": MediaInstance | null;
-    declare "_mediaclass": unknown;
+    /** Every media item: `[media, ...media_extra]` with a non-empty url. */
+    declare "_medias": MediaInstance[];
     declare "_text": Text;
     declare "_state": { loaded: boolean };
     declare "_scroll_hint": HTMLElement | null;
     declare "_scroll_hint_dismissed": boolean;
     declare "_onSlideScrollBound": EventListener;
-    /** Every `media_ended` handler registered via `onMediaEnded`, kept so `dispose()` can remove them. */
-    declare "_media_ended_fns": (() => void)[];
-    /** The `media_loaded` handler below, kept for the same reason. */
-    declare "_media_loaded_fn": (() => void) | null;
+    /** Every `media_ended` handler registered via `onMediaEnded`, with the
+        media it was attached to so `dispose()` can remove them. */
+    declare "_media_ended_fns": { media: MediaInstance; fn: () => void }[];
+    /** The `media_loaded` handlers below, kept for the same reason. */
+    declare "_media_loaded_fns": { media: MediaInstance; fn: () => void }[];
     declare "has": SlideHas;
     declare "title": string;
     declare "data": StorymapSlide;
@@ -118,7 +124,7 @@ class SlideBase {
 
         // Components
         this._media = null;
-        this._mediaclass = {};
+        this._medias = [];
         this._text = {} as Text;
 
         // State
@@ -174,6 +180,7 @@ class SlideBase {
 
         this._onSlideScrollBound = null as unknown as EventListener;
         this._media_ended_fns = [];
+        this._media_loaded_fns = [];
         mergeData(this.options, options);
         mergeData(this.data, data);
 
@@ -208,17 +215,20 @@ class SlideBase {
         }
         this._el.container?.getAnimations?.().forEach((a) => a.cancel());
         // the media_ended handlers registered via onMediaEnded() live on the
-        // media object, which outlives this slide once nulled — remove them
+        // media objects, which outlive this slide once nulled — remove them
         // here or a disposed slide's advance closure fires on a later ended
-        for (const fn of this._media_ended_fns) {
-            this._media?.off?.("media_ended", fn);
+        for (const { media, fn } of this._media_ended_fns) {
+            media.off?.("media_ended", fn);
         }
         this._media_ended_fns = [];
-        if (this._media_loaded_fn) {
-            this._media?.off?.("media_loaded", this._media_loaded_fn);
-            this._media_loaded_fn = null;
+        for (const { media, fn } of this._media_loaded_fns) {
+            media.off?.("media_loaded", fn);
         }
-        this._media?.dispose?.();
+        this._media_loaded_fns = [];
+        for (const media of this._medias) {
+            media.dispose?.();
+        }
+        this._medias = [];
         this._media = null;
         this._el.container?.remove();
     }
@@ -249,8 +259,10 @@ class SlideBase {
             // the active slide's images load eagerly: media built after this
             // point (the 1200ms load timer) honors the flag, already-built
             // images are upgraded below
-            if (this._media?._state) {
-                this._media._state.eager = true;
+            for (const media of this._medias) {
+                if (media._state) {
+                    media._state.eager = true;
+                }
             }
             this.loadMedia();
             this._eagerLoadImages();
@@ -266,8 +278,10 @@ class SlideBase {
     }
 
     loadMedia() {
-        if (this._media && !this._state.loaded) {
-            this._media.loadMedia();
+        if (this._medias.length > 0 && !this._state.loaded) {
+            for (const media of this._medias) {
+                media.loadMedia();
+            }
             this._state.loaded = true;
         }
     }
@@ -284,24 +298,27 @@ class SlideBase {
     }
 
     stopMedia() {
-        if (this._media && this._state.loaded) {
-            try {
-                this._media.stopMedia();
-            } catch (e: unknown) {
-                // Some sort of race condition or other ordering condition can cause
-                // an error when the preview tab is selected in the editor due to
-                // the stopped media not being properly formed.
-                if (
-                    (e as Error).message === "this._el.content_item.querySelector is not a function"
-                ) {
-                    console.warn("Ignoring error in editor context: " + (e as Error).message);
-                } else {
-                    throw e;
+        if (this._medias.length > 0 && this._state.loaded) {
+            for (const media of this._medias) {
+                try {
+                    media.stopMedia();
+                } catch (e: unknown) {
+                    // Some sort of race condition or other ordering condition can cause
+                    // an error when the preview tab is selected in the editor due to
+                    // the stopped media not being properly formed.
+                    if (
+                        (e as Error).message ===
+                        "this._el.content_item.querySelector is not a function"
+                    ) {
+                        console.warn("Ignoring error in editor context: " + (e as Error).message);
+                    } else {
+                        throw e;
+                    }
                 }
             }
-            // If the media load never started (its pending timer was
-            // cancelled on a quick pass-through), allow a revisit to retry
-            if (!this._media._state?.loaded) {
+            // If no media load started (pending timers were cancelled on a
+            // quick pass-through), allow a revisit to retry
+            if (!this._medias.some((media) => media._state?.loaded)) {
                 this._state.loaded = false;
             }
         }
@@ -317,20 +334,32 @@ class SlideBase {
      * its timer; everything else keeps the timer.
      */
     hasPlayableMedia(): boolean {
-        const kind = this.options.media_type as string | undefined;
-        return kind === "audio" || kind === "video";
+        if (this._medias.length === 0) {
+            const kind = this.options.media_type as string | undefined;
+            return kind === "audio" || kind === "video";
+        }
+        return this._medias.some((media) => {
+            const kind = media.options?.media_type;
+            return kind === "audio" || kind === "video";
+        });
     }
 
     /**
      * Call `fn` when this slide's media finishes playing. A slide with no
      * media — or media that cannot end — never calls it, which is why
      * `autoplay_media` keeps its timer as a fallback rather than waiting on
-     * an event that may not arrive.
+     * an event that may not arrive. Multi-media slides never call it either:
+     * waiting for the last of several items to end would stall autoplay, so
+     * the timer stays the advance for those (#358).
      */
     onMediaEnded(fn: () => void): void {
-        if (!this.hasPlayableMedia() || !this._media?.on) return;
-        this._media.on("media_ended", fn);
-        this._media_ended_fns.push(fn);
+        const playable = this._medias.filter((media) => {
+            const kind = media.options?.media_type;
+            return (kind === "audio" || kind === "video") && media.on;
+        });
+        if (playable.length !== 1) return;
+        playable[0].on?.("media_ended", fn);
+        this._media_ended_fns.push({ media: playable[0], fn });
     }
 
     scrollToTop() {
@@ -462,8 +491,13 @@ class SlideBase {
             }
         }
 
-        // Determine Assets for layout and loading
-        if (this.data.media && this.data.media.url && this.data.media.url !== "") {
+        // Determine Assets for layout and loading. A slide has media when
+        // any item — the primary or an extra — carries a non-empty url, so
+        // an empty `media.url` still yields false (#358).
+        const slide_media_items = [this.data.media, ...(this.data.media_extra ?? [])].filter(
+            (item): item is NonNullable<StorymapSlide["media"]> => !!item?.url,
+        );
+        if (slide_media_items.length > 0) {
             this.has.media = true;
         }
         if (this.data.text && this.data.text.text) {
@@ -474,20 +508,35 @@ class SlideBase {
             this.title = this.data.text.headline;
         }
 
-        // Create Media
-        const slide_media = this.data.media;
-        if (this.has.media && slide_media) {
-            // Determine the media type
-            slide_media.mediatype = MediaType(slide_media) as MediaTypeMatch;
-            this.options.media_name = slide_media.mediatype.name;
-            this.options.media_type = slide_media.mediatype.type;
-
-            // Create a media object using the matched class name
-            this._media = new slide_media.mediatype.cls(slide_media, this.options) as MediaInstance;
-            // loaded media changes the content height — the scroll hint
-            // may appear or disappear
-            this._media_loaded_fn = () => this._updateScrollHint();
-            this._media.on?.("media_loaded", this._media_loaded_fn);
+        // Create Media (#358): the primary item plus every extra with a
+        // non-empty url, in order. Each item gets its own MediaType match and
+        // its own consent identity (media_name/media_type), so per-slide
+        // consent asks and the audio badge tell items apart.
+        const media_items = slide_media_items;
+        if (media_items.length > 0) {
+            for (const item of media_items) {
+                // Determine the media type
+                item.mediatype = MediaType(item) as MediaTypeMatch;
+                // Item 0 keeps the historical write-back: the marker icon
+                // class reads it off the slide data.
+                if (item === media_items[0]) {
+                    this.options.media_name = item.mediatype.name;
+                    this.options.media_type = item.mediatype.type;
+                }
+                // Create a media object using the matched class name
+                const media = new item.mediatype.cls(item, {
+                    ...this.options,
+                    media_name: item.mediatype.name,
+                    media_type: item.mediatype.type,
+                }) as MediaInstance;
+                // loaded media changes the content height — the scroll hint
+                // may appear or disappear
+                const on_loaded = () => this._updateScrollHint();
+                media.on?.("media_loaded", on_loaded);
+                this._media_loaded_fns.push({ media, fn: on_loaded });
+                this._medias.push(media);
+            }
+            this._media = this._medias[0] ?? null;
         }
 
         // Create Text
@@ -500,16 +549,32 @@ class SlideBase {
         }
 
         // Add to DOM. Each branch has just established the members it uses
-        // (has.media -> _media, has.text/headline -> _text).
+        // (has.media -> _medias, has.text/headline -> _text). The media loop
+        // preserves the historical ordering: media-then-text, or
+        // text-then-media when there is a headline but no body text.
+        const medias = this._medias;
+        if (medias.length > 1) {
+            // `row` seats two items side by side; anything else stacks (D4)
+            const layout =
+                this.data.media_layout === "row" && medias.length === 2 ? "row" : "stack";
+            this._el.container.classList.add("vco-slide-media-multiple");
+            this._el.container.setAttribute("data-layout", layout);
+        }
         if (!this.has.text && !this.has.headline && this.has.media) {
             this._el.container.className += " vco-slide-media-only";
-            this._media?.addTo(this._el.content);
+            for (const media of medias) {
+                media.addTo(this._el.content);
+            }
         } else if (this.has.headline && this.has.media && !this.has.text) {
             this._el.container.className += " vco-slide-media-only";
             this._text.addTo(this._el.content);
-            this._media?.addTo(this._el.content);
+            for (const media of medias) {
+                media.addTo(this._el.content);
+            }
         } else if (this.has.text && this.has.media) {
-            this._media?.addTo(this._el.content);
+            for (const media of medias) {
+                media.addTo(this._el.content);
+            }
             this._text.addTo(this._el.content);
         } else if (this.has.text || this.has.headline) {
             this._el.container.className += " vco-slide-text-only";
@@ -565,15 +630,19 @@ class SlideBase {
             this.options.height = this._el.container.offsetHeight;
         }
 
-        if (this._media) {
+        if (this._medias.length > 0) {
             if (!this.has.text && this.has.headline) {
-                this._media.updateDisplay(
-                    this.options.width,
-                    this.options.height - this._text.headlineHeight(),
-                    layout,
-                );
+                for (const media of this._medias) {
+                    media.updateDisplay(
+                        this.options.width,
+                        this.options.height - this._text.headlineHeight(),
+                        layout,
+                    );
+                }
             } else {
-                this._media.updateDisplay(this.options.width, this.options.height, layout);
+                for (const media of this._medias) {
+                    media.updateDisplay(this.options.width, this.options.height, layout);
+                }
             }
         }
 

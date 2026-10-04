@@ -1704,14 +1704,18 @@ class StoryMapBase {
         // to have no slides at all)
         const seen = new Set<string>();
         for (const slide of this.data.slides ?? []) {
-            const url = (slide.media as { url?: string | null } | null)?.url;
-            if (!url) continue;
-            const match = MediaType({ url } as never) as { type: string; name: string } | false;
-            if (!match || seen.has(match.type)) continue;
-            seen.add(match.type);
-            // same registry the per-slide panel uses, so the two dialogs can
-            // never disagree about a service's name
-            services.push(mediaService(match.type, match.name));
+            // every visible media item is its own service (#358)
+            const items = [slide.media, ...(slide.media_extra ?? [])];
+            for (const item of items) {
+                const url = (item as { url?: string | null } | null)?.url;
+                if (!url) continue;
+                const match = MediaType({ url } as never) as { type: string; name: string } | false;
+                if (!match || seen.has(match.type)) continue;
+                seen.add(match.type);
+                // same registry the per-slide panel uses, so the two dialogs can
+                // never disagree about a service's name
+                services.push(mediaService(match.type, match.name));
+            }
         }
         // Slide narration is its own service: the recording plays through a
         // dedicated audio element, not through Media, so nothing else asks

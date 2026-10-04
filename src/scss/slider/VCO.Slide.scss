@@ -127,6 +127,23 @@
             }
         }
     }
+
+    // Second visible media slot (#358): every rule below is gated behind
+    // .vco-slide-media-multiple, so single-media slides render unchanged.
+    // stack drops the float (items pile vertically, the panel scrolls);
+    // row seats exactly two items side by side (D4).
+    &.vco-slide-media-multiple[data-layout="stack"] {
+        .vco-slide-content .vco-media {
+            float: none;
+        }
+    }
+
+    &.vco-slide-media-multiple[data-layout="row"] {
+        .vco-slide-content .vco-media {
+            width: 50%;
+            min-width: 0;
+        }
+    }
 }
 
 // touch devices (the container carries .vco-mobile on Browser.touch):

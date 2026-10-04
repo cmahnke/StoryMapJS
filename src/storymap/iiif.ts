@@ -607,18 +607,33 @@ function readFirstTypedBody(body: unknown): Record<string, unknown> | null {
     return url === null ? null : record;
 }
 
+/** Every body of a `body` array that yields a URL, in order (#358). */
+function readPaintingBodies(body: unknown): Record<string, unknown>[] {
+    if (Array.isArray(body)) {
+        return body.flatMap((entry) => readPaintingBodies(entry));
+    }
+    const record = asRecord(body);
+    if (!record) return [];
+    const url = asString(record.id) ?? asString(record.value);
+    return url === null ? [] : [record];
+}
+
 /**
- * Reads the slide media URL from the canvas's painting annotation body:
+ * Reads the slide media URLs from the canvas's painting annotation bodies:
  * typed bodies contribute their `id`, TextualBody (HTML) content its `value`
  * - the legacy format stores both in `media.url`. Also returns the region of
  * a selector on the annotation target, and the body fields listed on
  * {@link PaintingBody}.
+ *
+ * Every painting match is collected in order (#358): the first becomes the
+ * slide's `media`, further ones its `media_extra`.
  */
-function readPainting(
+function readPaintings(
     canvas: Record<string, unknown>,
     width: number | null = null,
     height: number | null = null,
-): PaintingBody | null {
+): PaintingBody[] {
+    const found: PaintingBody[] = [];
     const annotationPages = Array.isArray(canvas.items) ? canvas.items : [];
     for (const page of annotationPages) {
         const pageRecord = asRecord(page);
@@ -638,34 +653,34 @@ function readPainting(
                 return s === null || s === "painting";
             });
             if (!isPainting) continue;
-            const body = readFirstTypedBody(annotationRecord.body);
-            if (body === null) continue;
-            return {
-                url: asString(body.id) ?? asString(body.value) ?? "",
-                region: readSelector(annotationRecord.target, width, height).region,
-                type: asString(body.type),
-                format: asString(body.format),
-                // P3 puts label / requiredStatement / accessibilitySummary on
-                // the Annotation; some producers put them on the body, so the
-                // body is still consulted as a fallback (§2.7)
-                label:
-                    flattenLanguageMap(annotationRecord.label) ||
-                    flattenLanguageMap(body.label) ||
-                    null,
-                accessibilitySummary:
-                    flattenLanguageMap(annotationRecord.accessibilitySummary) ||
-                    flattenLanguageMap(body.accessibilitySummary) ||
-                    null,
-                credit: readAnnotationCredit(annotationRecord) ?? readBodyCredit(body),
-                thumbnail: readThumbnailId(body.thumbnail),
-                duration: asNumber(body.duration),
-                start: asNumber(body.start),
-                end: asNumber(body.end),
-                subtitles: readBodySubtitles(annotationRecord.body),
-            };
+            for (const body of readPaintingBodies(annotationRecord.body)) {
+                found.push({
+                    url: asString(body.id) ?? asString(body.value) ?? "",
+                    region: readSelector(annotationRecord.target, width, height).region,
+                    type: asString(body.type),
+                    format: asString(body.format),
+                    // P3 puts label / requiredStatement / accessibilitySummary on
+                    // the Annotation; some producers put them on the body, so the
+                    // body is still consulted as a fallback (§2.7)
+                    label:
+                        flattenLanguageMap(annotationRecord.label) ||
+                        flattenLanguageMap(body.label) ||
+                        null,
+                    accessibilitySummary:
+                        flattenLanguageMap(annotationRecord.accessibilitySummary) ||
+                        flattenLanguageMap(body.accessibilitySummary) ||
+                        null,
+                    credit: readAnnotationCredit(annotationRecord) ?? readBodyCredit(body),
+                    thumbnail: readThumbnailId(body.thumbnail),
+                    duration: asNumber(body.duration),
+                    start: asNumber(body.start),
+                    end: asNumber(body.end),
+                    subtitles: readBodySubtitles(annotationRecord.body),
+                });
+            }
         }
     }
-    return null;
+    return found;
 }
 
 /**
@@ -960,7 +975,11 @@ function canvasToSlide(
     // requiredStatement / accessibilitySummary as caption, credit and alt
     // text (§2.7 — the `mediaCaption`/`mediaCredit`/`mediaAlt` canvas terms are
     // gone). srcset/sizes remain terms: IIIF has no vocabulary for either.
-    const painting = readPainting(record, asNumber(record.width), asNumber(record.height));
+    const paintings = readPaintings(record, asNumber(record.width), asNumber(record.height));
+    // the first painting is the slide's media; further ones are its
+    // media_extra (#358)
+    const painting = paintings[0] ?? null;
+    const extraPaintings = paintings.slice(1);
     const caption = painting?.label ?? null;
     const credit = painting?.credit ?? null;
     const alt = painting?.accessibilitySummary ?? null;
@@ -990,12 +1009,26 @@ function canvasToSlide(
         if (painting?.subtitles != null) media.subtitles = painting.subtitles;
         slide.media = media;
     }
+    if (extraPaintings.length > 0) {
+        slide.media_extra = extraPaintings.map((extra) => {
+            const item: StorymapSlideMedia = { url: extra.url };
+            if (extra.label !== null) item.caption = extra.label;
+            if (extra.credit !== null) item.credit = extra.credit;
+            if (extra.accessibilitySummary !== null) item.alt = extra.accessibilitySummary;
+            return item;
+        });
+    }
 
     // narration: a supplementing Sound/Video body plays as the slide's
-    // narration (V1 of #358). Skipped when it duplicates the painting URL —
+    // narration (V1 of #358). Skipped when it duplicates a painting URL —
     // a body carrying both motivations is already the slide's media.
     const supplement = readSupplementing(record);
-    if (supplement !== null && supplement.url !== slide.media?.url) {
+    const mediaUrls = new Set(
+        [slide.media?.url, ...(slide.media_extra ?? []).map((item) => item.url)].filter(
+            (url): url is string => typeof url === "string" && url !== "",
+        ),
+    );
+    if (supplement !== null && !mediaUrls.has(supplement.url)) {
         slide.narration = { url: supplement.url };
     }
 

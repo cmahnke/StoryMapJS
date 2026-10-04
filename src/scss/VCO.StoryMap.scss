@@ -71,6 +71,7 @@
     --vco-color-text-inverted: #{$color-text-inverted};
     --vco-color-header-text-inverted: #{$color-header-text-inverted};
     --vco-color-ui-background: #{$ui-background-color};
+
     // Derived tones. Each is computed from the light palette here so the
     // default render is unchanged; the dark block redefines them from its
     // own palette. One property per distinct derivation, shared by every
@@ -81,7 +82,6 @@
     --vco-color-theme-faint: #{color.adjust($color-theme, $lightness: 90%)};
     --vco-color-theme-deep: #{color.adjust($color-theme, $lightness: -20%)};
     --vco-color-theme-bright: #{color.adjust($color-theme, $lightness: 15%)};
-    --vco-color-theme-deep: #{color.adjust($color-theme, $lightness: -20%)};
     --vco-color-link: #{color.adjust($color-dark, $lightness: 20%)};
     --vco-color-ui-fade: #{fadeout($ui-background-color, 10%)};
     --vco-color-ui-faint: #{fadeout($ui-background-color, 33%)};

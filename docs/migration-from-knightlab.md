@@ -123,11 +123,12 @@ their neutral values, and the map setters are no-ops.
 | Twitter `@nickname` rendering         | tweets from `x.com` URLs are now parsed too (fixes `@undefined` nicknames); no migration needed                                                                                                                              |
 | Ricoh360/theta360 embeds (#391)       | service no longer available (won't fix) — paste the provider's `<iframe>` snippet into the slide text if the service returns                                                                                                 |
 
-Extra media per slide (#358, partial): each slide still has one primary
-`media` item, but an `<iframe>` embed snippet pasted into the slide `text`
-field now renders sanitized (scripts, event handlers and non-https sources
-dropped) — use this for a second video/map/embed or as the migration path
-for removed media types:
+Extra media per slide (#358, partial): a slide takes `media_extra` (a list of
+further media items, rendered after the primary one) plus `media_layout`
+(`stack`, the default, or `row` for two side-by-side items). An `<iframe>`
+embed snippet pasted into the slide `text` field still renders sanitized
+(scripts, event handlers and non-https sources dropped) — keep that as the
+migration path for removed media types:
 
 ```html
 <p>Extra footage:</p>

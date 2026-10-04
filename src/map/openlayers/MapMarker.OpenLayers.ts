@@ -321,6 +321,7 @@ export default class OpenLayersMapMarker extends MapMarker {
         const data = this.data as unknown as {
             text?: { headline?: string; text?: string };
             media?: { thumb?: string | null; url?: string | null; caption?: string | null };
+            media_extra?: { thumb?: string | null; url?: string | null; caption?: string | null }[];
         };
         const card = document.createElement("div");
         card.className = "vco-marker-popup";
@@ -339,11 +340,13 @@ export default class OpenLayersMapMarker extends MapMarker {
         });
         card.appendChild(close);
 
-        if (data.media?.thumb) {
+        // first item with a thumb across the primary and the extras (#358)
+        const thumb_item = [data.media, ...(data.media_extra ?? [])].find((item) => !!item?.thumb);
+        if (thumb_item?.thumb) {
             const img = document.createElement("img");
             img.className = "vco-marker-popup-thumb";
-            img.src = data.media.thumb;
-            img.alt = data.media.caption ?? "";
+            img.src = thumb_item.thumb;
+            img.alt = thumb_item.caption ?? "";
             img.loading = "lazy";
             card.appendChild(img);
         }
@@ -374,8 +377,16 @@ export default class OpenLayersMapMarker extends MapMarker {
     _updateAudioBadge(): void {
         if (!this._audio_badge) return;
         const media = (this.data as unknown as { media?: { mediatype?: { type?: string } } }).media;
-        const kind = media?.mediatype?.type;
-        const audible = kind === "audio" || kind === "video" || !!this.data.narration;
+        // any audible item badges the marker, not just item 0: an
+        // image-first/audio-second slide is still an audible stop (#358)
+        const extra =
+            (this.data as unknown as { media_extra?: { mediatype?: { type?: string } }[] })
+                .media_extra ?? [];
+        const audible =
+            [media, ...extra].some((item) => {
+                const kind = item?.mediatype?.type;
+                return kind === "audio" || kind === "video";
+            }) || !!this.data.narration;
         this._marker.classList.toggle("vco-mapmarker-has-audio", audible);
         const suffix =
             audible && typeof Language.buttons.audio_badge === "string"

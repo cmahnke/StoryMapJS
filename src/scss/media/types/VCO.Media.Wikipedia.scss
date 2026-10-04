@@ -27,10 +27,7 @@
         }
 
         h4 a {
-            color: var(
-                --vco-color-dark,
-                #{$color-dark}
-            ); // var(--vco-color-theme, #{$color-theme});
+            color: var(--vco-color-dark, #{$color-dark});
             text-decoration: none;
         }
 

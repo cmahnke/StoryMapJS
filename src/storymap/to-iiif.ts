@@ -569,6 +569,11 @@ function buildCanvas(
                     // attached — exactly what the dedicated audio element
                     // plays. Skipped when it duplicates the painting URL.
                     ...buildNarration(canvasId, slide),
+                    // Extra visible media as further painting annotations (V2
+                    // of #358): IIIF expresses multiple media per canvas as
+                    // multiple paintings. The layout (media_layout) has no
+                    // term and stays viewer-side.
+                    ...buildExtraPaintings(canvasId, slide),
                     // Georeference Extension annotations for the placed rasters
                     // (§2.10). The layers are map-wide but an annotation is
                     // canvas-scoped, so they are written on the first canvas and
@@ -593,6 +598,26 @@ function buildCanvas(
         canvas.navPlace = navPlace;
     }
     return canvas;
+}
+
+/**
+ * A slide's extra visible media as further `painting` annotations (V2 of
+ * #358). Each extra reuses the primary's body and presentation builders, so
+ * captions, credits and alt text travel the same way; extras without a usable
+ * url are skipped, matching the viewer.
+ */
+function buildExtraPaintings(canvasId: string, slide: StorymapSlide): StorymapManifestAnnotation[] {
+    const extras = Array.isArray(slide.media_extra) ? slide.media_extra : [];
+    return extras
+        .filter((item) => typeof item?.url === "string" && item.url !== "")
+        .map((item, index) => ({
+            id: `${canvasId}/annotation/extra-${index + 1}`,
+            type: "Annotation",
+            motivation: "painting",
+            ...buildAnnotationPresentation({ media: item }),
+            body: buildBody({ media: item }, false),
+            target: canvasId,
+        }));
 }
 
 /**
