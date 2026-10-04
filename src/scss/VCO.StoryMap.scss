@@ -11,6 +11,7 @@
 
 /* Includes
 ================================================== */
+@use "sass:color";
 @use "Variables" as *; // Variables (easy way to make style changes)
 @use "core/Mixins" as *; // Less shortcuts and functions
 @use "core/Reset" as *; // CSS Reset
@@ -51,6 +52,25 @@
     overflow: hidden;
     position: relative;
     user-select: none;
+
+    // Theme palette (dark theme plan): every Variables.scss colour as a
+    // custom property, so a dark theme redeclares values instead of
+    // shipping a second stylesheet. Unused declarations cost nothing, and
+    // use sites keep their Sass value as the fallback, so each partial
+    // migrates independently. Includes the two runtime-themable text
+    // colors (issue #177), set inline via text_color/text_background_color.
+    --vco-color-background: #{$color-background};
+    --vco-color-foreground: #{$color-foreground};
+    --vco-color-dark: #{$color-dark};
+    --vco-color-theme: #{$color-theme};
+    --vco-color-theme-dark: #{$color-theme-dark};
+    --vco-color-theme-dark: #{$color-theme-dark};
+    --vco-color-text: #{$color-text};
+    --vco-color-text-muted: #{color.adjust($color-dark, $lightness: 40%)};
+    --vco-color-header-text: #{$color-header-text};
+    --vco-color-text-inverted: #{$color-text-inverted};
+    --vco-color-header-text-inverted: #{$color-header-text-inverted};
+    --vco-color-ui-background: #{$ui-background-color};
 
     /* Skip link: first tab stop inside the widget, off-screen until
        focused, so keyboard visitors can jump past the chrome. */
