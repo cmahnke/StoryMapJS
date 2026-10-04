@@ -4,6 +4,7 @@
     "messages": {
         "error": "Error loading",
         "loading": "Loading",
+        "skip_link": "Skip to story content",
         "wikipedia": "From Wikipedia, the free encyclopedia",
         "start": "Start Exploring",
         "consent_message": "Load content from {service}?",
@@ -29,7 +30,13 @@
         "exit_fullscreen": "Exit Full Screen",
         "layers": "Layers",
         "layers_basemaps": "Basemaps",
-        "layers_overlays": "Overlays"
+        "layers_overlays": "Overlays",
+        "autoplay_pause": "Pause autoplay",
+        "autoplay_play": "Resume autoplay",
+        "audio_badge": "Has audio"
+    },
+    "media": {
+        "iframe_title": "Embedded media"
     },
     "direction": "ltr"
 }

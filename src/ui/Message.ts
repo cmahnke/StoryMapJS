@@ -89,6 +89,12 @@ class MessageBase {
         } else {
             this._el.message.innerHTML = t;
         }
+        // the container dismisses on click, so it is a button to assistive
+        // tech too; its name tracks the message text
+        const label = this._el.message.textContent?.trim() ?? "";
+        if (label !== "") {
+            this._el.container.setAttribute("aria-label", label);
+        }
     }
 
     /*	Events
@@ -98,10 +104,24 @@ class MessageBase {
         this.fire("clicked", this.options);
     }
 
+    _onKeyDown(e: Event) {
+        const key = (e as KeyboardEvent).key;
+        if (key === "Enter" || key === " " || key === "Spacebar") {
+            e.preventDefault();
+            this._onMouseClick();
+        }
+    }
+
     /*	Private Methods
 	================================================== */
     _initLayout() {
         // Create Layout
+        // Dismissable by click and keyboard alike (see _onKeyDown): the
+        // fixed hook below carries the focus ring, whatever message_class
+        // the host configured.
+        this._el.container.classList.add("vco-message-dismiss");
+        this._el.container.setAttribute("role", "button");
+        this._el.container.setAttribute("tabindex", "0");
         this._el.message_container = Dom.create("div", "vco-message-container", this._el.container);
         this._el.loading_icon = Dom.create(
             "div",
@@ -115,14 +135,16 @@ class MessageBase {
 
     _initEvents() {
         DomEvent.addListener(this._el.container, "click", this._onMouseClick, this);
+        DomEvent.addListener(this._el.container, "keydown", this._onKeyDown, this);
     }
 
     /**
-     * Release the click listener and drop the element. Called by
+     * Release the listeners and drop the element. Called by
      * `StorySlider.dispose()`; the message must not be used afterwards.
      */
     dispose() {
         DomEvent.removeListener(this._el.container, "click", this._onMouseClick, this);
+        DomEvent.removeListener(this._el.container, "keydown", this._onKeyDown, this);
         this._el.container.remove();
     }
 }

@@ -25,6 +25,7 @@ export interface MenuBarEvents {
     overview: Event;
     back_to_start: Event;
     fullscreen: Event;
+    autoplay_toggle: undefined;
     collapse: { y: number; collapsed: boolean };
     basemapchange: { map_type: string };
     overlaychange: { index: number; visible: boolean };
@@ -40,6 +41,7 @@ class MenuBarBase {
     declare "animator": Record<string, unknown>;
     declare "fire": EventedInstance<MenuBarEvents>["fire"];
     _fullscreenActive = false;
+    _autoplayStopped = false;
     /** The layer switcher, if `show_layers_control` is on. */
     declare "_layersControl": LayersControl | null;
 
@@ -172,20 +174,68 @@ class MenuBarBase {
     }
 
     /**
+     * Reflect the autoplay state in the toggle label.
+     */
+    setAutoplayState(stopped: boolean): void {
+        this._autoplayStopped = stopped;
+        if (!this._el.button_autoplay) return;
+        const label = stopped ? Language.buttons.autoplay_play : Language.buttons.autoplay_pause;
+        if (Browser.mobile) {
+            this._el.button_autoplay.setAttribute("aria-label", label);
+        } else {
+            this._el.button_autoplay.textContent = label;
+        }
+        this._el.button_autoplay.setAttribute("aria-pressed", String(!stopped));
+    }
+
+    /**
      * Repaint every text label from the active language (see `setLanguage`).
-     * Icon-only mobile buttons carry no text and are left untouched.
+     * Icon-only mobile buttons carry text via aria-label instead.
      */
     refreshLabels(): void {
         // panel rows are always text, so the control repaints even where
         // the buttons below go icon-only
         this._layersControl?.refreshLabels();
         if (Browser.mobile) {
+            this._renderMobileLabels();
             return;
         }
         this._renderOverviewLabel();
         this._renderBackToStartLabel();
         this.setFullscreenState(this._fullscreenActive);
+        this.setAutoplayState(this._autoplayStopped);
         this._renderCollapseLabel(this.collapsed);
+    }
+
+    /**
+     * Icon-only mobile buttons expose their labels to assistive tech since
+     * the visible text is icon glyphs.
+     */
+    _renderMobileLabels(): void {
+        const labels: [string, string][] = [
+            ["button_backtostart", Language.buttons.backtostart],
+            [
+                "button_collapse_toggle",
+                this.collapsed
+                    ? Language.buttons.uncollapse_toggle
+                    : Language.buttons.collapse_toggle,
+            ],
+            [
+                "button_fullscreen",
+                this._fullscreenActive
+                    ? Language.buttons.exit_fullscreen
+                    : Language.buttons.fullscreen,
+            ],
+            [
+                "button_autoplay",
+                this._autoplayStopped
+                    ? Language.buttons.autoplay_play
+                    : Language.buttons.autoplay_pause,
+            ],
+        ];
+        for (const [key, label] of labels) {
+            this._el[key]?.setAttribute("aria-label", label);
+        }
     }
 
     /** Hand the layer switcher its state source (StoryMap wires this). */
@@ -256,6 +306,10 @@ class MenuBarBase {
         this.fire("fullscreen", e);
     }
 
+    _onButtonAutoplay() {
+        this.fire("autoplay_toggle");
+    }
+
     _onLayersBasemap(e: { map_type: string }) {
         this.fire("basemapchange", { map_type: e.map_type });
     }
@@ -319,6 +373,19 @@ class MenuBarBase {
         DomEvent.addListener(this._el.button_fullscreen, "click", this._onButtonFullscreen, this);
         if (this.options.fullscreen === false) {
             this._el.button_fullscreen.style.display = "none";
+        }
+
+        // Autoplay pause/resume toggle (only when the story auto-advances)
+        if (typeof this.options.autoplay === "number" && this.options.autoplay > 0) {
+            this._el.button_autoplay = Dom.create(
+                "button",
+                "vco-menubar-button vco-menubar-autoplay",
+                this._el.container,
+            );
+            this._el.button_autoplay.setAttribute("type", "button");
+            this._el.button_autoplay.setAttribute("aria-pressed", "true");
+            DomEvent.addListener(this._el.button_autoplay, "click", this._onButtonAutoplay, this);
+            this.setAutoplayState(false);
         }
 
         this._el.button_collapse_toggle = Dom.create(
@@ -403,6 +470,7 @@ class MenuBarBase {
             ["button_overview", this._onButtonOverview as EventListener],
             ["button_backtostart", this._onButtonBackToStart as EventListener],
             ["button_fullscreen", this._onButtonFullscreen as EventListener],
+            ["button_autoplay", this._onButtonAutoplay as EventListener],
             ["button_collapse_toggle", this._onButtonCollapseMap as EventListener],
         ];
         for (const [key, handler] of buttons) {

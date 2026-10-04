@@ -8,6 +8,8 @@
     border-left: 1px solid color.adjust($color-background, $lightness: -10%);
     font-size: 14px;
     padding: 6px 12px;
+    // pointer targets stay usable for coarse pointers and low vision
+    min-height: 44px;
 
     // position:relative;
     // top:-24px;
@@ -32,12 +34,14 @@
         color: $color-background;
     }
 
-    // keyboard focus parity with the hover state
+    // keyboard focus parity with the hover state. The ring is dark on the
+    // theme background (a theme-coloured ring on itself is 1:1) and sits
+    // outside the button edge so it is never covered.
     &:focus-visible {
         background: $color-theme;
         color: $color-background;
-        outline: 2px solid $color-theme;
-        outline-offset: -2px;
+        outline: 2px solid $color-dark;
+        outline-offset: 2px;
     }
 }
 

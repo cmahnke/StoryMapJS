@@ -142,9 +142,14 @@ function migrateLegacyKey(key: string): string {
 function consentButton(kind: "allow" | "deny", text: string): HTMLButtonElement {
     const button = Dom.create("button", `vco-consent-${kind}`) as HTMLButtonElement;
     button.setAttribute("type", "button");
+    // Text content provides the accessible name; native <button> is kept
+    // deliberately (no icon-only buttons, so no extra aria-label needed).
     button.textContent = text;
     return button;
 }
+
+/** Counter backing the unique title ids for aria-labelledby (multi-viewer pages). */
+let consentDialogCounter = 0;
 
 /** The title/message pair shared by both dialog shapes. */
 function consentHeader(
@@ -153,6 +158,11 @@ function consentHeader(
 ): { title: HTMLElement; message: HTMLElement } {
     const title = Dom.create("p", "vco-consent-title");
     title.textContent = titleText;
+    // Focus target on open: programmatically focusable, unique per dialog
+    // instance so aria-labelledby never collides across viewers.
+    title.setAttribute("tabindex", "-1");
+    consentDialogCounter += 1;
+    title.id = `vco-consent-title-${consentDialogCounter}`;
     const message = Dom.create("p", "vco-consent-message");
     message.textContent = messageText;
     return { title: title, message: message };
@@ -322,6 +332,11 @@ export class ConsentManager {
             messages.consent_start_title ?? "External content",
             messages.consent_start_message ?? "",
         );
+        // Non-modal library widget: exposed as a dialog without trapping
+        // focus or closing on Escape (no auto-decision for the visitor).
+        el.setAttribute("role", "dialog");
+        el.setAttribute("aria-modal", "false");
+        el.setAttribute("aria-labelledby", title.id);
 
         const list = Dom.create("div", "vco-consent-services");
         const toggles: Array<{ key: string; allow: HTMLButtonElement; deny: HTMLButtonElement }> =
@@ -377,6 +392,7 @@ export class ConsentManager {
         el.append(title, message, list, actions);
         container.append(el);
         this.startDialogs.add(el);
+        title.focus();
     }
 
     /**
@@ -400,6 +416,8 @@ export class ConsentManager {
         return new Promise((resolve) => {
             const messages = Language.messages;
             const el = Dom.create("div", "vco-consent");
+            // Non-modal library widget: exposed as a dialog without trapping
+            // focus or closing on Escape (no auto-decision for the visitor).
 
             const template = messages.consent_message ?? "Load content from {service}?";
             const { title, message } = consentHeader(
@@ -409,6 +427,9 @@ export class ConsentManager {
                 messages.consent_start_title ?? "External content",
                 template.replace("{service}", service.label) + (host ? ` (${host})` : ""),
             );
+            el.setAttribute("role", "dialog");
+            el.setAttribute("aria-modal", "false");
+            el.setAttribute("aria-labelledby", title.id);
 
             const buttons = Dom.create("div", "vco-consent-buttons");
             const allow = consentButton("allow", messages.consent_allow ?? "Allow");
@@ -425,6 +446,7 @@ export class ConsentManager {
             buttons.append(allow, deny);
             el.append(title, message, buttons);
             container.append(el);
+            title.focus();
         });
     }
 

@@ -52,6 +52,22 @@
     position: relative;
     user-select: none;
 
+    /* Skip link: first tab stop inside the widget, off-screen until
+       focused, so keyboard visitors can jump past the chrome. */
+    .vco-skip-link {
+        position: absolute;
+        top: -999px;
+        left: 8px;
+        z-index: 100;
+        padding: 8px 12px;
+        background-color: $color-background;
+        color: $color-text;
+
+        &:focus-visible {
+            top: 8px;
+        }
+    }
+
     /* fullscreen: fill the screen and sit above everything else */
     &:fullscreen {
         width: 100%;

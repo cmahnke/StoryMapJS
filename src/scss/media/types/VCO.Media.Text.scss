@@ -35,13 +35,13 @@
         line-height: $base-font-size;
         font-weight: normal;
         margin: 0 0 2px;
-        color: color.adjust($color-text, $lightness: 25%);
+        color: $color-text;
 
         small {
             font-size: $base-font-size;
             line-height: $base-font-size;
             font-weight: normal;
-            color: color.adjust($color-text, $lightness: 25%);
+            color: $color-text;
         }
     }
 

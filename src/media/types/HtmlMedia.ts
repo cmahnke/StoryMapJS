@@ -51,6 +51,19 @@ export class HtmlMediaBase extends Media {
         ) as HTMLMediaElement;
         this._el.content_item = media_item;
         media_item.controls = true;
+        const captionText =
+            typeof this.data.caption === "string"
+                ? this.data.caption
+                      .replace(/<[^>]*>/g, " ")
+                      .replace(/\s+/g, " ")
+                      .trim()
+                : "";
+        const mediaName =
+            typeof this.options.media_name === "string" ? this.options.media_name : "";
+        media_item.setAttribute(
+            "aria-label",
+            captionText || mediaName || (spec.kind === "audio" ? "Audio" : "Video"),
+        );
 
         const source_item = Dom.create("source", "", media_item) as HTMLSourceElement;
         this._el.source_item = source_item;

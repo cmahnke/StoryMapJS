@@ -3,6 +3,7 @@
     "lang": "de",
     "messages": {
         "loading": "Daten werden geladen",
+        "skip_link": "Zum Story-Inhalt springen",
         "wikipedia": "von Wikipedia, der freien Enzyklopädie",
         "start": "Explore",
         "consent_start_title": "Externe Inhalte",
@@ -28,7 +29,13 @@
         "exit_fullscreen": "Vollbild beenden",
         "layers": "Ebenen",
         "layers_basemaps": "Grundkarten",
-        "layers_overlays": "Overlays"
+        "layers_overlays": "Overlays",
+        "autoplay_pause": "Autoplay pausieren",
+        "autoplay_play": "Autoplay fortsetzen",
+        "audio_badge": "Enthält Audio"
+    },
+    "media": {
+        "iframe_title": "Eingebettetes Medium"
     },
     "direction": "ltr"
 }

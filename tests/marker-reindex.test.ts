@@ -63,3 +63,49 @@ describe("map marker numbering", () => {
         sm.dispose();
     });
 });
+
+describe("overview marker clicks", () => {
+    beforeAll(() => {
+        class ResizeObserverStub {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        }
+        (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
+    });
+
+    it("navigates the story when an overview pin is clicked", () => {
+        // an overview-typed slide with a location renders a pin (like the
+        // last stop of the katrina tour); clicking it must move the story,
+        // not just the map — the overview branch of goTo() used to skip
+        // the change event
+        const el = document.createElement("div");
+        el.id = "sm-overview-click";
+        document.body.appendChild(el);
+        const sm = new StoryMap("sm-overview-click", {
+            storymap: {
+                map_type: "osm",
+                slides: [
+                    { date: "", type: "overview", text: { headline: "Overview" } },
+                    {
+                        date: "",
+                        text: { headline: "Paris", text: "" },
+                        location: { lat: 48.85, lon: 2.35 },
+                    },
+                    {
+                        date: "",
+                        type: "overview",
+                        text: { headline: "Coda" },
+                        location: { lat: 51.5, lon: -0.12 },
+                    },
+                ],
+            },
+        } as unknown as StorymapDataWrapper);
+        expect(sm.current_slide).toBe(0);
+        const marker = sm.getMarker(2) as unknown as { _marker: HTMLElement };
+        expect(marker._marker).toBeInstanceOf(HTMLElement);
+        marker._marker.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        expect(sm.current_slide).toBe(2);
+        sm.dispose();
+    });
+});

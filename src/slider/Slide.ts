@@ -1,4 +1,4 @@
-import { mergeData } from "../core/Util";
+import { mergeData, prefersReducedMotion } from "../core/Util";
 import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import { DomEvent } from "../dom/DomEvent";
 import Dom from "../dom/Dom";
@@ -373,7 +373,10 @@ class SlideBase {
     _onScrollHintClick() {
         // scroll down one step, then hide (the scroll event dismisses too)
         const el = this._el.container;
-        el.scrollBy({ top: el.clientHeight * 0.8, behavior: "smooth" });
+        el.scrollBy({
+            top: el.clientHeight * 0.8,
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
+        });
         this._scroll_hint_dismissed = true;
         this._hideScrollHint();
     }
@@ -492,6 +495,7 @@ class SlideBase {
             this._text = new Text(this.data.text, {
                 title: this.has.title,
                 text_align: this.options.text_align as string | undefined,
+                language: this.data.language ?? undefined,
             });
         }
 

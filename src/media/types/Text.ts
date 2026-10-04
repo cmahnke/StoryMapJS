@@ -14,6 +14,8 @@ interface TextData {
 interface TextOptions {
     title?: boolean;
     text_align?: string;
+    /** BCP 47 tag for the slide text (from `StorymapSlide.language`). */
+    language?: string;
 }
 
 export interface TextEvents {
@@ -63,6 +65,15 @@ class TextBase {
 
         this._el.container = Dom.create("div", "vco-text");
         this._el.container.id = this.data.uniqueid ?? "";
+        // Pronounce mixed-language slides correctly: the reader reports
+        // which language map it picked, and the DOM should say so too.
+        if (
+            typeof this.options.language === "string" &&
+            this.options.language !== "" &&
+            this.options.language !== "none"
+        ) {
+            this._el.container.setAttribute("lang", this.options.language);
+        }
 
         this._initLayout();
 

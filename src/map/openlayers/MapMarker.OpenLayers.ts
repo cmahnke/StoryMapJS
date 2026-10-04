@@ -3,6 +3,7 @@ import { fromLonLat } from "ol/proj";
 import type { Map as OlMap } from "ol";
 import MapMarker from "../MapMarker";
 import { clearTimer } from "../../core/Util";
+import { Language } from "../../language/Language";
 import { sanitizeSlideText } from "../../media/EmbedUtil";
 import type { LatLngLiteral, MapMarkerData, StorymapOptions } from "../../types";
 
@@ -27,6 +28,10 @@ interface MarkerPresentation {
 export default class OpenLayersMapMarker extends MapMarker {
     declare "_overlay": Overlay;
     declare "_onMarkerClickBound": ((e: Event) => void) | null;
+    /** Enter/Space activation for keyboard visitors, detached in dispose(). */
+    declare "_onMarkerKeyBound": ((e: KeyboardEvent) => void) | null;
+    /** Base accessible name (slide headline or label), without audio suffix. */
+    declare "_marker_label": string;
     /** marker.popup: the active marker opens its card when clicked. */
     declare "_popup_enabled": boolean;
     /** marker.audioBadge: flag a slide that has narration or audio media. */
@@ -88,6 +93,15 @@ export default class OpenLayersMapMarker extends MapMarker {
             }
 
             this._marker = this._createMarkerElement(d as MapMarkerData, o);
+            // keyboard route to the same behaviour as a click: focusable,
+            // announced as a button, Enter/Space activate
+            const text = (d as MapMarkerData)?.text;
+            const headline =
+                typeof text?.headline === "string" && text.headline !== "" ? text.headline : null;
+            this._marker_label = presentation.label ?? headline ?? "Marker";
+            this._marker.setAttribute("tabindex", "0");
+            this._marker.setAttribute("role", "button");
+            this._marker.setAttribute("aria-label", this._marker_label);
             // kept as a field so dispose() can detach it; the inline arrow
             // had no other handle
             this._onMarkerClickBound = (e: Event) => {
@@ -102,6 +116,23 @@ export default class OpenLayersMapMarker extends MapMarker {
                 this._onMarkerClick(e);
             };
             this._marker.addEventListener("click", this._onMarkerClickBound);
+            // Keyboard visitors get the click behaviour: Enter/Space
+            // activates, and an opened card takes focus so its close button
+            // is reachable without a pointer.
+            this._onMarkerKeyBound = (e: KeyboardEvent) => {
+                if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar") return;
+                e.preventDefault();
+                const wasOpen = this.popupOpen;
+                this._onMarkerClickBound?.(e);
+                if (!wasOpen && this.popupOpen) {
+                    (
+                        this._popup_el?.querySelector(
+                            ".vco-marker-popup-close",
+                        ) as HTMLElement | null
+                    )?.focus();
+                }
+            };
+            this._marker.addEventListener("keydown", this._onMarkerKeyBound);
             // Escape closes the card; the listener is on the document and is
             // detached in dispose(), so a torn-down map leaves nothing behind
             this._onPopupKeyBound = (e: KeyboardEvent) => {
@@ -251,9 +282,15 @@ export default class OpenLayersMapMarker extends MapMarker {
      */
     closePopup(): void {
         if (!this._popup_el) return;
+        // keyboard visitors may be inside the card (its close button is
+        // focusable): hand focus back to the marker instead of dropping it
+        // on the page body. Mouse visitors never had focus here, so theirs
+        // is untouched.
+        const hadFocus = this._popup_el.contains(document.activeElement);
         this._popup_el.parentNode?.removeChild(this._popup_el);
         this._popup_el = null;
         this._marker?.classList?.remove("vco-mapmarker-popup-open");
+        if (hadFocus) this._marker?.focus();
         this.fire("popupclose", { marker_number: this.marker_number });
     }
 
@@ -340,6 +377,11 @@ export default class OpenLayersMapMarker extends MapMarker {
         const kind = media?.mediatype?.type;
         const audible = kind === "audio" || kind === "video" || !!this.data.narration;
         this._marker.classList.toggle("vco-mapmarker-has-audio", audible);
+        const suffix =
+            audible && typeof Language.buttons.audio_badge === "string"
+                ? `, ${Language.buttons.audio_badge}`
+                : "";
+        this._marker.setAttribute("aria-label", `${this._marker_label}${suffix}`);
     }
 
     dispose(): void {
@@ -352,6 +394,10 @@ export default class OpenLayersMapMarker extends MapMarker {
         if (this._onMarkerClickBound) {
             marker?.removeEventListener?.("click", this._onMarkerClickBound);
             this._onMarkerClickBound = null;
+        }
+        if (this._onMarkerKeyBound) {
+            marker?.removeEventListener?.("keydown", this._onMarkerKeyBound);
+            this._onMarkerKeyBound = null;
         }
         if (this._overlay) {
             this._overlay.setElement(undefined);

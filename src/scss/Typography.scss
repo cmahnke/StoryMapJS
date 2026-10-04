@@ -135,7 +135,7 @@
     blockquote,
     blockquote p {
         font-family: $font-serif;
-        color: color.adjust($color-dark, $lightness: 60%);
+        color: $color-text;
         text-align: left;
         background: transparent;
         border: 0;

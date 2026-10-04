@@ -359,11 +359,13 @@ export function slideTransitionDuration(from: number, to: number): number {
  * (`prefers-reduced-motion: reduce`) — slide/map glides collapse to
  * instant changes and autoplay stays off.
  */
+export const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
 export function prefersReducedMotion(): boolean {
     return (
         typeof window !== "undefined" &&
         typeof window.matchMedia === "function" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        window.matchMedia(REDUCED_MOTION_QUERY).matches
     );
 }
 

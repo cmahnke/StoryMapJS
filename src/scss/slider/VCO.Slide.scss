@@ -81,8 +81,8 @@
             // width:100%;
             // display:table;
             vertical-align: middle;
-            padding-left: 100px;
-            padding-right: 100px;
+            padding-left: clamp(10px, 5vw, 100px);
+            padding-right: clamp(10px, 5vw, 100px);
             position: relative;
             max-width: 100%;
 
@@ -111,7 +111,7 @@
             .vco-text {
                 width: 50%;
                 max-width: 50%;
-                min-width: 120px;
+                min-width: 0;
 
                 // height:100%;
                 // overflow-y:auto;
@@ -352,7 +352,7 @@
 .vco-text-content {
     iframe {
         width: 100%;
-        min-height: 280px;
+        min-height: min(280px, 50vh);
         border: 0;
     }
 }

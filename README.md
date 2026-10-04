@@ -215,9 +215,14 @@ Supported, and covered by tests: text alternatives on slide images
 (decorative `alt=""` included); real `<button>` menubar actions and slide
 navigation; polite live-region slide announcements; reduced-motion handling
 of the slide glide and autoplay; an embed page that does not disable zoom;
-sanitized author tables that keep their semantics; and slides hidden from
+sanitized author tables that keep their semantics; slides hidden from
 assistive tech while inactive (`aria-hidden` + `inert`), with a layer
-switcher built from native checkboxes, radios and fieldsets.
+switcher built from native checkboxes, radios and fieldsets; keyboard
+operable map pins and message dismissal; a skip link to the slide content;
+an autoplay pause/resume toggle; slide text pronounced in its own language
+(`lang`); consent dialogs exposed with labels and focus; media errors
+announced as alerts; and a motion kill-switch that also honors an
+OS reduced-motion toggle flipped mid-story.
 
 Known limitations (not fixed here): map markers are pointer-only; audio and
 video have no viewer-side captions or transcripts; narration ships without a

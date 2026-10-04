@@ -1,41 +1,70 @@
 {
     "be": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "bg": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "cs": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "de": ["messages.consent_service_narration"],
     "el": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "es": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "et": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
+        "media.iframe_title",
         "messages.consent_allow",
         "messages.consent_blocked",
         "messages.consent_deny",
@@ -43,32 +72,52 @@
         "messages.consent_service_fonts",
         "messages.consent_service_narration",
         "messages.consent_service_tiles",
-        "messages.error"
+        "messages.error",
+        "messages.skip_link"
     ],
     "fr": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "he": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "hu": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "is": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
+        "media.iframe_title",
         "messages.consent_allow",
         "messages.consent_blocked",
         "messages.consent_deny",
@@ -76,38 +125,63 @@
         "messages.consent_service_fonts",
         "messages.consent_service_narration",
         "messages.consent_service_tiles",
-        "messages.error"
+        "messages.error",
+        "messages.skip_link"
     ],
     "it": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "jp": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "ko": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "nl": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "nn": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
+        "media.iframe_title",
         "messages.consent_allow",
         "messages.consent_blocked",
         "messages.consent_deny",
@@ -115,45 +189,75 @@
         "messages.consent_service_fonts",
         "messages.consent_service_narration",
         "messages.consent_service_tiles",
-        "messages.error"
+        "messages.error",
+        "messages.skip_link"
     ],
     "no": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "pl": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "pt": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "ru": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "sk": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "sr": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
         "buttons.overview",
+        "media.iframe_title",
         "messages.consent_allow",
         "messages.consent_blocked",
         "messages.consent_deny",
@@ -161,32 +265,52 @@
         "messages.consent_service_fonts",
         "messages.consent_service_narration",
         "messages.consent_service_tiles",
-        "messages.error"
+        "messages.error",
+        "messages.skip_link"
     ],
     "sv": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "tr": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "uk": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "ur": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.exit_fullscreen",
         "buttons.fullscreen",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
+        "media.iframe_title",
         "messages.consent_allow",
         "messages.consent_blocked",
         "messages.consent_deny",
@@ -194,18 +318,29 @@
         "messages.consent_service_fonts",
         "messages.consent_service_narration",
         "messages.consent_service_tiles",
-        "messages.error"
+        "messages.error",
+        "messages.skip_link"
     ],
     "zh-cn": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ],
     "zh-tw": [
+        "buttons.audio_badge",
+        "buttons.autoplay_pause",
+        "buttons.autoplay_play",
         "buttons.layers",
         "buttons.layers_basemaps",
         "buttons.layers_overlays",
-        "messages.consent_service_narration"
+        "media.iframe_title",
+        "messages.consent_service_narration",
+        "messages.skip_link"
     ]
 }

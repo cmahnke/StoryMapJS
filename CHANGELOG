@@ -5,6 +5,15 @@ Added
 - Inactive slides are hidden from assistive tech (`aria-hidden` + `inert`
   in `Slide.setActive()`), so screen readers no longer read every
   off-screen slide; preloading (including iframes) is unaffected
+- Keyboard access: map pins are focusable buttons (Enter/Space activates,
+  focus returns on popup close), messages dismiss from the keyboard, and a
+  skip link jumps to the slide content. Autoplay gains a menubar
+  pause/resume toggle; slide text carries its `lang`; consent dialogs are
+  labelled dialogues with focus; media errors announce via `role=alert`
+- Reduced motion is honored everywhere it matters: map glides, line draw,
+  background fades, nav intro, smooth scroll and the loader freeze, and an
+  OS toggle flipped mid-story stops autoplay. Touch targets are 44px,
+  muted text meets contrast, and focus rings are visible
 - Programmatic popup cards: `storymap.openMarkerPopup(n)` navigates to the
   stop and opens its card (false and no navigation when disabled, out of
   range, disposed or mapless), plus `closeMarkerPopup(n?)` and

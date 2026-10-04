@@ -95,6 +95,18 @@
             opacity: 1;
         }
     }
+
+    // keyboard parity with the hover reveal, plus a visible ring: the
+    // container is a focusable div acting as a button
+    &:focus-visible {
+        outline: 2px solid $color-theme;
+        outline-offset: 2px;
+
+        .vco-slidenav-title,
+        .vco-slidenav-description {
+            opacity: 1;
+        }
+    }
 }
 
 .vco-slidenav-next {

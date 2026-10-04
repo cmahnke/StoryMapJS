@@ -448,6 +448,9 @@ export class MediaBase {
         const text = Dom.create("p", "");
         text.appendChild(document.createTextNode(message));
         this._el.content_item.appendChild(text);
+        // announced, not just shown: load failures otherwise pass silently
+        // for screen-reader visitors
+        this._el.content_item.setAttribute("role", "alert");
 
         // After Loaded
         this.onLoaded(true);

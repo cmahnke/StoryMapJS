@@ -1,4 +1,10 @@
-import { mergeData, slideTransitionDuration, updateData, prefersReducedMotion } from "../core/Util";
+import {
+    mergeData,
+    slideTransitionDuration,
+    updateData,
+    prefersReducedMotion,
+    REDUCED_MOTION_QUERY,
+} from "../core/Util";
 import { loadCSS } from "../core/Load";
 import { validateStorymapAndReport } from "./validate";
 import {
@@ -31,6 +37,7 @@ import {
     claimLanguage,
     releaseLanguage,
     isLanguageConflict,
+    Language,
 } from "../language/Language";
 import {
     markInteraction,
@@ -175,6 +182,8 @@ class StoryMapBase {
     declare "_on_keydown_global": ((e: KeyboardEvent) => void) | null;
     declare "_on_fullscreen": (() => void) | null;
     declare "_on_hashchange": (() => void) | null;
+    /** Reduced-motion toggles mid-story stop the advance timer. */
+    declare "_on_reduced_motion": ((e: MediaQueryListEvent) => void) | null;
     /** Set by `dispose()` so a second call returns early. */
     declare "_disposed": boolean;
     /** identity of this viewer's claim on the page-wide locale */
@@ -371,6 +380,7 @@ class StoryMapBase {
         this._on_keydown_global = null;
         this._on_fullscreen = null;
         this._on_hashchange = null;
+        this._on_reduced_motion = null;
         this._raw_manifest = null;
         this._initial_deep_link = null;
         this._disposed = false;
@@ -1059,6 +1069,12 @@ class StoryMapBase {
             window.removeEventListener("hashchange", this._on_hashchange);
             this._on_hashchange = null;
         }
+        if (this._on_reduced_motion && typeof window.matchMedia === "function") {
+            window
+                .matchMedia(REDUCED_MOTION_QUERY)
+                .removeEventListener("change", this._on_reduced_motion);
+            this._on_reduced_motion = null;
+        }
 
         // slide transitions in flight (Web Animations API)
         for (const el of [this._el?.container, this._el?.map]) {
@@ -1094,6 +1110,7 @@ class StoryMapBase {
         this._menubar?.off("fullscreen", this._onFullscreenToggle, this);
         this._menubar?.off("basemapchange", this._onLayersBasemap, this);
         this._menubar?.off("overlaychange", this._onLayersOverlay, this);
+        this._menubar?.off("autoplay_toggle", this._onAutoplayToggle, this);
         this._storyslider?.dispose?.();
         this._menubar?.dispose?.();
         this._map?.dispose?.();
@@ -1261,6 +1278,17 @@ class StoryMapBase {
             ? null
             : (this._resolveMapElement() ?? Dom.create("div", "vco-map", this._el.container));
         this._el.storyslider = Dom.create("div", "vco-storyslider", this._el.container);
+        // Skip link (a11y): first tab stop inside the widget, jumping to
+        // the slide content. Only when the host container has an id to
+        // anchor both ends to (multi-viewer pages need unique targets).
+        if (this._el.container.id !== "") {
+            this._el.storyslider.id = `${this._el.container.id}-slides`;
+            const skip = Dom.create("a", "vco-skip-link", this._el.container);
+            skip.setAttribute("href", `#${this._el.storyslider.id}`);
+            skip.textContent =
+                (Language.messages.skip_link as string | undefined) ?? "Skip to story content";
+            this._el.container.prepend(skip);
+        }
 
         // Initial Default Layout
         this.options.width = this._el.container.offsetWidth;
@@ -1352,6 +1380,7 @@ class StoryMapBase {
         this._map?.on("tilesallowed", this._onTilesAllowed, this);
         this._menubar.on("basemapchange", this._onLayersBasemap, this);
         this._menubar.on("overlaychange", this._onLayersOverlay, this);
+        this._menubar.on("autoplay_toggle", this._onAutoplayToggle, this);
         this._menubar.setLayersDelegate({ rows: () => this._layersRows() });
         this._menubar.refreshLayers();
 
@@ -1380,6 +1409,18 @@ class StoryMapBase {
         // Fullscreen state
         this._on_fullscreen = () => this._onFullscreenChange();
         document.addEventListener("fullscreenchange", this._on_fullscreen);
+
+        // An OS reduced-motion toggle mid-story stops automatic advancement;
+        // the next navigation's _scheduleAutoplay re-checks anyway, but an
+        // armed timer would otherwise fire once more first.
+        if (typeof window.matchMedia === "function") {
+            this._on_reduced_motion = (e: MediaQueryListEvent) => {
+                if (e.matches) this._stopAutoplay();
+            };
+            window
+                .matchMedia(REDUCED_MOTION_QUERY)
+                .addEventListener("change", this._on_reduced_motion);
+        }
     }
 
     _onKeyDownGlobal(e: KeyboardEvent) {
@@ -1782,10 +1823,16 @@ class StoryMapBase {
         }
         // prefers-reduced-motion: no autoplay (WCAG 2.2.2)
         if (this.options.autoplay > 0 && !prefersReducedMotion()) {
-            // any user interaction stops autoplay permanently
-            const stop = () => {
+            // any user interaction stops autoplay permanently — except on
+            // the pause/resume toggle itself, whose click would otherwise
+            // stop and immediately restart (net no-op instead of pause)
+            const stop = (e: Event) => {
+                if ((e.target as HTMLElement | null)?.closest?.(".vco-menubar-autoplay")) {
+                    return;
+                }
                 this._autoplay_stopped = true;
                 this._stopAutoplay();
+                this._menubar.setAutoplayState(true);
             };
             this._el.container.addEventListener("pointerdown", stop, { once: true });
             this._el.container.addEventListener("keydown", stop, { once: true });
@@ -1809,6 +1856,10 @@ class StoryMapBase {
     _scheduleAutoplay() {
         this._stopAutoplay();
         if (!(this.options.autoplay > 0) || this._autoplay_stopped) return;
+        // the OS setting may have flipped mid-story: re-check on every arm
+        // so a reduced-motion switch stops future advances (the in-flight
+        // timer is cleared by the next navigation's _scheduleAutoplay)
+        if (prefersReducedMotion()) return;
 
         const advance = () => {
             this._stopAutoplay();
@@ -2097,6 +2148,17 @@ class StoryMapBase {
         // keyboard focus from the row just toggled)
         this.setOverlayVisible(e.index, e.visible);
         this.fire("overlaychange", { index: e.index, visible: e.visible });
+    }
+
+    _onAutoplayToggle() {
+        if (this._autoplay_stopped) {
+            this._autoplay_stopped = false;
+            this._scheduleAutoplay();
+        } else {
+            this._autoplay_stopped = true;
+            this._stopAutoplay();
+        }
+        this._menubar.setAutoplayState(this._autoplay_stopped);
     }
 
     _onTilesAllowed() {

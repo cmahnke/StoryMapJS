@@ -1,4 +1,4 @@
-import { mergeData } from "../core/Util";
+import { mergeData, prefersReducedMotion } from "../core/Util";
 import { DomMixed, Evented, type EventedInstance } from "../core/mixins";
 import Dom from "../dom/Dom";
 import Animate from "../animation/tween";
@@ -119,7 +119,7 @@ class SlideNavBase {
         return_to_default: boolean,
     ) {
         const ani: AnimateOptions = {
-            duration: duration,
+            duration: prefersReducedMotion() ? 0 : duration,
             easing: ease,
             complete: () => {
                 this._onUpdatePositionComplete(return_to_default);

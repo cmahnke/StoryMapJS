@@ -9,6 +9,8 @@
 	in a storymap's JSON can never execute code in a viewer's browser.
 ================================================== */
 
+import { Language } from "../language/Language";
+
 // Attributes copied from a pasted <iframe> onto the rebuilt element.
 // src is handled separately (validated); everything else is dropped.
 const IFRAME_ATTRIBUTES = [
@@ -275,6 +277,21 @@ export function buildIframe(html: string): HTMLIFrameElement | null {
         iframe.setAttribute("height", "100%");
         iframe.setAttribute("frameborder", "0");
         iframe.setAttribute("allowfullscreen", "");
+    }
+    if (!iframe.hasAttribute("title")) {
+        const localeMedia = (Language as unknown as { media?: { iframe_title?: unknown } }).media;
+        const localeTitle =
+            typeof localeMedia?.iframe_title === "string" && localeMedia.iframe_title !== ""
+                ? localeMedia.iframe_title
+                : undefined;
+        const messagesTitle = Language.messages["media.iframe_title"];
+        iframe.setAttribute(
+            "title",
+            localeTitle ??
+                (typeof messagesTitle === "string" && messagesTitle !== ""
+                    ? messagesTitle
+                    : "Embedded media"),
+        );
     }
     return iframe;
 }

@@ -233,6 +233,10 @@ class MapBase {
             // Check to see if it's an overview
             if (marker.data.type && marker.data.type === "overview") {
                 this._markerOverview();
+                // overview stops are navigable like any other: report the
+                // change exactly as the branches below do, or a click on an
+                // overview pin moves the map without ever moving the story
+                this._onMarkerChange();
             } else {
                 // Make marker active
                 marker.active(true);

@@ -28,10 +28,10 @@
 
             .vco-media-loaderror {
                 p {
-                    color: $ui-background-color;
+                    color: $color-text;
 
                     span {
-                        color: $ui-background-color;
+                        color: $color-text;
                     }
 
                     text-align: center;
@@ -157,7 +157,7 @@
 /* Credit
 ================================================== */
 .vco-credit {
-    color: #999;
+    color: $color-text;
     text-align: right;
     display: block;
     margin: 0 auto;

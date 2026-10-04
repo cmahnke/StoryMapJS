@@ -127,4 +127,15 @@ describe("start-of-story consent dialog", () => {
         manager.requestAll(SERVICES, container);
         expect(container.querySelector(".vco-consent-start")).toBeNull();
     });
+
+    it("exposes the dialog with labelledby and moves focus to its title", () => {
+        const { container } = open();
+        const dialog = container.querySelector(".vco-consent-start") as HTMLElement;
+        expect(dialog.getAttribute("role")).toBe("dialog");
+        const labelledby = dialog.getAttribute("aria-labelledby");
+        expect(labelledby).not.toBeNull();
+        const title = document.getElementById(labelledby as string);
+        expect(title?.textContent).not.toBe("");
+        expect(document.activeElement).toBe(title);
+    });
 });

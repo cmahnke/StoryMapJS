@@ -28,6 +28,7 @@ import "ol/ol.css";
 import Map from "../Map";
 import OpenLayersMapMarker from "./MapMarker.OpenLayers";
 import { padCroppedZoomifyTile } from "./zoomifyTiles";
+import { prefersReducedMotion } from "../../core/Util";
 import type { LinePoint, ViewToOptions } from "../types";
 import type {
     LatLngLiteral,
@@ -1655,7 +1656,7 @@ export default class OpenLayers extends Map {
             size: ol_map.getSize(),
             padding: this._opaquePanelPadding(),
             maxZoom: 12,
-            duration: duration,
+            duration: prefersReducedMotion() ? 0 : duration,
             easing: this._easing,
         });
     }
@@ -1818,7 +1819,8 @@ export default class OpenLayers extends Map {
 
         this._cancelLineAnimation();
 
-        const duration = animate?.duration ?? 0;
+        // Reduced motion draws the full path at once instead of tracing it.
+        const duration = prefersReducedMotion() ? 0 : (animate?.duration ?? 0);
         if (duration <= 0 || view_coords.length < 2) {
             setGeometry(view_coords);
             return;
@@ -1964,7 +1966,7 @@ export default class OpenLayers extends Map {
     _panTo(loc: LatLngLiteral, animate?: boolean): void {
         this._map.getView().animate({
             center: this._toViewCoords(loc),
-            duration: this.options.duration,
+            duration: prefersReducedMotion() ? 0 : this.options.duration,
             easing: this._easing,
         });
     }
@@ -1972,7 +1974,7 @@ export default class OpenLayers extends Map {
     _zoomTo(z: number, animate?: boolean): void {
         this._map.getView().animate({
             zoom: z,
-            duration: this.options.duration,
+            duration: prefersReducedMotion() ? 0 : this.options.duration,
             easing: this._easing,
         });
     }
@@ -2033,7 +2035,7 @@ export default class OpenLayers extends Map {
         this._map.getView().animate({
             center: this._toViewCoords(_location),
             zoom: _zoom,
-            duration: _animate ? _duration : 0,
+            duration: _animate && !prefersReducedMotion() ? _duration : 0,
             easing: this._easing,
         });
 
@@ -2072,7 +2074,7 @@ export default class OpenLayers extends Map {
         this._map.getView().fit([x, y, x + w, y + h], {
             size: this._map.getSize(),
             padding: this._opaquePanelPadding(),
-            duration: _animate ? _duration : 0,
+            duration: _animate && !prefersReducedMotion() ? _duration : 0,
             easing: this._easing,
         });
         if (this._mini_map && this.options.width > this.options.skinny_size) {
@@ -2251,7 +2253,7 @@ export default class OpenLayers extends Map {
                 this._map.getView().animate({
                     center: center_view,
                     zoom: view_zoom,
-                    duration: duration ?? this._transition_duration,
+                    duration: prefersReducedMotion() ? 0 : (duration ?? this._transition_duration),
                     easing: this._easing,
                 });
             }
@@ -2293,7 +2295,9 @@ export default class OpenLayers extends Map {
                         view.animate({
                             center: this._toViewCoords(offset_location),
                             zoom: zoom,
-                            duration: duration ?? this._transition_duration,
+                            duration: prefersReducedMotion()
+                                ? 0
+                                : (duration ?? this._transition_duration),
                             easing: this._easing,
                         });
                     }
@@ -2334,7 +2338,7 @@ export default class OpenLayers extends Map {
                 this._map.getView().animate({
                     center: this._toViewCoords(offset_location),
                     zoom: zoom,
-                    duration: duration ?? this._transition_duration,
+                    duration: prefersReducedMotion() ? 0 : (duration ?? this._transition_duration),
                     easing: this._easing,
                 });
             } else if (
@@ -2360,7 +2364,9 @@ export default class OpenLayers extends Map {
                     this._map.getView().animate({
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
-                        duration: duration ?? this._transition_duration,
+                        duration: prefersReducedMotion()
+                            ? 0
+                            : (duration ?? this._transition_duration),
                         easing: this._easing,
                     });
                 }
@@ -2381,7 +2387,9 @@ export default class OpenLayers extends Map {
                     view.animate({
                         center: this._toViewCoords(offset_location),
                         zoom: zoom,
-                        duration: duration ?? this._transition_duration,
+                        duration: prefersReducedMotion()
+                            ? 0
+                            : (duration ?? this._transition_duration),
                         easing: this._easing,
                     });
                 }

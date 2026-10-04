@@ -563,7 +563,7 @@ class StorySliderBase {
             // FADE OUT IN
             this.animator_background = Animate(this._el.background, {
                 opacity: 0,
-                duration: this.options.duration / 2,
+                duration: prefersReducedMotion() ? 0 : this.options.duration / 2,
                 easing: this.options.ease,
                 complete: () => {
                     this.fadeInBackground(bg_css);
@@ -583,7 +583,7 @@ class StorySliderBase {
 
         this.animator_background = Animate(this._el.background, {
             opacity: 1,
-            duration: this.options.duration / 2,
+            duration: prefersReducedMotion() ? 0 : this.options.duration / 2,
             easing: this.options.ease,
         });
     }

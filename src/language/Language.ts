@@ -244,6 +244,13 @@ function setLanguage(code: string): LanguageEntry {
         messages: (merged.messages as Record<string, string>) ?? FALLBACK.messages,
         buttons: (merged.buttons as Record<string, string>) ?? FALLBACK.buttons,
     };
+    // The page declares the language the viewer actually renders, so
+    // assistive tech pronounces chrome correctly. One effective locale per
+    // page (a second viewer claiming another throws), so this cannot fight
+    // a sibling viewer.
+    if (typeof document !== "undefined") {
+        document.documentElement.setAttribute("lang", code);
+    }
     return Language;
 }
 
