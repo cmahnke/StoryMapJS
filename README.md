@@ -209,6 +209,24 @@ fetch and validation errors (e.g. "could not load storymap data from ...").
 The `error` event also fires for programmatic consumers. The full event
 reference (payloads included) is [docs/events.md](docs/events.md).
 
+## Accessibility
+
+Supported, and covered by tests: text alternatives on slide images
+(decorative `alt=""` included); real `<button>` menubar actions and slide
+navigation; polite live-region slide announcements; reduced-motion handling
+of the slide glide and autoplay; an embed page that does not disable zoom;
+sanitized author tables that keep their semantics; and slides hidden from
+assistive tech while inactive (`aria-hidden` + `inert`), with a layer
+switcher built from native checkboxes, radios and fieldsets.
+
+Known limitations (not fixed here): map markers are pointer-only; audio and
+video have no viewer-side captions or transcripts; narration ships without a
+transcript; focus moves only when the layer panel closes with Escape; labels
+and announcements are hardcoded English; several muted text colors fall
+below 4.5:1; third-party embeds are the vendor's conformance. No VPAT or
+ACR is claimed — §508 conformance is decided per deliverable by an
+external audit.
+
 ## Bundled credentials
 
 The viewer ships no credentials. Mapbox/Stadia tiles need a token passed via

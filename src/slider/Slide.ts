@@ -226,6 +226,19 @@ class SlideBase {
     setActive(is_active: boolean) {
         this.active = is_active;
 
+        // Off-screen slides are translated away but stay in the DOM, so a
+        // screen reader would read every slide's headline, body and caption.
+        // Hide inactive slides from assistive tech next to the flip that
+        // already marks them inactive; `inert` additionally drops their
+        // controls from keyboard reach. Neither affects loading: preloaded
+        // media (including iframes) still builds and fetches underneath.
+        this._el.container.setAttribute("aria-hidden", String(!is_active));
+        if (is_active) {
+            this._el.container.removeAttribute("inert");
+        } else {
+            this._el.container.setAttribute("inert", "");
+        }
+
         if (this.active) {
             if (this.data.background) {
                 this.fire("background_change", this.has.background);

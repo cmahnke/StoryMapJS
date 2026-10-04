@@ -2,6 +2,9 @@ Unreleased
 ------------------------
 Added
 -----
+- Inactive slides are hidden from assistive tech (`aria-hidden` + `inert`
+  in `Slide.setActive()`), so screen readers no longer read every
+  off-screen slide; preloading (including iframes) is unaffected
 - Programmatic popup cards: `storymap.openMarkerPopup(n)` navigates to the
   stop and opens its card (false and no navigation when disabled, out of
   range, disposed or mapless), plus `closeMarkerPopup(n?)` and
