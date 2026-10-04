@@ -27,3 +27,6 @@ node_modules/*
 # Local files
 /docs/Notes.md
 /opencode.json
+
+# Planning scratch (delivered plans are removed; works in progress stay local)
+docs/plans/
