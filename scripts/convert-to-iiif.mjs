@@ -19,8 +19,8 @@
 // tests/iiif-roundtrip.test.ts can convert in-process: that test asserts that
 // regenerating a fixture is a no-op (so a hand edit to a generated file is
 // caught) and that a manifest converts back to the storymap it came from. That
-// is what makes each docs/plans/iiif-interop.md §2 term migration checkable
-// as "unchanged in meaning" rather than by reading a fixture diff.
+// is what makes each term migration checkable as "unchanged in meaning"
+// rather than by reading a fixture diff.
 //
 // Importing a TypeScript module from a `.mjs` file needs Node's type
 // stripping, which is on by default from Node 22.18 and Node 23.6; `npm run

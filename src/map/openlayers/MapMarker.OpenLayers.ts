@@ -53,7 +53,7 @@ export default class OpenLayersMapMarker extends MapMarker {
     ================================================== */
     /**
      * The merged marker presentation: `marker.*` wins, `location.*` is the
-     * legacy spelling and still works (docs/plans/iiif-media-tours.md §2).
+     * legacy spelling and still works.
      * `location` also stays the carrier of geography, so lat/lon are read
      * from it alone — presentation never moves a marker.
      */

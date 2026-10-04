@@ -22,7 +22,7 @@ export const LOCATION_PROPERTIES = [
     "use_custom_marker",
     // marker presentation with no IIIF vocabulary of its own: a GeoJSON
     // foreign member needs no registration, which is why these live here
-    // rather than in a storymap: term (docs/plans/iiif-media-tours.md §2)
+    // rather than in a storymap: term (a GeoJSON foreign member needs no registration)
     "popup",
     "audioBadge",
 ] as const;

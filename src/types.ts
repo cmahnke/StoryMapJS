@@ -60,16 +60,8 @@ export interface StorymapSlideMedia {
 }
 
 /**
- * Optional spoken narration for one slide, played through a dedicated audio
- * element rather than the slide's media frame — a tour stop usually has a
- * picture and a recording, not one media item. Storymap JSON only: the
- * closest manifest spelling is a `Sound` body, which currently lands in
- * `media.url` rather than here.
- */
-/**
  * Per-slide marker presentation, consolidated. `location.*` keeps working as
- * the legacy spelling and `marker.*` wins when present — see
- * docs/plans/iiif-media-tours.md §2.
+ * the legacy spelling and `marker.*` wins when present.
  *
  * In a IIIF manifest none of this is a `storymap:` term: it all arrives in the
  * `navPlace` Feature's `properties` bag (`icon`, `iconSize`, `image`, `name`,
@@ -89,6 +81,13 @@ export interface StorymapSlideMarker {
     [key: string]: unknown;
 }
 
+/**
+ * Optional spoken narration for one slide, played through a dedicated audio
+ * element rather than the slide's media frame — a tour stop usually has a
+ * picture and a recording, not one media item. Storymap JSON only: the
+ * closest manifest spelling is a `Sound` body, which currently lands in
+ * `media.url` rather than here.
+ */
 export interface StorymapSlideNarration {
     url: string;
     [key: string]: unknown;
@@ -112,8 +111,7 @@ export interface StorymapSlide {
     date?: string | Record<string, unknown> | null;
     group?: string;
     /**
-     * The language tag this slide's text was read in (§3.4 of
-     * docs/plans/iiif-interop.md). A IIIF manifest states its text as a
+     * The language tag this slide's text was read in. A IIIF manifest states its text as a
      * language map; the reader picks the viewer's configured language and
      * reports which one it used, so a host can offer a language switch.
      * Absent for language-neutral (`none`) text, and for a single-language
@@ -306,7 +304,7 @@ export interface StorymapOptions {
     tilejson?: StorymapTilejson;
     /**
      * The `seeAlso` targets a IIIF manifest points at, recorded but not
-     * fetched — see `loadSeeAlso()` (§5.2 of docs/plans/iiif-interop.md).
+     * fetched — see `loadSeeAlso()`.
      */
     see_also?: { id: string; type: string }[];
     map_height: number;
@@ -343,7 +341,7 @@ export interface AnimationHandle {
 
 /**
  * TileJSON 2.1 tile source metadata, from a manifest's map configuration
- * service (§2.9 of docs/plans/iiif-interop.md).
+ * service.
  *
  * This is how a manifest states a tile source: `tiles` is the URL template and
  * the rest is the standard metadata around it, where a keyword basemap

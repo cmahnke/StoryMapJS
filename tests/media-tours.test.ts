@@ -3,9 +3,9 @@ import { StoryMap } from "../src/storymap/StoryMap";
 import type { StorymapDataWrapper, StorymapSlideMarker } from "../src/types";
 
 /**
- * §2 of docs/plans/iiif-media-tours.md: per-slide marker config (`marker.*`
- * winning over the legacy `location.*`), the popup card, the audio badge,
- * subtitles, narration and media-aware autoplay.
+ * Per-slide marker config (`marker.*` winning over the legacy
+ * `location.*`), the popup card, the audio badge, subtitles, narration
+ * and media-aware autoplay.
  */
 
 describe("marker config", () => {

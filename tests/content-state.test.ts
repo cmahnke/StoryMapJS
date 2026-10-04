@@ -8,7 +8,7 @@ import {
 } from "../src/storymap/content-state";
 
 /**
- * IIIF Content State 1.0 (§5.1 of docs/plans/iiif-interop.md). The spec
+ * IIIF Content State 1.0. The spec
  * defines four forms and a client should accept all of them; the awkward part is
  * the encoding rule, which is deliberately asymmetric — a plain URI is never
  * encoded, a JSON-LD form always is.

@@ -680,7 +680,7 @@ test("maps the mapconfig service to storymap options fields", () => {
 
 test("keeps the requiredStatement label, not just the value", () => {
     // a real-world manifest labels its statement; reading only `.value` threw
-    // that half away (iiif-interop.md §2.1)
+    // that half away
     const data = manifestToStorymapData({
         "@context": CONTEXTS,
         requiredStatement: {
@@ -753,7 +753,7 @@ test("a body requiredStatement keeps its label too", () => {
 test("a Collection is not accepted as a Manifest", () => {
     // detection used to accept anything carrying the P3 context, so a
     // Collection passed and its member Manifests were read as if they were
-    // Canvases (iiif-interop.md §2.2)
+    // Canvases
     const collection = {
         "@context": CONTEXTS,
         id: "https://example.org/collection",

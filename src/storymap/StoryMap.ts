@@ -1733,7 +1733,7 @@ class StoryMapBase {
 
     /*  Autoplay (issue #380) and hash bookmarks (issue #146)
     ================================================== */
-    /*  Narration (docs/plans/iiif-media-tours.md §2)
+    /*  Narration
     ================================================== */
 
     /**

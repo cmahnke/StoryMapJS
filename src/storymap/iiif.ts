@@ -127,8 +127,8 @@ function isEmptySelector(sel: ReadSelector): boolean {
 
 /** A `PointSelector` is a pin, which the viewer cannot fit, so we synthesize
  *  a square of 5% of the canvas's smaller side, centred on the point and
- *  clamped to the canvas. Stated once, here: the annotation-driven stops in
- *  docs/plans/iiif-media-tours.md consume this rather than re-deriving it. */
+ *  clamped to the canvas. Stated once, here, so annotation-driven stops
+ *  share it rather than re-deriving it. */
 const POINT_SQUARE_FRACTION = 0.05;
 
 function pointToRegion(
@@ -278,7 +278,7 @@ export function flattenLanguageMap(value: unknown): string {
  * type 'object'" — so the array branch below is producer leniency, not
  * conformance. The `label` ("Credit", "Rights holder", a language-tagged term)
  * is half of what a real institutional manifest ships, and reading only
- * `.value` dropped it. See docs/plans/iiif-interop.md §2.1.
+ * `.value` dropped it.
  */
 function readRequiredStatement(statement: unknown): { label: string; value: string } {
     const entries = Array.isArray(statement)
@@ -403,8 +403,7 @@ function collectionToStorymapData(collection: Record<string, unknown>): Storymap
             "A Presentation 3 Collection references its members from other documents, and " +
             "the converter is synchronous, so it contributes no slides rather than " +
             "mangling them. To build a multi-manifest tour, fetch the members and " +
-            "concatenate their manifestToStorymapData() slides yourself " +
-            "(see docs/plans/iiif-interop.md §2.2).",
+            "concatenate their manifestToStorymapData() slides yourself.",
     );
 
     return data;
@@ -516,8 +515,8 @@ function readMapConfig(manifest: Record<string, unknown>): Record<string, unknow
 /**
  * What a painting annotation tells us about a slide's media.
  *
- * This is the **shared body record** the annotation-driven stops in
- * docs/plans/iiif-media-tours.md read: `type` is how a `Sound` body is told
+ * This is the **shared body record** for annotation-driven stops:
+ * `type` is how a `Sound` body is told
  * from an `Image` or a `TextualBody`. Anything else that needs a field from
  * the body belongs on this record rather than in a second reader.
  */

@@ -8,8 +8,7 @@ import {
 /**
  * Annotation-driven tour stops: a canvas whose commenting/tagging/classifying/
  * describing annotations carry a fragment target becomes one slide per
- * annotation, each fitting the region it points at. See
- * docs/plans/iiif-media-tours.md §1.
+ * annotation, each fitting the region it points at.
  */
 
 const CANVAS_ID = "https://example.org/storymap/test/canvas/1";

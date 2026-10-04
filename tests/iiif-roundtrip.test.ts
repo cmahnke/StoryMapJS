@@ -9,7 +9,7 @@ import type { StorymapData, StorymapSlide } from "../src/types";
 
 /**
  * The IIIF fixtures are generated, not hand-written, so "the 52 manifests
- * still validate unchanged in meaning" (docs/plans/iiif-interop.md §2) has to
+ * still validate unchanged in meaning" has to
  * be checkable rather than a diff somebody reads. Three properties:
  *
  *  1. **drift** — regenerating a fixture reproduces the committed file
@@ -442,8 +442,8 @@ describe("context agreement", () => {
     });
 
     test("leaves no dropped term in any shipped manifest", () => {
-        // A term replaced by a standard property in docs/plans/iiif-interop.md
-        // §2 must be gone from the reader, the emitter, the context *and* every
+        // A term replaced by a standard property must be gone from the
+        // reader, the emitter, the context *and* every
         // manifest we ship. The fixture-drift test already pins the generated
         // ones to the converter; this is the independent check, and it also
         // covers the hand-authored georeferenced manifests.

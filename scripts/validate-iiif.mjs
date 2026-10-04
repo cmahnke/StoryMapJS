@@ -19,8 +19,7 @@ const REQUEST_DELAY_MS = 500;
  * rejected with "is not valid under any of the given schemas". We keep the
  * extension's own spelling anyway: a georeferenced manifest that other IIIF
  * tools can read is worth more than one this validator happens to accept, and
- * the two spellings cannot both be shipped. See docs/plans/iiif-interop.md
- * §2.10.
+ * the two spellings cannot both be shipped.
  *
  * These are still parsed as JSON, and the reader is covered by unit tests and
  * the browser matrix, so a typo in one does not go unnoticed. Any *other*

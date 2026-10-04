@@ -5,8 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
  * classifying or describing annotations carry a fragment target renders one
  * slide per annotation, each fitting the region it points at. Fixture:
  * public/examples-iiif/annotated-image.json (a single canvas presented as an
- * image map, with four stops). Documented in docs/iiif-authoring.md; plan:
- * docs/plans/iiif-media-tours.md §1.
+ * image map, with four stops). Documented in docs/iiif-authoring.md.
  */
 
 /** One canvas, which becomes the overview slide, plus four stops. */

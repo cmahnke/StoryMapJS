@@ -23,8 +23,6 @@ import { asRecord, isHttpUrl } from "./iiif-shared";
  * This module reads all four forms and writes the simplest one that can carry
  * the state, which is the Target URI for a whole canvas and the Target Body for
  * a region.
- *
- * See docs/plans/iiif-interop.md §5.1.
  */
 
 /** The initialization parameter the spec names. */

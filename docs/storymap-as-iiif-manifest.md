@@ -189,8 +189,7 @@ context, and a client that meets a property it does not understand must ignore
 it. There is no IIIF extension for marker presentation — navPlace defines
 exactly one term, `navPlace` itself — so the local context is the only option.
 It is why `popup` and `audioBadge` need no `storymap:` term of their own, and
-the same mechanism is what `docs/plans/iiif-media-tours.md` §2 wants for its
-marker config. The nine local names hang off this project's existing namespace
+the same mechanism serves marker config. The nine local names hang off this project's existing namespace
 (`https://christianmahnke.de/iiif/storymap#`), not a new one.
 
 ### Context order matters

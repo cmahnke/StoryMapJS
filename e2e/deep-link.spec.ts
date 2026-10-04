@@ -20,8 +20,7 @@ const manifestUrl = (name: string) => `/harness.html?manifest=${name}`;
 const MULTI = "instagram_joegermuska";
 
 /**
- * Deep links by stop identity rather than by position (§5.1 of
- * docs/plans/iiif-interop.md). A manifest's canvas ids are the canonical
+ * Deep links by stop identity rather than by position. A manifest's canvas ids are the canonical
  * identifiers (§2.3), so a link to "this stop" has to survive a slide being
  * inserted above it — which an index cannot. The `iiif-content` parameter is
  * the IIIF Content State 1.0 spelling, so a link opened in a different IIIF
