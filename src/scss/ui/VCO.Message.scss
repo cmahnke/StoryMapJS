@@ -13,7 +13,7 @@
 
     // dismissable by click and keyboard: keyboard focus gets a ring
     &.vco-message-dismiss:focus-visible {
-        outline: 2px solid $color-dark;
+        outline: 2px solid var(--vco-color-dark, #{$color-dark});
         outline-offset: -2px;
     }
 

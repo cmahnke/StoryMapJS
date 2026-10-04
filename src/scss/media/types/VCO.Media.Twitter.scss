@@ -15,12 +15,12 @@
             margin-right: $base-spacing;
             font-size: $base-font-size;
             line-height: math.floor($base-font-size * $base-line-height);
-            color: $color-foreground;
+            color: var(--vco-color-foreground, #{$color-foreground});
 
             p {
                 font-size: $base-font-size-xlarge;
                 line-height: math.floor($base-font-size-xlarge * 1.1);
-                color: $color-dark;
+                color: var(--vco-color-dark, #{$color-dark});
             }
         }
 

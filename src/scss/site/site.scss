@@ -25,6 +25,8 @@ $sm-color-green: #24a549; // button-secondary
 $sm-color-green-border: #1f9040;
 $sm-color-border: #b8b8b8;
 $sm-color-border-light: #d4d4d4;
+$sm-color-page: #fff;
+$sm-color-muted: #9c9c9c;
 $sm-font-serif: georgia, "Times New Roman", times, serif;
 $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
 
@@ -36,8 +38,8 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
     font-family: $sm-font-serif;
     font-size: 18px;
     line-height: 1.618;
-    color: $sm-color-text;
-    background-color: #fff;
+    color: var(--sm-color-text, #{$sm-color-text});
+    background-color: var(--sm-color-page, #fff);
 
     *,
     *::before,
@@ -57,7 +59,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
     pre {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 0.85em;
-        background-color: $sm-color-light;
+        background-color: var(--sm-color-light, #{$sm-color-light});
         border-radius: 3px;
     }
 
@@ -105,7 +107,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         font-style: italic;
         font-weight: normal;
         font-size: 3.82rem;
-        color: $sm-color-text;
+        color: var(--sm-color-text, #{$sm-color-text});
         margin: 0;
 
         @media (width <= 767px) {
@@ -152,10 +154,10 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         position: relative;
         overflow: hidden;
         padding: 0.89rem 1.78rem 0.94rem;
-        border: 1px solid $sm-color-border-light;
+        border: 1px solid var(--sm-color-border-light, #{$sm-color-border-light});
         border-radius: 4px;
         background-color: transparent;
-        color: $sm-color-grey;
+        color: var(--sm-color-grey, #{$sm-color-grey});
         font-family: $sm-font-sans;
         font-size: 0.89rem;
         text-align: center;
@@ -171,7 +173,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         &:hover {
             background-color: #fdfdfd;
             border-color: #d7d7d7;
-            color: $sm-color-grey;
+            color: var(--sm-color-grey, #{$sm-color-grey});
             text-decoration: none;
         }
 
@@ -287,11 +289,11 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         }
 
         .button-active {
-            background-color: $sm-color-border-light;
-            color: $sm-color-text;
+            background-color: var(--sm-color-border-light, #{$sm-color-border-light});
+            color: var(--sm-color-text, #{$sm-color-text});
 
             &:hover {
-                background-color: $sm-color-border-light;
+                background-color: var(--sm-color-border-light, #{$sm-color-border-light});
             }
         }
     }
@@ -313,8 +315,8 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
     .header-product {
         padding: 2rem 2rem 0;
         margin-bottom: 0;
-        border-bottom: 1px solid $sm-color-border;
-        background-color: $sm-color-light;
+        border-bottom: 1px solid var(--sm-color-border, #{$sm-color-border});
+        background-color: var(--sm-color-light, #{$sm-color-light});
         text-align: center;
 
         .product-tagline {
@@ -334,7 +336,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
 
     .navbar-subnav {
         margin-top: 1rem;
-        background-color: $sm-color-light;
+        background-color: var(--sm-color-light, #{$sm-color-light});
 
         // the original hides the subnav on phones entirely
         @media (width <= 767px) {
@@ -342,12 +344,12 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         }
 
         .button {
-            border-color: $sm-color-border-light;
+            border-color: var(--sm-color-border-light, #{$sm-color-border-light});
             box-shadow: none;
-            color: $sm-color-grey;
+            color: var(--sm-color-grey, #{$sm-color-grey});
 
             &:hover {
-                color: $sm-color-text;
+                color: var(--sm-color-text, #{$sm-color-text});
                 background-color: rgb(255 255 255 / 60%);
             }
         }
@@ -402,13 +404,13 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
     }
 
     .fill-color-grey {
-        background-color: $sm-color-light;
+        background-color: var(--sm-color-light, #{$sm-color-light});
     }
 
     .note {
-        background-color: $sm-color-light;
+        background-color: var(--sm-color-light, #{$sm-color-light});
         border-radius: 8px;
-        color: #9c9c9c;
+        color: var(--sm-color-muted, #{$sm-color-muted});
         font-family: $sm-font-sans;
         font-size: 0.9em;
         font-style: italic;
@@ -428,7 +430,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         display: block;
         width: 100%;
         border: 0;
-        background-color: $sm-color-light;
+        background-color: var(--sm-color-light, #{$sm-color-light});
     }
 
     // ---------------------------------------------------------------------
@@ -457,7 +459,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
 
         .card {
             padding: 0;
-            border: 1px solid $sm-color-border-light;
+            border: 1px solid var(--sm-color-border-light, #{$sm-color-border-light});
             border-radius: 4px;
             background-color: #fff;
             overflow: hidden;
@@ -482,7 +484,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
                 height: 100%;
                 background-position: center;
                 background-size: cover;
-                background-color: $sm-color-grey;
+                background-color: var(--sm-color-grey, #{$sm-color-grey});
                 transition: filter 0.3s ease;
 
                 &.bw {
@@ -496,7 +498,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
                 h3 {
                     font-size: 1rem;
                     margin: 0;
-                    color: $sm-color-text;
+                    color: var(--sm-color-text, #{$sm-color-text});
                 }
             }
 
@@ -505,11 +507,11 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
                 padding: 0.6rem 1rem 0.8rem;
                 font-family: $sm-font-sans;
                 font-size: 0.75em;
-                color: #9c9c9c;
+                color: var(--sm-color-muted, #{$sm-color-muted});
             }
 
             &:hover {
-                border-color: $sm-color-text;
+                border-color: var(--sm-color-text, #{$sm-color-text});
 
                 .header-image-background.bw {
                     filter: grayscale(0%);
@@ -532,15 +534,15 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
             position: relative;
             padding: 0.5rem;
             margin-bottom: 0.5rem;
-            background-color: $sm-color-lighter;
-            border: 1px solid $sm-color-border-light;
+            background-color: var(--sm-color-lighter, #{$sm-color-lighter});
+            border: 1px solid var(--sm-color-border-light, #{$sm-color-border-light});
             border-radius: 8px;
 
             &:hover {
                 border-color: $sm-color-navbar;
 
                 h3 {
-                    color: $sm-color-text;
+                    color: var(--sm-color-text, #{$sm-color-text});
                 }
             }
 
@@ -584,7 +586,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
                 font-size: 1.2rem;
                 font-weight: 700;
                 margin: 0.4rem 1.5rem 0.4rem 0.6rem;
-                color: $sm-color-text;
+                color: var(--sm-color-text, #{$sm-color-text});
             }
 
             .accordion-content {
@@ -647,13 +649,13 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
             th,
             td {
                 padding: 0.5rem 0.75rem;
-                border: 1px solid $sm-color-border-light;
+                border: 1px solid var(--sm-color-border-light, #{$sm-color-border-light});
                 text-align: left;
                 vertical-align: top;
             }
 
             th {
-                background-color: $sm-color-light;
+                background-color: var(--sm-color-light, #{$sm-color-light});
             }
 
             code {
@@ -665,8 +667,8 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         blockquote {
             margin: 1rem 0;
             padding: 0.25rem 1rem;
-            border-left: 4px solid $sm-color-border-light;
-            color: $sm-color-grey;
+            border-left: 4px solid var(--sm-color-border-light, #{$sm-color-border-light});
+            color: var(--sm-color-grey, #{$sm-color-grey});
         }
 
         img {
@@ -686,8 +688,8 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
         padding: 60px 80px 30px;
         font-family: $sm-font-sans;
         font-size: 0.85em;
-        background-color: $sm-color-light;
-        border-top: 1px solid $sm-color-border;
+        background-color: var(--sm-color-light, #{$sm-color-light});
+        border-top: 1px solid var(--sm-color-border, #{$sm-color-border});
 
         .footer-grid {
             display: flex;
@@ -735,7 +737,7 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
             list-style: none;
 
             a {
-                color: $sm-color-grey;
+                color: var(--sm-color-grey, #{$sm-color-grey});
                 font-size: 1.1em;
                 font-weight: 700;
 
@@ -744,5 +746,22 @@ $sm-font-sans: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-s
                 }
             }
         }
+    }
+}
+
+/* Dark landing (dark theme plan): the surfaces above redeclared. Brand
+   accents (badge, green, navbar, orange links) keep their light values —
+   they read on both. Follows the OS setting; the widget additionally
+   honours an explicit `theme` option. */
+@media (prefers-color-scheme: dark) {
+    .sm-site {
+        --sm-color-page: #1a1a1a;
+        --sm-color-text: #e0e0e0;
+        --sm-color-grey: #a8a8a8;
+        --sm-color-light: #262626;
+        --sm-color-lighter: #2e2e2e;
+        --sm-color-border: #555;
+        --sm-color-border-light: #444;
+        --sm-color-muted: #b0b0b0;
     }
 }

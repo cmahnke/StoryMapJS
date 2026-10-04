@@ -35,13 +35,13 @@
         line-height: $base-font-size;
         font-weight: normal;
         margin: 0 0 2px;
-        color: $color-text;
+        color: var(--vco-color-text, #{$color-text});
 
         small {
             font-size: $base-font-size;
             line-height: $base-font-size;
             font-weight: normal;
-            color: $color-text;
+            color: var(--vco-color-text, #{$color-text});
         }
     }
 
@@ -71,15 +71,15 @@
 .vco-full-color-background {
     .vco-text,
     .vco-text p {
-        color: $color-text-inverted !important;
+        color: var(--vco-color-text-inverted, #{$color-text-inverted}) !important;
         text-shadow: 1px 1px 2px #000;
 
         .vco-headline-date,
         h3.vco-headline-date {
-            color: $color-text-inverted !important;
+            color: var(--vco-color-text-inverted, #{$color-text-inverted}) !important;
 
             small {
-                color: $color-text-inverted !important;
+                color: var(--vco-color-text-inverted, #{$color-text-inverted}) !important;
             }
         }
     }

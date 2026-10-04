@@ -13,7 +13,7 @@
 
     // the container itself is in the tab order: keyboard focus gets a ring
     &:focus-visible {
-        outline: 2px solid $color-dark;
+        outline: 2px solid var(--vco-color-dark, #{$color-dark});
         outline-offset: -2px;
     }
 
