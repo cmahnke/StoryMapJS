@@ -1333,6 +1333,10 @@ class StoryMapBase {
 
         // Create Menu Bar
         this._menubar = new MenuBar(this._el.menubar, this._el.container, this.options);
+        // the progress chrome carries its initial state from construction,
+        // not from the first map/slider load event — otherwise the bar (and
+        // its ARIA) sits uninitialized until tiles arrive (issue #247)
+        this._updateProgress();
 
         // Create StorySlider
         this._storyslider = new StorySlider(this._el.storyslider, this.data, this.options);
