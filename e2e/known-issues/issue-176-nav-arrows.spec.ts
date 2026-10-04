@@ -81,8 +81,34 @@ test("issue #176: pins stay visible and clickable near the nav arrows", async ({
         expect(visible).toBe(true);
     }
 
-    // and it stays clickable
-    await page.mouse.click(target!.x, target!.y);
+    // and it stays clickable. The pin is re-resolved here, not reused from
+    // above: the view may still be settling, and a coordinate captured
+    // before the approach loop can be stale by click time.
+    const fresh = await page.evaluate(() => {
+        const mapRect = document.querySelector("#storymap-embed .vco-map")!.getBoundingClientRect();
+        const sliderRect = document
+            .querySelector("#storymap-embed .vco-storyslider")!
+            .getBoundingClientRect();
+        const markers = Array.from(
+            document.querySelectorAll("#storymap-embed .vco-map .vco-mapmarker"),
+        ) as HTMLElement[];
+        const visible = markers.find((m) => {
+            const r = m.getBoundingClientRect();
+            const cx = r.x + r.width / 2;
+            const cy = r.y + r.height / 2;
+            return (
+                cx > mapRect.x + 10 &&
+                cx < sliderRect.x - 10 &&
+                cy > mapRect.y &&
+                cy < mapRect.bottom
+            );
+        });
+        if (!visible) return null;
+        const r = visible.getBoundingClientRect();
+        return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    });
+    expect(fresh).not.toBeNull();
+    await page.mouse.click(fresh!.x, fresh!.y);
     await page.waitForTimeout(1500);
     const state = await getState(page);
     expect(state.currentSlide).toBeGreaterThan(0);
