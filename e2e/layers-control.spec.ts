@@ -4,7 +4,7 @@ import { getState, harnessUrl, waitForStoryMap } from "./known-issues/helpers";
 /**
  * Layers control (`show_layers_control`): a disclosure button in the menubar
  * opens an absolutely-positioned panel of basemap radios and overlay
- * checkboxes (docs/plans/layers-control.md §1.3). Toggling a row drives the
+ * checkboxes. Toggling a row drives the
  * matching layer and its credit, Escape dismisses the panel, and arrow keys
  * on a radio row stay native instead of paging the slider.
  */

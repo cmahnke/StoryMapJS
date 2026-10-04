@@ -2485,8 +2485,9 @@ export default class OpenLayers extends Map {
                     // observables (center, resolution, rotation), so neither
                     // can be applied to a live view. Generalising this rebuild
                     // is also the route to fixing a projection change; see
-                    // docs/plans/layers-control.md §2, which refuses a
-                    // runtime basemap swap across image space for it.
+                    // docs/migration-from-knightlab.md ("Layer switcher"),
+                    // which refuses a runtime basemap swap across image
+                    // space for it.
                     const view = this._map.getView();
                     const center = view.getCenter();
                     const zoom = view.getZoom();

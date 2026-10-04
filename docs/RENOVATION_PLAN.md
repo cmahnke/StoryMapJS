@@ -148,7 +148,7 @@ Runtime prototype copying (`classMixin(X, Events)` /
    (addTo/removeFrom/show/hide/onLoaded/onAdd/onRemove/setPosition).
    (Historical: `fire()` now merges `{...data, type, target}`, `off()`
    removes all matches, and the mixin is generic over per-emitter event
-   maps — see `docs/plans/event-system.md`.)
+   maps — see `docs/events.md`.)
 2. Class declarations become the composed form:
     - `class X extends Evented(XBase)` — Swipable, Draggable, StorySlider,
       MapMarker, Media (+ `Text` as a subclass of Media), StoryMap
