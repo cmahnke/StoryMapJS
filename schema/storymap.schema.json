@@ -281,6 +281,11 @@
                     "anyOf": [{ "type": "string" }, { "const": false }],
                     "description": "Font theme stylesheet (stock:<name> or URL); false disables the injected stylesheet because the host bundles the theme itself"
                 },
+                "theme": {
+                    "type": "string",
+                    "enum": ["dark", "light"],
+                    "description": "Colour theme: dark forces the dark palette, light pins the light one; unset follows prefers-color-scheme"
+                },
                 "call_to_action": {
                     "type": "boolean"
                 },

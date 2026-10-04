@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
  * Site chrome for the landing/docs pages (index.html, demo.html, docs/*).
  *
@@ -12,8 +13,8 @@
   font-family: georgia, "Times New Roman", times, serif;
   font-size: 18px;
   line-height: 1.618;
-  color: #222;
-  background-color: #fff;
+  color: var(--sm-color-text, #222);
+  background-color: var(--sm-color-page, #fff);
 }
 .sm-site *,
 .sm-site *::before,
@@ -30,7 +31,7 @@
 .sm-site pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.85em;
-  background-color: #f0f0f0;
+  background-color: var(--sm-color-light, #f0f0f0);
   border-radius: 3px;
 }
 .sm-site code {
@@ -68,7 +69,7 @@
   font-style: italic;
   font-weight: normal;
   font-size: 3.82rem;
-  color: #222;
+  color: var(--sm-color-text, #222);
   margin: 0;
 }
 @media (width <= 767px) {
@@ -105,10 +106,10 @@
   position: relative;
   overflow: hidden;
   padding: 0.89rem 1.78rem 0.94rem;
-  border: 1px solid #d4d4d4;
+  border: 1px solid var(--sm-color-border-light, #d4d4d4);
   border-radius: 4px;
   background-color: transparent;
-  color: #646464;
+  color: var(--sm-color-grey, #646464);
   font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
   font-size: 0.89rem;
   text-align: center;
@@ -122,7 +123,7 @@
 .sm-site .button:hover {
   background-color: #fdfdfd;
   border-color: #d7d7d7;
-  color: #646464;
+  color: var(--sm-color-grey, #646464);
   text-decoration: none;
 }
 .sm-site .button:focus-visible {
@@ -216,11 +217,11 @@
   border-color: rgba(255, 255, 255, 0.1);
 }
 .sm-site .navbar .button-active {
-  background-color: #d4d4d4;
-  color: #222;
+  background-color: var(--sm-color-border-light, #d4d4d4);
+  color: var(--sm-color-text, #222);
 }
 .sm-site .navbar .button-active:hover {
-  background-color: #d4d4d4;
+  background-color: var(--sm-color-border-light, #d4d4d4);
 }
 .sm-site .navbar-dark {
   background-color: #484848;
@@ -233,8 +234,8 @@
 .sm-site .header-product {
   padding: 2rem 2rem 0;
   margin-bottom: 0;
-  border-bottom: 1px solid #b8b8b8;
-  background-color: #f0f0f0;
+  border-bottom: 1px solid var(--sm-color-border, #b8b8b8);
+  background-color: var(--sm-color-light, #f0f0f0);
   text-align: center;
 }
 .sm-site .header-product .product-tagline {
@@ -251,7 +252,7 @@
 }
 .sm-site .navbar-subnav {
   margin-top: 1rem;
-  background-color: #f0f0f0;
+  background-color: var(--sm-color-light, #f0f0f0);
 }
 @media (width <= 767px) {
   .sm-site .navbar-subnav {
@@ -259,12 +260,12 @@
   }
 }
 .sm-site .navbar-subnav .button {
-  border-color: #d4d4d4;
+  border-color: var(--sm-color-border-light, #d4d4d4);
   box-shadow: none;
-  color: #646464;
+  color: var(--sm-color-grey, #646464);
 }
 .sm-site .navbar-subnav .button:hover {
-  color: #222;
+  color: var(--sm-color-text, #222);
   background-color: rgba(255, 255, 255, 0.6);
 }
 .sm-site .container {
@@ -307,12 +308,12 @@
   margin-bottom: 0;
 }
 .sm-site .fill-color-grey {
-  background-color: #f0f0f0;
+  background-color: var(--sm-color-light, #f0f0f0);
 }
 .sm-site .note {
-  background-color: #f0f0f0;
+  background-color: var(--sm-color-light, #f0f0f0);
   border-radius: 8px;
-  color: #9c9c9c;
+  color: var(--sm-color-muted, #9c9c9c);
   font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
   font-size: 0.9em;
   font-style: italic;
@@ -328,7 +329,7 @@
   display: block;
   width: 100%;
   border: 0;
-  background-color: #f0f0f0;
+  background-color: var(--sm-color-light, #f0f0f0);
 }
 .sm-site .cards {
   display: grid;
@@ -356,7 +357,7 @@
 }
 .sm-site .cards .card {
   padding: 0;
-  border: 1px solid #d4d4d4;
+  border: 1px solid var(--sm-color-border-light, #d4d4d4);
   border-radius: 4px;
   background-color: #fff;
   overflow: hidden;
@@ -379,7 +380,7 @@
   height: 100%;
   background-position: center;
   background-size: cover;
-  background-color: #646464;
+  background-color: var(--sm-color-grey, #646464);
   transition: filter 0.3s ease;
 }
 .sm-site .cards .card .header-image-background.bw {
@@ -391,17 +392,17 @@
 .sm-site .cards .card article.card-content h3 {
   font-size: 1rem;
   margin: 0;
-  color: #222;
+  color: var(--sm-color-text, #222);
 }
 .sm-site .cards .card footer {
   margin-top: auto;
   padding: 0.6rem 1rem 0.8rem;
   font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
   font-size: 0.75em;
-  color: #9c9c9c;
+  color: var(--sm-color-muted, #9c9c9c);
 }
 .sm-site .cards .card:hover {
-  border-color: #222;
+  border-color: var(--sm-color-text, #222);
 }
 .sm-site .cards .card:hover .header-image-background.bw {
   filter: grayscale(0%);
@@ -417,15 +418,15 @@
   position: relative;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
-  background-color: #f8f8f8;
-  border: 1px solid #d4d4d4;
+  background-color: var(--sm-color-lighter, #f8f8f8);
+  border: 1px solid var(--sm-color-border-light, #d4d4d4);
   border-radius: 8px;
 }
 .sm-site ul.accordion li:hover {
   border-color: #484848;
 }
 .sm-site ul.accordion li:hover h3 {
-  color: #222;
+  color: var(--sm-color-text, #222);
 }
 .sm-site ul.accordion li input[type=checkbox] {
   position: absolute;
@@ -461,7 +462,7 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin: 0.4rem 1.5rem 0.4rem 0.6rem;
-  color: #222;
+  color: var(--sm-color-text, #222);
 }
 .sm-site ul.accordion li .accordion-content {
   position: relative;
@@ -511,12 +512,12 @@
 .sm-site .sm-docs table th,
 .sm-site .sm-docs table td {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #d4d4d4;
+  border: 1px solid var(--sm-color-border-light, #d4d4d4);
   text-align: left;
   vertical-align: top;
 }
 .sm-site .sm-docs table th {
-  background-color: #f0f0f0;
+  background-color: var(--sm-color-light, #f0f0f0);
 }
 .sm-site .sm-docs table code {
   background: none;
@@ -525,8 +526,8 @@
 .sm-site .sm-docs blockquote {
   margin: 1rem 0;
   padding: 0.25rem 1rem;
-  border-left: 4px solid #d4d4d4;
-  color: #646464;
+  border-left: 4px solid var(--sm-color-border-light, #d4d4d4);
+  color: var(--sm-color-grey, #646464);
 }
 .sm-site .sm-docs img {
   max-width: 100%;
@@ -538,8 +539,8 @@
   padding: 60px 80px 30px;
   font-family: "Helvetica Neue", helvetica, arial, "Segoe UI", system-ui, sans-serif;
   font-size: 0.85em;
-  background-color: #f0f0f0;
-  border-top: 1px solid #b8b8b8;
+  background-color: var(--sm-color-light, #f0f0f0);
+  border-top: 1px solid var(--sm-color-border, #b8b8b8);
 }
 .sm-site .footer-knightlab .footer-grid {
   display: flex;
@@ -583,10 +584,27 @@
   list-style: none;
 }
 .sm-site .footer-knightlab ul.list-social a {
-  color: #646464;
+  color: var(--sm-color-grey, #646464);
   font-size: 1.1em;
   font-weight: 700;
 }
 .sm-site .footer-knightlab ul.list-social a:hover {
   color: #df4e13;
+}
+
+/* Dark landing (dark theme plan): the surfaces above redeclared. Brand
+   accents (badge, green, navbar, orange links) keep their light values —
+   they read on both. Follows the OS setting; the widget additionally
+   honours an explicit `theme` option. */
+@media (prefers-color-scheme: dark) {
+  .sm-site {
+    --sm-color-page: #1a1a1a;
+    --sm-color-text: #e0e0e0;
+    --sm-color-grey: #a8a8a8;
+    --sm-color-light: #262626;
+    --sm-color-lighter: #2e2e2e;
+    --sm-color-border: #555;
+    --sm-color-border-light: #444;
+    --sm-color-muted: #b0b0b0;
+  }
 }

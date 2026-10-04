@@ -319,6 +319,12 @@ export interface StorymapOptions {
      */
     font_css: string | false;
     language: string;
+    /**
+     * Colour theme: `"dark"` forces the dark palette, `"light"` pins the
+     * light one (overriding an OS dark preference), unset follows
+     * `prefers-color-scheme`. Construction-time only, like `map_type`.
+     */
+    theme?: "dark" | "light";
     api_key_flickr: string;
     [key: string]: unknown;
 }

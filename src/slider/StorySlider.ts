@@ -496,9 +496,22 @@ class StorySliderBase {
         const bg_alpha_end = "0.87";
         const _bg_old = this._el.background.getAttribute("style");
 
+        // Dark theme without an explicit slide background: fade from the
+        // themed panel color. White (the light default) would wash the
+        // dark slide; the existing darkness heuristics below (less fade,
+        // inverted nav icons) then behave as they do for dark author
+        // backgrounds.
+        const dark =
+            !bg.color_value &&
+            (this.options.theme === "dark" ||
+                (this.options.theme !== "light" &&
+                    typeof window.matchMedia === "function" &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches));
         if (bg.color_value) {
             // any CSS color; unparseable values fall back to the default
             bg_color = parseCssColor(bg.color_value) || this.options.default_bg_color;
+        } else if (dark) {
+            bg_color = { r: 34, g: 34, b: 34 };
         } else {
             bg_color = this.options.default_bg_color;
         }
@@ -546,6 +559,8 @@ class StorySliderBase {
             } else {
                 if (bg.color_value) {
                     bg_css += "background-color:" + bg.color_value + ";";
+                } else if (dark) {
+                    bg_css += "background-color:#222;";
                 } else {
                     bg_css += "background-color:#FFF;";
                 }

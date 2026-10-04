@@ -41,6 +41,13 @@ Added
   `motivation` values are honored everywhere — previously an array read as
   "no motivation" and was accepted as the canvas painting, shadowing the
   real media
+- Dark theme without a second stylesheet: every widget colour is a
+  `--vco-*` custom property (Sass values kept as fallbacks, so the default
+  render is unchanged); `theme: "dark"` forces the dark palette, `"light"`
+  pins the light one, unset follows `prefers-color-scheme`. The unshippable
+  `VCO.StoryMap.Dark.scss` / `Variables.Dark.scss` pair is deleted, the
+  dead widget reset is live again, and dark text pairs clear AA. The
+  landing page follows the OS scheme too
 - Typed events: every emitter has an `*Events` map (exported from the
   library), so `storymap.on("chnage", …)` is a compile error and handlers
   infer their payload. `fire()` can no longer be handed a `type`/`target`

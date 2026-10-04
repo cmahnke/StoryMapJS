@@ -6,7 +6,7 @@
     height: 100%;
     overflow: hidden;
     top: 0;
-    background-color: $color-foreground;
+    background-color: var(--vco-color-foreground, #{$color-foreground});
 
     .vco-map-mask {
         width: 100%;

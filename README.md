@@ -88,6 +88,9 @@ full list with defaults.
 `overlays[]` as checkboxes and `basemaps[]` as basemap radios, so the
 visitor can switch layers without touching code.
 
+`theme: "dark"` forces the dark palette, `"light"` pins the light one;
+unset, the widget follows `prefers-color-scheme`.
+
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with
 `use_custom_marker: true` in the location object (or set `use_custom_markers:

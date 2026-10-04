@@ -1268,6 +1268,13 @@ class StoryMapBase {
         this._el.container.className += " vco-storymap";
         this.options.base_class = this._el.container.className;
 
+        // Colour theme (dark theme plan): an explicit option pins the
+        // palette via data-vco-theme; unset, the CSS falls back to
+        // prefers-color-scheme. Construction-time only.
+        if (this.options.theme === "dark" || this.options.theme === "light") {
+            this._el.container.setAttribute("data-vco-theme", this.options.theme);
+        }
+
         // Text color theming (issue #177): expose the text colors as CSS
         // custom properties consumed by the slide typography
         this._applyTextColors();

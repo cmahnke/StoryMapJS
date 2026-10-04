@@ -19,7 +19,7 @@
             cite {
                 font-size: $base-font-size;
                 line-height: math.floor($base-font-size * $base-line-height);
-                color: $color-foreground;
+                color: var(--vco-color-foreground, #{$color-foreground});
                 text-align: right;
             }
         }

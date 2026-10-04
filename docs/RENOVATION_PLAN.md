@@ -170,10 +170,11 @@ Runtime prototype copying (`classMixin(X, Events)` /
 
 1. **No `@import` remains** — every import converted to
    `@use "<module>" as *;` (star namespace = unqualified access, minimal
-   churn), all `@use` lines hoisted to file top; entry files
-   (`VCO.StoryMap.scss`, `VCO.StoryMap.Dark.scss`) keep the original component
-   order so the compiled stylesheet is byte-identical to the pre-conversion
-   baseline (verified).
+   churn), all `@use` lines hoisted to file top; the entry file
+   (`VCO.StoryMap.scss`) keeps the original component order so the compiled
+   stylesheet is byte-identical to the pre-conversion baseline (verified).
+   (Historical: this item once named a second `VCO.StoryMap.Dark.scss` entry,
+   deleted with the custom-properties dark theme.)
 2. **`_font.base.scss` → mixin**: the old partial relied on `@import`'s
    parent-scope variable sharing. It now exposes
    `@mixin font-base($theme: ())` — `$theme` is a map of the 18 font variables
