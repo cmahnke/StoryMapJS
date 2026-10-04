@@ -16,16 +16,30 @@ test("slide changes are announced in the live region", async ({ page }) => {
     // the initial announcement names the first slide
     await expect(region).not.toHaveText("");
 
-    // navigating announces the new slide's headline
+    // navigating announces the new slide's headline: capture the text
+    // before moving and assert it actually changed (comparing against an
+    // unset dataset field could never fail)
+    const before = await region.textContent();
     await page.evaluate(() =>
         (window as unknown as { __sm?: { goTo(n: number): void } }).__sm?.goTo(1),
     );
-    await expect
-        .poll(() => region.textContent(), { timeout: 10_000 })
-        .not.toBe(await region.evaluate((el) => el.dataset.previous ?? ""));
+    await expect.poll(() => region.textContent(), { timeout: 10_000 }).not.toBe(before);
 
     const text = await region.textContent();
     expect(text).toBeTruthy();
+    expect(text).toContain("One");
+});
+
+test("a headline-less slide announces its position", async ({ page }) => {
+    await page.goto(harnessUrl("flickr-zach.wise"));
+    await waitForStoryMap(page);
+
+    const region = page.locator("#storymap-embed [aria-live='polite'][role='status']");
+    await expect(region).toHaveCount(1);
+    await page.evaluate(() =>
+        (window as unknown as { __sm?: { goTo(n: number): void } }).__sm?.goTo(1),
+    );
+    await expect.poll(() => region.textContent(), { timeout: 10_000 }).toMatch(/Slide 2 of \d+/);
 });
 
 test("the live region is visually hidden", async ({ page }) => {
