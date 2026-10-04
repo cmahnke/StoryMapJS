@@ -1,15 +1,12 @@
 /*	Reset
 ------------------------------------------------------------------------------------------- */
+@use "../Variables" as *;
 
-.vco-storyjs {
+.vco-storymap {
     /*	Reset tags and common classes
 		Display in IE6-9 and FF3
 		Based on: http://github.com/necolas/normalize.css
 	------------------------------------------------------------------------------------------- */
-
-    div * {
-        box-sizing: content-box;
-    }
 
     h1,
     h2,
@@ -91,7 +88,6 @@
         font-weight: normal;
         font-style: normal;
         font-size: 100%;
-        line-height: 1;
         font-family: inherit;
         width: auto;
         float: none;
@@ -111,11 +107,6 @@
         border-spacing: 0;
     }
 
-    ol,
-    ul {
-        list-style: none;
-    }
-
     q::before,
     q::after,
     blockquote::before,
@@ -123,13 +114,9 @@
         content: "";
     }
 
-    a:focus {
-        outline: thin dotted;
-    }
-
-    a:hover,
-    a:active {
-        outline: 0;
+    a:focus-visible {
+        outline: 2px solid $color-dark;
+        outline-offset: 2px;
     }
 
     article,
