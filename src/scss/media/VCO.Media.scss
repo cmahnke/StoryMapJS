@@ -28,10 +28,10 @@
 
             .vco-media-loaderror {
                 p {
-                    color: $color-text;
+                    color: var(--vco-color-text, #{$color-text});
 
                     span {
-                        color: $color-text;
+                        color: var(--vco-color-text, #{$color-text});
                     }
 
                     text-align: center;
@@ -105,14 +105,14 @@
     }
 
     a {
-        color: color.adjust($color-dark, $lightness: 20%);
+        color: var(--vco-color-link, #{color.adjust($color-dark, $lightness: 20%)});
         text-decoration: none;
     }
 
     a:hover {
         .fn,
         .nickname {
-            color: $color-theme;
+            color: var(--vco-color-theme, #{$color-theme});
 
             // text-decoration: underline;
         }
@@ -130,7 +130,7 @@
 
     .nickname {
         margin-top: 1px;
-        color: color.adjust($color-dark, $lightness: 40%);
+        color: var(--vco-color-text-muted, #{color.adjust($color-dark, $lightness: 40%)});
     }
 
     .avatar {
@@ -150,14 +150,14 @@
     .vcard a {
         @include slide-text-shadow;
 
-        color: color.adjust($color-theme, $lightness: 90%);
+        color: var(--vco-color-theme-faint, #{color.adjust($color-theme, $lightness: 90%)});
     }
 }
 
 /* Credit
 ================================================== */
 .vco-credit {
-    color: $color-text;
+    color: var(--vco-color-text, #{$color-text});
     text-align: right;
     display: block;
     margin: 0 auto;

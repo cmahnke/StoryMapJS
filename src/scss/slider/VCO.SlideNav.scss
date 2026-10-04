@@ -60,10 +60,10 @@
         .vco-slidenav-icon,
         .vco-slidenav-title,
         .vco-slidenav-description {
-            text-shadow: 1px 1px 1px $color-background;
+            text-shadow: 1px 1px 1px var(--vco-color-background, #{$color-background});
 
             // color: $color-foreground;
-            color: $color-background;
+            color: var(--vco-color-background, #{$color-background});
         }
 
         &.vco-slidenav-inverted {
@@ -71,8 +71,8 @@
             .vco-slidenav-title,
             .vco-slidenav-description {
                 // color:$color-background;
-                color: $color-foreground;
-                text-shadow: 1px 1px 1px $color-foreground;
+                color: var(--vco-color-foreground, #{$color-foreground});
+                text-shadow: 1px 1px 1px var(--vco-color-foreground, #{$color-foreground});
             }
         }
     }
@@ -99,7 +99,7 @@
     // keyboard parity with the hover reveal, plus a visible ring: the
     // container is a focusable div acting as a button
     &:focus-visible {
-        outline: 2px solid $color-theme;
+        outline: 2px solid var(--vco-color-theme, #{$color-theme});
         outline-offset: 2px;
 
         .vco-slidenav-title,
@@ -190,7 +190,7 @@
                 .vco-slidenav-icon,
                 .vco-slidenav-title,
                 .vco-slidenav-description {
-                    color: $color-background;
+                    color: var(--vco-color-background, #{$color-background});
 
                     // color: $color-foreground;
                 }
@@ -286,12 +286,16 @@
             .vco-slidenav-icon {
                 &::before {
                     // background-color:$color-background;
-                    background-color: $color-foreground;
+                    background-color: var(--vco-color-foreground, #{$color-foreground});
 
                     // .translucent-background($color-background, .85);
                     // .box-shadow(1px 1px 7px rgba(0,0,0,.30));
                     padding: 20px;
-                    border: 1px solid color.adjust($color-background, $lightness: -30%);
+                    border: 1px solid
+                        var(
+                            --vco-color-nav-border,
+                            #{color.adjust($color-background, $lightness: -30%)}
+                        );
                 }
             }
 

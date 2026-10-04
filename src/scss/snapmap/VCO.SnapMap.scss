@@ -10,7 +10,7 @@
             text-transform: none !important;
 
             a {
-                color: color.adjust($color-dark, $lightness: 40%);
+                color: var(--vco-color-text-muted, #{color.adjust($color-dark, $lightness: 40%)});
             }
         }
     }
@@ -21,7 +21,7 @@
         font-weight: bold;
         margin-top: 10px;
         font-size: 12px;
-        color: color.adjust($color-dark, $lightness: 40%);
+        color: var(--vco-color-text-muted, #{color.adjust($color-dark, $lightness: 40%)});
 
         /*
 		&:before {
@@ -51,7 +51,7 @@
         display: none;
 
         a {
-            color: #000;
+            color: var(--vco-color-dark, #{$color-dark});
         }
 
         .vco-snapmap-instagram-posts,

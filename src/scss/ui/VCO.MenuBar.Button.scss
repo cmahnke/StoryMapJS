@@ -5,7 +5,8 @@
 ================================================== */
 
 .vco-menubar-button {
-    border-left: 1px solid color.adjust($color-background, $lightness: -10%);
+    border-left: 1px solid
+        var(--vco-color-border, #{color.adjust($color-background, $lightness: -10%)});
     font-size: 14px;
     padding: 6px 12px;
 
@@ -14,11 +15,11 @@
 
     // position:relative;
     // top:-24px;
-    background-color: fadeout($ui-background-color, 10%);
-    background-color: $color-background;
+    background-color: var(--vco-color-ui-fade, #{fadeout($ui-background-color, 10%)});
+    background-color: var(--vco-color-background, #{$color-background});
     cursor: pointer;
     font-weight: bold;
-    color: $color-text;
+    color: var(--vco-color-text, #{$color-text});
 
     .vco-icon-arrow-up,
     .vco-icon-arrow-down {
@@ -31,17 +32,17 @@
     }
 
     &:hover {
-        background: $color-theme;
-        color: $color-background;
+        background: var(--vco-color-theme, #{$color-theme});
+        color: var(--vco-color-background, #{$color-background});
     }
 
     // keyboard focus parity with the hover state. The ring is dark on the
     // theme background (a theme-coloured ring on itself is 1:1) and sits
     // outside the button edge so it is never covered.
     &:focus-visible {
-        background: $color-theme;
-        color: $color-background;
-        outline: 2px solid $color-dark;
+        background: var(--vco-color-theme, #{$color-theme});
+        color: var(--vco-color-background, #{$color-background});
+        outline: 2px solid var(--vco-color-dark, #{$color-dark});
         outline-offset: 2px;
     }
 }
@@ -49,13 +50,13 @@
 .vco-mobile {
     .vco-menubar-button {
         &:hover {
-            background-color: fadeout($ui-background-color, 33%);
-            color: $color-text;
+            background-color: var(--vco-color-ui-faint, #{fadeout($ui-background-color, 33%)});
+            color: var(--vco-color-text, #{$color-text});
         }
 
         &:active {
-            background: $color-theme;
-            color: $color-background;
+            background: var(--vco-color-theme, #{$color-theme});
+            color: var(--vco-color-background, #{$color-background});
         }
     }
 }
@@ -88,7 +89,7 @@
     height: 6px;
     margin: 0 12px;
     vertical-align: middle;
-    background-color: color.adjust($color-background, $lightness: -10%);
+    background-color: var(--vco-color-border, #{color.adjust($color-background, $lightness: -10%)});
     border-radius: 3px;
     overflow: hidden;
 
@@ -96,7 +97,7 @@
         display: block;
         height: 100%;
         width: 0;
-        background-color: $color-theme;
+        background-color: var(--vco-color-theme, #{$color-theme});
         border-radius: 3px;
     }
 }
@@ -108,5 +109,5 @@
     margin: 0 12px;
     vertical-align: middle;
     font-size: $base-font-size-small;
-    color: $color-dark;
+    color: var(--vco-color-dark, #{$color-dark});
 }

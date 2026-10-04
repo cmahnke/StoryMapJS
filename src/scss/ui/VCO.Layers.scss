@@ -9,8 +9,8 @@
 // state class on the menubar would not survive a repaint.
 .vco-menubar-button.vco-menubar-layers {
     &.vco-active {
-        background: $color-theme;
-        color: $color-background;
+        background: var(--vco-color-theme, #{$color-theme});
+        color: var(--vco-color-background, #{$color-background});
     }
 }
 
@@ -27,10 +27,10 @@
     max-height: 70vh;
     overflow-y: auto;
     padding: 8px 0;
-    border: 1px solid color.adjust($color-background, $lightness: -10%);
+    border: 1px solid var(--vco-color-border, #{color.adjust($color-background, $lightness: -10%)});
     border-radius: 0 0 7px;
-    background-color: $color-background;
-    color: $color-foreground;
+    background-color: var(--vco-color-background, #{$color-background});
+    color: var(--vco-color-foreground, #{$color-foreground});
     font-family: $font-sanserif;
     font-size: $base-font-size-small;
     text-align: left;
@@ -43,7 +43,8 @@
         margin: 0;
         padding: 4px 0;
         border: 0;
-        border-top: 1px solid color.adjust($color-background, $lightness: -10%);
+        border-top: 1px solid
+            var(--vco-color-border, #{color.adjust($color-background, $lightness: -10%)});
 
         &:first-child {
             border-top: 0;
@@ -52,7 +53,7 @@
         legend {
             padding: 0 12px;
             font-weight: bold;
-            color: $color-text;
+            color: var(--vco-color-text, #{$color-text});
         }
 
         label {
@@ -64,7 +65,10 @@
             cursor: pointer;
 
             &:hover {
-                background-color: color.adjust($color-background, $lightness: -5%);
+                background-color: var(
+                    --vco-color-hover,
+                    #{color.adjust($color-background, $lightness: -5%)}
+                );
             }
 
             &:has(input:checked) {
@@ -80,14 +84,14 @@
             input[type="checkbox"] {
                 flex-shrink: 0;
                 margin: 0;
-                accent-color: $color-theme;
+                accent-color: var(--vco-color-theme, #{$color-theme});
 
                 &:disabled {
                     cursor: default;
                 }
 
                 &:focus-visible {
-                    outline: 2px solid $color-theme;
+                    outline: 2px solid var(--vco-color-theme, #{$color-theme});
                     outline-offset: 2px;
                 }
             }

@@ -20,12 +20,12 @@
     .vco-consent-title {
         margin: 0;
         font-weight: bold;
-        color: $color-foreground;
+        color: var(--vco-color-foreground, #{$color-foreground});
     }
 
     .vco-consent-message {
         margin: 0;
-        color: $color-dark;
+        color: var(--vco-color-dark, #{$color-dark});
     }
 
     .vco-consent-buttons {
@@ -36,31 +36,31 @@
         button {
             padding: 8px 18px;
             min-height: 44px;
-            border: 1px solid $color-dark;
+            border: 1px solid var(--vco-color-dark, #{$color-dark});
             border-radius: 4px;
             background-color: transparent;
-            color: $color-dark;
+            color: var(--vco-color-dark, #{$color-dark});
             font-family: $font-sanserif;
             cursor: pointer;
 
             &:hover {
-                background-color: $color-dark;
-                color: $color-background;
+                background-color: var(--vco-color-dark, #{$color-dark});
+                color: var(--vco-color-background, #{$color-background});
             }
 
             &:focus-visible {
-                outline: 2px solid $color-dark;
+                outline: 2px solid var(--vco-color-dark, #{$color-dark});
                 outline-offset: 2px;
             }
 
             &.vco-consent-allow {
-                background-color: $color-theme;
-                border-color: $color-theme;
-                color: $color-background;
+                background-color: var(--vco-color-theme, #{$color-theme});
+                border-color: var(--vco-color-theme, #{$color-theme});
+                color: var(--vco-color-background, #{$color-background});
 
                 &:hover {
-                    background-color: $color-theme-dark;
-                    border-color: $color-theme-dark;
+                    background-color: var(--vco-color-theme-dark, #{$color-theme-dark});
+                    border-color: var(--vco-color-theme-dark, #{$color-theme-dark});
                 }
             }
         }
@@ -75,8 +75,8 @@
     height: 100%;
     min-height: 120px;
     padding: 20px;
-    background-color: $color-background;
-    color: $color-dark;
+    background-color: var(--vco-color-background, #{$color-background});
+    color: var(--vco-color-dark, #{$color-dark});
     font-family: $font-sanserif;
     font-size: $base-font-size;
     text-align: center;
@@ -108,7 +108,7 @@
     }
 
     .vco-consent-service-label {
-        color: $color-dark;
+        color: var(--vco-color-dark, #{$color-dark});
         text-align: left;
     }
 

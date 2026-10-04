@@ -64,14 +64,17 @@
             }
 
             span {
-                color: $color-theme;
+                color: var(--vco-color-theme, #{$color-theme});
                 display: inline-block;
                 transform: rotate(45deg);
             }
 
             &:hover {
                 text-decoration: none;
-                color: color.adjust($color-theme, $lightness: 15%);
+                color: var(
+                    --vco-color-theme-bright,
+                    #{color.adjust($color-theme, $lightness: 15%)}
+                );
             }
         }
     }

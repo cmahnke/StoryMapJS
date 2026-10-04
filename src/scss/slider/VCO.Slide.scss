@@ -18,7 +18,7 @@
     // Visible, app-styled vertical scrollbar whenever the slide content
     // overflows (desktop); touch devices get a wider one
     scrollbar-width: thin;
-    scrollbar-color: $color-theme transparent;
+    scrollbar-color: var(--vco-color-theme, #{$color-theme}) transparent;
 
     //	overflow-y:auto;
     // z-index:26;
@@ -32,8 +32,8 @@
 
         .vco-slide-calltoaction-button-text {
             display: inline-block;
-            background-color: $color-theme;
-            color: $color-background;
+            background-color: var(--vco-color-theme, #{$color-theme});
+            color: var(--vco-color-background, #{$color-background});
 
             // padding:10px;
             padding: 10px 15px;
@@ -42,8 +42,8 @@
 
         &:hover {
             .vco-slide-calltoaction-button-text {
-                background-color: $color-theme-dark;
-                color: $color-background;
+                background-color: var(--vco-color-theme-dark, #{$color-theme-dark});
+                color: var(--vco-color-background, #{$color-background});
             }
         }
     }
@@ -135,7 +135,7 @@
 // keep their system overlay scrollbars)
 .vco-mobile .vco-slide {
     scrollbar-width: auto;
-    scrollbar-color: $color-theme-dark rgb(0 0 0 / 12%);
+    scrollbar-color: var(--vco-color-theme-dark, #{$color-theme-dark}) rgb(0 0 0 / 12%);
 }
 
 /* Scroll hint: a bouncing downward arrow when the slide content overflows
@@ -267,7 +267,7 @@
     blockquote p {
         @include slide-text-shadow;
 
-        color: color.adjust($color-theme, $lightness: 90%);
+        color: var(--vco-color-theme-faint, #{color.adjust($color-theme, $lightness: 90%)});
     }
 
     .vco-caption,

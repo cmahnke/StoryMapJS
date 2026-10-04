@@ -64,13 +64,27 @@
     --vco-color-dark: #{$color-dark};
     --vco-color-theme: #{$color-theme};
     --vco-color-theme-dark: #{$color-theme-dark};
-    --vco-color-theme-dark: #{$color-theme-dark};
     --vco-color-text: #{$color-text};
     --vco-color-text-muted: #{color.adjust($color-dark, $lightness: 40%)};
+    --vco-color-text-background: #{$color-background};
     --vco-color-header-text: #{$color-header-text};
     --vco-color-text-inverted: #{$color-text-inverted};
     --vco-color-header-text-inverted: #{$color-header-text-inverted};
     --vco-color-ui-background: #{$ui-background-color};
+    // Derived tones. Each is computed from the light palette here so the
+    // default render is unchanged; the dark block redefines them from its
+    // own palette. One property per distinct derivation, shared by every
+    // use site with the same arguments.
+    --vco-color-border: #{color.adjust($color-background, $lightness: -10%)};
+    --vco-color-hover: #{color.adjust($color-background, $lightness: -5%)};
+    --vco-color-nav-border: #{color.adjust($color-background, $lightness: -30%)};
+    --vco-color-theme-faint: #{color.adjust($color-theme, $lightness: 90%)};
+    --vco-color-theme-deep: #{color.adjust($color-theme, $lightness: -20%)};
+    --vco-color-theme-bright: #{color.adjust($color-theme, $lightness: 15%)};
+    --vco-color-theme-deep: #{color.adjust($color-theme, $lightness: -20%)};
+    --vco-color-link: #{color.adjust($color-dark, $lightness: 20%)};
+    --vco-color-ui-fade: #{fadeout($ui-background-color, 10%)};
+    --vco-color-ui-faint: #{fadeout($ui-background-color, 33%)};
 
     /* Skip link: first tab stop inside the widget, off-screen until
        focused, so keyboard visitors can jump past the chrome. */
@@ -80,8 +94,8 @@
         left: 8px;
         z-index: 100;
         padding: 8px 12px;
-        background-color: $color-background;
-        color: $color-text;
+        background-color: var(--vco-color-background, #{$color-background});
+        color: var(--vco-color-text, #{$color-text});
 
         &:focus-visible {
             top: 8px;
@@ -92,13 +106,56 @@
     &:fullscreen {
         width: 100%;
         height: 100%;
-        background-color: $color-background;
+        background-color: var(--vco-color-background, #{$color-background});
     }
 
     *,
     *::before,
     *::after {
         box-sizing: content-box;
+    }
+}
+
+/* Dark theme (dark theme plan): the same property names redeclared from
+   the dark palette. Values below were carried over from
+   `src/scss/Variables.Dark.scss` (now deleted), except `$color-theme`
+   (`#c34528` is 3.18:1 on `#222`) and `$color-text` (`#808080` is 4.03:1),
+   which are lightened to `#dd735a` (5.06:1) and `#949494` (5.24:1) so
+   every text pair clears AA. Hover tints go brighter in dark mode rather
+   than darker, so they stay visible on dark surfaces.
+   Selected with `data-vco-theme="dark"`, or (when unset) the OS
+   `prefers-color-scheme`; explicit `"light"` pins the light palette. */
+@mixin vco-dark-palette {
+    --vco-color-background: #222;
+    --vco-color-foreground: #ccc;
+    --vco-color-dark: #fff;
+    --vco-color-theme: #dd735a;
+    --vco-color-theme-dark: #c24628;
+    --vco-color-text: #949494;
+    --vco-color-text-muted: #999;
+    --vco-color-text-background: #222;
+    --vco-color-header-text: #fff;
+    --vco-color-text-inverted: #bfbfbf;
+    --vco-color-header-text-inverted: #fff;
+    --vco-color-ui-background: #4d4d4d;
+    --vco-color-border: #080808;
+    --vco-color-hover: #151515;
+    --vco-color-nav-border: #000;
+    --vco-color-theme-faint: #fff;
+    --vco-color-theme-deep: #eaa999;
+    --vco-color-theme-bright: #eaa999;
+    --vco-color-link: #eaa999;
+    --vco-color-ui-fade: #{fadeout(#4d4d4d, 10%)};
+    --vco-color-ui-faint: #{fadeout(#4d4d4d, 33%)};
+}
+
+.vco-storymap[data-vco-theme="dark"] {
+    @include vco-dark-palette;
+}
+
+@media (prefers-color-scheme: dark) {
+    .vco-storymap:not([data-vco-theme="light"]) {
+        @include vco-dark-palette;
     }
 }
 
@@ -126,12 +183,14 @@
             width: 120%;
             overflow: hidden;
 
-            @include gradient-horizontal(
-                rgba(255, 255, 255, 0.0001),
-                rgba(255, 255, 255, 0.85),
-                0%,
-                15%
+            // map-to-panel fade in the panel color so it stays seamless in
+            // both themes (the old white gradient washed dark slides)
+            background-image: linear-gradient(
+                to right,
+                transparent 0%,
+                var(--vco-color-background, #fff) 15%
             );
+            background-repeat: repeat-x;
         }
 
         .vco-slider-container-mask {
@@ -153,7 +212,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        background-color: $color-background;
+        background-color: var(--vco-color-background, #{$color-background});
 
         .vco-slider-background {
             display: none;
@@ -167,7 +226,7 @@
 ================================================== */
 .vco-map-area-left {
     .vco-storyslider {
-        background-color: $color-background;
+        background-color: var(--vco-color-background, #{$color-background});
     }
 
     .vco-slider-background {
