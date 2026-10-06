@@ -339,6 +339,14 @@ export type TileSourceFactory = (
     context: { options: StorymapOptions; createDefault: () => TileLayer },
 ) => Layer | TileLayer | Source | null | undefined;
 
+/**
+ * Named progress indicator styles (slideshow `progressbar`), shared by the
+ * translator (which emits them) and the menubar (which renders them) so the
+ * set cannot drift.
+ */
+export const PROGRESSBAR_STYLES = ["bar", "dots", "squares", "block", "thinblock"] as const;
+export type ProgressbarStyle = (typeof PROGRESSBAR_STYLES)[number];
+
 export interface StorymapOptions {
     width: number;
     height: number;
@@ -388,8 +396,14 @@ export interface StorymapOptions {
      * `show_progress` boolean decides and the style is `"bar"`. Honored
      * only with `slideshow_source`.
      */
-    progressbar?: boolean | "bar" | "dots" | "squares" | "block" | "thinblock" | "off";
-    /** Show the slide headline as a label on the active map marker (issue #243) */
+    progressbar?:
+        | boolean
+        | "bar"
+        | "dots"
+        | "squares"
+        | "block"
+        | "thinblock"
+        | "off"; /** Show the slide headline as a label on the active map marker (issue #243) */
     marker_labels: boolean;
     /** Default text alignment for slide text: left, center or right (issue #244) */
     text_align: "left" | "center" | "right";

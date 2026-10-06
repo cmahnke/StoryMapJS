@@ -29,9 +29,12 @@ import "@projektemacher/storymapjs/css/storymap.css";
 ```
 index.html            dev/demo entry + the project landing page
 demo.html             minimal single-example page
-harness.html          example harness used by the e2e suite (?example=<name>)
+harness.html          example harness used by the e2e suite
+                      (?example= / ?manifest= / ?slideshow= / ?url= / ?options=)
 public/               static assets copied verbatim to dist/
   examples/           storymap JSON fixtures (validated in CI)
+  examples-iiif/      generated Presentation 3 fixtures
+  examples-slideshow/ slideshow tour fixtures (raw tours + a static image)
   embed/              the embed page
   css/icons/          icon font binaries
 src/
@@ -49,6 +52,7 @@ scripts/
   validate-storymap.mjs  CLI validator (also runs on load in the browser)
   validate-iiif.mjs      validates public/examples-iiif/ with the official IIIF validator
   convert-to-iiif.mjs    legacy JSON -> Presentation 3 manifest
+  convert-from-slideshow.mjs  slideshow tour (URL or file) -> storymap JSON
   check-locales.mjs      reports which locales are missing which UI strings
   serve-root.mjs
 e2e/                  Playwright specs

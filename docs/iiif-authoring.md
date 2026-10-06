@@ -155,7 +155,9 @@ A stop's `body` may be one resource or an array.
   (start seconds), `storymap:loop`, `storymap:play` (`auto`/`click`) and
   `storymap:stopOnExit` — and a `motivation: "supplementing"` Sound/Video
   body becomes the slide `narration` with the same flags plus
-  `storymap:stopAllPrevious`.
+  `storymap:stopAllPrevious`. These fields are read from any manifest but
+  render only for slideshow tours (the viewer's `slideshow_source` marker);
+  hand-written manifests keep the long-standing playback.
 - A media body's `label` becomes the media caption,
   `accessibilitySummary` the alt text, and `requiredStatement` (or `provider`)
   the credit. A `thumbnail` becomes the media thumb. A sibling `TextualBody`

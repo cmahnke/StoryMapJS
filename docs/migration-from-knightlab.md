@@ -362,6 +362,16 @@ factory.
   [docs/storymap-as-iiif-manifest.md](storymap-as-iiif-manifest.md#geo-referenced-layers).
 - The editor, staging/backend infrastructure, AWS/GitHub hosting scripts and the
   Python authoring server are gone — this is a viewer-only library.
+- **Slideshow tours** are a third input format: W3C `AnnotationCollection`
+  documents (the format of slideshow-style guided image tours) load
+  directly by object, file or URL, auto-detected after the IIIF branch
+  (`slideshow: false` opts out). A pure translator converts them to
+  storymap data — per-slide image regions, rotation, filter grading,
+  spotlight masks, per-slide basemaps, narration with playback flags and
+  player chrome — which renders only for slideshow tours (the internal
+  `slideshow_source` marker; other documents are unaffected). Convert
+  offline with `npm run convert:slideshow`; the full mapping is in
+  [docs/slideshow.md](slideshow.md).
 
 ## Events (unchanged, plus new ones)
 

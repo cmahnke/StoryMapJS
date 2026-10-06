@@ -44,6 +44,7 @@ import {
     buildSlideFilter,
     isStaticImageUrl,
     normalizeMask,
+    serviceToInfoJson,
     slideBasemapKey,
     slideRotationRad,
     type NormalizedMask,
@@ -134,6 +135,11 @@ export default class OpenLayers extends Map {
     /** Guards stale static-fallback probes (see `_probeStaticFallback`). */
     declare "_static_probe_token": number;
     /**
+     * Set by `dispose()` so in-flight fetches and probes resolve into
+     * no-ops instead of touching a torn-down map.
+     */
+    declare "_disposed": boolean;
+    /**
      * Per-URL probe tokens for static slide basemaps: concurrent probes for
      * different slides must not cancel each other (see
      * `_createStaticImageBasemap`).
@@ -145,6 +151,7 @@ export default class OpenLayers extends Map {
     _createMap(): void {
         const is_image_map = this.isImageSpace();
         this._imageready_fired = new WeakSet();
+        this._disposed = false;
         this._basemap_cache = new globalThis.Map();
         this._slide_basemap = null;
         this._story_basemap_layer = null;
@@ -927,14 +934,14 @@ export default class OpenLayers extends Map {
         const token = ++this._static_probe_token;
         try {
             const dims = await this._probeStaticImage(url);
-            if (token !== this._static_probe_token) return;
+            if (this._disposed || token !== this._static_probe_token) return;
             if (!dims || !(dims.width > 0) || !(dims.height > 0)) {
                 console.error("Static fallback image has no usable dimensions:", url);
                 return;
             }
             this._buildStaticLayer(empty_layer, url, dims.width, dims.height);
         } catch (err) {
-            if (token !== this._static_probe_token) return;
+            if (this._disposed || token !== this._static_probe_token) return;
             console.error(
                 "Static fallback image could not be probed:",
                 url,
@@ -966,22 +973,64 @@ export default class OpenLayers extends Map {
         });
     }
 
+    /**
+     * One static image source: shared by the story fallback (known extent),
+     * per-slide static basemaps (probed extent) and per-slide overlays
+     * (view extent). Layer assembly stays per call site — base (z 0),
+     * pending-fill and overlay (z 5, opacity) have different lifecycles.
+     */
+    _newStaticSource(
+        url: string,
+        extent: Extent,
+        projection: string | Projection,
+        attributions?: string | string[],
+    ): Static {
+        return new Static({
+            url,
+            imageExtent: extent,
+            projection,
+            crossOrigin: "anonymous",
+            ...(attributions !== undefined ? { attributions } : {}),
+        });
+    }
+
+    /**
+     * One static image layer: the constructor shared by the story fallback,
+     * per-slide static basemaps and per-slide overlays. Extent and
+     * projection are the caller's policy (canvas size, probed size, or view
+     * extent); presentation rides the options.
+     */
+    _newStaticLayer(
+        url: string,
+        extent: Extent,
+        projection: string | Projection,
+        presentation: { opacity?: number; attributions?: string | string[]; zIndex?: number } = {},
+    ): ImageLayer<Static> {
+        const layer = new ImageLayer({
+            source: this._newStaticSource(url, extent, projection, presentation.attributions),
+            ...(presentation.opacity !== undefined ? { opacity: presentation.opacity } : {}),
+        });
+        layer.setZIndex(presentation.zIndex ?? 0);
+        return layer;
+    }
+
     /** Swap the empty tile layer for a static image of the given extent. */
     _buildStaticLayer(empty_layer: TileLayer, url: string, width: number, height: number): void {
-        const source = new Static({
-            url,
-            imageExtent: [0, 0, width, height],
-            projection: "EPSG:4326",
-            crossOrigin: "anonymous",
+        if (this._disposed) return;
+        const layer = this._newStaticLayer(url, [0, 0, width, height], "EPSG:4326", {
             attributions: this.options.iiif.attribution || [],
         });
-        const layer = new ImageLayer({ source });
-        layer.setZIndex(0);
         if (this._tile_layer === (empty_layer as unknown as Layer)) {
             this._map.removeLayer(empty_layer);
             this._tile_layer = layer;
             this._map.addLayer(layer);
+        } else {
+            // superseded while resolving (basemap switch, dispose): announce
+            // nothing and fit nothing for a layer that never shows
+            return;
         }
+        const source = this._sourceOf(layer);
+        if (!source) return;
         this._fireImageready(source, "iiif", layer);
         if (typeof source.getState === "function" && source.getState() === "ready") {
             this._markerOverview();
@@ -1086,6 +1135,10 @@ export default class OpenLayers extends Map {
      * used afterwards.
      */
     dispose(): void {
+        this._disposed = true;
+        // invalidate in-flight static probes and info.json fetches: their
+        // continuations check the flag or their token and resolve quietly
+        this._static_probe_token++;
         if (this._line_animation !== null) {
             cancelAnimationFrame(this._line_animation);
             this._line_animation = null;
@@ -2358,17 +2411,18 @@ export default class OpenLayers extends Map {
             return this._createStaticImageBasemap(key);
         }
         if (/^https?:\/\//i.test(key) && !key.includes("{z}")) {
-            const info_url = /info\.json$/i.test(key) ? key : `${key.replace(/\/$/, "")}/info.json`;
+            const info_url = serviceToInfoJson(key);
             const pending: TileLayer = new TileLayer();
             fetch(info_url)
                 .then((r) => r.json())
                 .then((info: unknown) => {
+                    if (this._disposed) return;
                     const parsed = new IIIFInfo(
                         info as ImageInformationResponse,
                     ).getTileSourceOptions();
                     const dims = info as { width?: number; height?: number };
                     if (typeof dims.width !== "number" || typeof dims.height !== "number") {
-                        console.error("Slide basemap info.json is missing width/height:", info_url);
+                        this._replaceWithStaticBasemap(key, pending);
                         return;
                     }
                     const source = new IIIF({
@@ -2405,18 +2459,13 @@ export default class OpenLayers extends Map {
         this._slide_probe_tokens.set(url, token);
         void this._probeStaticImage(url).then(
             (dims) => {
-                if (this._slide_probe_tokens.get(url) !== token) return;
+                if (this._disposed || this._slide_probe_tokens.get(url) !== token) return;
                 if (!dims || !(dims.width > 0) || !(dims.height > 0)) {
                     console.error("Slide basemap image has no usable dimensions:", url);
                     return;
                 }
                 pending.setSource(
-                    new Static({
-                        url,
-                        imageExtent: [0, 0, dims.width, dims.height],
-                        projection: "EPSG:4326",
-                        crossOrigin: "anonymous",
-                    }),
+                    this._newStaticSource(url, [0, 0, dims.width, dims.height], "EPSG:4326"),
                 );
                 this._fireImageready(
                     pending.getSource() as { getState?(): string },
@@ -2441,6 +2490,7 @@ export default class OpenLayers extends Map {
      * case the cache holds it for a return visit).
      */
     _replaceWithStaticBasemap(key: string, pending: TileLayer): void {
+        if (this._disposed) return;
         const staticLayer = this._createStaticImageBasemap(key);
         this._basemap_cache.set(key, staticLayer);
         if (this._tile_layer === (pending as unknown as Layer)) {
@@ -2589,14 +2639,12 @@ export default class OpenLayers extends Map {
             typeof overlay.opacity === "number" && Number.isFinite(overlay.opacity)
                 ? Math.min(1, Math.max(0, overlay.opacity))
                 : 1;
-        const source = new Static({
-            url: overlay.url,
-            imageExtent: extent,
-            projection: this._map.getView().getProjection(),
-            crossOrigin: "anonymous",
-        });
-        const layer = new ImageLayer({ source, opacity });
-        layer.setZIndex(5);
+        const layer = this._newStaticLayer(
+            overlay.url,
+            extent,
+            this._map.getView().getProjection(),
+            { opacity, zIndex: 5 },
+        );
         this._map.addLayer(layer);
         this._imgoverlay_layer = layer;
     }

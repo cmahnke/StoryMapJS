@@ -23,7 +23,10 @@ import {
     asString,
     asStringArray,
     clampRegion,
+    escapeText,
+    isDuplicateNarration,
     isLonLatBox,
+    readPlaybackBag,
 } from "./iiif-shared";
 
 const PRESENTATION_3_CONTEXT = "iiif.io/api/presentation/3/context.json";
@@ -570,22 +573,15 @@ export interface PaintingBody {
 
 /**
  * Reads `storymap:` playback flags off a painting annotation into the
- * painting body: `offset` (seconds), `loop`, `play` and `stopOnExit`.
+ * painting body: `offset` (seconds), `loop`, `play` and `stopOnExit`
+ * (painting annotations never carry `stopAllPrevious`).
  */
 function readPaintingPlayback(
     annotationRecord: Record<string, unknown>,
     painting: { offset?: number; loop?: boolean; play?: "auto" | "click"; stopOnExit?: boolean },
 ): void {
-    const offset = annotationRecord[STORYMAP_PREFIX + "offset"];
-    if (typeof offset === "number" && Number.isFinite(offset) && offset >= 0) {
-        painting.offset = offset;
-    }
-    const loop = annotationRecord[STORYMAP_PREFIX + "loop"];
-    if (typeof loop === "boolean") painting.loop = loop;
-    const play = annotationRecord[STORYMAP_PREFIX + "play"];
-    if (play === "auto" || play === "click") painting.play = play;
-    const stopOnExit = annotationRecord[STORYMAP_PREFIX + "stopOnExit"];
-    if (typeof stopOnExit === "boolean") painting.stopOnExit = stopOnExit;
+    const { stopAllPrevious: _dropped, ...bag } = readPlaybackBag(annotationRecord);
+    Object.assign(painting, bag);
 }
 
 /**
@@ -765,25 +761,7 @@ function readSupplementing(canvas: Record<string, unknown>): {
                 play?: "auto" | "click";
                 stopOnExit?: boolean;
                 stopAllPrevious?: boolean;
-            } = { url };
-            const readBag = (record: Record<string, unknown>) => {
-                const loop = record[STORYMAP_PREFIX + "loop"];
-                if (typeof loop === "boolean") narration.loop = loop;
-                const offset = record[STORYMAP_PREFIX + "offset"];
-                if (typeof offset === "number" && Number.isFinite(offset) && offset >= 0) {
-                    narration.offset = offset;
-                }
-                const play = record[STORYMAP_PREFIX + "play"];
-                if (play === "auto" || play === "click") narration.play = play;
-                const stopOnExit = record[STORYMAP_PREFIX + "stopOnExit"];
-                if (typeof stopOnExit === "boolean") narration.stopOnExit = stopOnExit;
-                const stopAllPrevious = record[STORYMAP_PREFIX + "stopAllPrevious"];
-                if (typeof stopAllPrevious === "boolean") {
-                    narration.stopAllPrevious = stopAllPrevious;
-                }
-            };
-            readBag(annotationRecord);
-            readBag(body);
+            } = { url, ...readPlaybackBag(annotationRecord), ...readPlaybackBag(body) };
             return narration;
         }
     }
@@ -1131,15 +1109,9 @@ function canvasToSlide(
             (url): url is string => typeof url === "string" && url !== "",
         ),
     );
-    if (supplement !== null && !mediaUrls.has(supplement.url)) {
-        slide.narration = { url: supplement.url };
-        if (supplement.loop !== undefined) slide.narration.loop = supplement.loop;
-        if (supplement.offset !== undefined) slide.narration.offset = supplement.offset;
-        if (supplement.play !== undefined) slide.narration.play = supplement.play;
-        if (supplement.stopOnExit !== undefined) slide.narration.stopOnExit = supplement.stopOnExit;
-        if (supplement.stopAllPrevious !== undefined) {
-            slide.narration.stopAllPrevious = supplement.stopAllPrevious;
-        }
+    if (supplement !== null && !isDuplicateNarration([...mediaUrls], supplement.url)) {
+        const { url, ...flags } = supplement;
+        slide.narration = { url, ...flags };
     }
 
     // location: canvas navPlace, falling back to a manifest-level navPlace
@@ -1248,21 +1220,11 @@ function canvasToSlide(
  */
 const STOP_MOTIVATIONS = new Set(["commenting", "tagging", "classifying", "describing"]);
 
-/** Escapes the five characters that would otherwise be markup, so a
- *  `text/plain` annotation body cannot inject HTML. The renderer sanitizes
- *  slide text as well; this keeps the stored value honest on its own. */
-function escapeText(value: string): string {
-    return value
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
-
 /**
  * A `text/plain` body becomes one paragraph per blank-line-separated block,
- * escaped. A `text/html` body is passed through as markup — the slide text
+ * escaped (`escapeText` is shared with the slideshow translator, which
+ * wraps single paragraphs the same way). A `text/html` body is passed
+ * through as markup — the slide text
  * pipeline (`sanitizeSlideText`, via `media/types/Text.ts`) sanitizes whatever
  * it is given, which is the same path a storymap JSON `text.text` takes.
  */

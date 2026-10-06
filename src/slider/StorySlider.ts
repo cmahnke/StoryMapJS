@@ -376,11 +376,17 @@ class StorySliderBase {
                 if (!fromScroll) {
                     this._static_spying = true;
                     this._scrollSlideIntoView(this.current_slide);
+                    // longer than the smooth scroll it triggers: the
+                    // observer must stay deaf until the list settles, or it
+                    // echoes the programmatic scroll back as user input
                     window.setTimeout(() => {
                         this._static_spying = false;
-                    }, 150);
+                    }, 600);
                 }
-                this._onSlideChange(displayupdate);
+                // scroll-spy navigation must fire: the map follows the
+                // reading position through the change event (fromScroll only
+                // suppresses the echo scroll above, never the event)
+                this._onSlideChange(fromScroll ? false : displayupdate);
             } else if (fast || prefersReducedMotion() || this.options.fxmode === "none") {
                 this._el.slider_container.style.opacity = "";
                 this._el.slider_container.style.left = -(this.slide_spacing * n) + "px";
@@ -664,7 +670,10 @@ class StorySliderBase {
     _initStaticSpy(): void {
         if (typeof IntersectionObserver === "undefined") return;
         this._static_observer?.disconnect();
-        const root = this._el.slider_container_mask;
+        // the scrolling element is the observer root: the mask scrolls WITH
+        // the content (it is an ancestor chain member, not the scrollport),
+        // so intersections against it would never change
+        const root = this._isStatic() ? this._el.container : this._el.slider_container_mask;
         this._static_observer = new IntersectionObserver(
             (entries) => {
                 if (this._static_spying) return;
@@ -678,7 +687,7 @@ class StorySliderBase {
                     }
                 }
                 if (best >= 0 && best !== this.current_slide) {
-                    this.goTo(best, true, true, true);
+                    this.goTo(best, true, false, true);
                 }
             },
             { root, threshold: [0, 0.25, 0.5, 0.75, 1] },
@@ -693,18 +702,19 @@ class StorySliderBase {
     /** Scroll a stacked slide into view without moving the host page. */
     _scrollSlideIntoView(n: number): void {
         const slide = this._el.slider_item_container.children[n] as HTMLElement | undefined;
-        const mask = this._el.slider_container_mask;
-        if (!slide || !mask || typeof slide.offsetTop !== "number") return;
+        // the scrollport in static mode is the storyslider element itself
+        const scroller = this._isStatic() ? this._el.container : this._el.slider_container_mask;
+        if (!slide || !scroller || typeof slide.offsetTop !== "number") return;
         const container = this._el.slider_item_container;
         const top =
             (typeof container.offsetTop === "number" ? container.offsetTop : 0) + slide.offsetTop;
         try {
-            mask.scrollTo({
+            scroller.scrollTo({
                 top,
                 behavior: prefersReducedMotion() ? "auto" : "smooth",
             });
         } catch {
-            mask.scrollTop = top;
+            scroller.scrollTop = top;
         }
     }
 

@@ -56,6 +56,47 @@ test("slideshow tour renders its slides", async ({ page }) => {
     }
 });
 
+test("static mode follows the reading position", async ({ page }) => {
+    const pageErrors = collectPageErrors(page);
+
+    await page.goto('/harness.html?slideshow=single&options={"mode":"static"}');
+
+    await expect
+        .poll(() => page.evaluate(() => (window as unknown as { __smReady?: boolean }).__smReady), {
+            timeout: 30_000,
+        })
+        .toBe(true);
+
+    // the opening goTo() keeps the scroll-spy deaf for its 600ms settle
+    // window; scrolling inside it would go unheard (the entry fires once,
+    // is ignored, and nothing re-fires)
+    await page.waitForTimeout(800);
+
+    // scroll the stacked list to the second slide: the scroll-spy must fire
+    // change so the map follows (not just flip the active class)
+    await page.evaluate(() => {
+        const slides = document.querySelectorAll("#storymap-embed .vco-slide");
+        slides[1]?.scrollIntoView({ block: "start" });
+    });
+    await expect
+        .poll(
+            () =>
+                page.evaluate(
+                    () =>
+                        (window as unknown as { __sm?: { current_slide: number } }).__sm
+                            ?.current_slide,
+                ),
+            { timeout: 15_000 },
+        )
+        .toBe(1);
+
+    expect(pageErrors, "uncaught exceptions").toEqual([]);
+    expect(
+        await page.evaluate(() => (window as unknown as { __smErrors?: string[] }).__smErrors),
+        "window errors",
+    ).toEqual([]);
+});
+
 function collectPageErrors(page: Page): string[] {
     const errors: string[] = [];
     page.on("pageerror", (err) => errors.push(String(err)));

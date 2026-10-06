@@ -1,18 +1,17 @@
 import { describe, expect, test } from "vitest";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import {
     isSlideshowCollection,
     slideshowToStorymapData,
     slideshowVersion,
 } from "../src/storymap/from-slideshow";
 import { validateStorymap } from "../src/storymap/validate";
+import { loadFixture } from "./helpers";
 import type { StorymapData } from "../src/types";
 
-const FIXTURES = join(process.cwd(), "tests/fixtures/slideshow");
+const FIXTURES = "tests/fixtures/slideshow";
 
 function fixture(name: string): unknown {
-    return JSON.parse(readFileSync(join(FIXTURES, `${name}.json`), "utf8"));
+    return loadFixture(`${FIXTURES}/${name}.json`);
 }
 
 function kinds(result: { warnings: { kind: string }[] }): string[] {
@@ -143,6 +142,32 @@ describe("overshooting targets", () => {
         expect(result.data.slides[2].location?.region).toBeUndefined();
         const target = result.warnings.find((w) => w.kind === "slideshow.target");
         expect(target?.count).toBe(2);
+    });
+
+    test("reads standard xywh fragments with and without the pixel prefix", () => {
+        const annotation = (fragment: string) => ({
+            id: `https://example.org/t/x${fragment}`,
+            type: "Annotation",
+            body: { type: "TextualBody", value: "<p>T.</p>", format: "text/html" },
+            target: { id: `https://images.example.org/iiif/canvas/1${fragment}`, type: "Image" },
+            strollview: {},
+        });
+        const doc = {
+            "@context": [
+                "http://www.w3.org/ns/anno.jsonld",
+                "https://seige.digital/strollview/2/context.jsonld",
+            ],
+            id: "https://example.org/t",
+            type: "AnnotationCollection",
+            first: {
+                type: "AnnotationPage",
+                items: [annotation("#xywh=10,20,30,40"), annotation("#xywh=pixel:50,60,70,80")],
+            },
+        };
+        const result = slideshowToStorymapData(doc);
+        expect(validateStorymap({ storymap: result.data })).toEqual([]);
+        expect(result.data.slides[0].location?.region).toEqual([10, 20, 30, 40]);
+        expect(result.data.slides[1].location?.region).toEqual([50, 60, 70, 80]);
     });
 });
 

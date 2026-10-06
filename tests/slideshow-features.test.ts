@@ -13,7 +13,10 @@ import { validateStorymap } from "../src/storymap/validate";
 import { StoryMap } from "../src/storymap/StoryMap";
 import MenuBar from "../src/ui/MenuBar";
 import { shouldShowInfo } from "../src/media/Media";
+import { ensureTestDom, makeStorymap, twoSlides } from "./helpers";
 import type { StorymapData, StorymapDataWrapper } from "../src/types";
+
+ensureTestDom();
 
 describe("clampRegion", () => {
     test("keeps a valid region unchanged", () => {
@@ -68,7 +71,8 @@ describe("buildSlideFilter", () => {
     });
     test("clamps ranges and drops mistyped values", () => {
         expect(buildSlideFilter({ brightness: 500 })).toBe("brightness(200%)");
-        expect(buildSlideFilter({ blur: -3 })).toBe("blur(0px)");
+        // blur clamped to the default (0) is a no-op, so it is omitted
+        expect(buildSlideFilter({ blur: -3 })).toBe("");
         expect(buildSlideFilter({ hueRotate: 400 })).toBe("hue-rotate(180deg)");
         expect(buildSlideFilter({ brightness: "high" } as unknown as { brightness: number })).toBe(
             "",
@@ -113,6 +117,11 @@ describe("normalizeMask", () => {
         expect(mask?.x).toBe(0);
         expect(mask?.w).toBe(1);
         expect(mask?.color).toBe("rgba(0,0,0,0.5)");
+    });
+
+    test("returns null for a fully-outside mask", () => {
+        expect(normalizeMask({ x: -0.5, y: 0, w: 0.3, h: 0.3 })).toBeNull();
+        expect(normalizeMask({ x: 1.5, y: 0, w: 0.3, h: 0.3 })).toBeNull();
     });
 });
 
@@ -308,39 +317,11 @@ describe("view terms round-trip", () => {
 });
 
 describe("chrome options", () => {
-    beforeAll(() => {
-        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
-            class ResizeObserverStub {
-                observe() {}
-                unobserve() {}
-                disconnect() {}
-            }
-            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
-        }
-    });
-
     // Helpers build translator output by default (sourced=true simulates a
     // slideshow-loaded tour via the documented escape hatch); pass false for
     // an internal document, which must render exactly as before.
     function chromeStorymap(id: string, storymap: Record<string, unknown>, sourced = true) {
-        const el = document.createElement("div");
-        el.id = id;
-        document.body.appendChild(el);
-        return new StoryMap(
-            id,
-            { storymap } as unknown as StorymapDataWrapper,
-            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
-        );
-    }
-
-    function twoSlides(extra: Record<string, unknown> = {}) {
-        return {
-            slides: [
-                { text: { headline: "One", text: "" } },
-                { text: { headline: "Two", text: "" } },
-            ],
-            ...extra,
-        };
+        return makeStorymap(id, storymap, sourced ? { slideshow_source: true } : undefined);
     }
 
     test("accepts every new option and slide field", () => {
@@ -530,32 +511,16 @@ describe("menu progress styles", () => {
 });
 
 describe("map per-slide presentation", () => {
-    beforeAll(() => {
-        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
-            class ResizeObserverStub {
-                observe() {}
-                unobserve() {}
-                disconnect() {}
-            }
-            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
-        }
-    });
-
     function geoStorymap(id: string, locations: Record<string, unknown>[], sourced = true) {
-        const el = document.createElement("div");
-        el.id = id;
-        document.body.appendChild(el);
-        return new StoryMap(
+        return makeStorymap(
             id,
             {
-                storymap: {
-                    slides: locations.map((location, n) => ({
-                        text: { headline: `S${n}`, text: "" },
-                        location: { lat: 10 + n, lon: 20, ...location },
-                    })),
-                },
-            } as unknown as StorymapDataWrapper,
-            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+                slides: locations.map((location, n) => ({
+                    text: { headline: `S${n}`, text: "" },
+                    location: { lat: 10 + n, lon: 20, ...location },
+                })),
+            },
+            sourced ? { slideshow_source: true } : undefined,
         );
     }
 
@@ -673,34 +638,21 @@ describe("map per-slide presentation", () => {
 
 describe("narration playback", () => {
     beforeAll(() => {
-        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
-            class ResizeObserverStub {
-                observe() {}
-                unobserve() {}
-                disconnect() {}
-            }
-            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
-        }
         vi.spyOn(window.HTMLMediaElement.prototype, "play").mockImplementation(
             () => Promise.resolve() as unknown as Promise<void>,
         );
     });
 
     function narrated(id: string, narrations: Record<string, unknown>[], sourced = true) {
-        const el = document.createElement("div");
-        el.id = id;
-        document.body.appendChild(el);
-        return new StoryMap(
+        return makeStorymap(
             id,
             {
-                storymap: {
-                    slides: narrations.map((narration, n) => ({
-                        text: { headline: `S${n}`, text: "" },
-                        narration,
-                    })),
-                },
-            } as unknown as StorymapDataWrapper,
-            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+                slides: narrations.map((narration, n) => ({
+                    text: { headline: `S${n}`, text: "" },
+                    narration,
+                })),
+            },
+            sourced ? { slideshow_source: true } : undefined,
         );
     }
 
@@ -766,24 +718,10 @@ describe("narration playback", () => {
 });
 
 describe("internal documents stay unchanged", () => {
-    beforeAll(() => {
-        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
-            class ResizeObserverStub {
-                observe() {}
-                unobserve() {}
-                disconnect() {}
-            }
-            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
-        }
-    });
-
     function internalStorymap(id: string, storymap: Record<string, unknown>) {
-        const el = document.createElement("div");
-        el.id = id;
-        document.body.appendChild(el);
         // no slideshow_source: the document names the new keys anyway, and
         // every one of them must stay inert
-        return new StoryMap(id, { storymap } as unknown as StorymapDataWrapper);
+        return makeStorymap(id, storymap);
     }
 
     test("chrome options reset to defaults", () => {
@@ -937,32 +875,16 @@ describe("shouldShowInfo", () => {
 });
 
 describe("static fallback probing", () => {
-    beforeAll(() => {
-        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
-            class ResizeObserverStub {
-                observe() {}
-                unobserve() {}
-                disconnect() {}
-            }
-            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
-        }
-    });
-
     function probeStorymap(id: string, iiif: Record<string, unknown>, sourced: boolean) {
-        const el = document.createElement("div");
-        el.id = id;
-        document.body.appendChild(el);
-        return new StoryMap(
+        return makeStorymap(
             id,
             {
-                storymap: {
-                    map_type: "iiif",
-                    map_as_image: true,
-                    iiif: { url: "https://iiif.example.org/info.json", attribution: "", ...iiif },
-                    slides: [{ text: { headline: "S0", text: "" } }],
-                },
-            } as unknown as StorymapDataWrapper,
-            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+                map_type: "iiif",
+                map_as_image: true,
+                iiif: { url: "https://iiif.example.org/info.json", attribution: "", ...iiif },
+                slides: [{ text: { headline: "S0", text: "" } }],
+            },
+            sourced ? { slideshow_source: true } : undefined,
         );
     }
 
@@ -1053,17 +975,6 @@ describe("static fallback probing", () => {
 });
 
 describe("slideshow page chains", () => {
-    beforeAll(() => {
-        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
-            class ResizeObserverStub {
-                observe() {}
-                unobserve() {}
-                disconnect() {}
-            }
-            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
-        }
-    });
-
     type ChainHarness = {
         _followSlideshowPages(
             doc: unknown,
@@ -1072,12 +983,9 @@ describe("slideshow page chains", () => {
     };
 
     function harness(id: string): ChainHarness {
-        const el = document.createElement("div");
-        el.id = id;
-        document.body.appendChild(el);
-        return new StoryMap(id, {
-            storymap: { slides: [{ text: { headline: "S0", text: "" } }] },
-        } as unknown as StorymapDataWrapper) as unknown as ChainHarness;
+        return makeStorymap(id, {
+            slides: [{ text: { headline: "S0", text: "" } }],
+        }) as unknown as ChainHarness;
     }
 
     function page(next?: string) {

@@ -18,8 +18,19 @@ import type {
     StorymapSlideMask,
     StorymapSlideNarration,
 } from "../types";
-import { asNumber, asRecord, asString, asStringArray, clampRegion } from "./iiif-shared.ts";
-import { isStaticImageUrl } from "../map/slideView.ts";
+import {
+    asNumber,
+    asRecord,
+    asString,
+    asStringArray,
+    clampRegion,
+    escapeText,
+    isDuplicateNarration,
+} from "./iiif-shared.ts";
+import { FILTER_RANGES, isStaticImageUrl, serviceToInfoJson } from "../map/slideView.ts";
+// Explicit extension like the other two: the CLI imports this module
+// straight into node --experimental-strip-types.
+import { PROGRESSBAR_STYLES } from "../types.ts";
 
 /** The embed `settings` JSON (string → web component), all fields optional. */
 export interface SlideshowPlayerSettings {
@@ -54,6 +65,15 @@ export interface SlideshowWarning {
     detail: string;
 }
 
+/**
+ * One log line per warning kind: count, detail and sample ids. Shared by
+ * the viewer (console) and the CLI so the two surfaces cannot drift.
+ */
+export function formatSlideshowWarning(warning: SlideshowWarning): string {
+    const samples = warning.sampleIds.length > 0 ? ` [${warning.sampleIds.join(", ")}]` : "";
+    return `slideshow ${warning.kind} (×${warning.count}): ${warning.detail}${samples}`;
+}
+
 export interface SlideshowToStorymapResult {
     data: StorymapData;
     warnings: SlideshowWarning[];
@@ -70,7 +90,7 @@ export interface SlideshowTranslatorOptions {
 }
 
 /** Maximum `next` pages consumed (collect + warn when truncated). */
-const MAX_EXTRA_PAGES = 20;
+export const SLIDESHOW_MAX_PAGES = 20;
 /** Sample ids kept per warning kind (counts are exact regardless). */
 const MAX_WARNING_SAMPLES = 5;
 
@@ -144,16 +164,6 @@ function flattenLabel(value: unknown): string {
     return "";
 }
 
-/** Escape the five markup characters for `text/plain` bodies. */
-function escapeText(value: string): string {
-    return value
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
-
 class Warnings {
     private map = new Map<string, { count: number; sampleIds: string[]; detail: string }>();
 
@@ -171,6 +181,43 @@ class Warnings {
     }
 }
 
+/**
+ * Follow a tour's `first.next` page chain for the translator. Bounded by
+ * `SLIDESHOW_MAX_PAGES` and cycle-guarded; loading and link resolution are
+ * injected so the viewer (fetch) and the CLI (fetch or filesystem) share
+ * the walk. A broken chain reports incompletely so callers warn instead of
+ * truncating silently.
+ */
+export async function followSlideshowPages(opts: {
+    first: unknown;
+    base: string;
+    resolve: (link: string, current: string) => string | null;
+    load: (absolute: string) => Promise<unknown>;
+    maxPages?: number;
+}): Promise<{ pages: unknown[]; complete: boolean }> {
+    const pages: unknown[] = [];
+    const seen = new Set<string>([opts.base]);
+    let current = opts.base;
+    let next: unknown = opts.first;
+    const maxPages = opts.maxPages ?? SLIDESHOW_MAX_PAGES;
+    for (let hop = 0; hop < maxPages; hop++) {
+        const link = (next as Record<string, unknown> | null)?.next;
+        if (typeof link !== "string" || link === "") return { pages, complete: true };
+        const absolute = opts.resolve(link, current);
+        if (absolute === null || seen.has(absolute)) return { pages, complete: false };
+        seen.add(absolute);
+        try {
+            const page: unknown = await opts.load(absolute);
+            pages.push(page);
+            next = page;
+            current = absolute;
+        } catch {
+            return { pages, complete: false };
+        }
+    }
+    return { pages, complete: false };
+}
+
 /** Split a canvas target id into its base and an `x,y,w,h` fragment. */
 function splitTarget(target: unknown): {
     canvas: string | null;
@@ -182,10 +229,12 @@ function splitTarget(target: unknown): {
     if (id === null) return { canvas: null, region: null, raw: false };
     const hash = id.indexOf("#");
     if (hash === -1) return { canvas: id, region: null, raw: false };
-    const parts = id
+    // standard `xywh=` / `xywh=pixel:` prefixes as well as bare `x,y,w,h`
+    const fragment = id
         .slice(hash + 1)
-        .split(",")
-        .map(Number);
+        .replace(/^xywh=(pixel:)?/i, "")
+        .trim();
+    const parts = fragment.split(",").map(Number);
     if (parts.length === 4 && parts.every((n) => Number.isFinite(n))) {
         const [x, y, w, h] = parts;
         if (w > 0 && h > 0) {
@@ -205,23 +254,29 @@ function readFilter(value: unknown): StorymapSlideFilter | null {
     const record = asRecord(value);
     if (!record) return null;
     const filter: StorymapSlideFilter = {};
-    const percent = (key: string, min: number, max: number) => {
+    // same ranges the renderer enforces (see FILTER_RANGES); read-time
+    // clamping keeps translator output inside the schema
+    const percent = (key: "brightness" | "contrast" | "saturate" | "sepia") => {
+        const range = FILTER_RANGES[key];
         const n = record[key];
         if (typeof n === "number" && Number.isFinite(n)) {
-            filter[key] = Math.min(max, Math.max(min, n));
+            filter[key] = Math.min(range.max, Math.max(range.min, n));
         }
     };
-    percent("brightness", 0, 200);
-    percent("contrast", 0, 200);
-    percent("saturate", 0, 200);
-    percent("sepia", 0, 100);
+    percent("brightness");
+    percent("contrast");
+    percent("saturate");
+    percent("sepia");
     const hue = record["hue_rotate"];
     if (typeof hue === "number" && Number.isFinite(hue)) {
-        filter.hueRotate = Math.min(180, Math.max(-180, hue));
+        filter.hueRotate = Math.min(
+            FILTER_RANGES.hueRotate.max,
+            Math.max(FILTER_RANGES.hueRotate.min, hue),
+        );
     }
     const blur = record["blur"];
     if (typeof blur === "number" && Number.isFinite(blur)) {
-        filter.blur = Math.min(20, Math.max(0, blur));
+        filter.blur = Math.min(FILTER_RANGES.blur.max, Math.max(FILTER_RANGES.blur.min, blur));
     }
     return Object.keys(filter).length > 0 ? filter : null;
 }
@@ -348,7 +403,7 @@ function applySettings(
                 : 6000;
         if (target.autoplay === 6000 && settings.slidetimeout !== undefined) {
             const raw = Number(settings.slidetimeout);
-            if (!Number.isFinite(raw)) {
+            if (!Number.isFinite(raw) || raw < 0) {
                 warnings.add(
                     "slideshow.slidetimeout",
                     null,
@@ -367,13 +422,10 @@ function applySettings(
     }
     const progressbar = settings.progressbar;
     if (
-        progressbar === "dots" ||
-        progressbar === "squares" ||
-        progressbar === "block" ||
-        progressbar === "thinblock" ||
-        progressbar === "bar"
+        typeof progressbar === "string" &&
+        (PROGRESSBAR_STYLES as readonly string[]).includes(progressbar)
     ) {
-        target.progressbar = progressbar;
+        target.progressbar = progressbar as (typeof PROGRESSBAR_STYLES)[number];
     } else if (progressbar === false || progressbar === "off") {
         target.progressbar = false;
     } else if (progressbar !== undefined) {
@@ -547,9 +599,7 @@ function translateV1(
     const iiif: { url: string; attribution: string } = { url: "", attribution: "" };
     const firstService = services.length > 0 ? (services[0] as string) : null;
     if (firstService !== null && !isStaticImageUrl(firstService)) {
-        iiif.url = firstService.endsWith("/info.json")
-            ? firstService
-            : `${firstService.replace(/\/$/, "")}/info.json`;
+        iiif.url = serviceToInfoJson(firstService);
     }
     (data as unknown as Record<string, unknown>).iiif = iiif;
     applySettings(data, slides, opts.settings, warnings);
@@ -605,7 +655,14 @@ export function slideshowToStorymapData(
     const first = asRecord(record.first);
     if (first) pages.push(first);
     for (const extra of opts.extraPages ?? []) {
-        if (pages.length - 1 >= MAX_EXTRA_PAGES) break;
+        if (pages.length - 1 >= SLIDESHOW_MAX_PAGES) {
+            warnings.add(
+                "slideshow.paging",
+                null,
+                `kept the first ${SLIDESHOW_MAX_PAGES} extra pages, dropped the rest`,
+            );
+            break;
+        }
         pages.push(extra);
     }
     const nextLink = first ? asString(first.next) : null;
@@ -700,8 +757,7 @@ export function slideshowToStorymapData(
         }
         if (Object.keys(location).length > 0) slide.location = location;
         if (narration !== null) {
-            const mediaUrl = slide.media?.url;
-            if (typeof mediaUrl === "string" && mediaUrl === narration.url) {
+            if (isDuplicateNarration([slide.media?.url], narration.url)) {
                 warnings.add("slideshow.audio-dup", sampleId, "audio duplicates media, kept media");
             } else {
                 slide.narration = narration;
@@ -718,9 +774,7 @@ export function slideshowToStorymapData(
     };
     const firstService = services.length > 0 ? (services[0] as string) : null;
     if (firstService !== null && !isStaticImageUrl(firstService)) {
-        iiif.url = firstService.endsWith("/info.json")
-            ? firstService
-            : `${firstService.replace(/\/$/, "")}/info.json`;
+        iiif.url = serviceToInfoJson(firstService);
     }
     // a static first service (or none at all) leaves url empty: the story
     // renders from the fallback image once probed (slideshow tours only)

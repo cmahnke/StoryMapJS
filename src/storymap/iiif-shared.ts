@@ -83,6 +83,110 @@ export function languageMap(value: string): { none: string[] } {
 }
 
 /**
+ * Escape the five characters that would otherwise be markup. Shared by the
+ * manifest reader (multi-paragraph bodies) and the slideshow translator
+ * (single-paragraph bodies) — the wrappers differ, the escaping must not.
+ */
+export function escapeText(value: string): string {
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+/**
+ * Playback flags shared by narration and audio/video media (slideshow
+ * audio terms when they ride `storymap:` foreign members). All optional;
+ * absent means the long-standing behavior (play on arrival, stop on leave).
+ */
+export interface PlaybackBag {
+    loop?: boolean;
+    offset?: number;
+    play?: "auto" | "click";
+    stopOnExit?: boolean;
+    stopAllPrevious?: boolean;
+}
+
+/**
+ * Read playback flags off a record's `storymap:` foreign members. Only
+ * well-typed values are kept; `onUnknownPlay` reports an unexpected `play`
+ * (the slideshow translator warns, the manifest reader stays silent).
+ */
+export function readPlaybackBag(
+    record: Record<string, unknown> | null,
+    onUnknownPlay?: (value: unknown) => void,
+): PlaybackBag {
+    const bag: PlaybackBag = {};
+    if (!record) return bag;
+    if (typeof record["storymap:loop"] === "boolean") bag.loop = record["storymap:loop"];
+    const offset = record["storymap:offset"];
+    if (typeof offset === "number" && Number.isFinite(offset) && offset >= 0) {
+        bag.offset = offset;
+    }
+    const play = record["storymap:play"];
+    if (play === "auto" || play === "click") {
+        bag.play = play;
+    } else if (play !== undefined) {
+        onUnknownPlay?.(play);
+    }
+    if (typeof record["storymap:stopOnExit"] === "boolean") {
+        bag.stopOnExit = record["storymap:stopOnExit"];
+    }
+    if (typeof record["storymap:stopAllPrevious"] === "boolean") {
+        bag.stopAllPrevious = record["storymap:stopAllPrevious"];
+    }
+    return bag;
+}
+
+/**
+ * Write playback flags as `storymap:` foreign members. Only present flags
+ * are written, so readers that never heard of them see an unchanged
+ * annotation.
+ */
+export function writePlaybackTerms(bag: {
+    loop?: boolean;
+    offset?: number;
+    play?: "auto" | "click";
+    stopOnExit?: boolean;
+    stopAllPrevious?: boolean;
+}): {
+    "storymap:loop"?: boolean;
+    "storymap:offset"?: number;
+    "storymap:play"?: string;
+    "storymap:stopOnExit"?: boolean;
+    "storymap:stopAllPrevious"?: boolean;
+} {
+    const terms: {
+        "storymap:loop"?: boolean;
+        "storymap:offset"?: number;
+        "storymap:play"?: string;
+        "storymap:stopOnExit"?: boolean;
+        "storymap:stopAllPrevious"?: boolean;
+    } = {};
+    if (typeof bag.loop === "boolean") terms["storymap:loop"] = bag.loop;
+    if (typeof bag.offset === "number") terms["storymap:offset"] = bag.offset;
+    if (bag.play === "auto" || bag.play === "click") terms["storymap:play"] = bag.play;
+    if (typeof bag.stopOnExit === "boolean") terms["storymap:stopOnExit"] = bag.stopOnExit;
+    if (typeof bag.stopAllPrevious === "boolean") {
+        terms["storymap:stopAllPrevious"] = bag.stopAllPrevious;
+    }
+    return terms;
+}
+
+/**
+ * True when a narration URL duplicates slide media (the track is kept
+ * once, as media, never twice).
+ */
+export function isDuplicateNarration(
+    mediaUrls: (string | null | undefined)[],
+    url: string,
+): boolean {
+    return mediaUrls.some((mediaUrl) => typeof mediaUrl === "string" && mediaUrl === url);
+}
+
+/**
  * Clamp an image region `[x, y, w, h]` to the canvas `[0, 0, W, H]`
  * (slideshow targets routinely overshoot, e.g. `#-922,1005,2129,949`).
  * Returns the intersected region, or null when nothing visible remains.

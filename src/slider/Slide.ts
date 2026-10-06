@@ -217,10 +217,7 @@ class SlideBase {
         // the media_ended handlers registered via onMediaEnded() live on the
         // media objects, which outlive this slide once nulled — remove them
         // here or a disposed slide's advance closure fires on a later ended
-        for (const { media, fn } of this._media_ended_fns) {
-            media.off?.("media_ended", fn);
-        }
-        this._media_ended_fns = [];
+        this.clearMediaEnded();
         for (const { media, fn } of this._media_loaded_fns) {
             media.off?.("media_loaded", fn);
         }
@@ -390,6 +387,23 @@ class SlideBase {
         if (playable.length !== 1) return;
         playable[0].on?.("media_ended", fn);
         this._media_ended_fns.push({ media: playable[0], fn });
+    }
+
+    /**
+     * Drop `media_ended` handlers armed by `onMediaEnded()` without waiting
+     * for dispose: re-arming (autoplay revisit) or navigating away must not
+     * accumulate stale advance closures — an ambient bed outliving its slide
+     * would otherwise fire a previous slide's advance on ending.
+     */
+    clearMediaEnded(): void {
+        for (const { media, fn } of this._media_ended_fns) {
+            try {
+                media.off?.("media_ended", fn);
+            } catch {
+                // same editor-context race stopMedia() already tolerates
+            }
+        }
+        this._media_ended_fns = [];
     }
 
     scrollToTop() {

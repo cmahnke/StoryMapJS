@@ -25,9 +25,11 @@ import type {
 import {
     LOCATION_PROPERTIES,
     asRecord,
+    isDuplicateNarration,
     isHttpUrl,
     isLonLatBox,
     languageMap,
+    writePlaybackTerms,
 } from "./iiif-shared.ts";
 
 /**
@@ -598,7 +600,7 @@ function buildCanvas(
                         target: buildRegionTarget(canvasId, slide.location?.region) ?? canvasId,
                         // Playback flags for audio/video media (slideshow
                         // audio terms); absent stays absent.
-                        ...buildPlaybackTerms(slide.media ?? {}),
+                        ...writePlaybackTerms(slide.media ?? {}),
                     },
                     // Narration is a supplementing Sound body (V1 of #358):
                     // "additional to the painting", with no rendering rules
@@ -663,7 +665,7 @@ function buildExtraPaintings(canvasId: string, slide: StorymapSlide): StorymapMa
  */
 function buildNarration(canvasId: string, slide: StorymapSlide): StorymapManifestAnnotation[] {
     const url = slide.narration?.url;
-    if (typeof url !== "string" || url === "" || url === slide.media?.url) {
+    if (typeof url !== "string" || url === "" || isDuplicateNarration([slide.media?.url], url)) {
         return [];
     }
     return [
@@ -673,7 +675,7 @@ function buildNarration(canvasId: string, slide: StorymapSlide): StorymapManifes
             motivation: "supplementing",
             body: { id: url, type: "Sound" },
             target: canvasId,
-            ...buildPlaybackTerms(slide.narration ?? {}),
+            ...writePlaybackTerms(slide.narration ?? {}),
         },
     ];
 }
@@ -939,41 +941,6 @@ function buildCanvasTerms(slide: StorymapSlide): Partial<StorymapManifestCanvas>
     }
     if (present(slide.provenance)) {
         terms["storymap:provenance"] = slide.provenance;
-    }
-    return terms;
-}
-
-/**
- * `storymap:` playback flags for a media/narration bag (slideshow audio
- * terms): foreign members needing no vocabulary registration. Only present
- * flags are written, so old readers see an unchanged annotation.
- */
-function buildPlaybackTerms(bag: {
-    loop?: boolean;
-    offset?: number;
-    play?: "auto" | "click";
-    stopOnExit?: boolean;
-    stopAllPrevious?: boolean;
-}): {
-    "storymap:loop"?: boolean;
-    "storymap:offset"?: number;
-    "storymap:play"?: string;
-    "storymap:stopOnExit"?: boolean;
-    "storymap:stopAllPrevious"?: boolean;
-} {
-    const terms: {
-        "storymap:loop"?: boolean;
-        "storymap:offset"?: number;
-        "storymap:play"?: string;
-        "storymap:stopOnExit"?: boolean;
-        "storymap:stopAllPrevious"?: boolean;
-    } = {};
-    if (typeof bag.loop === "boolean") terms["storymap:loop"] = bag.loop;
-    if (typeof bag.offset === "number") terms["storymap:offset"] = bag.offset;
-    if (bag.play === "auto" || bag.play === "click") terms["storymap:play"] = bag.play;
-    if (typeof bag.stopOnExit === "boolean") terms["storymap:stopOnExit"] = bag.stopOnExit;
-    if (typeof bag.stopAllPrevious === "boolean") {
-        terms["storymap:stopAllPrevious"] = bag.stopAllPrevious;
     }
     return terms;
 }

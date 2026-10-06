@@ -17,20 +17,20 @@ npm run convert:slideshow -- --settings settings.json --out tour.storymap.json <
 
 ## Slide mapping (one annotation = one slide, in page order)
 
-| Tour field                    | Story field                                                    |
-| ----------------------------- | -------------------------------------------------------------- |
-| `label`                       | story `title` (first slide headline)                           |
-| `creator` / `rights`          | story `credit` (+ map attribution)                             |
-| `TextualBody value`           | `text.text` (`text/html` verbatim)                             |
-| target `#x,y,w,h`             | `location.region` (origins clamped)                            |
-| annotation / canvas ids       | `uniqueid` + `provenance`                                      |
-| `rotation` (non-zero)         | `location.rotation`                                            |
-| `filters`                     | `location.filter` (`hue_rotate` → `hueRotate`)                 |
-| `passepartout` + color/invert | `location.mask`                                                |
-| `audio`                       | `narration` (full flag bag)                                    |
-| `image_srv`                   | `location.basemap` (IIIF services and plain image files alike) |
-| `image_static`                | `media.url` + story `fallbackUrl`                              |
-| `manifest_id`                 | `provenance.manifest` only                                     |
+| Tour field                               | Story field                                                                 |
+| ---------------------------------------- | --------------------------------------------------------------------------- |
+| `label`                                  | story `title` (first slide headline)                                        |
+| `creator` / `rights`                     | story `credit` (+ map attribution)                                          |
+| `TextualBody value`                      | `text.text` (`text/html` verbatim)                                          |
+| target `#x,y,w,h`                        | `location.region` (origins clamped)                                         |
+| annotation / canvas ids                  | `uniqueid` + `provenance`                                                   |
+| `rotation` (non-zero)                    | `location.rotation`                                                         |
+| `filters`                                | `location.filter` (`hue_rotate` → `hueRotate`)                              |
+| `passepartout` + color/invert            | `location.mask`                                                             |
+| `audio`                                  | `narration` (full flag bag)                                                 |
+| `image_srv`                              | `location.basemap` (IIIF services and plain image files alike)              |
+| `image_static`                           | `media.url` + story `fallbackUrl`                                           |
+| `manifest_id` / `canvas_id` / `image_id` | `provenance.{manifest,canvas,image}` (canvas falls back to the target base) |
 
 `rotation: 0`, `filters: false`, `passepartout: false` and `audio: false`
 are omitted (the viewer defaults match). A target without a fragment, or
@@ -41,10 +41,11 @@ duplicates the slide media URL is kept once, as media.
 
 v1 documents (`AnnotationPageSequence`, one page per slide, `metadata`
 with plain `title`/`author`/`license`) map page-by-page: bodies
-concatenate with a space, the last `#x,y,w,h` fragment wins, ids come
-from the first item's target, and the metadata becomes title + credit.
-v1 has no filters/rotation/mask/audio/static fields. Detection is by
-context plus shape, never Presentation 3.
+concatenate with a space, the last `#x,y,w,h` fragment wins, the
+`uniqueid` is the page's first annotation id (provenance comes from the
+target's `manifest_id`/`canvas_id`/`image_id`), and the metadata becomes
+title + credit. v1 has no filters/rotation/mask/audio/static fields.
+Detection is by context plus shape, never Presentation 3.
 
 ## Player settings mapping
 
@@ -68,12 +69,13 @@ context plus shape, never Presentation 3.
 ## Loss table (warned, one `console.warn` per kind)
 
 Provenance identifiers beyond `uniqueid` (kept data-only in
-`slide.provenance`), legacy v1 tours (detected, not mapped), unfollowed
-`next` pages (inline documents; the URL loader and CLI follow the chain),
-unknown `mode`/`fxmode`/`play` values, unparsable bottom-dock
-`textsize`/`hudopacity`/`viewerheight`, overlay enabled without a URL,
-malformed targets/annotations. Everything else translates silently, and
-every translator output validates against `schema/storymap.schema.json`.
+`slide.provenance`), unfollowed `next` pages (inline documents; the URL
+loader and CLI follow the chain), unknown `mode`/`fxmode`/`play` values,
+unparsable bottom-dock `textsize`/`hudopacity`/`viewerheight`, overlay
+enabled without a URL, malformed targets/annotations, empty pages
+(skipped). Everything else translates silently — legacy v1 tours map
+fully (above) — and every translator output validates against
+`schema/storymap.schema.json`.
 
 Translated tours render through the slideshow-gated presentation fields
 (`slideshow_source`), so internal documents are unaffected — see the

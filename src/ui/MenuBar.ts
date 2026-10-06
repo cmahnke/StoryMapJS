@@ -4,6 +4,7 @@ import Dom from "../dom/Dom";
 import { easeInOutQuint } from "../animation/easings";
 
 import { DomEvent } from "../dom/DomEvent";
+import { PROGRESSBAR_STYLES } from "../types";
 import { Browser } from "../core/Browser";
 import { Language, currentLocale } from "../language/Language";
 import LayersControl, { type LayersControlDelegate } from "./LayersControl";
@@ -267,27 +268,35 @@ class MenuBarBase {
         if (!this._el.progress_fill) {
             return;
         }
-        const percent = total > 1 ? Math.round((current / (total - 1)) * 100) : 100;
+        // a single slide (or none) is fully read by definition, but a
+        // progressbar over zero slides is invalid ARIA — clear it instead
+        if (!(total > 1)) {
+            this._el.progress_fill.style.width = "100%";
+            this._el.progress.removeAttribute("role");
+            this._el.progress.removeAttribute("aria-valuenow");
+            this._el.progress.removeAttribute("aria-valuemin");
+            this._el.progress.removeAttribute("aria-valuemax");
+            this._el.progress.setAttribute("aria-label", "1 / 1");
+            return;
+        }
+        const percent = Math.round((Math.min(current, total - 1) / (total - 1)) * 100);
         this._el.progress_fill.style.width = percent + "%";
         this._el.progress.setAttribute("role", "progressbar");
-        this._el.progress.setAttribute("aria-valuenow", String(current + 1));
+        this._el.progress.setAttribute("aria-valuenow", String(Math.min(current, total - 1) + 1));
         this._el.progress.setAttribute("aria-valuemin", "1");
         this._el.progress.setAttribute("aria-valuemax", String(total));
-        this._el.progress.setAttribute("aria-label", `${current + 1} / ${total}`);
+        this._el.progress.setAttribute(
+            "aria-label",
+            `${Math.min(current, total - 1) + 1} / ${total}`,
+        );
     }
 
     /** The resolved progress style: `progressbar` wins, `show_progress` decides the default. */
     _progressStyle(): "off" | "bar" | "dots" | "squares" | "block" | "thinblock" {
         const raw = this.options.progressbar as string | boolean | undefined;
         if (raw === false || raw === "off") return "off";
-        if (
-            raw === "bar" ||
-            raw === "dots" ||
-            raw === "squares" ||
-            raw === "block" ||
-            raw === "thinblock"
-        ) {
-            return raw;
+        if (typeof raw === "string" && (PROGRESSBAR_STYLES as readonly string[]).includes(raw)) {
+            return raw as "bar" | "dots" | "squares" | "block" | "thinblock";
         }
         return this.options.show_progress ? "bar" : "off";
     }
@@ -295,6 +304,12 @@ class MenuBarBase {
     /** Per-slide progress buttons for the `dots`/`squares` styles. */
     _renderProgressSteps(style: "dots" | "squares", current: number, total: number): void {
         const container = this._el.progress;
+        if (!(total > 0)) {
+            container.innerHTML = "";
+            container.removeAttribute("role");
+            container.setAttribute("aria-label", "No slides");
+            return;
+        }
         const built = Number(container.getAttribute("data-steps") ?? "0");
         if (built !== total) {
             container.innerHTML = "";

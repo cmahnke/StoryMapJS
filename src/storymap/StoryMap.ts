@@ -20,10 +20,13 @@ import {
     manifestToStorymapData,
 } from "./iiif";
 import {
+    followSlideshowPages,
+    formatSlideshowWarning,
     isSlideshowCollection,
     slideshowToStorymapData,
     type SlideshowWarning,
 } from "./from-slideshow";
+import { asClampedNumber } from "./iiif-shared";
 import {
     ConsentManager,
     consentManagerOf,
@@ -515,15 +518,12 @@ class StoryMapBase {
 	================================================== */
     /**
      * One `console.warn` per warning kind: count, detail and sample ids.
-     * Translation losses are loud exactly once, never per slide.
+     * Translation losses are loud exactly once, never per slide. Shared
+     * formatting with the CLI (see `formatSlideshowWarning`).
      */
     _warnSlideshow(warnings: SlideshowWarning[]): void {
         for (const warning of warnings) {
-            const samples =
-                warning.sampleIds.length > 0 ? ` [${warning.sampleIds.join(", ")}]` : "";
-            console.warn(
-                `StoryMapJS: slideshow ${warning.kind} (×${warning.count}): ${warning.detail}${samples}`,
-            );
+            console.warn(`StoryMapJS: ${formatSlideshowWarning(warning)}`);
         }
     }
 
@@ -537,31 +537,33 @@ class StoryMapBase {
         doc: unknown,
         url: string,
     ): Promise<{ pages: unknown[]; complete: boolean }> {
-        const pages: unknown[] = [];
-        const seen = new Set<string>([url]);
-        let next: unknown = (doc as Record<string, unknown> | null)?.first;
-        for (let hop = 0; hop < 20; hop++) {
-            const link = (next as Record<string, unknown> | null)?.next;
-            if (typeof link !== "string" || link === "") return { pages, complete: true };
-            let absolute: string;
-            try {
-                absolute = new URL(link, url).href;
-            } catch {
-                return { pages, complete: false };
-            }
-            if (seen.has(absolute)) return { pages, complete: false };
-            seen.add(absolute);
-            try {
-                const response = await fetch(absolute);
-                if (!response.ok) return { pages, complete: false };
-                const page: unknown = await response.json();
-                pages.push(page);
-                next = page;
-            } catch {
-                return { pages, complete: false };
-            }
+        // relative tour URLs (harness, subpath deploys) resolve against the
+        // page; an unresolvable base still lets absolute links through
+        let base = url;
+        try {
+            base = new URL(url, window.location.href).href;
+        } catch {
+            // keep the raw url
         }
-        return { pages, complete: false };
+        const first = (doc as Record<string, unknown> | null)?.first;
+        return followSlideshowPages({
+            first,
+            base,
+            resolve: (link, current) => {
+                try {
+                    return new URL(link, current).href;
+                } catch {
+                    return null;
+                }
+            },
+            load: async (absolute: string) => {
+                const response = await fetch(absolute);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
+                }
+                return response.json() as Promise<unknown>;
+            },
+        });
     }
 
     async _loadDataFromUrl(url: string, source: string) {
@@ -1485,15 +1487,12 @@ class StoryMapBase {
             container.style.removeProperty("--vco-hud-fg");
         }
         if (options.hudbgcolor) {
-            const opacity =
-                typeof options.hudopacity === "number" && Number.isFinite(options.hudopacity)
-                    ? Math.min(100, Math.max(0, options.hudopacity)) / 100
-                    : null;
+            const opacity = asClampedNumber(options.hudopacity, 0, 100);
             container.style.setProperty(
                 "--vco-hud-bg",
                 opacity === null
                     ? options.hudbgcolor
-                    : `color-mix(in srgb, ${options.hudbgcolor} ${Math.round(opacity * 100)}%, transparent)`,
+                    : `color-mix(in srgb, ${options.hudbgcolor} ${Math.round(opacity)}%, transparent)`,
             );
         } else {
             container.style.removeProperty("--vco-hud-bg");
@@ -1517,10 +1516,8 @@ class StoryMapBase {
         }
         const textsize = options.textsize;
         if (typeof textsize === "number" && Number.isFinite(textsize)) {
-            container.style.setProperty(
-                "--vco-panel-size",
-                `${Math.min(80, Math.max(10, textsize))}%`,
-            );
+            const clamped = asClampedNumber(textsize, 10, 80) ?? 50;
+            container.style.setProperty("--vco-panel-size", `${clamped}%`);
         } else {
             container.style.removeProperty("--vco-panel-size");
         }
@@ -1534,7 +1531,7 @@ class StoryMapBase {
     _panelShare(): number {
         const textsize = this.options.textsize;
         if (typeof textsize === "number" && Number.isFinite(textsize)) {
-            return Math.min(0.8, Math.max(0.1, textsize / 100));
+            return (asClampedNumber(textsize, 10, 80) ?? 50) / 100;
         }
         return this.options.textmode === "bottom" ? 0.4 : 0.5;
     }
@@ -2181,10 +2178,16 @@ class StoryMapBase {
      * Start the current slide's click-armed narration (`narration.play:
      * "click"`): the control for visitors (or hosts) to start a track that
      * waits for them. Auto-armed tracks play on their own. No-op when
-     * nothing is armed.
+     * nothing is armed. Prefers the current slide's own track: with an
+     * ambient bed running, the foreground it armed is the one to start.
      */
     playNarration(): void {
-        const el = this._ambient_meta ? this._ambient_el : this._narration_el;
+        const bag = this.data.slides?.[this.current_slide]?.narration ?? null;
+        const persistent = bag?.stopOnExit === false && typeof bag?.url === "string";
+        const el =
+            persistent && this._ambient_meta?.url === bag?.url
+                ? this._ambient_el
+                : this._narration_el;
         if (!el || !el.getAttribute("src")) return;
         if (this._disposed || !this._narration_allowed || this._has_user_gesture() === false) {
             this._replayNarrationAfterGesture = true;
@@ -2332,22 +2335,40 @@ class StoryMapBase {
 
     /**
      * Stop other slides' ambient audio beds when the new slide claims the
-     * audio (its narration, or playable media, does not opt out via
-     * `stopAllPrevious: false`). A silent slide inherits a playing bed.
+     * audio: its narration (unless opted out via `stopAllPrevious: false`),
+     * or playable media that is actually playing (a paused click-to-play
+     * bed must not kill an inherited ambient track it never starts).
+     * A silent slide inherits a playing bed.
      */
     _stopAmbientSlideMedia(slide: StorymapSlide | undefined) {
-        const claims =
-            (typeof slide?.narration?.url === "string" &&
-                slide.narration.url !== "" &&
-                slide.narration.stopAllPrevious !== false) ||
-            (this._storyslider?._slides?.[this.current_slide]?.hasPlayableMedia?.() === true &&
-                (slide?.media as { stopAllPrevious?: boolean } | null | undefined)
-                    ?.stopAllPrevious !== false);
-        if (!claims) return;
+        const claimsNarration =
+            typeof slide?.narration?.url === "string" &&
+            slide.narration.url !== "" &&
+            slide.narration.stopAllPrevious !== false;
+        const claimsMedia =
+            (slide?.media as { stopAllPrevious?: boolean } | null | undefined)?.stopAllPrevious !==
+                false && this._isSlideMediaPlaying(this.current_slide);
+        if (!claimsNarration && !claimsMedia) return;
         const slides = this._storyslider?._slides;
         if (!slides) return;
         slides.forEach((entry, index) => {
             if (index !== this.current_slide) entry.stopAmbientMedia?.();
+        });
+    }
+
+    /**
+     * True when the slide's media element exists and is currently playing
+     * (not paused, not ended, not merely loadable).
+     */
+    _isSlideMediaPlaying(index: number): boolean {
+        const slide = this._storyslider?._slides?.[index];
+        const medias = (
+            slide as unknown as { _medias?: { player_element?: HTMLMediaElement | null }[] }
+        )?._medias;
+        if (!Array.isArray(medias)) return false;
+        return medias.some((media) => {
+            const el = media?.player_element;
+            return !!el && typeof el.paused === "boolean" && !el.paused && !el.ended;
         });
     }
 
@@ -2394,7 +2415,15 @@ class StoryMapBase {
         if (this.options.autoplay_media) {
             const slide = this._storyslider?._slides?.[this.current_slide];
             if (slide?.hasPlayableMedia?.()) {
-                slide.onMediaEnded(advance);
+                // re-arming clears the previous advance: without this,
+                // revisits accumulate listeners and a stale ended (e.g. an
+                // ambient bed outliving its slide) advances the wrong slide.
+                // The index guard covers the race between clearing and firing.
+                slide.clearMediaEnded();
+                const armed = this.current_slide;
+                slide.onMediaEnded(() => {
+                    if (this.current_slide === armed) advance();
+                });
             }
         }
 
@@ -2767,7 +2796,10 @@ class StoryMapBase {
     }
 
     _updateProgress() {
-        if (this.options.show_progress && this._menubar) {
+        // any enabled style updates (the classic bar via show_progress, the
+        // variants via progressbar); a disabled indicator stays untouched so
+        // its ARIA never goes stale
+        if (this._menubar && this._menubar._progressStyle() !== "off") {
             this._menubar.setProgress(this.current_slide, this.data.slides.length);
         }
     }

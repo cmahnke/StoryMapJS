@@ -327,7 +327,7 @@
                             "enum": ["bar", "dots", "squares", "block", "thinblock", "off"]
                         }
                     ],
-                    "description": "Progress indicator style (slideshow progressbar): false/off hides it, true/bar is the classic fill bar, dots/squares render one step per slide, block/thinblock are fill-bar height variants. Absent means show_progress decides with the bar style."
+                    "description": "Progress indicator style (slideshow progressbar): false/off hides it, true/bar is the classic fill bar, dots/squares render one step per slide, block/thinblock are fill-bar height variants. Absent means show_progress decides with the bar style. Honored only with slideshow_source."
                 },
                 "show_layers_control": {
                     "type": "boolean",
@@ -365,49 +365,49 @@
                 "textmode": {
                     "type": "string",
                     "enum": ["left", "right", "bottom"],
-                    "description": "Slide panel dock (slideshow textmode) in landscape: right (default) is the current layout, left mirrors it, bottom docks the panel below the map. Portrait layouts always behave like bottom."
+                    "description": "Slide panel dock (slideshow textmode) in landscape: right (default) is the current layout, left mirrors it, bottom docks the panel below the map. Portrait layouts always behave like bottom. Honored only with slideshow_source."
                 },
                 "textsize": {
                     "type": "number",
                     "minimum": 10,
                     "maximum": 80,
-                    "description": "Slide panel size as a percentage (slideshow textsize): percent of the width for side docks, of the height for the bottom dock. Absent keeps the built-in 50/50 split."
+                    "description": "Slide panel size as a percentage (slideshow textsize): percent of the width for side docks, of the height for the bottom dock. Absent keeps the built-in 50/50 split. Honored only with slideshow_source."
                 },
                 "fxmode": {
                     "type": "string",
                     "enum": ["slide", "fade", "none"],
-                    "description": "Slide transition effect (slideshow fxmode): slide (default) is the current glide, fade cross-fades slides, none jumps without animation. prefers-reduced-motion still forces none."
+                    "description": "Slide transition effect (slideshow fxmode): slide (default) is the current glide, fade cross-fades slides, none jumps without animation. prefers-reduced-motion still forces none. Honored only with slideshow_source."
                 },
                 "mode": {
                     "type": "string",
                     "enum": ["standard", "static"],
-                    "description": "Reading mode (slideshow mode): standard (default) is the slider; static stacks all slides in a scrollable list and follows the map to the slide in view."
+                    "description": "Reading mode (slideshow mode): standard (default) is the slider; static stacks all slides in a scrollable list and follows the map to the slide in view. Honored only with slideshow_source."
                 },
                 "hudcolor": {
                     "type": "string",
-                    "description": "HUD foreground color override (slideshow hudcolor)"
+                    "description": "HUD foreground color override (slideshow hudcolor). Honored only with slideshow_source."
                 },
                 "hudbgcolor": {
                     "type": "string",
-                    "description": "HUD background color override (slideshow hudbgcolor)"
+                    "description": "HUD background color override (slideshow hudbgcolor). Honored only with slideshow_source."
                 },
                 "hudopacity": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100,
-                    "description": "HUD opacity percent 0..100 (slideshow hudopacity), applied to the HUD background"
+                    "description": "HUD opacity percent 0..100 (slideshow hudopacity), applied to the HUD background. Honored only with slideshow_source."
                 },
                 "shownav": {
                     "type": "boolean",
-                    "description": "Show the previous/next slide navigation (slideshow shownav). Default true."
+                    "description": "Show the previous/next slide navigation (slideshow shownav). Default true. Honored only with slideshow_source."
                 },
                 "show_headings": {
                     "type": "boolean",
-                    "description": "Render slide headlines (slideshow showheadings). Default true; false hides headline elements."
+                    "description": "Render slide headlines (slideshow showheadings). Default true; false hides headline elements. Honored only with slideshow_source."
                 },
                 "show_scrollbars": {
                     "type": "boolean",
-                    "description": "Show scrollbars in the slide panel (slideshow showscrollbars). Default true; false hides them (content still scrolls)."
+                    "description": "Show scrollbars in the slide panel (slideshow showscrollbars). Default true; false hides them (content still scrolls). Honored only with slideshow_source."
                 },
                 "viewerheight": {
                     "type": "string",
@@ -526,20 +526,20 @@
                 "offset": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "Start offset in seconds for audio/video media (slideshow audio.offset)"
+                    "description": "Start offset in seconds for audio/video media (slideshow audio.offset). Honored only with slideshow_source"
                 },
                 "loop": {
                     "type": "boolean",
-                    "description": "Loop audio/video media (slideshow audio.loop)"
+                    "description": "Loop audio/video media (slideshow audio.loop). Honored only with slideshow_source"
                 },
                 "play": {
                     "type": "string",
                     "enum": ["auto", "click"],
-                    "description": "auto plays on activation; click arms paused for the visitor to start"
+                    "description": "auto plays on activation; click arms paused for the visitor to start. Honored only with slideshow_source"
                 },
                 "stopOnExit": {
                     "type": "boolean",
-                    "description": "Stop this media when leaving the slide (default true); false lets an audio bed continue"
+                    "description": "Stop this media when leaving the slide (default true); false lets an audio bed continue. Honored only with slideshow_source"
                 },
                 "mediatype": {
                     "type": ["object", "null"]
@@ -585,11 +585,11 @@
                         },
                         "rotation": {
                             "type": "number",
-                            "description": "View rotation in degrees clockwise (slideshow rotation); absent means north-up"
+                            "description": "View rotation in degrees clockwise (slideshow rotation); absent means north-up. Honored only with slideshow_source"
                         },
                         "filter": {
                             "type": "object",
-                            "description": "Per-slide image grading (slideshow filters), applied as a CSS filter() on the map viewport",
+                            "description": "Per-slide image grading (slideshow filters), applied as a CSS filter() on the map viewport. Honored only with slideshow_source",
                             "properties": {
                                 "brightness": { "type": "number", "minimum": 0, "maximum": 200 },
                                 "contrast": { "type": "number", "minimum": 0, "maximum": 200 },
@@ -601,7 +601,7 @@
                         },
                         "mask": {
                             "type": "object",
-                            "description": "Spotlight mask (slideshow passepartout): normalized viewport fractions left visible while the rest is dimmed",
+                            "description": "Spotlight mask (slideshow passepartout): normalized viewport fractions left visible while the rest is dimmed. Honored only with slideshow_source",
                             "required": ["x", "y", "w", "h"],
                             "properties": {
                                 "x": { "type": "number" },
@@ -615,7 +615,7 @@
                         },
                         "basemap": {
                             "type": "string",
-                            "description": "Per-slide basemap override (multi-manifest tours): any map_type value or IIIF info.json URL. Absent keeps the story basemap."
+                            "description": "Per-slide basemap override (multi-manifest tours): any map_type value or IIIF info.json URL. Absent keeps the story basemap. Honored only with slideshow_source."
                         },
                         "zoom": {
                             "type": "number"
@@ -720,25 +720,25 @@
                         },
                         "loop": {
                             "type": "boolean",
-                            "description": "Loop the narration (slideshow audio.loop)"
+                            "description": "Loop the narration (slideshow audio.loop). Honored only with slideshow_source"
                         },
                         "offset": {
                             "type": "number",
                             "minimum": 0,
-                            "description": "Start offset in seconds (slideshow audio.offset)"
+                            "description": "Start offset in seconds (slideshow audio.offset). Honored only with slideshow_source"
                         },
                         "play": {
                             "type": "string",
                             "enum": ["auto", "click"],
-                            "description": "auto plays on navigation; click arms paused for the visitor to start (slideshow audio.play)"
+                            "description": "auto plays on navigation; click arms paused for the visitor to start (slideshow audio.play). Honored only with slideshow_source"
                         },
                         "stopOnExit": {
                             "type": "boolean",
-                            "description": "Stop when leaving the slide (default true); false keeps an audio bed across slides while the URL is unchanged"
+                            "description": "Stop when leaving the slide (default true); false keeps an audio bed across slides while the URL is unchanged. Honored only with slideshow_source"
                         },
                         "stopAllPrevious": {
                             "type": "boolean",
-                            "description": "Stop any other playing track before starting (default true); false allows ambient overlap"
+                            "description": "Stop any other playing track before starting (default true); false allows ambient overlap. Honored only with slideshow_source"
                         }
                     },
                     "required": ["url"]
@@ -746,11 +746,11 @@
                 "slidetimeout": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "Per-slide autoplay dwell in milliseconds (slideshow slidetimeout): overrides the global autoplay interval for this slide; 0 holds. Absent means the global interval."
+                    "description": "Per-slide autoplay dwell in milliseconds (slideshow slidetimeout): overrides the global autoplay interval for this slide; 0 holds. Absent means the global interval. Honored only with slideshow_source."
                 },
                 "imgoverlay": {
                     "anyOf": [{ "type": "object" }, { "type": "null" }],
-                    "description": "Per-slide image overlay on the map (slideshow imgoverlay), shown while this slide is active",
+                    "description": "Per-slide image overlay on the map (slideshow imgoverlay), shown while this slide is active. Honored only with slideshow_source",
                     "properties": {
                         "url": { "type": "string", "format": "uri" },
                         "size": { "type": "number", "exclusiveMinimum": 0 },

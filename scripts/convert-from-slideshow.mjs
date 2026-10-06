@@ -17,13 +17,21 @@
 // stripping, which is on by default from Node 22.18 and Node 23.6; the npm
 // script passes `--experimental-strip-types` for Node 22.6-22.17.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, dirname, extname, join } from "node:path";
+import { basename, dirname, extname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { isSlideshowCollection, slideshowToStorymapData } from "../src/storymap/from-slideshow.ts";
+import {
+    followSlideshowPages,
+    formatSlideshowWarning,
+    isSlideshowCollection,
+    slideshowToStorymapData,
+} from "../src/storymap/from-slideshow.ts";
 
-export { isSlideshowCollection, slideshowToStorymapData };
-
-const MAX_PAGES = 20;
+export {
+    followSlideshowPages,
+    formatSlideshowWarning,
+    isSlideshowCollection,
+    slideshowToStorymapData,
+};
 
 /** True when this file is the process entry point, not an import. */
 const invokedDirectly =
@@ -58,19 +66,19 @@ export async function convertSlideshowSource(source, settings = null) {
     if (!isSlideshowCollection(doc)) {
         throw new Error("not a slideshow tour document");
     }
-    const extraPages = [];
-    const seen = new Set([base]);
-    let next = doc?.first;
-    for (let hop = 0; hop < MAX_PAGES; hop++) {
-        const link = next?.next;
-        if (typeof link !== "string" || link === "") break;
-        const absolute = resolveLink(link, base);
-        if (absolute === null || seen.has(absolute)) break;
-        seen.add(absolute);
-        const { doc: page } = await loadJson(absolute);
-        extraPages.push(page);
-        next = page;
-    }
+    // file inputs resolve `next` against the filesystem (node fetch cannot
+    // do file: URLs), URL inputs against the tour URL
+    const fromFile = !isUrl(source);
+    const start = fromFile ? resolve(base) : base;
+    const { pages: extraPages } = await followSlideshowPages({
+        first: doc?.first,
+        base: start,
+        resolve: (link, current) => {
+            if (fromFile) return join(dirname(current), link);
+            return resolveLink(link, current);
+        },
+        load: async (absolute) => (await loadJson(absolute)).doc,
+    });
     return slideshowToStorymapData(doc, { settings, extraPages });
 }
 
@@ -131,9 +139,7 @@ async function main() {
         try {
             const { data, warnings } = await convertSlideshowSource(input, settings);
             for (const warning of warnings) {
-                console.warn(
-                    `! ${input}: slideshow ${warning.kind} (×${warning.count}): ${warning.detail}`,
-                );
+                console.warn(`! ${input}: ${formatSlideshowWarning(warning)}`);
             }
             planned.push({ out, data });
         } catch (err) {

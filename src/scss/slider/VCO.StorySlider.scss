@@ -73,24 +73,29 @@
 
     /* Static reading mode (mode: "static"): all slides stacked in a
        scrollable list instead of a translating strip; the scroll-spy in
-       StorySlider follows the reading position. Standard mode is untouched.
+       StorySlider follows the reading position. The container chain gets
+       definite heights so the slides' percentage min-height resolves and
+       the list actually overflows into a scroll. Specificity is raised via
+       .vco-storymap because this block compiles before the entry-file
+       landscape/base rules it must beat. Standard mode is untouched.
     ================================================== */
-    &.vco-static {
+    @at-root .vco-storymap &.vco-static {
         overflow-y: auto;
 
         .vco-slider-container-mask {
             overflow: visible;
+            height: 100%;
         }
 
         .vco-slider-container {
             position: relative;
-            height: auto;
+            height: 100%;
         }
 
         .vco-slider-item-container {
             position: relative;
             display: block;
-            height: auto;
+            height: 100%;
         }
 
         .vco-slide {

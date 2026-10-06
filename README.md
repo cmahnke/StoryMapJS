@@ -100,29 +100,40 @@ the view while it is active; everything is optional and validated against
     location: {
         region: [x, y, w, h],  // image-pixel stop (IIIF xywh); negative origins clamp to the canvas
         rotation: 45,          // view rotation in degrees clockwise
-        filter: { sepia: 40 }, // brightness/contrast/saturate (%), hueRotate (°), sepia (%), blur (px)
-        mask: { x: 0.1, y: 0.1, w: 0.8, h: 0.8 },  // spotlight mask (fractions) + color/invert
-        basemap: "osm:bright", // per-slide basemap (any map_type or IIIF info.json URL)
+        filter: { sepia: 40 }, // brightness/contrast/saturate 0-200 (%), hueRotate -180-180 (°), sepia 0-100 (%), blur 0-20 (px)
+        mask: { x: 0.1, y: 0.1, w: 0.8, h: 0.8, opacity: 0.5 },  // spotlight mask (fractions) + color/invert
+        basemap: "osm:bright", // per-slide basemap (any map_type, IIIF info.json URL or image file)
     },
     narration: { url, loop, offset, play: "auto"|"click", stopOnExit, stopAllPrevious },
     slidetimeout: 9000,        // per-slide autoplay dwell in ms (0 holds); default is the global autoplay
-    imgoverlay: { url, extent, opacity },  // image overlay while the slide is active
+    imgoverlay: { url, size, extent, opacity },  // image overlay while the slide is active
+
+Audio/video media take the same `offset`/`loop`/`play`/`stopOnExit` flags
+on the slide's `media` object (`stopAllPrevious` is narration-only).
 
 When a slide's IIIF `info.json` cannot be loaded, `iiif: { width, height,
 fallbackUrl }` paints the static image instead of a blank basemap. Without
 stated dimensions the viewer probes the fallback image's natural size first,
 but only for slideshow tours (15s timeout); other documents keep the logged
-error path.
+error path. Per-slide static basemaps (`image_srv` pointing at a plain
+image file, absolute or same-origin relative) probe the same way, and a
+failed `info.json` fetch falls back to a probed static image in place.
 
 The player chrome is opt-in storymap options (absent means the default
-layout): `textmode: "left"|"right"|"bottom"` with `textsize` (10–80 %),
+layout): `textmode: "left"|"right"|"bottom"` with `textsize` (10–80 %,
+bottom dock only — the player drops side-dock sizes too),
 `progressbar: "bar"|"dots"|"squares"|"block"|"thinblock"|"off"`,
 `fxmode: "slide"|"fade"|"none"`, `mode: "static"` (stacked reading list with
 scroll-spy map sync), `hudcolor`/`hudbgcolor`/`hudopacity`,
 `shownav`/`show_headings`/`show_scrollbars`/`show_info` toggles and
-`viewerheight: "400px"`. The same presentation round-trips through IIIF
-manifests as `storymap:` terms — see
-[docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md).
+`viewerheight: "400px"`.
+
+**IIIF round-trip:** the per-slide fields do survive — `rotation`,
+`filter`, `mask`, `basemap`, `slidetimeout`, `imgoverlay`, `provenance`
+and the playback bags travel as `storymap:` terms (see
+[docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md)).
+The player chrome does **not**: it has no IIIF vocabulary and is
+translator-only (a storymap→manifest→storymap cycle drops it).
 
 These presentation fields render **only for slideshow tours** (documents
 loaded from that format, which set the internal `slideshow_source` marker).
@@ -133,9 +144,9 @@ pass `slideshow_source: true` explicitly as an escape hatch (e.g. in tests).
 
 Slideshow tours (W3C `AnnotationCollection` documents) load directly — by
 object, file or URL, following `next` pages — or convert offline with
-`npm run convert:slideshow` (see
-[docs/slideshow.md](docs/slideshow.md) for the field mapping, player-settings
-handling and loss table).
+`npm run convert:slideshow -- [--settings settings.json] [--out out.json] <tour-url-or-file>`
+(see [docs/slideshow.md](docs/slideshow.md) for the field mapping,
+player-settings handling and loss table).
 
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with

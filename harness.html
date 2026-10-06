@@ -72,7 +72,15 @@
                     return r.json();
                 })
                 .then((data) => {
-                    const sm = new StoryMap("storymap-embed", data, optionsOverride, {});
+                    // slideshow tours pass the URL through so the viewer
+                    // exercises its own fetch + next-page following (like a
+                    // host would); everything else passes the document
+                    const sm = new StoryMap(
+                        "storymap-embed",
+                        slideshow !== null && remoteUrl === null ? dataUrl : data,
+                        optionsOverride,
+                        {},
+                    );
                     window.__sm = sm;
                     // opt-in: ?record=imageready,loaded collects events into
                     // window.__events. Attaching here (not in the constructor
