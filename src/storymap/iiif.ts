@@ -1210,6 +1210,17 @@ function canvasToSlide(
         const overlayUrl = asString(canvasImgoverlay.url);
         if (overlayUrl !== null) slide.imgoverlay = { ...canvasImgoverlay, url: overlayUrl };
     }
+    const canvasProvenance = asRecord(record[STORYMAP_PREFIX + "provenance"]);
+    if (slide.provenance === undefined && canvasProvenance !== null) {
+        const provenance: Record<string, unknown> = {};
+        for (const key of ["manifest", "canvas", "image"]) {
+            const value = asString(canvasProvenance[key]);
+            if (value !== null) provenance[key] = value;
+        }
+        if (Object.keys(provenance).length > 0) {
+            slide.provenance = provenance as StorymapSlide["provenance"];
+        }
+    }
 
     // StoryMap extension terms
     const slideType = asString(record[STORYMAP_PREFIX + "type"]);

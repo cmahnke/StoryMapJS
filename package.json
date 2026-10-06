@@ -109,6 +109,7 @@
         "check:locales:baseline": "node scripts/check-locales.mjs --write-baseline",
         "validate:iiif": "node scripts/validate-iiif.mjs",
         "convert:iiif": "node --experimental-strip-types scripts/convert-to-iiif.mjs",
+        "convert:slideshow": "node --experimental-strip-types scripts/convert-from-slideshow.mjs",
         "lint": "eslint . && stylelint 'src/scss/**/*.scss'",
         "format": "prettier --write .",
         "format:check": "prettier --check ."

@@ -212,15 +212,23 @@ test("sanitizeSlideText drops javascript: links but keeps the link text", () => 
 	copied every other attribute verbatim. These cases pin the closed holes.
 ================================================== */
 
-test("sanitizeSlideText drops the style attribute (clickjacking overlay)", () => {
+test("sanitizeSlideText keeps the style attribute verbatim (trusted authors)", () => {
     const html = renderedHTML(
         sanitizeSlideText(
             '<div style="position:fixed;inset:0;z-index:2147483647;background:#fff">cover</div>',
         ) as Node,
     );
-    expect(html).not.toContain("style=");
-    // the text is preserved: the element is unwrapped, not deleted
+    // tour authors are trusted: inline declarations pass through, and the
+    // positioned, isolated slide root confines them to the slide box
+    expect(html).toContain('style="position:fixed;inset:0;z-index:2147483647;background:#fff"');
     expect(html).toContain("cover");
+});
+
+test("sanitizeSlideText keeps ordinary inline styling", () => {
+    const html = renderedHTML(
+        sanitizeSlideText('<p style="color:#a00;font-weight:bold">styled</p>') as Node,
+    );
+    expect(html).toBe('<p style="color:#a00;font-weight:bold">styled</p>');
 });
 
 test("sanitizeSlideText overwrites a pasted target so it cannot escape the viewer", () => {

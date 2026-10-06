@@ -131,6 +131,12 @@ rendering even when they name the new keys — captions always show, the
 autoplay interval stays global, the panel keeps its default dock. Hosts may
 pass `slideshow_source: true` explicitly as an escape hatch (e.g. in tests).
 
+Slideshow tours (W3C `AnnotationCollection` documents) load directly — by
+object, file or URL, following `next` pages — or convert offline with
+`npm run convert:slideshow` (see
+[docs/slideshow.md](docs/slideshow.md) for the field mapping, player-settings
+handling and loss table).
+
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with
 `use_custom_marker: true` in the location object (or set `use_custom_markers:

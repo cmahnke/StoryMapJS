@@ -1,0 +1,48 @@
+{
+    "@context": [
+        "http://www.w3.org/ns/anno.jsonld",
+        "https://seige.digital/strollview/2/context.jsonld"
+    ],
+    "id": "https://example.org/tours/unsupported",
+    "type": "AnnotationCollection",
+    "creator": "",
+    "label": "Unknown values warn",
+    "rights": "",
+    "first": {
+        "type": "AnnotationPage",
+        "items": [
+            {
+                "id": "https://example.org/tours/unsupported/annotation/0",
+                "type": "Annotation",
+                "body": {
+                    "id": "https://example.org/tours/unsupported/body/0",
+                    "type": "TextualBody",
+                    "value": "<p>Unknown enums warn and omit.</p>",
+                    "format": "text/html"
+                },
+                "target": {
+                    "id": "https://images.example.org/iiif/canvas/1#0,0,100,100",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "strollview": {
+                    "filters": false,
+                    "passepartout": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "audio": {
+                        "url": "https://example.org/audio/x.mp3",
+                        "play": "someday"
+                    },
+                    "manifest_id": "https://images.example.org/iiif/manifest",
+                    "canvas_id": "https://images.example.org/iiif/canvas/1",
+                    "image_id": "https://images.example.org/iiif/image/1",
+                    "image_srv": "https://images.example.org/iiif/image/1",
+                    "image_static": null,
+                    "passepartout_color": "#000000cc",
+                    "passepartout_invert": false
+                }
+            },
+            "not-an-annotation"
+        ]
+    }
+}

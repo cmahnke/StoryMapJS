@@ -1,0 +1,79 @@
+{
+    "@context": [
+        "http://www.w3.org/ns/anno.jsonld",
+        "https://seige.digital/strollview/2/context.jsonld"
+    ],
+    "id": "https://example.org/tours/single",
+    "type": "AnnotationCollection",
+    "creator": "Example Author",
+    "label": "A single-manifest tour",
+    "rights": "https://creativecommons.org/licenses/by/4.0/",
+    "first": {
+        "type": "AnnotationPage",
+        "items": [
+            {
+                "id": "https://example.org/tours/single/annotation/0",
+                "type": "Annotation",
+                "body": {
+                    "id": "https://example.org/tours/single/body/0",
+                    "type": "TextualBody",
+                    "value": "<h2>Opening</h2><p>First stop.</p>",
+                    "format": "text/html"
+                },
+                "target": {
+                    "id": "https://images.example.org/iiif/canvas/1#100,200,300,400",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "strollview": {
+                    "filters": { "brightness": 110, "sepia": 20 },
+                    "passepartout": { "x": 0.1, "y": 0.1, "w": 0.8, "h": 0.8 },
+                    "rotation": 45,
+                    "audio": {
+                        "url": "https://example.org/audio/0.mp3",
+                        "loop": false,
+                        "offset": 2,
+                        "play": "auto",
+                        "stopallprevious": true,
+                        "stoponexit": true
+                    },
+                    "manifest_id": "https://images.example.org/iiif/manifest",
+                    "canvas_id": "https://images.example.org/iiif/canvas/1",
+                    "image_id": "https://images.example.org/iiif/image/1",
+                    "image_srv": "https://images.example.org/iiif/image/1",
+                    "image_static": "https://images.example.org/static/1.jpg",
+                    "passepartout_color": "#000000cc",
+                    "passepartout_invert": false
+                }
+            },
+            {
+                "id": "https://example.org/tours/single/annotation/1",
+                "type": "Annotation",
+                "body": {
+                    "id": "https://example.org/tours/single/body/1",
+                    "type": "TextualBody",
+                    "value": "<p>Second stop, plain view.</p>",
+                    "format": "text/html"
+                },
+                "target": {
+                    "id": "https://images.example.org/iiif/canvas/1",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "strollview": {
+                    "filters": false,
+                    "passepartout": false,
+                    "rotation": 0,
+                    "audio": false,
+                    "manifest_id": "https://images.example.org/iiif/manifest",
+                    "canvas_id": "https://images.example.org/iiif/canvas/1",
+                    "image_id": "https://images.example.org/iiif/image/1",
+                    "image_srv": "https://images.example.org/iiif/image/1",
+                    "image_static": null,
+                    "passepartout_color": "#000000cc",
+                    "passepartout_invert": false
+                }
+            }
+        ]
+    }
+}

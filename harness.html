@@ -35,9 +35,20 @@
 
             const params = new URLSearchParams(window.location.search);
             const manifest = params.get("manifest");
+            const slideshow = params.get("slideshow");
             const remoteUrl = params.get("url");
-            const name = manifest !== null ? manifest : params.get("example");
-            const base = manifest !== null ? "/examples-iiif/" : "/examples/";
+            const name =
+                manifest !== null
+                    ? manifest
+                    : slideshow !== null
+                      ? slideshow
+                      : params.get("example");
+            const base =
+                manifest !== null
+                    ? "/examples-iiif/"
+                    : slideshow !== null
+                      ? "/examples-slideshow/"
+                      : "/examples/";
             // optional inline options overrides for issue-reproduction tests
             let optionsOverride = {};
             if (params.get("options")) {

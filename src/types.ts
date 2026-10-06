@@ -252,6 +252,13 @@ export interface StorymapSlide {
     background?: StorymapSlideBackground | string | null;
     uniqueid?: string | null;
     /**
+     * Provenance identifiers for the slide's source (slideshow
+     * `manifest_id`/`canvas_id`/`image_id`): which manifest, canvas and
+     * image the stop was translated from. Data-only (deep links, export);
+     * never rendered.
+     */
+    provenance?: StorymapSlideProvenance | null;
+    /**
      * Per-slide autoplay dwell in milliseconds (slideshow `slidetimeout`):
      * overrides the global `autoplay` interval for this slide; `0` holds on
      * this slide. Absent means the global interval. Honored only with
@@ -281,9 +288,33 @@ export interface StorymapImageOverlay {
     [key: string]: unknown;
 }
 
+/**
+ * Provenance identifiers for one slide's source: the manifest, canvas and
+ * image a stop was translated from. Data-only.
+ */
+export interface StorymapSlideProvenance {
+    manifest?: string;
+    canvas?: string;
+    image?: string;
+    [key: string]: unknown;
+}
+
+/**
+ * Authorship and rights for the story as a whole (slideshow
+ * `creator`/`rights`). Rendered into the map attribution line for
+ * slideshow tours; the license URL stays data-only for hosts.
+ */
+export interface StorymapCredit {
+    creator?: string;
+    rights?: string;
+    licenseUrl?: string;
+    [key: string]: unknown;
+}
+
 export interface StorymapData {
     uniqueid?: string;
     slides: StorymapSlide[];
+    credit?: StorymapCredit | null;
     [key: string]: unknown;
 }
 
@@ -521,6 +552,13 @@ export interface StorymapOptions {
      * `slideshow_source`.
      */
     show_info?: boolean;
+    /**
+     * Detect slideshow tours automatically (default `true`): an
+     * `AnnotationCollection` shaped like one loads through the translator.
+     * Set `false` to disable detection (such documents then fail validation
+     * as before).
+     */
+    slideshow?: boolean;
     /**
      * @internal Source marker: true when the loaded document came from a
      * slideshow tour (set programmatically by the viewer, never from data).

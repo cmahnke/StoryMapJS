@@ -11,6 +11,10 @@
     padding: 0;
     margin: 0;
 
+    // authored inline styles (trusted tour content) cannot reorder above
+    // viewer chrome: a stacking context without any layout effect
+    isolation: isolate;
+
     // display:table;
     // table-layout: fixed;
     overflow: hidden auto;

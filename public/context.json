@@ -44,6 +44,7 @@
         "offset": "storymap:offset",
         "play": "storymap:play",
         "stopOnExit": "storymap:stopOnExit",
-        "stopAllPrevious": "storymap:stopAllPrevious"
+        "stopAllPrevious": "storymap:stopAllPrevious",
+        "provenance": "storymap:provenance"
     }
 }

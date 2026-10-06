@@ -349,6 +349,7 @@ describe("context agreement", () => {
             "storymap:play",
             "storymap:stopOnExit",
             "storymap:stopAllPrevious",
+            "storymap:provenance",
         ]);
         const unaccounted = [...declared].filter(
             (t) => !emitted.has(t) && !NOT_EXERCISED_BY_A_FIXTURE.has(t),

@@ -20,6 +20,11 @@ import {
     manifestToStorymapData,
 } from "./iiif";
 import {
+    isSlideshowCollection,
+    slideshowToStorymapData,
+    type SlideshowWarning,
+} from "./from-slideshow";
+import {
     ConsentManager,
     consentManagerOf,
     fontService,
@@ -333,6 +338,7 @@ class StoryMapBase {
             trackResize: true,
             keyboard: false,
             nocache: false,
+            slideshow: true,
             autoplay: 0,
             autoplay_media: false,
             show_progress: false,
@@ -483,6 +489,12 @@ class StoryMapBase {
                 this._data_from_manifest = true;
                 this._raw_manifest = data;
                 this.data = manifestToStorymapData(data);
+            } else if (this.options.slideshow !== false && isSlideshowCollection(data)) {
+                this._data_from_slideshow = true;
+                const { data: storymap, warnings } = slideshowToStorymapData(data);
+                this._warnSlideshow(warnings);
+                validateStorymapAndReport({ storymap }, "slideshow");
+                this.data = storymap;
             } else {
                 const wrapper = data as StorymapDataWrapper;
                 validateStorymapAndReport(wrapper);
@@ -501,6 +513,57 @@ class StoryMapBase {
 
     /* Load storymap data from a URL
 	================================================== */
+    /**
+     * One `console.warn` per warning kind: count, detail and sample ids.
+     * Translation losses are loud exactly once, never per slide.
+     */
+    _warnSlideshow(warnings: SlideshowWarning[]): void {
+        for (const warning of warnings) {
+            const samples =
+                warning.sampleIds.length > 0 ? ` [${warning.sampleIds.join(", ")}]` : "";
+            console.warn(
+                `StoryMapJS: slideshow ${warning.kind} (×${warning.count}): ${warning.detail}${samples}`,
+            );
+        }
+    }
+
+    /**
+     * Follow a tour's `first.next` page chain, returning the following pages
+     * for the translator. Bounded (20) and cycle-guarded; a broken chain
+     * reports incompletely so the caller warns instead of truncating
+     * silently. Relative links resolve against the tour URL.
+     */
+    async _followSlideshowPages(
+        doc: unknown,
+        url: string,
+    ): Promise<{ pages: unknown[]; complete: boolean }> {
+        const pages: unknown[] = [];
+        const seen = new Set<string>([url]);
+        let next: unknown = (doc as Record<string, unknown> | null)?.first;
+        for (let hop = 0; hop < 20; hop++) {
+            const link = (next as Record<string, unknown> | null)?.next;
+            if (typeof link !== "string" || link === "") return { pages, complete: true };
+            let absolute: string;
+            try {
+                absolute = new URL(link, url).href;
+            } catch {
+                return { pages, complete: false };
+            }
+            if (seen.has(absolute)) return { pages, complete: false };
+            seen.add(absolute);
+            try {
+                const response = await fetch(absolute);
+                if (!response.ok) return { pages, complete: false };
+                const page: unknown = await response.json();
+                pages.push(page);
+                next = page;
+            } catch {
+                return { pages, complete: false };
+            }
+        }
+        return { pages, complete: false };
+    }
+
     async _loadDataFromUrl(url: string, source: string) {
         try {
             const response = await fetch(url);
@@ -519,6 +582,28 @@ class StoryMapBase {
                 this._data_from_manifest = true;
                 this._raw_manifest = result;
                 this.data = manifestToStorymapData(result);
+            } else if (this.options.slideshow !== false && isSlideshowCollection(result)) {
+                this._data_from_slideshow = true;
+                const followed = await this._followSlideshowPages(result, url);
+                if (this._disposed) {
+                    return;
+                }
+                const { data: storymap, warnings } = slideshowToStorymapData(result, {
+                    extraPages: followed.pages,
+                });
+                this._warnSlideshow(warnings);
+                if (!followed.complete) {
+                    this._warnSlideshow([
+                        {
+                            kind: "slideshow.paging",
+                            count: 1,
+                            sampleIds: [],
+                            detail: "page chain broke, tour may be truncated",
+                        },
+                    ]);
+                }
+                validateStorymapAndReport({ storymap }, source);
+                this.data = storymap;
             } else {
                 validateStorymapAndReport(result, source);
                 const wrapper = result as StorymapDataWrapper;
@@ -585,6 +670,20 @@ class StoryMapBase {
         // slideshow source. this.data itself is never touched (it is the
         // host's object — see data-immutable.test.ts).
         this._normalizeNonSlideshowOptions();
+        // Story credit (slideshow `creator`/`rights`) joins the map
+        // attribution line for slideshow tours only; the line re-sanitizes
+        // its input, so author strings render as text. Internal documents
+        // keep their own attribution untouched.
+        if (this._data_from_slideshow && this.data.credit) {
+            const credit = [this.data.credit.creator, this.data.credit.rights].filter(
+                (part): part is string => typeof part === "string" && part !== "",
+            );
+            if (credit.length > 0) {
+                this.options.attribution = [this.options.attribution, ...credit]
+                    .filter((part) => part !== "")
+                    .join(" · ");
+            }
+        }
 
         // Capture the deep link now, before the slider and map exist and can
         // navigate — and so rewrite the URL we would read it from later.

@@ -101,6 +101,11 @@ const SLIDE_TEXT_DROP_TAGS = DROP_TAGS.filter((tag) => tag !== "IFRAME");
  *
  * This list covers prose and media embeds. Anything else is unwrapped (its
  * text is kept) rather than dropped with its contents.
+ *
+ * Note on `style` (trusted authors): inline declarations pass through
+ * verbatim — there is no script execution from declarations in modern
+ * engines, `url()` tracking is at parity with allowlisted `<img>`, and the
+ * slide root is positioned and isolated so nothing escapes the slide box.
  */
 const SLIDE_TEXT_TAGS = [
     // structure / text
@@ -167,13 +172,16 @@ const SLIDE_TEXT_TAGS = [
 
 /**
  * Attributes allowed on slide-text elements. `id`/`name` are deliberately
- * absent: they enable DOM clobbering of host-page globals. `style` is
- * deliberately absent (see above). `class` is kept — the story fixtures and
+ * absent: they enable DOM clobbering of host-page globals. `style` passes
+ * through verbatim — tour authors are trusted; the slide root is positioned
+ * and isolated, so declarations cannot escape it (see VCO.Slide.scss).
+ * `class` is kept — the story fixtures and
  * the migrated site content style slides through it, and a class name cannot
  * execute anything.
  */
 const SLIDE_TEXT_ATTRIBUTES = [
     "class",
+    "style",
     "title",
     "lang",
     "dir",

@@ -104,6 +104,23 @@ export {
 export { storymapToManifest } from "./storymap/to-iiif";
 
 /**
+ * Read a slideshow tour (W3C AnnotationCollection + extension) as storymap
+ * data — the counterpart of `manifestToStorymapData()` for that format.
+ * Pure, so the same document always produces the same story.
+ */
+export {
+    isSlideshowCollection,
+    slideshowVersion,
+    slideshowToStorymapData,
+} from "./storymap/from-slideshow";
+export type {
+    SlideshowPlayerSettings,
+    SlideshowTranslatorOptions,
+    SlideshowToStorymapResult,
+    SlideshowWarning,
+} from "./storymap/from-slideshow";
+
+/**
  * The manifest shape `storymapToManifest()` produces, for a host that wants to
  * consume or further annotate the result.
  */

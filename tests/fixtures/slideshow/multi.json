@@ -1,0 +1,72 @@
+{
+    "@context": [
+        "http://www.w3.org/ns/anno.jsonld",
+        "https://seige.digital/strollview/2/context.jsonld"
+    ],
+    "id": "https://example.org/tours/multi",
+    "type": "AnnotationCollection",
+    "creator": "",
+    "label": "A multi-manifest tour",
+    "rights": "",
+    "first": {
+        "type": "AnnotationPage",
+        "items": [
+            {
+                "id": "https://example.org/tours/multi/annotation/0",
+                "type": "Annotation",
+                "body": {
+                    "id": "https://example.org/tours/multi/body/0",
+                    "type": "TextualBody",
+                    "value": "<p>From the first server.</p>",
+                    "format": "text/html"
+                },
+                "target": {
+                    "id": "https://one.example.org/canvas/1#0,0,800,600",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "strollview": {
+                    "filters": false,
+                    "passepartout": false,
+                    "rotation": 0,
+                    "audio": false,
+                    "manifest_id": "https://one.example.org/manifest",
+                    "canvas_id": "https://one.example.org/canvas/1",
+                    "image_id": "https://one.example.org/image/1",
+                    "image_srv": "https://one.example.org/image/1",
+                    "image_static": null,
+                    "passepartout_color": "#000000cc",
+                    "passepartout_invert": false
+                }
+            },
+            {
+                "id": "https://example.org/tours/multi/annotation/1",
+                "type": "Annotation",
+                "body": {
+                    "id": "https://example.org/tours/multi/body/1",
+                    "type": "TextualBody",
+                    "value": "<p>From a static file.</p>",
+                    "format": "text/html"
+                },
+                "target": {
+                    "id": "https://two.example.org/sheet.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "strollview": {
+                    "filters": false,
+                    "passepartout": false,
+                    "rotation": 0,
+                    "audio": false,
+                    "manifest_id": "https://two.example.org/manifest",
+                    "canvas_id": "https://two.example.org/sheet.jpg",
+                    "image_id": "https://two.example.org/sheet.jpg",
+                    "image_srv": "https://two.example.org/sheet.jpg",
+                    "image_static": "https://two.example.org/sheet.jpg",
+                    "passepartout_color": "#000000cc",
+                    "passepartout_invert": false
+                }
+            }
+        ]
+    }
+}

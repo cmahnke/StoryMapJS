@@ -104,3 +104,12 @@ export function slideBasemapKey(location: StorymapSlideLocation | null | undefin
     const basemap = location?.basemap;
     return typeof basemap === "string" && basemap !== "" ? basemap : null;
 }
+
+/** True for plain image-file URLs (no IIIF service, `{z}` template or keyword). */
+export function isStaticImageUrl(url: string): boolean {
+    return (
+        /^https?:\/\//i.test(url) &&
+        !url.includes("{z}") &&
+        /\.(jpe?g|png|gif|webp|tif?f|bmp|avif|jp2)(\?.*)?$/i.test(url)
+    );
+}

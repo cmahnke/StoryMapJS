@@ -186,6 +186,8 @@ export interface StorymapManifestCanvas {
     /** Per-slide autoplay dwell (slideshow slidetimeout) and image overlay. */
     "storymap:slidetimeout"?: number;
     "storymap:imgoverlay"?: unknown;
+    /** Provenance identifiers (slideshow manifest/canvas/image ids). */
+    "storymap:provenance"?: unknown;
     navPlace?: StorymapManifestFeatureCollection;
 }
 
@@ -349,6 +351,23 @@ export function storymapToManifest(name: string, legacy: StorymapDocument): Stor
         ],
         items: canvases,
     };
+    // Story credit (slideshow `creator`/`rights`): structured metadata
+    // entries, which the reader keeps in `data.metadata`. The dedicated
+    // `provider`/`rights` slots stay untouched — provider names the
+    // publisher, which the converter does not know (§3.2).
+    const credit = storymap.credit;
+    if (credit && typeof credit.creator === "string" && credit.creator !== "") {
+        manifest.metadata.push({
+            label: languageMap("Creator"),
+            value: languageMap(credit.creator),
+        });
+    }
+    if (credit && typeof credit.rights === "string" && credit.rights !== "") {
+        manifest.metadata.push({
+            label: languageMap("Rights"),
+            value: languageMap(credit.rights),
+        });
+    }
 
     // `structures` carries the groups (§3.5). A storymap states a slide's
     // group as a plain string; P3 states it as a Range over the canvases it
@@ -917,6 +936,9 @@ function buildCanvasTerms(slide: StorymapSlide): Partial<StorymapManifestCanvas>
     }
     if (present(slide.imgoverlay)) {
         terms["storymap:imgoverlay"] = slide.imgoverlay;
+    }
+    if (present(slide.provenance)) {
+        terms["storymap:provenance"] = slide.provenance;
     }
     return terms;
 }

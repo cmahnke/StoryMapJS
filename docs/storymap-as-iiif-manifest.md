@@ -69,7 +69,8 @@ reference; a manifest must reference it by URL, not paste it in (see the
         "offset": "storymap:offset",
         "play": "storymap:play",
         "stopOnExit": "storymap:stopOnExit",
-        "stopAllPrevious": "storymap:stopAllPrevious"
+        "stopAllPrevious": "storymap:stopAllPrevious",
+        "provenance": "storymap:provenance"
     }
 }
 ```
@@ -144,7 +145,8 @@ what the fixtures reference. Content:
         "offset": "storymap:offset",
         "play": "storymap:play",
         "stopOnExit": "storymap:stopOnExit",
-        "stopAllPrevious": "storymap:stopAllPrevious"
+        "stopAllPrevious": "storymap:stopAllPrevious",
+        "provenance": "storymap:provenance"
     }
 }
 ```
@@ -420,8 +422,10 @@ Canvas table above), plus the view directives `storymap:rotation`,
 `storymap:basemap`, `storymap:filter` and `storymap:mask` (the fallback for
 slides without `lat`/`lon`, which have no `navPlace` to carry them — the
 reader prefers `navPlace` when both spell a key), the per-slide autoplay
-dwell `storymap:slidetimeout` (milliseconds, `0` holds) and the per-slide
-image overlay `storymap:imgoverlay` (`{url, size?, opacity?, extent?}`). A slide's date is the standard `navDate` and its
+dwell `storymap:slidetimeout` (milliseconds, `0` holds), the per-slide
+image overlay `storymap:imgoverlay` (`{url, size?, opacity?, extent?}`) and
+the provenance identifiers `storymap:provenance`
+(`{manifest?, canvas?, image?}`, data-only). A slide's date is the standard `navDate` and its
 background is the standard `background` annotation. The media caption, credit and alt
 text are **not** terms any more: they are the painting annotation's own `label`,
 `requiredStatement` and `accessibilitySummary`, which is where Presentation 3
@@ -933,6 +937,7 @@ photo, and a slide with a YouTube video — full manifest:
 | `location.mask`                                         | Canvas `navPlace` Feature `properties.mask`, else Canvas `storymap:mask`         |
 | `slidetimeout`                                          | Canvas `storymap:slidetimeout` (milliseconds, `0` holds)                         |
 | `imgoverlay`                                            | Canvas `storymap:imgoverlay`                                                     |
+| `provenance`                                            | Canvas `storymap:provenance` (data-only identifiers)                             |
 | `narration.url`                                         | Supplementing annotation body `{type: "Sound"}`                                  |
 | `narration.loop/offset/play/stopOnExit/stopAllPrevious` | Supplementing annotation `storymap:` members (foreign members, only when set)    |
 | `media.offset/loop/play/stopOnExit`                     | Painting annotation `storymap:` members (foreign members, only when set)         |

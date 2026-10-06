@@ -476,6 +476,15 @@
                         "$ref": "#/$defs/slide"
                     }
                 },
+                "credit": {
+                    "type": "object",
+                    "description": "Authorship and rights for the story (slideshow creator/rights); rendered into the map attribution line for slideshow tours.",
+                    "properties": {
+                        "creator": { "type": "string" },
+                        "rights": { "type": "string" },
+                        "licenseUrl": { "type": "string", "format": "uri" }
+                    }
+                },
                 "layout": {
                     "type": "string",
                     "enum": ["landscape", "portrait"],
@@ -773,6 +782,15 @@
                 },
                 "uniqueid": {
                     "type": "string"
+                },
+                "provenance": {
+                    "type": "object",
+                    "description": "Provenance identifiers for the slide's source (slideshow manifest/canvas/image ids). Data-only, never rendered.",
+                    "properties": {
+                        "manifest": { "type": "string", "format": "uri" },
+                        "canvas": { "type": "string", "format": "uri" },
+                        "image": { "type": "string", "format": "uri" }
+                    }
                 }
             }
         }

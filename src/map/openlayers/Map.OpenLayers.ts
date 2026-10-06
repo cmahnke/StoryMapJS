@@ -42,6 +42,7 @@ import type {
 import { fitGeoreference, resolveInfoJsonUrl } from "../georeference";
 import {
     buildSlideFilter,
+    isStaticImageUrl,
     normalizeMask,
     slideBasemapKey,
     slideRotationRad,
@@ -132,6 +133,8 @@ export default class OpenLayers extends Map {
     declare "_imgoverlay_layer": Layer | null;
     /** Guards stale static-fallback probes (see `_probeStaticFallback`). */
     declare "_static_probe_token": number;
+    /** Guards stale per-slide static basemap probes, independently. */
+    declare "_slide_probe_token": number;
 
     /*	Create the Map
 	================================================== */
@@ -144,6 +147,7 @@ export default class OpenLayers extends Map {
         this._mask_el = null;
         this._imgoverlay_layer = null;
         this._static_probe_token = 0;
+        this._slide_probe_token = 0;
 
         // Caller-supplied OpenLayers options: `controls` replaces the defaults
         // (the viewer installs none), `interactions` are added to the viewer's
@@ -1263,6 +1267,17 @@ export default class OpenLayers extends Map {
 
             case "iiif": {
                 const iiif_layer: TileLayer = new TileLayer();
+                // a static-image tour states no info.json at all: skip the
+                // fetch and go straight to the fallback (which probes when
+                // no dimensions are stated either)
+                if (typeof this.options.iiif.url !== "string" || this.options.iiif.url === "") {
+                    if (!this._useStaticFallback(iiif_layer)) {
+                        console.error(
+                            "IIIF info.json URL is missing and no static fallback is stated.",
+                        );
+                    }
+                    return iiif_layer;
+                }
                 fetch(this.options.iiif.url)
                     .then((r) => r.json())
                     .then((info: unknown) => {
@@ -2327,11 +2342,15 @@ export default class OpenLayers extends Map {
 
     /**
      * Build a per-slide basemap layer: IIIF `info.json` URLs (or bare
-     * service bases) become tile layers; anything else goes through the
+     * service bases) become tile layers; plain image URLs become static
+     * image layers (dimensions probed); anything else goes through the
      * regular tile layer factory, so keywords and templates keep working.
      */
     _createSlideBasemap(key: string): Layer {
         if (/^https?:\/\//i.test(key) && !key.includes("{z}")) {
+            if (isStaticImageUrl(key)) {
+                return this._createStaticImageBasemap(key);
+            }
             const info_url = /info\.json$/i.test(key) ? key : `${key.replace(/\/$/, "")}/info.json`;
             const pending: TileLayer = new TileLayer();
             fetch(info_url)
@@ -2364,6 +2383,47 @@ export default class OpenLayers extends Map {
             return pending;
         }
         return this._createTileLayer(key);
+    }
+
+    /**
+     * A basemap from a plain image URL (no IIIF service): an `ImageLayer`
+     * filled in once the natural size probes. Used for per-slide basemaps
+     * pointing at static files; unusable dimensions keep the error logged
+     * and the layer empty, like the failed-service path.
+     */
+    _createStaticImageBasemap(url: string): Layer {
+        const pending = new ImageLayer();
+        pending.setZIndex(0);
+        const token = ++this._slide_probe_token;
+        void this._probeStaticImage(url).then(
+            (dims) => {
+                if (token !== this._slide_probe_token) return;
+                if (!dims || !(dims.width > 0) || !(dims.height > 0)) {
+                    console.error("Slide basemap image has no usable dimensions:", url);
+                    return;
+                }
+                pending.setSource(
+                    new Static({
+                        url,
+                        imageExtent: [0, 0, dims.width, dims.height],
+                        projection: "EPSG:4326",
+                        crossOrigin: "anonymous",
+                    }),
+                );
+                this._fireImageready(
+                    pending.getSource() as { getState?(): string },
+                    "iiif",
+                    pending,
+                );
+            },
+            (err) =>
+                console.error(
+                    "Slide basemap image could not be probed:",
+                    url,
+                    (err as Error)?.stack || err,
+                ),
+        );
+        return pending;
     }
 
     /**
