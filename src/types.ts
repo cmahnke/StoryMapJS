@@ -24,26 +24,29 @@ export interface StorymapSlideLocation {
     /**
      * View rotation in degrees clockwise (slideshow `rotation`). Applied to
      * the map view on navigation; absent means north-up (0). Image and geo
-     * maps alike; purely presentational.
+     * maps alike; purely presentational. Honored only with
+     * `slideshow_source`.
      */
     rotation?: number;
     /**
      * Per-slide image grading (slideshow `filters`): applied as a CSS
      * `filter()` on the map viewport. All fields optional; absent means
      * unfiltered. `hueRotate` is degrees (-180..180), `blur` is CSS pixels.
+     * Honored only with `slideshow_source`.
      */
     filter?: StorymapSlideFilter;
     /**
      * Spotlight mask (slideshow `passepartout`): normalized viewport
      * fractions `{x, y, w, h}` (0..1) left visible while the rest is dimmed
      * with `color`. `invert` dims the inside instead of the outside.
-     * Absent means no mask.
+     * Absent means no mask. Honored only with `slideshow_source`.
      */
     mask?: StorymapSlideMask;
     /**
      * Per-slide basemap override (multi-manifest slideshow tours): any
      * `map_type` value or IIIF `info.json` URL. Absent keeps the story
      * basemap. The layer is cached, so returning to a slide is free.
+     * Honored only with `slideshow_source`.
      */
     basemap?: string;
     line?: boolean;
@@ -113,20 +116,24 @@ export interface StorymapSlideMedia {
     /**
      * Start offset in seconds for audio/video media (slideshow `audio.offset`).
      * Applied once the media metadata is available; absent or negative means 0.
+     * Honored only with `slideshow_source`.
      */
     offset?: number;
     /**
      * Loop audio/video media (slideshow `audio.loop`). Absent means no loop.
+     * Honored only with `slideshow_source`.
      */
     loop?: boolean;
     /**
      * `auto` (default) plays on activation; `click` arms the media paused and
      * lets the visitor start it (slideshow `audio.play`). Absent means `auto`.
+     * Honored only with `slideshow_source`.
      */
     play?: "auto" | "click";
     /**
      * Stop this media when leaving the slide (default true). `false` lets an
-     * audio bed continue across slides (slideshow ambient audio).
+     * audio bed continue across slides (slideshow ambient audio). Honored
+     * only with `slideshow_source`.
      */
     stopOnExit?: boolean;
     [key: string]: unknown;
@@ -166,28 +173,32 @@ export interface StorymapSlideNarration {
     /**
      * Loop the narration (slideshow `audio.loop`). Absent means no loop.
      * Note: a looping narration never fires `ended`, so `autoplay_media`
-     * falls back to its millisecond timer for that slide.
+     * falls back to its millisecond timer for that slide. Honored only with
+     * `slideshow_source`.
      */
     loop?: boolean;
     /**
      * Start offset in seconds (slideshow `audio.offset`), applied once the
-     * audio metadata is available. Absent or negative means 0.
+     * audio metadata is available. Absent or negative means 0. Honored only
+     * with `slideshow_source`.
      */
     offset?: number;
     /**
      * `auto` (default) plays on navigation; `click` arms the narration
      * paused and lets the visitor start it (slideshow `audio.play`).
+     * Honored only with `slideshow_source`.
      */
     play?: "auto" | "click";
     /**
      * Stop the narration when leaving the slide (default true). `false`
      * keeps an audio bed playing across slides while the URL is unchanged
-     * (slideshow ambient audio).
+     * (slideshow ambient audio). Honored only with `slideshow_source`.
      */
     stopOnExit?: boolean;
     /**
      * Stop any other playing narration/ambient track before starting this
      * one (default true). `false` allows the ambient overlap of two tracks.
+     * Honored only with `slideshow_source`.
      */
     stopAllPrevious?: boolean;
     [key: string]: unknown;
@@ -243,12 +254,14 @@ export interface StorymapSlide {
     /**
      * Per-slide autoplay dwell in milliseconds (slideshow `slidetimeout`):
      * overrides the global `autoplay` interval for this slide; `0` holds on
-     * this slide. Absent means the global interval.
+     * this slide. Absent means the global interval. Honored only with
+     * `slideshow_source`.
      */
     slidetimeout?: number;
     /**
      * Per-slide image overlay on the map (slideshow `imgoverlay`): a placed
      * image shown while this slide is active. Absent means no overlay.
+     * Honored only with `slideshow_source`.
      */
     imgoverlay?: StorymapImageOverlay | null;
     [key: string]: unknown;
@@ -341,7 +354,8 @@ export interface StorymapOptions {
      * hides it (same as `show_progress: false`), `true`/`"bar"` is the
      * classic fill bar, `dots`/`squares` render one step per slide,
      * `block`/`thinblock` are fill-bar height variants. Absent means the
-     * `show_progress` boolean decides and the style is `"bar"`.
+     * `show_progress` boolean decides and the style is `"bar"`. Honored
+     * only with `slideshow_source`.
      */
     progressbar?: boolean | "bar" | "dots" | "squares" | "block" | "thinblock" | "off";
     /** Show the slide headline as a label on the active map marker (issue #243) */
@@ -352,13 +366,15 @@ export interface StorymapOptions {
      * Slide panel dock (slideshow `textmode`): which side the text panel
      * occupies in landscape. `"right"` (default) is the current layout;
      * `"left"` mirrors it; `"bottom"` docks the panel below the map.
-     * Portrait layouts always behave like `"bottom"`.
+     * Portrait layouts always behave like `"bottom"`. Honored only with
+     * `slideshow_source`.
      */
     textmode?: "left" | "right" | "bottom";
     /**
      * Slide panel size as a percentage (slideshow `textsize`): percent of
      * the width for side docks, of the height for the bottom dock.
-     * Range 10..80; absent keeps the built-in 50/50 split.
+     * Range 10..80; absent keeps the built-in 50/50 split. Honored only
+     * with `slideshow_source`.
      */
     textsize?: number;
     /** Override the overview fit center (issues #107, #271) */
@@ -445,52 +461,78 @@ export interface StorymapOptions {
     /**
      * Slide transition effect (slideshow `fxmode`): `"slide"` (default) is
      * the current glide, `"fade"` cross-fades slides, `"none"` jumps without
-     * animation. `prefers-reduced-motion` still forces `"none"`.
+     * animation. `prefers-reduced-motion` still forces `"none"`. Honored
+     * only with `slideshow_source`.
      */
     fxmode?: "slide" | "fade" | "none";
     /**
      * Reading mode (slideshow `mode`): `"standard"` (default) is the
      * slider; `"static"` stacks all slides in a scrollable list and follows
-     * the map to the slide in view.
+     * the map to the slide in view. Honored only with `slideshow_source`.
      */
     mode?: "standard" | "static";
     /**
      * HUD foreground color override (slideshow `hudcolor`): sets the
-     * `--vco-hud-fg` CSS variable. Absent follows the theme.
+     * `--vco-hud-fg` CSS variable. Absent follows the theme. Honored only
+     * with `slideshow_source`.
      */
     hudcolor?: string;
     /**
      * HUD background color override (slideshow `hudbgcolor`): sets the
-     * `--vco-hud-bg` CSS variable. Absent follows the theme.
+     * `--vco-hud-bg` CSS variable. Absent follows the theme. Honored only
+     * with `slideshow_source`.
      */
     hudbgcolor?: string;
     /**
      * HUD opacity percent 0..100 (slideshow `hudopacity`): applied to the
-     * HUD background. Absent means fully opaque theme background.
+     * HUD background. Absent means fully opaque theme background. Honored
+     * only with `slideshow_source`.
      */
     hudopacity?: number;
     /**
      * Show the previous/next slide navigation (slideshow `shownav`).
      * Default true; `false` hides the nav chrome (keyboard/AT navigation
      * still works, like `show_progress: false` keeps the story usable).
+     * Honored only with `slideshow_source`.
      */
     shownav?: boolean;
     /**
      * Render slide headlines (slideshow `showheadings`). Default true;
-     * `false` hides headline elements via CSS.
+     * `false` hides headline elements via CSS. Honored only with
+     * `slideshow_source`.
      */
     show_headings?: boolean;
     /**
      * Show scrollbars in the slide panel (slideshow `showscrollbars`).
      * Default true; `false` hides them via CSS (content still scrolls).
+     * Honored only with `slideshow_source`.
      */
     show_scrollbars?: boolean;
     /**
      * Fixed viewer height (slideshow `viewerheight`), e.g. `"400px"`:
      * applied as a container height override when set. Absent keeps the
      * measured-container behavior. Only `px`, `%` and `vh` units accepted.
+     * Honored only with `slideshow_source`.
      */
     viewerheight?: string;
+    /**
+     * Show media captions and credits (slideshow `showinfo`). Default true;
+     * `false` hides the caption/credit block. Honored only with
+     * `slideshow_source`.
+     */
+    show_info?: boolean;
+    /**
+     * @internal Source marker: true when the loaded document came from a
+     * slideshow tour (set programmatically by the viewer, never from data).
+     * The slideshow-motivated presentation fields (location
+     * rotation/filter/mask/basemap, narration/media playback bags,
+     * slidetimeout, imgoverlay, and the player-chrome options above) render
+     * only with this set — internal documents keep the long-standing
+     * behavior. Absent from constructor defaults and schema, so storymap
+     * data cannot inject it; it travels via options copies. Hosts may pass
+     * it explicitly as an escape hatch.
+     */
+    slideshow_source?: boolean;
     /**
      * Raw OpenLayers map configuration. `controls` replaces the StoryMapJS
      * defaults, `interactions` are *added to* the viewer's own pan/zoom

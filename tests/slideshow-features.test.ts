@@ -11,6 +11,7 @@ import { storymapToManifest } from "../src/storymap/to-iiif";
 import { validateStorymap } from "../src/storymap/validate";
 import { StoryMap } from "../src/storymap/StoryMap";
 import MenuBar from "../src/ui/MenuBar";
+import { shouldShowInfo } from "../src/media/Media";
 import type { StorymapData, StorymapDataWrapper } from "../src/types";
 
 describe("clampRegion", () => {
@@ -291,11 +292,18 @@ describe("chrome options", () => {
         }
     });
 
-    function chromeStorymap(id: string, storymap: Record<string, unknown>) {
+    // Helpers build translator output by default (sourced=true simulates a
+    // slideshow-loaded tour via the documented escape hatch); pass false for
+    // an internal document, which must render exactly as before.
+    function chromeStorymap(id: string, storymap: Record<string, unknown>, sourced = true) {
         const el = document.createElement("div");
         el.id = id;
         document.body.appendChild(el);
-        return new StoryMap(id, { storymap } as unknown as StorymapDataWrapper);
+        return new StoryMap(
+            id,
+            { storymap } as unknown as StorymapDataWrapper,
+            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+        );
     }
 
     function twoSlides(extra: Record<string, unknown> = {}) {
@@ -506,18 +514,22 @@ describe("map per-slide presentation", () => {
         }
     });
 
-    function geoStorymap(id: string, locations: Record<string, unknown>[]) {
+    function geoStorymap(id: string, locations: Record<string, unknown>[], sourced = true) {
         const el = document.createElement("div");
         el.id = id;
         document.body.appendChild(el);
-        return new StoryMap(id, {
-            storymap: {
-                slides: locations.map((location, n) => ({
-                    text: { headline: `S${n}`, text: "" },
-                    location: { lat: 10 + n, lon: 20, ...location },
-                })),
-            },
-        } as unknown as StorymapDataWrapper);
+        return new StoryMap(
+            id,
+            {
+                storymap: {
+                    slides: locations.map((location, n) => ({
+                        text: { headline: `S${n}`, text: "" },
+                        location: { lat: 10 + n, lon: 20, ...location },
+                    })),
+                },
+            } as unknown as StorymapDataWrapper,
+            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+        );
     }
 
     test("rotation applies instantly and resets on plain slides", () => {
@@ -611,18 +623,22 @@ describe("narration playback", () => {
         );
     });
 
-    function narrated(id: string, narrations: Record<string, unknown>[]) {
+    function narrated(id: string, narrations: Record<string, unknown>[], sourced = true) {
         const el = document.createElement("div");
         el.id = id;
         document.body.appendChild(el);
-        return new StoryMap(id, {
-            storymap: {
-                slides: narrations.map((narration, n) => ({
-                    text: { headline: `S${n}`, text: "" },
-                    narration,
-                })),
-            },
-        } as unknown as StorymapDataWrapper);
+        return new StoryMap(
+            id,
+            {
+                storymap: {
+                    slides: narrations.map((narration, n) => ({
+                        text: { headline: `S${n}`, text: "" },
+                        narration,
+                    })),
+                },
+            } as unknown as StorymapDataWrapper,
+            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+        );
     }
 
     type NarrationHarness = {
@@ -683,5 +699,292 @@ describe("narration playback", () => {
         harness._playNarration(harness.data.slides[1], true);
         expect(harness._narration_el?.src).toContain("next.mp3");
         expect(harness._ambient_el?.getAttribute("src")).toBeNull();
+    });
+});
+
+describe("internal documents stay unchanged", () => {
+    beforeAll(() => {
+        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
+            class ResizeObserverStub {
+                observe() {}
+                unobserve() {}
+                disconnect() {}
+            }
+            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
+        }
+    });
+
+    function internalStorymap(id: string, storymap: Record<string, unknown>) {
+        const el = document.createElement("div");
+        el.id = id;
+        document.body.appendChild(el);
+        // no slideshow_source: the document names the new keys anyway, and
+        // every one of them must stay inert
+        return new StoryMap(id, { storymap } as unknown as StorymapDataWrapper);
+    }
+
+    test("chrome options reset to defaults", () => {
+        const sms = internalStorymap("sm-int-chrome", {
+            slides: [
+                { text: { headline: "One", text: "" } },
+                { text: { headline: "Two", text: "" } },
+            ],
+            textmode: "left",
+            textsize: 30,
+            fxmode: "fade",
+            mode: "static",
+            hudcolor: "#fff",
+            hudbgcolor: "#000",
+            hudopacity: 50,
+            shownav: false,
+            show_headings: false,
+            show_scrollbars: false,
+            viewerheight: "400px",
+            progressbar: "dots",
+            show_info: false,
+        });
+        const options = (sms as unknown as { options: Record<string, unknown> }).options;
+        expect(options.textmode).toBe("right");
+        expect(options.textsize).toBeUndefined();
+        expect(options.fxmode).toBe("slide");
+        expect(options.mode).toBe("standard");
+        expect(options.hudcolor).toBe("");
+        expect(options.hudbgcolor).toBe("");
+        expect(options.hudopacity).toBeUndefined();
+        expect(options.shownav).toBe(true);
+        expect(options.show_headings).toBe(true);
+        expect(options.show_scrollbars).toBe(true);
+        expect(options.viewerheight).toBe("");
+        expect(options.show_info).toBe(true);
+        expect(options.progressbar).toBeUndefined();
+        const container = document.getElementById("sm-int-chrome");
+        expect(container?.classList.contains("vco-textmode-left")).toBe(false);
+        expect(container?.classList.contains("vco-no-headings")).toBe(false);
+        expect(container?.classList.contains("vco-mode-static")).toBe(false);
+        expect(container?.style.getPropertyValue("--vco-hud-fg")).toBe("");
+        expect(container?.style.height).toBe("");
+    });
+
+    test("slide presentation fields stay inert", () => {
+        const sms = internalStorymap("sm-int-map", {
+            slides: [
+                {
+                    text: { headline: "S0", text: "" },
+                    location: {
+                        lat: 10,
+                        lon: 20,
+                        rotation: 45,
+                        filter: { sepia: 40 },
+                        mask: { x: 0.1, y: 0.1, w: 0.8, h: 0.8 },
+                        basemap: "stamen:toner-lite",
+                    },
+                    narration: { url: "https://example.org/a.mp3", loop: true, offset: 5 },
+                    slidetimeout: 1,
+                    imgoverlay: { url: "https://example.org/o.png" },
+                },
+                { text: { headline: "S1", text: "" }, location: { lat: 11, lon: 21 } },
+            ],
+        });
+        const harness = sms as unknown as {
+            map: {
+                getViewport(): HTMLElement;
+                getLayers(): { getLength(): number };
+                getView(): { getRotation(): number };
+            };
+            _map: {
+                _mask_el: HTMLElement | null;
+                _tile_layer: object | null;
+                _slide_basemap: string | null;
+            };
+        };
+        const layersBefore = harness.map.getLayers().getLength();
+        const tileLayer = harness._map._tile_layer;
+        const nav = sms as unknown as { goTo(n: number): void };
+        // arrive at the fully-loaded slide from elsewhere: none of its
+        // presentation fields may move the map
+        nav.goTo(1);
+        nav.goTo(0);
+        expect(harness.map.getView().getRotation()).toBe(0);
+        expect(harness.map.getViewport().style.filter).toBe("");
+        expect(harness._map._mask_el).toBeNull();
+        expect(harness._map._tile_layer).toBe(tileLayer);
+        expect(harness._map._slide_basemap).toBeNull();
+        expect(harness.map.getLayers().getLength()).toBe(layersBefore);
+    });
+
+    test("per-slide dwell stays on the global interval", () => {
+        vi.useFakeTimers();
+        try {
+            const el = document.createElement("div");
+            el.id = "sm-int-dwell";
+            document.body.appendChild(el);
+            const sms = new StoryMap("sm-int-dwell", {
+                storymap: {
+                    autoplay: 100,
+                    slides: [
+                        {
+                            text: { headline: "S0", text: "" },
+                            slidetimeout: 10000,
+                        },
+                        { text: { headline: "S1", text: "" } },
+                    ],
+                },
+            } as unknown as StorymapDataWrapper);
+            const current = () => (sms as unknown as { current_slide: number }).current_slide;
+            expect(current()).toBe(0);
+            vi.advanceTimersByTime(150);
+            // gated: the 10s per-slide dwell is ignored, the global 100ms wins
+            expect(current()).toBe(1);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test("narration plays url-only with the global dwell", () => {
+        const sms = internalStorymap("sm-int-narr", {
+            slides: [
+                {
+                    text: { headline: "S0", text: "" },
+                    narration: { url: "https://example.org/a.mp3", loop: true, offset: 5 },
+                    slidetimeout: 1,
+                },
+            ],
+        });
+        const harness = sms as unknown as {
+            data: { slides: { narration?: { url: string } }[] };
+            _playNarration(slide: unknown, allow?: boolean): void;
+            _narration_el: HTMLAudioElement | null;
+            _ambient_el: HTMLAudioElement | null;
+        };
+        harness._playNarration(harness.data.slides[0], true);
+        expect(harness._narration_el?.src).toContain("https://example.org/a.mp3");
+        expect(harness._narration_el?.loop).toBe(false);
+        expect(harness._ambient_el).toBeNull();
+    });
+});
+
+describe("shouldShowInfo", () => {
+    test("hides only for flagged tours that opt out", () => {
+        expect(shouldShowInfo({})).toBe(true);
+        expect(shouldShowInfo({ show_info: false })).toBe(true);
+        expect(shouldShowInfo({ slideshow_source: true })).toBe(true);
+        expect(shouldShowInfo({ slideshow_source: true, show_info: false })).toBe(false);
+        expect(shouldShowInfo({ slideshow_source: true, show_info: true })).toBe(true);
+    });
+});
+
+describe("static fallback probing", () => {
+    beforeAll(() => {
+        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
+            class ResizeObserverStub {
+                observe() {}
+                unobserve() {}
+                disconnect() {}
+            }
+            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
+        }
+    });
+
+    function probeStorymap(id: string, iiif: Record<string, unknown>, sourced: boolean) {
+        const el = document.createElement("div");
+        el.id = id;
+        document.body.appendChild(el);
+        return new StoryMap(
+            id,
+            {
+                storymap: {
+                    map_type: "iiif",
+                    map_as_image: true,
+                    iiif: { url: "https://iiif.example.org/info.json", attribution: "", ...iiif },
+                    slides: [{ text: { headline: "S0", text: "" } }],
+                },
+            } as unknown as StorymapDataWrapper,
+            sourced ? ({ slideshow_source: true } as Record<string, unknown>) : undefined,
+        );
+    }
+
+    type ProbeMap = {
+        _useStaticFallback(layer: object): boolean;
+        _probeStaticImage(url: string): Promise<{ width: number; height: number }>;
+        _buildStaticLayer(layer: object, url: string, width: number, height: number): void;
+        getLayers(): { getLength(): number };
+    };
+
+    function probeMapOf(sms: StoryMap): ProbeMap {
+        return (sms as unknown as { _map: ProbeMap })._map;
+    }
+
+    test("without dims and without the flag the legacy error path stands", () => {
+        const sms = probeStorymap(
+            "sm-probe-off",
+            { fallbackUrl: "https://example.org/full.jpg" },
+            false,
+        );
+        const map = probeMapOf(sms);
+        const errors: unknown[][] = [];
+        const orig = console.error;
+        console.error = (...args: unknown[]) => {
+            errors.push(args);
+        };
+        try {
+            expect(map._useStaticFallback({} as object)).toBe(false);
+        } finally {
+            console.error = orig;
+        }
+        expect(errors).toEqual([]);
+    });
+
+    test("with the flag a dim-less fallback probes instead of failing", async () => {
+        const sms = probeStorymap(
+            "sm-probe-on",
+            { fallbackUrl: "https://example.org/full.jpg" },
+            true,
+        );
+        const map = probeMapOf(sms);
+        const seen: string[] = [];
+        map._probeStaticImage = (url: string) => {
+            seen.push(url);
+            return Promise.resolve({ width: 800, height: 600 });
+        };
+        const built: { width: number; height: number }[] = [];
+        const origBuild = map._buildStaticLayer.bind(map);
+        map._buildStaticLayer = (layer: object, url: string, width: number, height: number) => {
+            built.push({ width, height });
+            return origBuild(layer, url, width, height);
+        };
+        // construction itself already probed once (the info.json fetch
+        // fails with no network); drain it and test the explicit call
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        seen.length = 0;
+        built.length = 0;
+        expect(map._useStaticFallback({} as object)).toBe(true);
+        await Promise.resolve();
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(seen).toEqual(["https://example.org/full.jpg"]);
+        expect(built).toEqual([{ width: 800, height: 600 }]);
+    });
+
+    test("a failed probe logs instead of painting", async () => {
+        const sms = probeStorymap(
+            "sm-probe-fail",
+            { fallbackUrl: "https://example.org/full.jpg" },
+            true,
+        );
+        const map = probeMapOf(sms);
+        map._probeStaticImage = () => Promise.reject(new Error("load error"));
+        const errors: unknown[][] = [];
+        const orig = console.error;
+        console.error = (...args: unknown[]) => {
+            errors.push(args);
+        };
+        try {
+            expect(map._useStaticFallback({} as object)).toBe(true);
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        } finally {
+            console.error = orig;
+        }
+        expect(errors.length).toBeGreaterThan(0);
     });
 });

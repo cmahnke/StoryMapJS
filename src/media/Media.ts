@@ -50,6 +50,16 @@ export function loadErrorIcon(media_type: unknown): string {
     return LOAD_ERROR_ICONS[type] ?? GENERIC_LOAD_ERROR_ICON;
 }
 
+/**
+ * Whether media captions/credits render: `show_info: false` hides them, but
+ * only for slideshow tours (`slideshow_source`) — internal documents always
+ * show their captions. Pure for testability.
+ */
+export function shouldShowInfo(options: MediaOptions): boolean {
+    if (options.slideshow_source !== true) return true;
+    return options.show_info !== false;
+}
+
 /*	Options for Media and its subclasses: the fields Media itself sets
 	or reads. Everything else merged in via mergeData is absorbed by the
 	index signature. */
@@ -484,6 +494,9 @@ export class MediaBase {
 
     /** Render the media credit and caption, if the slide has them. */
     showMeta(): void {
+        // slideshow tours may hide the info block (show_info: false);
+        // internal documents always render it
+        if (!shouldShowInfo(this.options)) return;
         this._state.show_meta = true;
         // Credit and caption are author-supplied strings that may legitimately
         // contain formatting (they are documented as HTML), so they go through

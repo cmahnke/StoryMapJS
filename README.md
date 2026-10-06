@@ -109,17 +109,27 @@ the view while it is active; everything is optional and validated against
     imgoverlay: { url, extent, opacity },  // image overlay while the slide is active
 
 When a slide's IIIF `info.json` cannot be loaded, `iiif: { width, height,
-fallbackUrl }` paints the static image instead of a blank basemap.
+fallbackUrl }` paints the static image instead of a blank basemap. Without
+stated dimensions the viewer probes the fallback image's natural size first,
+but only for slideshow tours (15s timeout); other documents keep the logged
+error path.
 
 The player chrome is opt-in storymap options (absent means the default
 layout): `textmode: "left"|"right"|"bottom"` with `textsize` (10–80 %),
 `progressbar: "bar"|"dots"|"squares"|"block"|"thinblock"|"off"`,
 `fxmode: "slide"|"fade"|"none"`, `mode: "static"` (stacked reading list with
 scroll-spy map sync), `hudcolor`/`hudbgcolor`/`hudopacity`,
-`shownav`/`show_headings`/`show_scrollbars` toggles and
+`shownav`/`show_headings`/`show_scrollbars`/`show_info` toggles and
 `viewerheight: "400px"`. The same presentation round-trips through IIIF
 manifests as `storymap:` terms — see
 [docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md).
+
+These presentation fields render **only for slideshow tours** (documents
+loaded from that format, which set the internal `slideshow_source` marker).
+Hand-written storymap documents and IIIF manifests keep the long-standing
+rendering even when they name the new keys — captions always show, the
+autoplay interval stays global, the panel keeps its default dock. Hosts may
+pass `slideshow_source: true` explicitly as an escape hatch (e.g. in tests).
 
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with

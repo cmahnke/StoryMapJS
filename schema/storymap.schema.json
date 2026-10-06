@@ -412,7 +412,11 @@
                 "viewerheight": {
                     "type": "string",
                     "pattern": "^[0-9]+(\\.[0-9]+)?(px|%|vh)$",
-                    "description": "Fixed viewer height (slideshow viewerheight), e.g. 400px: applied as a container height override when set."
+                    "description": "Fixed viewer height (slideshow viewerheight), e.g. 400px: applied as a container height override when set. Honored only with slideshow_source."
+                },
+                "show_info": {
+                    "type": "boolean",
+                    "description": "Show media captions and credits (slideshow showinfo). Default true; false hides the caption/credit block. Honored only with slideshow_source."
                 },
                 "text_color": {
                     "type": "string"

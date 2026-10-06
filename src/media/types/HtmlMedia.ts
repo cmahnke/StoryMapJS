@@ -73,8 +73,18 @@ export class HtmlMediaBase extends Media {
         this._onEnded = null;
         // Playback flags (slideshow audio terms): loop repeats, offset seeks
         // once the metadata is available, play:"auto" starts on load
-        // (absent stays click-to-play with controls, as before).
-        const bag = this.data as {
+        // (absent stays click-to-play with controls, as before). Slideshow
+        // tours only — internal documents ignore the bag even when present.
+        const sourced = (this.options as { slideshow_source?: unknown }).slideshow_source === true;
+        const bag = (
+            sourced
+                ? this.data
+                : ({} as {
+                      loop?: boolean;
+                      offset?: number;
+                      play?: string;
+                  })
+        ) as {
             loop?: boolean;
             offset?: number;
             play?: string;

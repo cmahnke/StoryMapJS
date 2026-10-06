@@ -61,6 +61,16 @@ import { sanitizeSlideText } from "../../media/EmbedUtil";
 
 const MAX_ZOOM = 19;
 
+/**
+ * Natural-size probe timeout for the static fallback: how long the viewer
+ * waits for the fallback image's dimensions before giving up and logging
+ * the IIIF error. A named constant (rather than an inline literal) so hosts
+ * and tests can find the single knob. There is no shared network-timeout
+ * option to reuse — `options.duration` is animation timing and the 1200ms
+ * media delay is a load deferral, not a watchdog.
+ */
+const STATIC_PROBE_TIMEOUT_MS = 15000;
+
 /** What kind of imagery an `imageready` source carries. */
 export type ImagereadyKind = "iiif" | "zoomify" | "tiles";
 
@@ -120,6 +130,8 @@ export default class OpenLayers extends Map {
     declare "_mask_el": HTMLDivElement | null;
     /** Per-slide image overlay layer (slideshow imgoverlay), or null. */
     declare "_imgoverlay_layer": Layer | null;
+    /** Guards stale static-fallback probes (see `_probeStaticFallback`). */
+    declare "_static_probe_token": number;
 
     /*	Create the Map
 	================================================== */
@@ -131,6 +143,7 @@ export default class OpenLayers extends Map {
         this._story_basemap_layer = null;
         this._mask_el = null;
         this._imgoverlay_layer = null;
+        this._static_probe_token = 0;
 
         // Caller-supplied OpenLayers options: `controls` replaces the defaults
         // (the viewer installs none), `interactions` are added to the viewer's
@@ -874,24 +887,79 @@ export default class OpenLayers extends Map {
      * used (unreachable, or missing dimensions): a single-resolution
      * `ImageStatic` layer replaces the empty tile layer, so the tour still
      * shows its picture instead of a blank basemap. Needs
-     * `iiif.width`/`iiif.height` (canvas size) and `iiif.fallbackUrl` (the
-     * full-size image); returns false when either is absent, leaving the
-     * existing error path untouched.
+     * `iiif.fallbackUrl` (the full-size image) plus `iiif.width`/`height`
+     * (canvas size); without dimensions the natural size is probed, but
+     * only for slideshow tours — internal documents keep the existing
+     * error path. Returns false when nothing was (or will be) painted.
      */
     _useStaticFallback(empty_layer: TileLayer): boolean {
         const width = this.options.iiif.width;
         const height = this.options.iiif.height;
         const url = this.options.iiif.fallbackUrl;
-        if (
-            typeof width !== "number" ||
-            !(width > 0) ||
-            typeof height !== "number" ||
-            !(height > 0) ||
-            typeof url !== "string" ||
-            url === ""
-        ) {
+        if (typeof url !== "string" || url === "") {
             return false;
         }
+        if (typeof width === "number" && width > 0 && typeof height === "number" && height > 0) {
+            this._buildStaticLayer(empty_layer, url, width, height);
+            return true;
+        }
+        if (this.options.slideshow_source !== true) {
+            return false;
+        }
+        void this._probeStaticFallback(empty_layer, url);
+        return true;
+    }
+
+    /**
+     * Resolve a fallback image's natural size, then paint it. Stale probes
+     * (a newer probe started, e.g. after a basemap switch) and unusable
+     * dimensions fall back to the logged IIIF error.
+     */
+    async _probeStaticFallback(empty_layer: TileLayer, url: string): Promise<void> {
+        const token = ++this._static_probe_token;
+        try {
+            const dims = await this._probeStaticImage(url);
+            if (token !== this._static_probe_token) return;
+            if (!dims || !(dims.width > 0) || !(dims.height > 0)) {
+                console.error("Static fallback image has no usable dimensions:", url);
+                return;
+            }
+            this._buildStaticLayer(empty_layer, url, dims.width, dims.height);
+        } catch (err) {
+            if (token !== this._static_probe_token) return;
+            console.error(
+                "Static fallback image could not be probed:",
+                url,
+                (err as Error)?.stack || err,
+            );
+        }
+    }
+
+    /**
+     * The natural size of an image URL. Separated for testability: unit
+     * tests stub the `Image` constructor rather than the network.
+     */
+    _probeStaticImage(url: string): Promise<{ width: number; height: number }> {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const timer = setTimeout(() => {
+                reject(new Error(`timed out after ${STATIC_PROBE_TIMEOUT_MS}ms`));
+            }, STATIC_PROBE_TIMEOUT_MS);
+            img.onload = () => {
+                clearTimeout(timer);
+                resolve({ width: img.naturalWidth, height: img.naturalHeight });
+            };
+            img.onerror = () => {
+                clearTimeout(timer);
+                reject(new Error("load error"));
+            };
+            img.crossOrigin = "anonymous";
+            img.src = url;
+        });
+    }
+
+    /** Swap the empty tile layer for a static image of the given extent. */
+    _buildStaticLayer(empty_layer: TileLayer, url: string, width: number, height: number): void {
         const source = new Static({
             url,
             imageExtent: [0, 0, width, height],
@@ -918,7 +986,6 @@ export default class OpenLayers extends Map {
         } else {
             this._markerOverview();
         }
-        return true;
     }
 
     _createTileLayer(map_type: string): Layer {
@@ -2089,8 +2156,10 @@ export default class OpenLayers extends Map {
         // Per-slide presentation first: basemap swap, filter grading and
         // spotlight mask are synchronous state, independent of movement.
         // Rotation joins the movement animation below (or _fitRegion's).
-        this._switchSlideBasemap(loc);
-        this._applySlideFilterAndMask(loc);
+        // Slideshow tours only: internal documents move exactly as before.
+        const feat = this.options.slideshow_source === true ? loc : undefined;
+        this._switchSlideBasemap(feat);
+        this._applySlideFilterAndMask(feat);
         // Image region stops (slideshow-style): in image mode the view is
         // EPSG:4326 where coordinates are raw image pixels — fit the xywh
         // region instead of flying to a point. Everything else (geo maps,
@@ -2101,7 +2170,7 @@ export default class OpenLayers extends Map {
                 ? loc.region
                 : null;
         if (region) {
-            this._fitRegion(region, opts, loc);
+            this._fitRegion(region, opts, feat);
             return;
         }
 
@@ -2109,7 +2178,7 @@ export default class OpenLayers extends Map {
         if (!start) {
             // location-less slide (region-only on a geo map): nothing to
             // fly to, but an explicit rotation still applies
-            this._applySlideRotation(loc, opts?.duration, opts?.duration === 0);
+            this._applySlideRotation(feat, opts?.duration, opts?.duration === 0);
             return;
         }
         let _animate = true,
@@ -2149,7 +2218,7 @@ export default class OpenLayers extends Map {
         // A slide rotation joins the glide; the animation arg is only added
         // when the slide or the view is rotated, so unrotated stories
         // animate exactly as before.
-        const _rotation = slideRotationRad(loc);
+        const _rotation = slideRotationRad(feat);
         const _current_rotation = this._map.getView().getRotation();
         this._map.getView().animate({
             center: this._toViewCoords(_location),
@@ -2229,6 +2298,8 @@ export default class OpenLayers extends Map {
      * the switch entirely.
      */
     _switchSlideBasemap(loc: StorymapSlideLocation | null | undefined): void {
+        // slideshow tours only: internal documents keep the story basemap
+        if (this.options.slideshow_source !== true) return;
         if (!this._tilesAllowed()) return;
         const key = slideBasemapKey(loc);
         if (key === this._slide_basemap) return;
@@ -2398,6 +2469,8 @@ export default class OpenLayers extends Map {
         }
         if (!overlay || typeof overlay.url !== "string" || overlay.url === "") return;
         if (!this._tilesAllowed()) return;
+        // slideshow tours only: internal documents never paint overlays
+        if (this.options.slideshow_source !== true) return;
         const given = overlay.extent;
         let extent: Extent;
         if (
@@ -2996,10 +3069,15 @@ export default class OpenLayers extends Map {
         view.setZoom(zoom);
         view.setCenter(this._toViewCoords(_location));
         // instant path (resize): rotation sets synchronously, filter and
-        // mask re-apply idempotently
-        const rotation = slideRotationRad(loc);
-        view.setRotation(rotation ?? 0);
-        this._applySlideFilterAndMask(loc);
+        // mask re-apply idempotently — slideshow tours only, so the resize
+        // path for internal documents touches nothing new
+        if (this.options.slideshow_source === true) {
+            const rotation = slideRotationRad(loc);
+            if (rotation !== null || view.getRotation() !== 0) {
+                view.setRotation(rotation ?? 0);
+            }
+            this._applySlideFilterAndMask(loc);
+        }
         this._map.renderSync();
     }
 }

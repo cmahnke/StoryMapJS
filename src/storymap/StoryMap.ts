@@ -192,6 +192,8 @@ class StoryMapBase {
     declare "_collapsed": boolean;
     /** the data source was a IIIF Presentation manifest (legacy zoomify options are ignored) */
     declare "_data_from_manifest": boolean;
+    /** the data source was a slideshow tour (slideshow-only features apply) */
+    declare "_data_from_slideshow": boolean;
     declare "_resize_observer": ResizeObserver | null;
     /** Stored so `dispose()` can remove them again (see AGENTS: no leaks) */
     declare "_on_resize": (() => void) | null;
@@ -348,6 +350,7 @@ class StoryMapBase {
             show_headings: true,
             show_scrollbars: true,
             viewerheight: "",
+            show_info: true,
             map_overview_center: null,
             map_type: "", // "osm:standard",
             tile_source_factory: null,
@@ -462,6 +465,10 @@ class StoryMapBase {
         // legacy zoomify options are only honored for storymap JSON sources —
         // a IIIF Presentation manifest cannot carry them
         this._data_from_manifest = false;
+        // slideshow tours unlock the slideshow-only presentation fields; the
+        // translator branch that sets this lives with the translator phase —
+        // until then only an explicit host flag (see slideshow_source) sets it
+        this._data_from_slideshow = false;
         if (typeof data === "string") {
             // issue #417: optional cache-busting re-fetch of the source file
             const url =
@@ -537,9 +544,47 @@ class StoryMapBase {
 
     /* Initialize the options
 	================================================== */
+    /**
+     * Reset every slideshow-only option to its long-standing default unless
+     * the loaded tour came from a slideshow source. Internal documents keep
+     * the pre-existing rendering even when they (or a host, via
+     * setMapOptions) name the new keys; slideshow tours keep what the
+     * translator emitted. Runs on every load and every runtime option change,
+     * over the viewer options and (at runtime) the map's own options copy.
+     */
+    _normalizeNonSlideshowOptions(options: StorymapOptions = this.options): void {
+        if (options.slideshow_source === true) return;
+        options.textmode = "right";
+        options.textsize = undefined;
+        options.fxmode = "slide";
+        options.mode = "standard";
+        options.hudcolor = "";
+        options.hudbgcolor = "";
+        options.hudopacity = undefined;
+        options.shownav = true;
+        options.show_headings = true;
+        options.show_scrollbars = true;
+        options.viewerheight = "";
+        options.show_info = true;
+        options.progressbar = undefined;
+    }
+
     _initOptions() {
         // Grab options from storymap data
         updateData(this.options, this.data);
+
+        // Source marker for the slideshow-only presentation fields: set
+        // programmatically from the load path, never from data (the key is
+        // absent from defaults and schema, so updateData above cannot inject
+        // it — a host may still pass it explicitly as an escape hatch).
+        if (this._data_from_slideshow) {
+            this.options.slideshow_source = true;
+        }
+        // Slideshow-only chrome stays inert for internal documents: reset
+        // every such option to its default unless the tour came from a
+        // slideshow source. this.data itself is never touched (it is the
+        // host's object — see data-immutable.test.ts).
+        this._normalizeNonSlideshowOptions();
 
         // Capture the deep link now, before the slider and map exist and can
         // navigate — and so rewrite the URL we would read it from later.
@@ -932,8 +977,11 @@ class StoryMapBase {
             }
         }
         mergeData(this.options, effective);
+        // slideshow-only keys stay inert for internal documents at runtime too
+        this._normalizeNonSlideshowOptions();
         if (this._map && this._map.options) {
             mergeData(this._map.options, effective);
+            this._normalizeNonSlideshowOptions(this._map.options);
             this._map.applyOptions(Object.keys(effective));
         }
         if (this.ready) {
@@ -1941,7 +1989,16 @@ class StoryMapBase {
      *   playback, and the story still works.
      */
     _playNarration(slide: StorymapSlide | undefined, allow_without_gesture = false) {
-        const bag = slide?.narration ?? null;
+        // Slideshow-only playback flags render only for slideshow tours;
+        // internal documents play the bare URL exactly as before (no data is
+        // mutated — the bag is reduced to a local).
+        const raw = slide?.narration ?? null;
+        const bag =
+            this.options.slideshow_source === true
+                ? raw
+                : raw && typeof raw.url === "string"
+                  ? { url: raw.url }
+                  : null;
         const url = typeof bag?.url === "string" && bag.url !== "" ? bag.url : null;
         const persistent = bag?.stopOnExit === false;
         if (url !== null && persistent) {
@@ -2226,7 +2283,9 @@ class StoryMapBase {
 
         // Per-slide dwell (slideshow slidetimeout): overrides the global
         // interval for this slide; 0 holds here even with autoplay on.
-        const slideTimeout = this.data.slides?.[this.current_slide]?.slidetimeout;
+        // Internal documents always use the global interval.
+        const rawTimeout = this.data.slides?.[this.current_slide]?.slidetimeout;
+        const slideTimeout = this.options.slideshow_source === true ? rawTimeout : undefined;
         const dwell =
             typeof slideTimeout === "number" && Number.isFinite(slideTimeout) && slideTimeout >= 0
                 ? slideTimeout

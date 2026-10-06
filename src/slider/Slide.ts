@@ -303,8 +303,11 @@ class SlideBase {
                 // An audio bed that outlives its slide
                 // (`media.stopOnExit: false`, slideshow ambient audio) keeps
                 // playing; StoryMap stops it when another slide claims audio.
+                // Slideshow-only: internal documents always stop.
                 const mediaData = (media as unknown as { data?: { stopOnExit?: boolean } }).data;
-                if (mediaData?.stopOnExit === false) continue;
+                const sourced =
+                    (this.options as { slideshow_source?: unknown }).slideshow_source === true;
+                if (sourced && mediaData?.stopOnExit === false) continue;
                 try {
                     media.stopMedia();
                 } catch (e: unknown) {
@@ -335,6 +338,9 @@ class SlideBase {
      * deactivation (see `stopMedia`, which skips them).
      */
     stopAmbientMedia() {
+        // Slideshow-only by construction (see stopMedia): without the source
+        // flag no media can be ambient, so there is nothing to stop.
+        if ((this.options as { slideshow_source?: unknown }).slideshow_source !== true) return;
         if (this._medias.length > 0 && this._state.loaded) {
             for (const media of this._medias) {
                 const mediaData = (media as unknown as { data?: { stopOnExit?: boolean } }).data;
