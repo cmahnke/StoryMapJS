@@ -2352,10 +2352,12 @@ export default class OpenLayers extends Map {
      * regular tile layer factory, so keywords and templates keep working.
      */
     _createSlideBasemap(key: string): Layer {
+        // plain image files (absolute or same-origin relative) skip the
+        // doomed info.json fetch; services and keywords flow on
+        if (isStaticImageUrl(key)) {
+            return this._createStaticImageBasemap(key);
+        }
         if (/^https?:\/\//i.test(key) && !key.includes("{z}")) {
-            if (isStaticImageUrl(key)) {
-                return this._createStaticImageBasemap(key);
-            }
             const info_url = /info\.json$/i.test(key) ? key : `${key.replace(/\/$/, "")}/info.json`;
             const pending: TileLayer = new TileLayer();
             fetch(info_url)

@@ -78,3 +78,26 @@ every translator output validates against `schema/storymap.schema.json`.
 Translated tours render through the slideshow-gated presentation fields
 (`slideshow_source`), so internal documents are unaffected — see the
 README's slideshow section.
+
+## Corpus
+
+Observed tours (structural facts only; no content archived). Hunt grounds
+exhausted per the stop rule: Forum Wissen embeds are consent-walled,
+code search doesn't index the tour JSONs, museum/partner repos hold only
+manifests — the canonical
+[`strollview-format-lib`](https://github.com/seigedigital/strollview-format-lib)
+(v1/v2 parsers, samples) is the authoritative shape reference.
+
+| Tour                      | Ver | Stops | Targets              | Extras seen                                                       | Audio                    | Services                                |
+| ------------------------- | --- | ----- | -------------------- | ----------------------------------------------------------------- | ------------------------ | --------------------------------------- |
+| Uni der Dinge (Göttingen) | v2  | 19    | frag, bare, negative | filters obj, mask obj, rotation 0                                 | none                     | IIIF 2/3, custom API                    |
+| 47 Ronin (emakimono)      | v2  | 35    | frag                 | all `false`                                                       | none                     | single `.ptif` service                  |
+| John Low (VKC)            | v2  | 36    | frag, bare, negative | mask obj (incl. tiny/out-of-range), `image_static`                | `auto`/`n/a`, Drive + S3 | IIIF 2/3 mixed                          |
+| DDD AAA (test tour)       | v2  | 17    | frag, bare           | rotation 35/181, `play: "click"`, `application/ogg`, missing keys | `click` + `auto`         | IIIF                                    |
+| Demo (Leipzig)            | v1  | 8 pp  | frag, bare           | — (v1 has none)                                                   | —                        | IIIF 2 (`.jpx` bases serve `info.json`) |
+| format-lib 1-01           | v1  | 8 pp  | frag, bare           | —                                                                 | —                        | IIIF                                    |
+
+Never observed in the wild: `next` page chains, non-IIIF image files,
+`audio.play` beyond `auto`/`click`, `mode`/`fxmode` beyond
+`standard`/`basic`. Those paths are proven synthetically (paging chain
+unit tests, local static-image e2e) and warn loudly if met.

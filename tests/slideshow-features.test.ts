@@ -129,6 +129,16 @@ describe("isStaticImageUrl", () => {
         expect(isStaticImageUrl("https://example.org/iiif/image/1/info.json")).toBe(false);
         expect(isStaticImageUrl("https://example.org/tiles/{z}/{x}/{y}.png")).toBe(false);
         expect(isStaticImageUrl("osm:bright")).toBe(false);
+        expect(isStaticImageUrl("mapbox://styles/a/b")).toBe(false);
+        expect(isStaticImageUrl("data:image/png;base64,iVBOR")).toBe(false);
+    });
+
+    test("sniffs same-origin relative image files", () => {
+        expect(isStaticImageUrl("/examples-slideshow/static/pixel.png")).toBe(true);
+        expect(isStaticImageUrl("./tiles/sheet.jpg")).toBe(true);
+        expect(isStaticImageUrl("../img/scan.tif")).toBe(true);
+        expect(isStaticImageUrl("./tiles/{z}/{x}/{y}.png")).toBe(false);
+        expect(isStaticImageUrl("/iiif/image/1")).toBe(false);
     });
 });
 
@@ -1039,5 +1049,95 @@ describe("static fallback probing", () => {
             console.error = orig;
         }
         expect(errors.length).toBeGreaterThan(0);
+    });
+});
+
+describe("slideshow page chains", () => {
+    beforeAll(() => {
+        if (typeof (globalThis as Record<string, unknown>).ResizeObserver === "undefined") {
+            class ResizeObserverStub {
+                observe() {}
+                unobserve() {}
+                disconnect() {}
+            }
+            (globalThis as Record<string, unknown>).ResizeObserver = ResizeObserverStub;
+        }
+    });
+
+    type ChainHarness = {
+        _followSlideshowPages(
+            doc: unknown,
+            url: string,
+        ): Promise<{ pages: unknown[]; complete: boolean }>;
+    };
+
+    function harness(id: string): ChainHarness {
+        const el = document.createElement("div");
+        el.id = id;
+        document.body.appendChild(el);
+        return new StoryMap(id, {
+            storymap: { slides: [{ text: { headline: "S0", text: "" } }] },
+        } as unknown as StorymapDataWrapper) as unknown as ChainHarness;
+    }
+
+    function page(next?: string) {
+        return { type: "AnnotationPage", items: [], ...(next !== undefined ? { next } : {}) };
+    }
+
+    test("follows relative chains in order", async () => {
+        const sms = harness("sm-chain");
+        vi.stubGlobal(
+            "fetch",
+            (url: string) =>
+                Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(url.endsWith("/p2") ? page("/tour/p3") : page()),
+                }) as Promise<Response>,
+        );
+        try {
+            const result = await sms._followSlideshowPages(
+                { first: page("/tour/p2") },
+                "https://example.org/tour",
+            );
+            expect(result.complete).toBe(true);
+            expect(result.pages).toHaveLength(2);
+        } finally {
+            vi.unstubAllGlobals();
+        }
+    });
+
+    test("stops on cycles, errors and the hop bound", async () => {
+        const sms = harness("sm-chain-stop");
+        vi.stubGlobal("fetch", (url: string) => {
+            if (url.endsWith("/loop")) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(page("https://example.org/tour")),
+                }) as Promise<Response>;
+            }
+            return Promise.reject(new Error("down")) as Promise<Response>;
+        });
+        try {
+            const cycled = await sms._followSlideshowPages(
+                { first: page("/loop") },
+                "https://example.org/tour",
+            );
+            expect(cycled.complete).toBe(false);
+            expect(cycled.pages).toHaveLength(1);
+            const broken = await sms._followSlideshowPages(
+                { first: page("/missing") },
+                "https://example.org/tour",
+            );
+            expect(broken.complete).toBe(false);
+            expect(broken.pages).toHaveLength(0);
+        } finally {
+            vi.unstubAllGlobals();
+        }
+    });
+
+    test("a bare first page completes immediately", async () => {
+        const sms = harness("sm-chain-bare");
+        const result = await sms._followSlideshowPages({ first: page() }, "https://example.org/t");
+        expect(result).toEqual({ pages: [], complete: true });
     });
 });
