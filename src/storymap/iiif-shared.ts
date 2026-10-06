@@ -15,6 +15,10 @@
 export const LOCATION_PROPERTIES = [
     "name",
     "zoom",
+    "rotation",
+    "basemap",
+    "filter",
+    "mask",
     "line",
     "icon",
     "iconSize",
@@ -76,4 +80,45 @@ export function isHttpUrl(value: unknown): value is string {
 /** A plain string as a language-neutral (`none`) language map. */
 export function languageMap(value: string): { none: string[] } {
     return { none: [value] };
+}
+
+/**
+ * Clamp an image region `[x, y, w, h]` to the canvas `[0, 0, W, H]`
+ * (slideshow targets routinely overshoot, e.g. `#-922,1005,2129,949`).
+ * Returns the intersected region, or null when nothing visible remains.
+ * Without known dims only the negative origin is pulled to 0 (preserving
+ * the far edge); zero/negative sizes are always null.
+ */
+export function clampRegion(
+    region: [number, number, number, number],
+    width: number | null,
+    height: number | null,
+): [number, number, number, number] | null {
+    let [x, y, w, h] = region;
+    if (![x, y, w, h].every((n) => typeof n === "number" && Number.isFinite(n))) {
+        return null;
+    }
+    if (!(w > 0) || !(h > 0)) return null;
+    if (x < 0) {
+        w += x;
+        x = 0;
+    }
+    if (y < 0) {
+        h += y;
+        y = 0;
+    }
+    if (width !== null && width > 0) {
+        w = Math.min(w, width - x);
+    }
+    if (height !== null && height > 0) {
+        h = Math.min(h, height - y);
+    }
+    if (!(w > 0) || !(h > 0)) return null;
+    return [x, y, w, h];
+}
+
+/** A finite number within `[min, max]`, or null. */
+export function asClampedNumber(value: unknown, min: number, max: number): number | null {
+    if (typeof value !== "number" || isNaN(value) || !Number.isFinite(value)) return null;
+    return Math.min(max, Math.max(min, value));
 }

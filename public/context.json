@@ -33,6 +33,17 @@
             "@type": "@id"
         },
         "mediaSrcset": "storymap:mediaSrcset",
-        "mediaSizes": "storymap:mediaSizes"
+        "mediaSizes": "storymap:mediaSizes",
+        "rotation": "storymap:rotation",
+        "basemap": "storymap:basemap",
+        "filter": "storymap:filter",
+        "mask": "storymap:mask",
+        "slidetimeout": "storymap:slidetimeout",
+        "imgoverlay": "storymap:imgoverlay",
+        "loop": "storymap:loop",
+        "offset": "storymap:offset",
+        "play": "storymap:play",
+        "stopOnExit": "storymap:stopOnExit",
+        "stopAllPrevious": "storymap:stopAllPrevious"
     }
 }

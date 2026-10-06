@@ -300,6 +300,11 @@ class SlideBase {
     stopMedia() {
         if (this._medias.length > 0 && this._state.loaded) {
             for (const media of this._medias) {
+                // An audio bed that outlives its slide
+                // (`media.stopOnExit: false`, slideshow ambient audio) keeps
+                // playing; StoryMap stops it when another slide claims audio.
+                const mediaData = (media as unknown as { data?: { stopOnExit?: boolean } }).data;
+                if (mediaData?.stopOnExit === false) continue;
                 try {
                     media.stopMedia();
                 } catch (e: unknown) {
@@ -320,6 +325,25 @@ class SlideBase {
             // quick pass-through), allow a revisit to retry
             if (!this._medias.some((media) => media._state?.loaded)) {
                 this._state.loaded = false;
+            }
+        }
+    }
+
+    /**
+     * Stop this slide's ambient audio beds (`media.stopOnExit: false`) —
+     * called by the viewer when another slide claims the audio, not on every
+     * deactivation (see `stopMedia`, which skips them).
+     */
+    stopAmbientMedia() {
+        if (this._medias.length > 0 && this._state.loaded) {
+            for (const media of this._medias) {
+                const mediaData = (media as unknown as { data?: { stopOnExit?: boolean } }).data;
+                if (mediaData?.stopOnExit !== false) continue;
+                try {
+                    media.stopMedia();
+                } catch {
+                    // same editor-context race stopMedia() already tolerates
+                }
             }
         }
     }

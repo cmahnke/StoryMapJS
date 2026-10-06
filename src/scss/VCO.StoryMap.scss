@@ -289,3 +289,69 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* Slide panel dock + size (textmode/textsize): right is the long-standing
+   landscape layout; left mirrors it; bottom docks the panel below the map
+   (the component split is computed in StoryMap._updateDisplay). Unset means
+   right at 50/50, so existing stories render unchanged.
+================================================== */
+.vco-layout-landscape {
+    .vco-storyslider {
+        width: var(--vco-panel-size, 50%);
+        left: calc(100% - var(--vco-panel-size, 50%));
+    }
+
+    &.vco-textmode-left {
+        .vco-storyslider {
+            left: 0;
+
+            .vco-slider-background {
+                margin-left: 0;
+                width: 120%;
+                background-image: linear-gradient(
+                    to left,
+                    transparent 0%,
+                    var(--vco-color-background, #fff) 15%
+                );
+                background-repeat: repeat-x;
+            }
+        }
+    }
+
+    &.vco-textmode-bottom {
+        .vco-storyslider {
+            left: 0;
+            width: 100%;
+
+            .vco-slider-background {
+                margin-left: 0;
+                width: 100%;
+                background-image: linear-gradient(
+                    to top,
+                    transparent 0%,
+                    var(--vco-color-background, #fff) 15%
+                );
+                background-repeat: repeat-x;
+            }
+        }
+    }
+}
+
+/* Headline visibility (show_headings: false hides slide headlines) */
+.vco-no-headings {
+    .vco-headline {
+        display: none;
+    }
+}
+
+/* Scrollbar visibility (show_scrollbars: false hides the panel scrollbars;
+   content still scrolls) */
+.vco-no-scrollbars {
+    .vco-slide {
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}

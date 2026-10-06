@@ -155,7 +155,21 @@ describe("readSelector", () => {
     it("rejects a non-positive or malformed region", () => {
         expect(readSelector(`${CANVAS_ID}#xywh=0,0,0,10`).region).toBeNull();
         expect(readSelector(`${CANVAS_ID}#xywh=0,0,10`).region).toBeNull();
-        expect(readSelector(`${CANVAS_ID}#xywh=-1,0,10,10`).region).toBeNull();
+        expect(readSelector(`${CANVAS_ID}#xywh=0,0,-10,10`).region).toBeNull();
+    });
+
+    it("clamps a negative region origin to the canvas (slideshow overshoot)", () => {
+        // unknown canvas size: the origin pulls to 0, preserving the far edge
+        expect(readSelector(`${CANVAS_ID}#xywh=-1,0,10,10`).region).toEqual([0, 0, 9, 10]);
+        // known canvas size: the region intersects the canvas
+        expect(readSelector(`${CANVAS_ID}#xywh=-10,-10,5000,5000`, 1000, 800).region).toEqual([
+            0, 0, 1000, 800,
+        ]);
+        expect(readSelector(`${CANVAS_ID}#xywh=900,700,500,500`, 1000, 800).region).toEqual([
+            900, 700, 100, 100,
+        ]);
+        // fully outside the canvas: no region
+        expect(readSelector(`${CANVAS_ID}#xywh=2000,2000,10,10`, 1000, 800).region).toBeNull();
     });
 
     it("returns an empty result for an unknown selector", () => {

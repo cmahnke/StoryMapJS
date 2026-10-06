@@ -4,7 +4,7 @@ import { manifestToStorymapData } from "../src/storymap/iiif";
 import type { StorymapDataWrapper } from "../src/types";
 
 /**
- * Image region stops (StrollView-style): `location.region` is an IIIF
+ * Image region stops (slideshow-style): `location.region` is an IIIF
  * xywh box ([x, y, w, h] image pixels). A IIIF manifest encodes it as the
  * painting annotation's `ImageApiSelector` target selector; invalid regions
  * are ignored.

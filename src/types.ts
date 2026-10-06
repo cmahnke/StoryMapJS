@@ -17,15 +17,69 @@ export interface StorymapSlideLocation {
     zoom?: number;
     /**
      * Image region `[x, y, w, h]` in image pixels (IIIF xywh convention,
-     * StrollView-style image stops): the view fits the region on
+     * slideshow-style image stops): the view fits the region on
      * navigation; image maps (`map_type: "iiif"` + `map_as_image`) only.
      */
     region?: [number, number, number, number];
+    /**
+     * View rotation in degrees clockwise (slideshow `rotation`). Applied to
+     * the map view on navigation; absent means north-up (0). Image and geo
+     * maps alike; purely presentational.
+     */
+    rotation?: number;
+    /**
+     * Per-slide image grading (slideshow `filters`): applied as a CSS
+     * `filter()` on the map viewport. All fields optional; absent means
+     * unfiltered. `hueRotate` is degrees (-180..180), `blur` is CSS pixels.
+     */
+    filter?: StorymapSlideFilter;
+    /**
+     * Spotlight mask (slideshow `passepartout`): normalized viewport
+     * fractions `{x, y, w, h}` (0..1) left visible while the rest is dimmed
+     * with `color`. `invert` dims the inside instead of the outside.
+     * Absent means no mask.
+     */
+    mask?: StorymapSlideMask;
+    /**
+     * Per-slide basemap override (multi-manifest slideshow tours): any
+     * `map_type` value or IIIF `info.json` URL. Absent keeps the story
+     * basemap. The layer is cached, so returning to a slide is free.
+     */
+    basemap?: string;
     line?: boolean;
     icon?: string;
     iconSize?: number[];
     image?: string;
     use_custom_marker?: boolean;
+    [key: string]: unknown;
+}
+
+/**
+ * Declarative CSS filter grading for one slide (slideshow `filters`).
+ * Rendered by `buildSlideFilter()`; unknown keys never reach CSS.
+ */
+export interface StorymapSlideFilter {
+    brightness?: number;
+    contrast?: number;
+    saturate?: number;
+    hueRotate?: number;
+    sepia?: number;
+    blur?: number;
+    [key: string]: unknown;
+}
+
+/**
+ * Spotlight mask geometry (slideshow `passepartout`). Fractions of the
+ * visible map area; `color` is a `#rgb`/`#rrggbb`/`#rrggbbaa`/`rgb(a)` string.
+ */
+export interface StorymapSlideMask {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    color?: string;
+    invert?: boolean;
+    opacity?: number;
     [key: string]: unknown;
 }
 
@@ -56,6 +110,25 @@ export interface StorymapSlideMedia {
      * `TextualBody` + `format: text/vtt` shape we also accept.
      */
     subtitles?: string | null;
+    /**
+     * Start offset in seconds for audio/video media (slideshow `audio.offset`).
+     * Applied once the media metadata is available; absent or negative means 0.
+     */
+    offset?: number;
+    /**
+     * Loop audio/video media (slideshow `audio.loop`). Absent means no loop.
+     */
+    loop?: boolean;
+    /**
+     * `auto` (default) plays on activation; `click` arms the media paused and
+     * lets the visitor start it (slideshow `audio.play`). Absent means `auto`.
+     */
+    play?: "auto" | "click";
+    /**
+     * Stop this media when leaving the slide (default true). `false` lets an
+     * audio bed continue across slides (slideshow ambient audio).
+     */
+    stopOnExit?: boolean;
     [key: string]: unknown;
 }
 
@@ -90,6 +163,33 @@ export interface StorymapSlideMarker {
  */
 export interface StorymapSlideNarration {
     url: string;
+    /**
+     * Loop the narration (slideshow `audio.loop`). Absent means no loop.
+     * Note: a looping narration never fires `ended`, so `autoplay_media`
+     * falls back to its millisecond timer for that slide.
+     */
+    loop?: boolean;
+    /**
+     * Start offset in seconds (slideshow `audio.offset`), applied once the
+     * audio metadata is available. Absent or negative means 0.
+     */
+    offset?: number;
+    /**
+     * `auto` (default) plays on navigation; `click` arms the narration
+     * paused and lets the visitor start it (slideshow `audio.play`).
+     */
+    play?: "auto" | "click";
+    /**
+     * Stop the narration when leaving the slide (default true). `false`
+     * keeps an audio bed playing across slides while the URL is unchanged
+     * (slideshow ambient audio).
+     */
+    stopOnExit?: boolean;
+    /**
+     * Stop any other playing narration/ambient track before starting this
+     * one (default true). `false` allows the ambient overlap of two tracks.
+     */
+    stopAllPrevious?: boolean;
     [key: string]: unknown;
 }
 
@@ -140,6 +240,31 @@ export interface StorymapSlide {
     text?: StorymapSlideText | null;
     background?: StorymapSlideBackground | string | null;
     uniqueid?: string | null;
+    /**
+     * Per-slide autoplay dwell in milliseconds (slideshow `slidetimeout`):
+     * overrides the global `autoplay` interval for this slide; `0` holds on
+     * this slide. Absent means the global interval.
+     */
+    slidetimeout?: number;
+    /**
+     * Per-slide image overlay on the map (slideshow `imgoverlay`): a placed
+     * image shown while this slide is active. Absent means no overlay.
+     */
+    imgoverlay?: StorymapImageOverlay | null;
+    [key: string]: unknown;
+}
+
+/**
+ * A per-slide image overlay (slideshow `imgoverlay`). `url` is a full-size
+ * image; `extent` pins it to `[west, south, east, north]` (lon/lat, or raw
+ * image pixels on image-space maps) and defaults to the current view;
+ * `size` scales it as a fraction of the viewport width; `opacity` is 0..1.
+ */
+export interface StorymapImageOverlay {
+    url: string;
+    size?: number;
+    opacity?: number;
+    extent?: [number, number, number, number];
     [key: string]: unknown;
 }
 
@@ -211,10 +336,31 @@ export interface StorymapOptions {
     autoplay_media: boolean;
     /** Show a progress bar in the menubar (issue #247) */
     show_progress: boolean;
+    /**
+     * Progress indicator style (slideshow `progressbar`): `false`/`"off"`
+     * hides it (same as `show_progress: false`), `true`/`"bar"` is the
+     * classic fill bar, `dots`/`squares` render one step per slide,
+     * `block`/`thinblock` are fill-bar height variants. Absent means the
+     * `show_progress` boolean decides and the style is `"bar"`.
+     */
+    progressbar?: boolean | "bar" | "dots" | "squares" | "block" | "thinblock" | "off";
     /** Show the slide headline as a label on the active map marker (issue #243) */
     marker_labels: boolean;
     /** Default text alignment for slide text: left, center or right (issue #244) */
     text_align: "left" | "center" | "right";
+    /**
+     * Slide panel dock (slideshow `textmode`): which side the text panel
+     * occupies in landscape. `"right"` (default) is the current layout;
+     * `"left"` mirrors it; `"bottom"` docks the panel below the map.
+     * Portrait layouts always behave like `"bottom"`.
+     */
+    textmode?: "left" | "right" | "bottom";
+    /**
+     * Slide panel size as a percentage (slideshow `textsize`): percent of
+     * the width for side docks, of the height for the bottom dock.
+     * Range 10..80; absent keeps the built-in 50/50 split.
+     */
+    textsize?: number;
     /** Override the overview fit center (issues #107, #271) */
     map_overview_center: { lat: number; lon: number } | null;
     map_type: string;
@@ -297,6 +443,55 @@ export interface StorymapOptions {
     /** Show the great-circle route distance in the menubar (issue #341) */
     show_distance: boolean;
     /**
+     * Slide transition effect (slideshow `fxmode`): `"slide"` (default) is
+     * the current glide, `"fade"` cross-fades slides, `"none"` jumps without
+     * animation. `prefers-reduced-motion` still forces `"none"`.
+     */
+    fxmode?: "slide" | "fade" | "none";
+    /**
+     * Reading mode (slideshow `mode`): `"standard"` (default) is the
+     * slider; `"static"` stacks all slides in a scrollable list and follows
+     * the map to the slide in view.
+     */
+    mode?: "standard" | "static";
+    /**
+     * HUD foreground color override (slideshow `hudcolor`): sets the
+     * `--vco-hud-fg` CSS variable. Absent follows the theme.
+     */
+    hudcolor?: string;
+    /**
+     * HUD background color override (slideshow `hudbgcolor`): sets the
+     * `--vco-hud-bg` CSS variable. Absent follows the theme.
+     */
+    hudbgcolor?: string;
+    /**
+     * HUD opacity percent 0..100 (slideshow `hudopacity`): applied to the
+     * HUD background. Absent means fully opaque theme background.
+     */
+    hudopacity?: number;
+    /**
+     * Show the previous/next slide navigation (slideshow `shownav`).
+     * Default true; `false` hides the nav chrome (keyboard/AT navigation
+     * still works, like `show_progress: false` keeps the story usable).
+     */
+    shownav?: boolean;
+    /**
+     * Render slide headlines (slideshow `showheadings`). Default true;
+     * `false` hides headline elements via CSS.
+     */
+    show_headings?: boolean;
+    /**
+     * Show scrollbars in the slide panel (slideshow `showscrollbars`).
+     * Default true; `false` hides them via CSS (content still scrolls).
+     */
+    show_scrollbars?: boolean;
+    /**
+     * Fixed viewer height (slideshow `viewerheight`), e.g. `"400px"`:
+     * applied as a container height override when set. Absent keeps the
+     * measured-container behavior. Only `px`, `%` and `vh` units accepted.
+     */
+    viewerheight?: string;
+    /**
      * Raw OpenLayers map configuration. `controls` replaces the StoryMapJS
      * defaults, `interactions` are *added to* the viewer's own pan/zoom
      * interactions, and `view` is merged over the computed default view
@@ -315,7 +510,20 @@ export interface StorymapOptions {
     show_lines: boolean;
     show_history_line: boolean;
     use_custom_markers: boolean;
-    iiif: { url: string; attribution: string };
+    /**
+     * IIIF image service for image maps. `url` is the `info.json`; `width`
+     * and `height` record the canvas size so region clamping and the static
+     * fallback work without another fetch; `fallbackUrl` is a full-size
+     * image used when `info.json` cannot be loaded (slideshow
+     * `image_static`).
+     */
+    iiif: {
+        url: string;
+        attribution: string;
+        width?: number;
+        height?: number;
+        fallbackUrl?: string;
+    };
     tilejson?: StorymapTilejson;
     /**
      * The `seeAlso` targets a IIIF manifest points at, recorded but not

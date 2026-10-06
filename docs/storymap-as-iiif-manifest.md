@@ -58,7 +58,18 @@ reference; a manifest must reference it by URL, not paste it in (see the
             "@type": "@id"
         },
         "mediaSrcset": "storymap:mediaSrcset",
-        "mediaSizes": "storymap:mediaSizes"
+        "mediaSizes": "storymap:mediaSizes",
+        "rotation": "storymap:rotation",
+        "basemap": "storymap:basemap",
+        "filter": "storymap:filter",
+        "mask": "storymap:mask",
+        "slidetimeout": "storymap:slidetimeout",
+        "imgoverlay": "storymap:imgoverlay",
+        "loop": "storymap:loop",
+        "offset": "storymap:offset",
+        "play": "storymap:play",
+        "stopOnExit": "storymap:stopOnExit",
+        "stopAllPrevious": "storymap:stopAllPrevious"
     }
 }
 ```
@@ -122,7 +133,18 @@ what the fixtures reference. Content:
         "overlays": "storymap:overlays",
         "type": { "@id": "storymap:type", "@type": "@id" },
         "mediaSrcset": "storymap:mediaSrcset",
-        "mediaSizes": "storymap:mediaSizes"
+        "mediaSizes": "storymap:mediaSizes",
+        "rotation": "storymap:rotation",
+        "basemap": "storymap:basemap",
+        "filter": "storymap:filter",
+        "mask": "storymap:mask",
+        "slidetimeout": "storymap:slidetimeout",
+        "imgoverlay": "storymap:imgoverlay",
+        "loop": "storymap:loop",
+        "offset": "storymap:offset",
+        "play": "storymap:play",
+        "stopOnExit": "storymap:stopOnExit",
+        "stopAllPrevious": "storymap:stopAllPrevious"
     }
 }
 ```
@@ -175,9 +197,16 @@ with one GeoJSON Feature:
   verbatim. For image-map storymaps (`storymap:mapAsImage: true`) the values are
   image coordinates rather than WGS84 degrees; consumers can detect this via
   `storymap:mapAsImage`.
-- `properties`: marker data — `name`, `zoom`, `line`, `icon`, `iconSize`,
-  `image`, `use_custom_marker`, plus the presentation-only `popup` and
-  `audioBadge` (only present keys).
+- `properties`: marker data — `name`, `zoom`, `rotation` (view rotation in
+  degrees clockwise), `basemap` (a per-slide basemap override: any `map_type`
+  value or IIIF `info.json` URL), `filter` (per-slide image grading:
+  `brightness`/`contrast`/`saturate` in percent, `hueRotate` in degrees,
+  `sepia` in percent, `blur` in CSS pixels), `mask` (a spotlight mask:
+  normalized `{x, y, w, h}` viewport fractions plus `color`/`invert`), `line`,
+  `icon`, `iconSize`, `image`, `use_custom_marker`, plus the
+  presentation-only `popup` and `audioBadge` (only present keys). Slides
+  without `lat`/`lon` carry `rotation`/`basemap`/`filter`/`mask` as the
+  canvas `storymap:` terms below instead.
 - `location.use_custom_marker` / `use_custom_markers` (manifest) opt into
   custom marker rendering; see the storymap terms below.
 
@@ -189,7 +218,7 @@ context, and a client that meets a property it does not understand must ignore
 it. There is no IIIF extension for marker presentation — navPlace defines
 exactly one term, `navPlace` itself — so the local context is the only option.
 It is why `popup` and `audioBadge` need no `storymap:` term of their own, and
-the same mechanism serves marker config. The nine local names hang off this project's existing namespace
+the same mechanism serves marker config. The thirteen local names hang off this project's existing namespace
 (`https://christianmahnke.de/iiif/storymap#`), not a new one.
 
 ### Context order matters
@@ -387,7 +416,12 @@ offset, the same reason `map_bbox` works the way it does.
 Canvas objects are open for extension terms, so slide-specific StoryMap data is
 carried directly on the Canvas: `storymap:type`, plus the two terms with no
 standard home, `storymap:mediaSrcset` and `storymap:mediaSizes` (see the
-Canvas table above). A slide's date is the standard `navDate` and its
+Canvas table above), plus the view directives `storymap:rotation`,
+`storymap:basemap`, `storymap:filter` and `storymap:mask` (the fallback for
+slides without `lat`/`lon`, which have no `navPlace` to carry them — the
+reader prefers `navPlace` when both spell a key), the per-slide autoplay
+dwell `storymap:slidetimeout` (milliseconds, `0` holds) and the per-slide
+image overlay `storymap:imgoverlay` (`{url, size?, opacity?, extent?}`). A slide's date is the standard `navDate` and its
 background is the standard `background` annotation. The media caption, credit and alt
 text are **not** terms any more: they are the painting annotation's own `label`,
 `requiredStatement` and `accessibilitySummary`, which is where Presentation 3
@@ -879,39 +913,48 @@ photo, and a slide with a YouTube video — full manifest:
 | `start_at_slide`             | `service[0].storymap:startAtSlide`                                      |
 | _(root) `width`, `height`_   | _dropped_ (viewer embed size)                                           |
 
-| Legacy field (slide)           | IIIF path                                                                   |
-| ------------------------------ | --------------------------------------------------------------------------- |
-| `type: "overview"`             | Canvas `storymap:type: "overview"`                                          |
-| `date`                         | Canvas `navDate`                                                            |
-| `text.headline`                | Canvas `label` (language map)                                               |
-| `text.text`                    | Canvas `summary` (language map)                                             |
-| `location.lat`, `location.lon` | Canvas `navPlace` Feature `geometry.coordinates`                            |
-| `location.zoom`                | Canvas `navPlace` Feature `properties.zoom`                                 |
-| `location.line`                | Canvas `navPlace` Feature `properties.line`                                 |
-| `location.name`                | Canvas `navPlace` Feature `properties.name`                                 |
-| `location.icon`                | Canvas `navPlace` Feature `properties.icon`                                 |
-| `location.iconSize`            | Canvas `navPlace` Feature `properties.iconSize`                             |
-| `location.image`               | Canvas `navPlace` Feature `properties.image`                                |
-| `location.use_custom_marker`   | Canvas `navPlace` Feature `properties.use_custom_marker`                    |
-| `media.url` (image)            | Annotation body `{type: "Image", format: ...}`                              |
-| `media.url` (video service)    | Annotation body `{type: "Video"}`                                           |
-| `media.url` (audio service)    | Annotation body `{type: "Sound"}`                                           |
-| `media.url` (web page)         | Annotation body `{type: "Text", format: "text/html"}`                       |
-| `media.url` (absent / HTML)    | Annotation body `{type: "TextualBody", value: ...}`                         |
-| `media.caption`                | Painting annotation `label`                                                 |
-| `media.credit`                 | Painting annotation `requiredStatement` (`{label, value}`)                  |
-| `media.alt`                    | Painting annotation `accessibilitySummary`                                  |
-| `media.srcset`                 | Canvas `storymap:mediaSrcset`                                               |
-| `media.sizes`                  | Canvas `storymap:mediaSizes`                                                |
-| `location.region`              | Painting annotation target `ImageApiSelector` `xywh=pixel:`                 |
-| `media.thumb`                  | Canvas `thumbnail[]` or the body `thumbnail[]`                              |
-| `background`                   | Canvas `background` painting annotation (Image + Color body)                |
-| `uniqueid`                     | Canvas `id`                                                                 |
-| `group`                        | A `structures` Range label; the Range order is the slide order              |
-| `language` (per slide)         | The language tag the slide's text was read in (§3.4)                        |
-| `logo`, `metadata`             | Read into `data.logo` / `data.metadata[]`                                   |
-| `tilejson`                     | `service[0].tilejson`                                                       |
-| `title`                        | Manifest `label` (a label is required, so the converter uses the file name) |
+| Legacy field (slide)                                    | IIIF path                                                                        |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `type: "overview"`                                      | Canvas `storymap:type: "overview"`                                               |
+| `date`                                                  | Canvas `navDate`                                                                 |
+| `text.headline`                                         | Canvas `label` (language map)                                                    |
+| `text.text`                                             | Canvas `summary` (language map)                                                  |
+| `location.lat`, `location.lon`                          | Canvas `navPlace` Feature `geometry.coordinates`                                 |
+| `location.zoom`                                         | Canvas `navPlace` Feature `properties.zoom`                                      |
+| `location.line`                                         | Canvas `navPlace` Feature `properties.line`                                      |
+| `location.name`                                         | Canvas `navPlace` Feature `properties.name`                                      |
+| `location.icon`                                         | Canvas `navPlace` Feature `properties.icon`                                      |
+| `location.iconSize`                                     | Canvas `navPlace` Feature `properties.iconSize`                                  |
+| `location.image`                                        | Canvas `navPlace` Feature `properties.image`                                     |
+| `location.use_custom_marker`                            | Canvas `navPlace` Feature `properties.use_custom_marker`                         |
+| `location.rotation`                                     | Canvas `navPlace` Feature `properties.rotation`, else Canvas `storymap:rotation` |
+| `location.basemap`                                      | Canvas `navPlace` Feature `properties.basemap`, else Canvas `storymap:basemap`   |
+| `location.filter`                                       | Canvas `navPlace` Feature `properties.filter`, else Canvas `storymap:filter`     |
+| `location.mask`                                         | Canvas `navPlace` Feature `properties.mask`, else Canvas `storymap:mask`         |
+| `slidetimeout`                                          | Canvas `storymap:slidetimeout` (milliseconds, `0` holds)                         |
+| `imgoverlay`                                            | Canvas `storymap:imgoverlay`                                                     |
+| `narration.url`                                         | Supplementing annotation body `{type: "Sound"}`                                  |
+| `narration.loop/offset/play/stopOnExit/stopAllPrevious` | Supplementing annotation `storymap:` members (foreign members, only when set)    |
+| `media.offset/loop/play/stopOnExit`                     | Painting annotation `storymap:` members (foreign members, only when set)         |
+| `media.url` (image)                                     | Annotation body `{type: "Image", format: ...}`                                   |
+| `media.url` (video service)                             | Annotation body `{type: "Video"}`                                                |
+| `media.url` (audio service)                             | Annotation body `{type: "Sound"}`                                                |
+| `media.url` (web page)                                  | Annotation body `{type: "Text", format: "text/html"}`                            |
+| `media.url` (absent / HTML)                             | Annotation body `{type: "TextualBody", value: ...}`                              |
+| `media.caption`                                         | Painting annotation `label`                                                      |
+| `media.credit`                                          | Painting annotation `requiredStatement` (`{label, value}`)                       |
+| `media.alt`                                             | Painting annotation `accessibilitySummary`                                       |
+| `media.srcset`                                          | Canvas `storymap:mediaSrcset`                                                    |
+| `media.sizes`                                           | Canvas `storymap:mediaSizes`                                                     |
+| `location.region`                                       | Painting annotation target `ImageApiSelector` `xywh=pixel:`                      |
+| `media.thumb`                                           | Canvas `thumbnail[]` or the body `thumbnail[]`                                   |
+| `background`                                            | Canvas `background` painting annotation (Image + Color body)                     |
+| `uniqueid`                                              | Canvas `id`                                                                      |
+| `group`                                                 | A `structures` Range label; the Range order is the slide order                   |
+| `language` (per slide)                                  | The language tag the slide's text was read in (§3.4)                             |
+| `logo`, `metadata`                                      | Read into `data.logo` / `data.metadata[]`                                        |
+| `tilejson`                                              | `service[0].tilejson`                                                            |
+| `title`                                                 | Manifest `label` (a label is required, so the converter uses the file name)      |
 
 ## Conversion
 

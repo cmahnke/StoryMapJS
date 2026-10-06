@@ -35,6 +35,20 @@
         "audioBadge": {
             "@id": "storymap_navplace:navplaceAudioBadge",
             "@type": "xsd:boolean"
+        },
+        "rotation": {
+            "@id": "storymap_navplace:navplaceRotation",
+            "@type": "xsd:decimal"
+        },
+        "basemap": {
+            "@id": "storymap_navplace:navplaceBasemap",
+            "@type": "@id"
+        },
+        "filter": {
+            "@id": "storymap_navplace:navplaceFilter"
+        },
+        "mask": {
+            "@id": "storymap_navplace:navplaceMask"
         }
     }
 }

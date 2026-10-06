@@ -71,9 +71,52 @@ export class HtmlMediaBase extends Media {
         // Media Loaded Event. The references are kept so dispose() can detach
         // them: an inline arrow function has no other handle.
         this._onEnded = null;
+        // Playback flags (slideshow audio terms): loop repeats, offset seeks
+        // once the metadata is available, play:"auto" starts on load
+        // (absent stays click-to-play with controls, as before).
+        const bag = this.data as {
+            loop?: boolean;
+            offset?: number;
+            play?: string;
+        };
+        media_item.loop = bag.loop === true;
+        const offset =
+            typeof bag.offset === "number" && Number.isFinite(bag.offset) && bag.offset > 0
+                ? bag.offset
+                : 0;
+        const seek = () => {
+            if (offset <= 0) return;
+            try {
+                media_item.currentTime = offset;
+            } catch {
+                // pre-metadata seek throws in some browsers; canplay retries
+            }
+        };
+        const autoplay = bag.play === "auto";
         this._onCanPlay = () => {
+            seek();
+            if (autoplay) {
+                void media_item.play()?.catch?.(() => {
+                    // autoplay policy or missing gesture: controls stay for
+                    // the visitor, like a click-armed slide
+                });
+            }
             this.onLoaded();
         };
+        // offset with metadata already present (cached media): seek now too
+        if (offset > 0) {
+            if (media_item.readyState >= 1) {
+                seek();
+            } else {
+                media_item.addEventListener(
+                    "loadedmetadata",
+                    () => {
+                        seek();
+                    },
+                    { once: true },
+                );
+            }
+        }
         media_item.addEventListener("canplay", this._onCanPlay);
 
         // Load Error Event (the source element fires it, not the media element)

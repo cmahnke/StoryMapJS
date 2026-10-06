@@ -128,13 +128,13 @@ slide.
 
 ### Target selectors
 
-| Selector                                                    | Becomes                                                                                                                            |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `FragmentSelector` / `ImageApiSelector` with `xywh=x,y,w,h` | that image-pixel region. `xywh=pixel:…` works too                                                                                  |
-| `PointSelector` (`x`, `y`)                                  | a square of 5% of the canvas's smaller side, centred on the point and clamped to the canvas — a pin you can fit                    |
-| `TextQuoteSelector` (`exact`, optional `prefix`/`suffix`)   | preserved; **not resolved**, because a canvas carries no transcript. Use it to anchor a stop to quoted text in a tool that has one |
-| `TimeState` (`start`, `end`) or a `start`/`end` range       | preserved on the stop; a time-ranged narration can be built from it                                                                |
-| `SvgSelector`                                               | preserved; the viewer fits the bounding region, it does not draw the true outline yet                                              |
+| Selector                                                    | Becomes                                                                                                                                                              |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `FragmentSelector` / `ImageApiSelector` with `xywh=x,y,w,h` | that image-pixel region. `xywh=pixel:…` works too. A negative origin is clamped to the canvas (targets routinely overshoot it); a region fully outside it is dropped |
+| `PointSelector` (`x`, `y`)                                  | a square of 5% of the canvas's smaller side, centred on the point and clamped to the canvas — a pin you can fit                                                      |
+| `TextQuoteSelector` (`exact`, optional `prefix`/`suffix`)   | preserved; **not resolved**, because a canvas carries no transcript. Use it to anchor a stop to quoted text in a tool that has one                                   |
+| `TimeState` (`start`, `end`) or a `start`/`end` range       | preserved on the stop; a time-ranged narration can be built from it                                                                                                  |
+| `SvgSelector`                                               | preserved; the viewer fits the bounding region, it does not draw the true outline yet                                                                                |
 
 One level of `refinedBy` is followed, so a fragment refined by a quote works.
 
@@ -150,7 +150,12 @@ A stop's `body` may be one resource or an array.
   `media.url`. The viewer resolves the URL to a player: a `.mp3`/`.wav`/`.m4a`
   URL renders a native `<audio>`, a YouTube or Vimeo URL renders that embed,
   and anything else falls back to a framed website. A `Sound` body therefore
-  needs no type of its own beyond `id` and `format`.
+  needs no type of its own beyond `id` and `format`. Playback flags ride
+  `storymap:` members on the painting annotation — `storymap:offset`
+  (start seconds), `storymap:loop`, `storymap:play` (`auto`/`click`) and
+  `storymap:stopOnExit` — and a `motivation: "supplementing"` Sound/Video
+  body becomes the slide `narration` with the same flags plus
+  `storymap:stopAllPrevious`.
 - A media body's `label` becomes the media caption,
   `accessibilitySummary` the alt text, and `requiredStatement` (or `provider`)
   the credit. A `thumbnail` becomes the media thumb. A sibling `TextualBody`
@@ -166,7 +171,9 @@ A stop's `body` may be one resource or an array.
 - **A point on a map** — [navPlace](https://iiif.io/api/extension/navplace/)
   on the canvas. A `Point` gives the slide's location; a `Polygon` gives the
   story's extent (`map_bbox`). Marker presentation (`icon`, `iconSize`,
-  `image`, `name`, `line`, `zoom`, `use_custom_marker`) goes in the Feature's
+  `image`, `name`, `line`, `zoom`, `rotation` in degrees clockwise, `basemap`
+  for a per-slide basemap, `filter` for per-slide image grading, `mask` for a
+  spotlight mask, `use_custom_marker`) goes in the Feature's
   `properties`. All stops on a canvas share that canvas's `navPlace` — the
   extension does not allow it on an annotation, so there is no per-stop
   override. Two `properties` names are marker behaviour, not data:
@@ -174,7 +181,7 @@ A stop's `body` may be one resource or an array.
   excerpt, and `audioBadge: true` dots a marker whose slide has narration or
   audio. Open the card from code with `storymap.openMarkerPopup(n)` (it
   navigates to the stop first) and listen for `popupopen` / `popupclose`
-  with `{ marker_number, current_slide }`. The nine names the reader
+  with `{ marker_number, current_slide }`. The thirteen names the reader
   copies — and the linked-data context that describes them — are listed
   in `docs/storymap-as-iiif-manifest.md`.
 - **Chapters** — a `Range` with a `label` and no `start` groups the canvases

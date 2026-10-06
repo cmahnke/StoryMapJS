@@ -91,6 +91,36 @@ visitor can switch layers without touching code.
 `theme: "dark"` forces the dark palette, `"light"` pins the light one;
 unset, the widget follows `prefers-color-scheme`.
 
+### Slideshow-style tours
+
+Slides can carry per-slide presentation for image tours (a stop can restyle
+the view while it is active; everything is optional and validated against
+`schema/storymap.schema.json`):
+
+    location: {
+        region: [x, y, w, h],  // image-pixel stop (IIIF xywh); negative origins clamp to the canvas
+        rotation: 45,          // view rotation in degrees clockwise
+        filter: { sepia: 40 }, // brightness/contrast/saturate (%), hueRotate (°), sepia (%), blur (px)
+        mask: { x: 0.1, y: 0.1, w: 0.8, h: 0.8 },  // spotlight mask (fractions) + color/invert
+        basemap: "osm:bright", // per-slide basemap (any map_type or IIIF info.json URL)
+    },
+    narration: { url, loop, offset, play: "auto"|"click", stopOnExit, stopAllPrevious },
+    slidetimeout: 9000,        // per-slide autoplay dwell in ms (0 holds); default is the global autoplay
+    imgoverlay: { url, extent, opacity },  // image overlay while the slide is active
+
+When a slide's IIIF `info.json` cannot be loaded, `iiif: { width, height,
+fallbackUrl }` paints the static image instead of a blank basemap.
+
+The player chrome is opt-in storymap options (absent means the default
+layout): `textmode: "left"|"right"|"bottom"` with `textsize` (10–80 %),
+`progressbar: "bar"|"dots"|"squares"|"block"|"thinblock"|"off"`,
+`fxmode: "slide"|"fade"|"none"`, `mode: "static"` (stacked reading list with
+scroll-spy map sync), `hudcolor`/`hudbgcolor`/`hudopacity`,
+`shownav`/`show_headings`/`show_scrollbars` toggles and
+`viewerheight: "400px"`. The same presentation round-trips through IIIF
+manifests as `storymap:` terms — see
+[docs/storymap-as-iiif-manifest.md](docs/storymap-as-iiif-manifest.md).
+
 Images can now be used in place of map pins.
 Use `image` inside the location object and include a url to use, together with
 `use_custom_marker: true` in the location object (or set `use_custom_markers:

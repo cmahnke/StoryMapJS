@@ -70,4 +70,36 @@
             }
         }
     }
+
+    /* Static reading mode (mode: "static"): all slides stacked in a
+       scrollable list instead of a translating strip; the scroll-spy in
+       StorySlider follows the reading position. Standard mode is untouched.
+    ================================================== */
+    &.vco-static {
+        overflow-y: auto;
+
+        .vco-slider-container-mask {
+            overflow: visible;
+        }
+
+        .vco-slider-container {
+            position: relative;
+            height: auto;
+        }
+
+        .vco-slider-item-container {
+            position: relative;
+            display: block;
+            height: auto;
+        }
+
+        .vco-slide {
+            position: relative;
+            left: auto !important;
+            top: auto !important;
+            height: auto;
+            min-height: 60%;
+            margin-bottom: 24px;
+        }
+    }
 }

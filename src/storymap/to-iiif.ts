@@ -110,6 +110,12 @@ export interface StorymapManifestAnnotation {
     accessibilitySummary?: StorymapLanguageMap;
     body: StorymapManifestContentResource;
     target: string | StorymapManifestSpecificResource;
+    /** Playback flags (slideshow audio terms); foreign members, absent when unset. */
+    "storymap:loop"?: boolean;
+    "storymap:offset"?: number;
+    "storymap:play"?: string;
+    "storymap:stopOnExit"?: boolean;
+    "storymap:stopAllPrevious"?: boolean;
 }
 
 /** A painting annotation whose target is a region of a larger image (§2.8). */
@@ -172,6 +178,14 @@ export interface StorymapManifestCanvas {
     "storymap:type"?: string;
     "storymap:mediaSrcset"?: unknown;
     "storymap:mediaSizes"?: unknown;
+    /** View directives (slideshow rotation/basemap/filter/mask); navPlace carries them when lat/lon exist. */
+    "storymap:rotation"?: number;
+    "storymap:basemap"?: string;
+    "storymap:filter"?: unknown;
+    "storymap:mask"?: unknown;
+    /** Per-slide autoplay dwell (slideshow slidetimeout) and image overlay. */
+    "storymap:slidetimeout"?: number;
+    "storymap:imgoverlay"?: unknown;
     navPlace?: StorymapManifestFeatureCollection;
 }
 
@@ -563,6 +577,9 @@ function buildCanvas(
                         ...buildAnnotationPresentation(slide),
                         body: buildBody(slide, isImageMap),
                         target: buildRegionTarget(canvasId, slide.location?.region) ?? canvasId,
+                        // Playback flags for audio/video media (slideshow
+                        // audio terms); absent stays absent.
+                        ...buildPlaybackTerms(slide.media ?? {}),
                     },
                     // Narration is a supplementing Sound body (V1 of #358):
                     // "additional to the painting", with no rendering rules
@@ -637,6 +654,7 @@ function buildNarration(canvasId: string, slide: StorymapSlide): StorymapManifes
             motivation: "supplementing",
             body: { id: url, type: "Sound" },
             target: canvasId,
+            ...buildPlaybackTerms(slide.narration ?? {}),
         },
     ];
 }
@@ -878,6 +896,62 @@ function buildCanvasTerms(slide: StorymapSlide): Partial<StorymapManifestCanvas>
     }
     if (present(slide.media?.sizes)) {
         terms["storymap:mediaSizes"] = slide.media?.sizes;
+    }
+    // View directives that also ride the navPlace properties (which only
+    // exist when the slide has lat/lon): the canvas terms are the fallback
+    // for image-region-only slides, and the reader prefers navPlace.
+    if (typeof slide.location?.rotation === "number") {
+        terms["storymap:rotation"] = slide.location.rotation;
+    }
+    if (present(slide.location?.basemap) && typeof slide.location?.basemap === "string") {
+        terms["storymap:basemap"] = slide.location.basemap;
+    }
+    if (present(slide.location?.filter)) {
+        terms["storymap:filter"] = slide.location?.filter;
+    }
+    if (present(slide.location?.mask)) {
+        terms["storymap:mask"] = slide.location?.mask;
+    }
+    if (typeof slide.slidetimeout === "number") {
+        terms["storymap:slidetimeout"] = slide.slidetimeout;
+    }
+    if (present(slide.imgoverlay)) {
+        terms["storymap:imgoverlay"] = slide.imgoverlay;
+    }
+    return terms;
+}
+
+/**
+ * `storymap:` playback flags for a media/narration bag (slideshow audio
+ * terms): foreign members needing no vocabulary registration. Only present
+ * flags are written, so old readers see an unchanged annotation.
+ */
+function buildPlaybackTerms(bag: {
+    loop?: boolean;
+    offset?: number;
+    play?: "auto" | "click";
+    stopOnExit?: boolean;
+    stopAllPrevious?: boolean;
+}): {
+    "storymap:loop"?: boolean;
+    "storymap:offset"?: number;
+    "storymap:play"?: string;
+    "storymap:stopOnExit"?: boolean;
+    "storymap:stopAllPrevious"?: boolean;
+} {
+    const terms: {
+        "storymap:loop"?: boolean;
+        "storymap:offset"?: number;
+        "storymap:play"?: string;
+        "storymap:stopOnExit"?: boolean;
+        "storymap:stopAllPrevious"?: boolean;
+    } = {};
+    if (typeof bag.loop === "boolean") terms["storymap:loop"] = bag.loop;
+    if (typeof bag.offset === "number") terms["storymap:offset"] = bag.offset;
+    if (bag.play === "auto" || bag.play === "click") terms["storymap:play"] = bag.play;
+    if (typeof bag.stopOnExit === "boolean") terms["storymap:stopOnExit"] = bag.stopOnExit;
+    if (typeof bag.stopAllPrevious === "boolean") {
+        terms["storymap:stopAllPrevious"] = bag.stopAllPrevious;
     }
     return terms;
 }

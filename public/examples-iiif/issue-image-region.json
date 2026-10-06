@@ -173,7 +173,7 @@
             },
             "summary": {
                 "none": [
-                    "StrollView-style image stops via the IIIF xywh convention."
+                    "Slideshow-style image stops via the IIIF xywh convention."
                 ]
             }
         }

@@ -3,10 +3,11 @@ import View from "ol/View";
 import { unByKey } from "ol/Observable";
 import type { Control } from "ol/control";
 import type { Interaction } from "ol/interaction";
-import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { Image as ImageLayer, Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import Layer from "ol/layer/Layer";
 import VectorTileLayer from "ol/layer/VectorTile";
 import { XYZ, OSM, IIIF } from "ol/source";
+import Static from "ol/source/ImageStatic";
 import type Source from "ol/source/Source";
 import VectorSource from "ol/source/Vector";
 import LineString from "ol/geom/LineString";
@@ -32,12 +33,20 @@ import { prefersReducedMotion } from "../../core/Util";
 import type { LinePoint, ViewToOptions } from "../types";
 import type {
     LatLngLiteral,
+    StorymapImageOverlay,
     StorymapOverlayLayer,
     StorymapTilejson,
     StorymapSlide,
     StorymapSlideLocation,
 } from "../../types";
 import { fitGeoreference, resolveInfoJsonUrl } from "../georeference";
+import {
+    buildSlideFilter,
+    normalizeMask,
+    slideBasemapKey,
+    slideRotationRad,
+    type NormalizedMask,
+} from "../slideView";
 import {
     consentManagerOf,
     tileService,
@@ -96,12 +105,32 @@ export default class OpenLayers extends Map {
     declare "_imageready_fired": WeakSet<object>;
     /** The `loadend` subscription key, stored so dispose() can detach it. */
     declare "_loadend_key": Parameters<typeof unByKey>[0] | null;
+    /**
+     * Per-slide basemap layers by key (multi-manifest tours): built on first
+     * use through the tile layer factory, then reused. Empty until a slide
+     * names a `location.basemap`.
+     */
+    declare "_basemap_cache": globalThis.Map<string, Layer>;
+    /**
+     * The active per-slide basemap key, or null when the story basemap is
+     * showing. Restored to the story basemap on slides without one.
+     */
+    declare "_slide_basemap": string | null;
+    /** Spotlight mask element (slideshow passepartout), or null when off. */
+    declare "_mask_el": HTMLDivElement | null;
+    /** Per-slide image overlay layer (slideshow imgoverlay), or null. */
+    declare "_imgoverlay_layer": Layer | null;
 
     /*	Create the Map
 	================================================== */
     _createMap(): void {
         const is_image_map = this.isImageSpace();
         this._imageready_fired = new WeakSet();
+        this._basemap_cache = new globalThis.Map();
+        this._slide_basemap = null;
+        this._story_basemap_layer = null;
+        this._mask_el = null;
+        this._imgoverlay_layer = null;
 
         // Caller-supplied OpenLayers options: `controls` replaces the defaults
         // (the viewer installs none), `interactions` are added to the viewer's
@@ -477,6 +506,10 @@ export default class OpenLayers extends Map {
         // to bury the route lines under fresh tiles
         this._tile_layer.setZIndex(0);
         this._map.addLayer(this._tile_layer);
+        // the story's own base layer: per-slide basemaps hand back to it
+        if (!this._story_basemap_layer) {
+            this._story_basemap_layer = this._tile_layer;
+        }
     }
 
     /**
@@ -750,6 +783,9 @@ export default class OpenLayers extends Map {
                 if (latlon) {
                     this._fitView(this._map, [[latlon.lon, latlon.lat]], 0);
                 }
+                // consent arrived after markers: the current slide may name
+                // a per-slide basemap
+                this._switchSlideBasemap(marker.data.location ?? null);
             }
         }
     }
@@ -831,6 +867,58 @@ export default class OpenLayers extends Map {
             (pyramid.extent[1] + pyramid.extent[3]) / 2,
         ];
         return { zoom, center };
+    }
+
+    /**
+     * Paint the story's static image when its IIIF `info.json` cannot be
+     * used (unreachable, or missing dimensions): a single-resolution
+     * `ImageStatic` layer replaces the empty tile layer, so the tour still
+     * shows its picture instead of a blank basemap. Needs
+     * `iiif.width`/`iiif.height` (canvas size) and `iiif.fallbackUrl` (the
+     * full-size image); returns false when either is absent, leaving the
+     * existing error path untouched.
+     */
+    _useStaticFallback(empty_layer: TileLayer): boolean {
+        const width = this.options.iiif.width;
+        const height = this.options.iiif.height;
+        const url = this.options.iiif.fallbackUrl;
+        if (
+            typeof width !== "number" ||
+            !(width > 0) ||
+            typeof height !== "number" ||
+            !(height > 0) ||
+            typeof url !== "string" ||
+            url === ""
+        ) {
+            return false;
+        }
+        const source = new Static({
+            url,
+            imageExtent: [0, 0, width, height],
+            projection: "EPSG:4326",
+            crossOrigin: "anonymous",
+            attributions: this.options.iiif.attribution || [],
+        });
+        const layer = new ImageLayer({ source });
+        layer.setZIndex(0);
+        if (this._tile_layer === (empty_layer as unknown as Layer)) {
+            this._map.removeLayer(empty_layer);
+            this._tile_layer = layer;
+            this._map.addLayer(layer);
+        }
+        this._fireImageready(source, "iiif", layer);
+        if (typeof source.getState === "function" && source.getState() === "ready") {
+            this._markerOverview();
+        } else if (typeof (source as { once?: unknown }).once === "function") {
+            (source as unknown as { once(e: string, fn: () => void): void }).once("change", () => {
+                if (source.getState() === "ready") {
+                    this._markerOverview();
+                }
+            });
+        } else {
+            this._markerOverview();
+        }
+        return true;
     }
 
     _createTileLayer(map_type: string): Layer {
@@ -941,6 +1029,12 @@ export default class OpenLayers extends Map {
             marker.dispose?.();
         }
         this._markers = [];
+        this._mask_el?.remove();
+        this._mask_el = null;
+        this._basemap_cache.clear();
+        this._slide_basemap = null;
+        this._story_basemap_layer = null;
+        this._imgoverlay_layer = null;
         // detach the viewport first: dispose() alone leaves the canvas in
         // the caller's DOM
         this._map.setTarget(undefined);
@@ -1116,10 +1210,15 @@ export default class OpenLayers extends Map {
                             typeof fallback.width !== "number" ||
                             typeof fallback.height !== "number"
                         ) {
-                            console.error(
-                                "IIIF info.json is missing width/height:",
-                                this.options.iiif.url,
-                            );
+                            // without dimensions there is no grid to build;
+                            // fall back to the static image when the story
+                            // states dimensions of its own
+                            if (!this._useStaticFallback(iiif_layer)) {
+                                console.error(
+                                    "IIIF info.json is missing width/height:",
+                                    this.options.iiif.url,
+                                );
+                            }
                             return;
                         }
                         const source = new IIIF({
@@ -1142,11 +1241,18 @@ export default class OpenLayers extends Map {
                         }
                     })
                     .catch((err) =>
-                        console.error(
-                            "IIIF info.json could not be loaded:",
-                            this.options.iiif.url,
-                            err?.stack || err,
-                        ),
+                        // the tile pyramid is unreachable: paint the static
+                        // image instead when the story states one, so the
+                        // tour still shows its picture
+                        {
+                            if (!this._useStaticFallback(iiif_layer)) {
+                                console.error(
+                                    "IIIF info.json could not be loaded:",
+                                    this.options.iiif.url,
+                                    err?.stack || err,
+                                );
+                            }
+                        },
                     );
                 return iiif_layer;
             }
@@ -1622,7 +1728,7 @@ export default class OpenLayers extends Map {
             panel_rect.bottom > map_rect.top;
         if (!overlaps) return padding;
         const layout = this.options.layout;
-        if (layout === "portrait") {
+        if (layout === "portrait" || this.options.textmode === "bottom") {
             padding[2] += Math.max(0, map_rect.bottom - panel_rect.top);
         } else {
             padding[1] += Math.max(0, panel_rect.right - map_rect.left);
@@ -1980,7 +2086,12 @@ export default class OpenLayers extends Map {
     }
 
     _viewTo(loc: StorymapSlideLocation, opts?: ViewToOptions): void {
-        // Image region stops (StrollView-style): in image mode the view is
+        // Per-slide presentation first: basemap swap, filter grading and
+        // spotlight mask are synchronous state, independent of movement.
+        // Rotation joins the movement animation below (or _fitRegion's).
+        this._switchSlideBasemap(loc);
+        this._applySlideFilterAndMask(loc);
+        // Image region stops (slideshow-style): in image mode the view is
         // EPSG:4326 where coordinates are raw image pixels — fit the xywh
         // region instead of flying to a point. Everything else (geo maps,
         // absent/invalid regions) keeps the point behavior unchanged.
@@ -1990,12 +2101,15 @@ export default class OpenLayers extends Map {
                 ? loc.region
                 : null;
         if (region) {
-            this._fitRegion(region, opts);
+            this._fitRegion(region, opts, loc);
             return;
         }
 
         const start = this._latLngOf(loc);
         if (!start) {
+            // location-less slide (region-only on a geo map): nothing to
+            // fly to, but an explicit rotation still applies
+            this._applySlideRotation(loc, opts?.duration, opts?.duration === 0);
             return;
         }
         let _animate = true,
@@ -2032,9 +2146,15 @@ export default class OpenLayers extends Map {
             _location = this._getMapCenterOffset(_location, _zoom);
         }
 
+        // A slide rotation joins the glide; the animation arg is only added
+        // when the slide or the view is rotated, so unrotated stories
+        // animate exactly as before.
+        const _rotation = slideRotationRad(loc);
+        const _current_rotation = this._map.getView().getRotation();
         this._map.getView().animate({
             center: this._toViewCoords(_location),
             zoom: _zoom,
+            ...(_rotation !== null || _current_rotation !== 0 ? { rotation: _rotation ?? 0 } : {}),
             duration: _animate && !prefersReducedMotion() ? _duration : 0,
             easing: this._easing,
         });
@@ -2055,9 +2175,15 @@ export default class OpenLayers extends Map {
     /**
      * Image region stop: fit the xywh bbox ([x, y, w, h] image pixels —
      * the EPSG:4326 image space) with the shared animation options, then
-     * keep the minimap collapse state in sync like `_viewTo`.
+     * keep the minimap collapse state in sync like `_viewTo`. A slide
+     * rotation follows the fit (fit() takes no rotation), plus the
+     * filter/mask tail when the location is passed.
      */
-    _fitRegion(region: [number, number, number, number], opts?: ViewToOptions): void {
+    _fitRegion(
+        region: [number, number, number, number],
+        opts?: ViewToOptions,
+        loc?: StorymapSlideLocation,
+    ): void {
         const [x, y, w, h] = region;
         if (!(w > 0) || !(h > 0)) {
             return;
@@ -2077,6 +2203,10 @@ export default class OpenLayers extends Map {
             duration: _animate && !prefersReducedMotion() ? _duration : 0,
             easing: this._easing,
         });
+        if (loc) {
+            this._applySlideRotation(loc, _duration, !_animate);
+            this._applySlideFilterAndMask(loc);
+        }
         if (this._mini_map && this.options.width > this.options.skinny_size) {
             this._mini_map.setCollapsed(true);
         }
@@ -2086,6 +2216,232 @@ export default class OpenLayers extends Map {
         const is_image_space = this._map.getView().getProjection().getCode() === "EPSG:4326";
         if (is_image_space) return [loc.lon, loc.lat];
         return fromLonLat([loc.lon, loc.lat]);
+    }
+
+    /*	Per-slide view presentation (slideshow rotation/filter/mask/basemap)
+	================================================== */
+    /**
+     * Swap the base layer for a slide `location.basemap` (multi-manifest
+     * tours): built on first use through the tile layer factory (custom
+     * factories apply), then cached. A slide without one restores the story
+     * basemap. No-op when the requested key is already showing, so resize
+     * and re-fit paths pass through untouched. Consent-denied tiles skip
+     * the switch entirely.
+     */
+    _switchSlideBasemap(loc: StorymapSlideLocation | null | undefined): void {
+        if (!this._tilesAllowed()) return;
+        const key = slideBasemapKey(loc);
+        if (key === this._slide_basemap) return;
+        if (this._tile_layer) {
+            this._map.removeLayer(this._tile_layer);
+        }
+        if (key === null) {
+            this._tile_layer =
+                this._story_basemap_layer ?? this._createTileLayer(this.options.map_type);
+            this._story_basemap_layer = this._tile_layer;
+        } else {
+            let layer = this._basemap_cache.get(key);
+            if (!layer) {
+                layer = this._createSlideBasemap(key);
+                layer.setZIndex(0);
+                this._basemap_cache.set(key, layer);
+            }
+            this._tile_layer = layer;
+        }
+        this._tile_layer.setZIndex(0);
+        this._map.addLayer(this._tile_layer);
+        this._slide_basemap = key;
+        this._updateAttribution();
+    }
+
+    /**
+     * Build a per-slide basemap layer: IIIF `info.json` URLs (or bare
+     * service bases) become tile layers; anything else goes through the
+     * regular tile layer factory, so keywords and templates keep working.
+     */
+    _createSlideBasemap(key: string): Layer {
+        if (/^https?:\/\//i.test(key) && !key.includes("{z}")) {
+            const info_url = /info\.json$/i.test(key) ? key : `${key.replace(/\/$/, "")}/info.json`;
+            const pending: TileLayer = new TileLayer();
+            fetch(info_url)
+                .then((r) => r.json())
+                .then((info: unknown) => {
+                    const parsed = new IIIFInfo(
+                        info as ImageInformationResponse,
+                    ).getTileSourceOptions();
+                    const dims = info as { width?: number; height?: number };
+                    if (typeof dims.width !== "number" || typeof dims.height !== "number") {
+                        console.error("Slide basemap info.json is missing width/height:", info_url);
+                        return;
+                    }
+                    const source = new IIIF({
+                        ...(parsed ?? {}),
+                        projection: "EPSG:4326",
+                        size: [dims.width, dims.height],
+                        crossOrigin: "anonymous",
+                    });
+                    pending.setSource(source);
+                    this._fireImageready(source, "iiif", pending);
+                })
+                .catch((err) =>
+                    console.error(
+                        "Slide basemap info.json could not be loaded:",
+                        info_url,
+                        err?.stack || err,
+                    ),
+                );
+            return pending;
+        }
+        return this._createTileLayer(key);
+    }
+
+    /**
+     * The story's own base layer (as opposed to a per-slide one): stashed
+     * on creation so a slide basemap can hand back to it without refetching.
+     */
+    declare "_story_basemap_layer": Layer | null;
+
+    /**
+     * Apply a slide's CSS filter grading to the map viewport
+     * (slideshow `filters`). Always assigned — "" clears — so grading never
+     * leaks onto the next slide.
+     */
+    _applySlideFilter(loc: StorymapSlideLocation | null | undefined): void {
+        this._map.getViewport().style.filter = buildSlideFilter(loc?.filter);
+    }
+
+    /**
+     * Apply a slide's spotlight mask (slideshow `passepartout`): normalized
+     * viewport fractions stay visible while the rest is dimmed. Rendered as
+     * up to four percentage-positioned divs (or one for `invert`), so it
+     * needs no updates on pan/zoom/resize. `pointer-events: none` keeps
+     * markers clickable through the shade; the marker overlay container
+     * (z-index 1) paints above it. Absent/invalid clears the mask.
+     */
+    _applySlideMask(loc: StorymapSlideLocation | null | undefined): void {
+        const mask: NormalizedMask | null = normalizeMask(loc?.mask);
+        if (!mask) {
+            this._mask_el?.remove();
+            this._mask_el = null;
+            return;
+        }
+        const viewport = this._map.getViewport();
+        if (!this._mask_el) {
+            const el = document.createElement("div");
+            el.className = "vco-map-mask";
+            el.setAttribute("aria-hidden", "true");
+            el.style.position = "absolute";
+            el.style.inset = "0";
+            el.style.zIndex = "0";
+            el.style.pointerEvents = "none";
+            el.style.overflow = "hidden";
+            viewport.appendChild(el);
+            this._mask_el = el;
+        }
+        const pct = (n: number) => `${n * 100}%`;
+        const shade = (left: string, top: string, width: string, height: string) =>
+            `<div style="position:absolute;left:${left};top:${top};width:${width};height:${height};background:${mask.color};opacity:${mask.opacity}"></div>`;
+        this._mask_el.innerHTML = mask.invert
+            ? shade(pct(mask.x), pct(mask.y), pct(mask.w), pct(mask.h))
+            : shade("0", "0", "100%", pct(mask.y)) +
+              shade("0", pct(mask.y + mask.h), "100%", pct(1 - mask.y - mask.h)) +
+              shade("0", pct(mask.y), pct(mask.x), pct(mask.h)) +
+              shade(pct(mask.x + mask.w), pct(mask.y), pct(1 - mask.x - mask.w), pct(mask.h));
+    }
+
+    /** Filter + mask together: the synchronous tail of every navigation. */
+    _applySlideFilterAndMask(loc: StorymapSlideLocation | null | undefined): void {
+        this._applySlideFilter(loc);
+        this._applySlideMask(loc);
+    }
+
+    /**
+     * Rotate the view to a slide `rotation` (degrees clockwise). Merges into
+     * the caller's animation when one is running; on its own (region fits,
+     * location-less slides, overview reset) it animates alone, or sets
+     * synchronously when the navigation is instant. A no-op when neither
+     * the slide nor the view is rotated, so unrotated stories animate
+     * exactly as before.
+     */
+    _applySlideRotation(
+        loc: StorymapSlideLocation | null | undefined,
+        duration?: number,
+        instant = false,
+    ): void {
+        const rotation = slideRotationRad(loc);
+        const view = this._map.getView();
+        if (rotation === null && view.getRotation() === 0) return;
+        const target = rotation ?? 0;
+        if (instant || prefersReducedMotion()) {
+            view.setRotation(target);
+            return;
+        }
+        view.animate({
+            rotation: target,
+            duration: duration ?? this.options.duration,
+            easing: this._easing,
+        });
+    }
+
+    /**
+     * Show a per-slide image overlay (slideshow `imgoverlay`) while its
+     * slide is active. `extent` pins it (`[west, south, east, north]` lon/lat,
+     * raw image pixels on image-space maps); otherwise it covers the current
+     * view, optionally scaled to `size` (fraction of the viewport). Painted
+     * above the base (z 5) below the route lines. Null/empty clears.
+     * Consent-denied tiles skip it like every other layer.
+     */
+    setSlideImageOverlay(overlay: StorymapImageOverlay | null | undefined): void {
+        if (this._imgoverlay_layer) {
+            this._map.removeLayer(this._imgoverlay_layer);
+            this._imgoverlay_layer = null;
+        }
+        if (!overlay || typeof overlay.url !== "string" || overlay.url === "") return;
+        if (!this._tilesAllowed()) return;
+        const given = overlay.extent;
+        let extent: Extent;
+        if (
+            Array.isArray(given) &&
+            given.length === 4 &&
+            given.every((n) => typeof n === "number" && Number.isFinite(n))
+        ) {
+            const raw = (
+                this.isImageSpace()
+                    ? [given[0], given[1], given[2], given[3]]
+                    : [...fromLonLat([given[0], given[1]]), ...fromLonLat([given[2], given[3]])]
+            ) as Extent;
+            // lon/lat corners can arrive swapped; the view fit needs min/max
+            extent = [
+                Math.min(raw[0], raw[2]),
+                Math.min(raw[1], raw[3]),
+                Math.max(raw[0], raw[2]),
+                Math.max(raw[1], raw[3]),
+            ];
+        } else {
+            extent = this._map.getView().calculateExtent(this._viewportSize());
+            if (typeof overlay.size === "number" && Number.isFinite(overlay.size)) {
+                const scale = Math.min(1, Math.max(0.05, overlay.size));
+                const cx = (extent[0] + extent[2]) / 2;
+                const cy = (extent[1] + extent[3]) / 2;
+                const hw = ((extent[2] - extent[0]) * scale) / 2;
+                const hh = ((extent[3] - extent[1]) * scale) / 2;
+                extent = [cx - hw, cy - hh, cx + hw, cy + hh];
+            }
+        }
+        const opacity =
+            typeof overlay.opacity === "number" && Number.isFinite(overlay.opacity)
+                ? Math.min(1, Math.max(0, overlay.opacity))
+                : 1;
+        const source = new Static({
+            url: overlay.url,
+            imageExtent: extent,
+            projection: this._map.getView().getProjection(),
+            crossOrigin: "anonymous",
+        });
+        const layer = new ImageLayer({ source, opacity });
+        layer.setZIndex(5);
+        this._map.addLayer(layer);
+        this._imgoverlay_layer = layer;
     }
 
     _getMapZoom(): number {
@@ -2223,6 +2579,25 @@ export default class OpenLayers extends Map {
         this._cancelLineAnimation();
         this._line_active.setVisible(false);
 
+        // The overview shows the whole story: per-slide grading, mask and
+        // rotation do not apply. Each reset is guarded so the common path
+        // (nothing set) touches nothing.
+        if (this._map.getView().getRotation() !== 0) {
+            this._map.getView().animate({
+                rotation: 0,
+                duration: prefersReducedMotion() ? 0 : (duration ?? this._transition_duration),
+                easing: this._easing,
+            });
+        }
+        if (this._map.getViewport().style.filter !== "") {
+            this._map.getViewport().style.filter = "";
+        }
+        if (this._mask_el) {
+            this._mask_el.remove();
+            this._mask_el = null;
+        }
+        this._switchSlideBasemap(null);
+
         // repeated presses while an overview animation is running snap
         // instantly instead of restarting the ~1s animation
         if (duration && this._map.getView().getAnimating()) {
@@ -2264,6 +2639,22 @@ export default class OpenLayers extends Map {
             }
             const fit = () => {
                 try {
+                    // static fallback (no tile grid): fit the single image
+                    // extent directly so the overview still frames the picture
+                    const static_extent = (
+                        source as { getImageExtent?: () => Extent | null }
+                    ).getImageExtent?.();
+                    if (static_extent) {
+                        this._map.getView().fit(static_extent, {
+                            size: this._viewportSize(),
+                            padding: this._opaquePanelPadding(),
+                            duration: prefersReducedMotion()
+                                ? 0
+                                : (duration ?? this._transition_duration),
+                            easing: this._easing,
+                        });
+                        return;
+                    }
                     // a custom layer with a source is not necessarily a tile
                     // source; only tile grids can supply a fit extent
                     const grid = (
@@ -2450,6 +2841,11 @@ export default class OpenLayers extends Map {
                         this._tile_layer.setZIndex(0);
                         this._map.addLayer(this._tile_layer);
                     }
+                    // the story basemap changed: per-slide layers stay cached
+                    // (their keys are unchanged) but the active one is rebuilt
+                    // by the re-fit below through _switchSlideBasemap
+                    this._story_basemap_layer = this._tile_layer ?? null;
+                    this._slide_basemap = null;
                     this._refreshMiniMapLayer();
                     this._updateAttribution();
                     this._el.map.style.backgroundColor = this.options.map_background_color;
@@ -2599,6 +2995,11 @@ export default class OpenLayers extends Map {
         const view = this._map.getView();
         view.setZoom(zoom);
         view.setCenter(this._toViewCoords(_location));
+        // instant path (resize): rotation sets synchronously, filter and
+        // mask re-apply idempotently
+        const rotation = slideRotationRad(loc);
+        view.setRotation(rotation ?? 0);
+        this._applySlideFilterAndMask(loc);
         this._map.renderSync();
     }
 }

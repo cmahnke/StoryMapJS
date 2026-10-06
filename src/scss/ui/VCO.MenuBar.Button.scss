@@ -100,6 +100,64 @@
         background-color: var(--vco-color-theme, #{$color-theme});
         border-radius: 3px;
     }
+
+    // height variants of the fill bar (progressbar block/thinblock)
+    &.vco-menubar-progress-block {
+        height: 12px;
+    }
+
+    &.vco-menubar-progress-thinblock {
+        height: 3px;
+    }
+
+    // per-slide steps (progressbar dots/squares): buttons jumping to
+    // their slide, built by MenuBar._renderProgressSteps
+    &.vco-menubar-progress-dots,
+    &.vco-menubar-progress-squares {
+        width: auto;
+        height: auto;
+        background: none;
+        overflow: visible;
+    }
+
+    .vco-menubar-progress-step {
+        display: inline-block;
+        min-height: 0;
+        min-width: 0;
+        margin: 0 3px;
+        padding: 0;
+        border: 1px solid var(--vco-color-theme, #{$color-theme});
+        background: transparent;
+        cursor: pointer;
+        vertical-align: middle;
+
+        &.vco-menubar-progress-dots {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        &.vco-menubar-progress-squares {
+            width: 10px;
+            height: 10px;
+            border-radius: 0;
+        }
+
+        &.vco-past {
+            background-color: var(--vco-color-theme, #{$color-theme});
+        }
+
+        &.vco-active {
+            background-color: var(--vco-color-theme, #{$color-theme});
+            outline: 2px solid var(--vco-color-dark, #{$color-dark});
+            outline-offset: 1px;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--vco-color-dark, #{$color-dark});
+            outline-offset: 2px;
+        }
+    }
 }
 
 /* Route distance display (issue #341)

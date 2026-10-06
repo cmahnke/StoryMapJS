@@ -66,6 +66,7 @@ import type {
     StorymapDataWrapper,
     StorymapOptions,
     StorymapSlide,
+    StorymapSlideNarration,
 } from "../types";
 
 /** Map height in pixels while the menubar has collapsed the map (portrait only). */
@@ -162,6 +163,21 @@ class StoryMapBase {
     declare "_autoplay_stopped": boolean;
     /** The narration player: one <audio> for the whole story, reused. */
     declare "_narration_el": HTMLAudioElement | null;
+    /**
+     * The ambient player: a second <audio> for a narration bed that outlives
+     * its slide (`narration.stopOnExit: false`, slideshow ambient audio).
+     * At most one ambient track plays; a new one replaces it.
+     */
+    declare "_ambient_el": HTMLAudioElement | null;
+    /** What each player is (or was) playing, so same-URL beds continue. */
+    declare "_narration_meta": { url: string; stopOnExit: boolean } | null;
+    declare "_ambient_meta": { url: string } | null;
+    /**
+     * Whether the ambient bed is actually playing: `HTMLMediaElement.paused`
+     * cannot be trusted here (test doubles and pre-gesture elements report
+     * stale state), so the viewer tracks it explicitly.
+     */
+    declare "_ambient_playing": boolean;
     /** Guards a stale play() from a slide change that already moved on. */
     declare "_narration_token": number;
     /** Whether narration consent was granted (asked once per story). */
@@ -318,8 +334,20 @@ class StoryMapBase {
             autoplay: 0,
             autoplay_media: false,
             show_progress: false,
+            progressbar: undefined,
             marker_labels: false,
             text_align: "left",
+            textmode: "right",
+            textsize: undefined,
+            fxmode: "slide",
+            mode: "standard",
+            hudcolor: "",
+            hudbgcolor: "",
+            hudopacity: undefined,
+            shownav: true,
+            show_headings: true,
+            show_scrollbars: true,
+            viewerheight: "",
             map_overview_center: null,
             map_type: "", // "osm:standard",
             tile_source_factory: null,
@@ -393,6 +421,10 @@ class StoryMapBase {
         this._transition_timer = null;
         this._autoplay_stopped = false;
         this._narration_el = null;
+        this._ambient_el = null;
+        this._narration_meta = null;
+        this._ambient_meta = null;
+        this._ambient_playing = false;
         this._narration_token = 0;
         this._narration_allowed = true;
         this._user_gestured = false;
@@ -535,9 +567,19 @@ class StoryMapBase {
             // map_area "left": the map is limited to the visible half with an
             // opaque slide panel — no offset needed (the view center is the
             // visible center already); "full" (default) offsets the view so
-            // markers clear the panel that fades in over the map
+            // markers clear the panel that fades in over the map. A left
+            // text panel (textmode "left") mirrors the offset.
             if (this.options.map_area !== "left") {
-                this.options.map_center_offset = { left: -200, top: 0 };
+                // side docks offset the view past the panel (mirrored for a
+                // left panel); a bottom dock recenters slightly upward so
+                // point stops clear the panel (fits use measured padding)
+                if (this.options.textmode === "left") {
+                    this.options.map_center_offset = { left: 200, top: 0 };
+                } else if (this.options.textmode === "bottom") {
+                    this.options.map_center_offset = { left: 0, top: -120 };
+                } else {
+                    this.options.map_center_offset = { left: -200, top: 0 };
+                }
             } else {
                 this.options.map_center_offset = { left: 0, top: 0 };
             }
@@ -766,6 +808,10 @@ class StoryMapBase {
         if (navigate !== "map") {
             this._map?.goTo(this.current_slide);
         }
+        // Per-slide image overlay (slideshow imgoverlay): shown while its
+        // slide is active, cleared otherwise. Null-safe: mapless stories
+        // have no map, slides without one clear a previous overlay.
+        this._map?.setSlideImageOverlay(this.data.slides?.[this.current_slide]?.imgoverlay ?? null);
         this._beginTransition(duration);
         if (!navigated) {
             // programmatic navigation reports outward like interaction does;
@@ -781,6 +827,7 @@ class StoryMapBase {
         }
         this._syncHash();
         this._playNarration(this.data.slides?.[this.current_slide]);
+        this._stopAmbientSlideMedia(this.data.slides?.[this.current_slide]);
         this._scheduleAutoplay();
         this._updateProgress();
     }
@@ -892,6 +939,9 @@ class StoryMapBase {
         if (this.ready) {
             // text color theming follows runtime option changes (issue #177)
             this._applyTextColors();
+            // slideshow chrome that maps onto container state does too;
+            // layout modes (textmode, mode) need a display pass to take effect
+            this._applyChrome();
             // layers may have been added, removed or re-projected
             this._menubar.refreshLayers();
             this.updateDisplay();
@@ -1086,10 +1136,17 @@ class StoryMapBase {
         consentManagerOf(this.options)?.dispose();
 
         this._stopNarration();
+        this._stopAmbient();
         if (this._narration_el) {
             this._narration_el.src = "";
             this._narration_el = null;
         }
+        if (this._ambient_el) {
+            this._ambient_el.src = "";
+            this._ambient_el = null;
+        }
+        this._narration_meta = null;
+        this._ambient_meta = null;
         // detach the child subscriptions so a host holding a documented
         // child handle (storymap._map) cannot keep this viewer alive
         // through the listener contexts
@@ -1111,6 +1168,7 @@ class StoryMapBase {
         this._menubar?.off("basemapchange", this._onLayersBasemap, this);
         this._menubar?.off("overlaychange", this._onLayersOverlay, this);
         this._menubar?.off("autoplay_toggle", this._onAutoplayToggle, this);
+        this._menubar?.off("progress_go", this._onProgressGo, this);
         this._storyslider?.dispose?.();
         this._menubar?.dispose?.();
         this._map?.dispose?.();
@@ -1257,6 +1315,83 @@ class StoryMapBase {
         }
     }
 
+    /**
+     * Publish the slideshow-driven player chrome as container state.
+     * Everything here is opt-in: unset options leave the container exactly
+     * as the long-standing layout does, so existing stories are unaffected.
+     */
+    _applyChrome(): void {
+        const options = this.options;
+        const container = this._el.container;
+        // idempotent: runtime option changes re-run this, so previous state
+        // is cleared first (unset means the long-standing layout)
+        container.classList.remove(
+            "vco-textmode-left",
+            "vco-textmode-bottom",
+            "vco-no-headings",
+            "vco-no-scrollbars",
+            "vco-mode-static",
+        );
+        if (options.hudcolor) {
+            container.style.setProperty("--vco-hud-fg", options.hudcolor);
+        } else {
+            container.style.removeProperty("--vco-hud-fg");
+        }
+        if (options.hudbgcolor) {
+            const opacity =
+                typeof options.hudopacity === "number" && Number.isFinite(options.hudopacity)
+                    ? Math.min(100, Math.max(0, options.hudopacity)) / 100
+                    : null;
+            container.style.setProperty(
+                "--vco-hud-bg",
+                opacity === null
+                    ? options.hudbgcolor
+                    : `color-mix(in srgb, ${options.hudbgcolor} ${Math.round(opacity * 100)}%, transparent)`,
+            );
+        } else {
+            container.style.removeProperty("--vco-hud-bg");
+        }
+        if (typeof options.viewerheight === "string" && options.viewerheight !== "") {
+            container.style.height = options.viewerheight;
+        } else {
+            container.style.removeProperty("height");
+        }
+        if (options.textmode === "left" || options.textmode === "bottom") {
+            container.classList.add(`vco-textmode-${options.textmode}`);
+        }
+        if (options.show_headings === false) {
+            container.classList.add("vco-no-headings");
+        }
+        if (options.show_scrollbars === false) {
+            container.classList.add("vco-no-scrollbars");
+        }
+        if (options.mode === "static") {
+            container.classList.add("vco-mode-static");
+        }
+        const textsize = options.textsize;
+        if (typeof textsize === "number" && Number.isFinite(textsize)) {
+            container.style.setProperty(
+                "--vco-panel-size",
+                `${Math.min(80, Math.max(10, textsize))}%`,
+            );
+        } else {
+            container.style.removeProperty("--vco-panel-size");
+        }
+    }
+
+    /**
+     * The slide panel share of the width (side docks) or height (bottom
+     * dock) as a fraction: `textsize` percent when valid (10..80), else the
+     * built-in split (half for sides, 40% height for the bottom dock).
+     */
+    _panelShare(): number {
+        const textsize = this.options.textsize;
+        if (typeof textsize === "number" && Number.isFinite(textsize)) {
+            return Math.min(0.8, Math.max(0.1, textsize / 100));
+        }
+        return this.options.textmode === "bottom" ? 0.4 : 0.5;
+    }
+
     /*	Private Methods
 	================================================== */
 
@@ -1267,6 +1402,11 @@ class StoryMapBase {
         }
         this._el.container.className += " vco-storymap";
         this.options.base_class = this._el.container.className;
+
+        // slideshow-driven player chrome first: viewerheight is an inline
+        // height that the measurement below must see (classes are re-applied
+        // in _updateDisplay, which rebuilds className from base_class)
+        this._applyChrome();
 
         // Colour theme (dark theme plan): an explicit option pins the
         // palette via data-vco-theme; unset, the CSS falls back to
@@ -1392,6 +1532,7 @@ class StoryMapBase {
         this._menubar.on("basemapchange", this._onLayersBasemap, this);
         this._menubar.on("overlaychange", this._onLayersOverlay, this);
         this._menubar.on("autoplay_toggle", this._onAutoplayToggle, this);
+        this._menubar.on("progress_go", this._onProgressGo, this);
         this._menubar.setLayersDelegate({ rows: () => this._layersRows() });
         this._menubar.refreshLayers();
 
@@ -1630,23 +1771,53 @@ class StoryMapBase {
                 display_class += " vco-map-area-left";
                 this._map_el().style.width = Math.floor(this.options.width / 2) + "px";
                 this._map_required().setMapOffset(0, 0);
+            } else if (this.options.textmode === "bottom") {
+                // bottom dock: the map takes the top share, the slider the
+                // bottom share (like the portrait split, but keeping the
+                // landscape slide styling)
+                display_class += " vco-textmode-bottom";
+                const share = this._panelShare();
+                this.options.map_height = Math.floor(this.options.height * (1 - share));
+                this.options.storyslider_height = this.options.height - this.options.map_height - 1;
+                this._map_el().style.width = "100%";
+                this._map_el().style.height = this.options.map_height + "px";
+                this._map_required().setMapOffset(0, 0);
+                this._el.storyslider.style.top = this.options.map_height + "px";
+                this._el.storyslider.style.height = this.options.storyslider_height + "px";
+                this._menubar.updateDisplay(this.options.width, this.options.height, animate);
+                this._map_required().updateDisplay(
+                    this.options.width,
+                    this.options.height,
+                    animate,
+                    d,
+                );
+                this._storyslider.updateDisplay(
+                    this.options.width,
+                    this.options.storyslider_height,
+                    animate,
+                    this.options.layout,
+                );
             } else {
                 this._map_el().style.width = "100%";
                 this._map_required().setMapOffset(-(this.options.width / 4), 0);
+                // StorySlider
+                this._el.storyslider.style.top = "0";
+                this._el.storyslider.style.height = this.options.storyslider_height + "px";
+
+                this._menubar.updateDisplay(this.options.width, this.options.height, animate);
+                this._map_required().updateDisplay(
+                    this.options.width,
+                    this.options.height,
+                    animate,
+                    d,
+                );
+                this._storyslider.updateDisplay(
+                    this.options.width * this._panelShare(),
+                    this.options.storyslider_height,
+                    animate,
+                    this.options.layout,
+                );
             }
-
-            // StorySlider
-            this._el.storyslider.style.top = "0";
-            this._el.storyslider.style.height = this.options.storyslider_height + "px";
-
-            this._menubar.updateDisplay(this.options.width, this.options.height, animate);
-            this._map_required().updateDisplay(this.options.width, this.options.height, animate, d);
-            this._storyslider.updateDisplay(
-                this.options.width / 2,
-                this.options.storyslider_height,
-                animate,
-                this.options.layout,
-            );
         }
 
         // the resolved locale decides the layout direction (issues #211, #245)
@@ -1656,6 +1827,10 @@ class StoryMapBase {
 
         // Apply class
         this._el.container.className = display_class;
+        // _updateDisplay rebuilds the container class from base_class, which
+        // wipes the opt-in chrome state _initLayout applied — re-apply it
+        // after every layout pass (init, resize, runtime option changes)
+        this._applyChrome();
     }
 
     /*	Events
@@ -1766,7 +1941,40 @@ class StoryMapBase {
      *   playback, and the story still works.
      */
     _playNarration(slide: StorymapSlide | undefined, allow_without_gesture = false) {
-        const url = (slide?.narration as { url?: string } | null)?.url;
+        const bag = slide?.narration ?? null;
+        const url = typeof bag?.url === "string" && bag.url !== "" ? bag.url : null;
+        const persistent = bag?.stopOnExit === false;
+        if (url !== null && persistent) {
+            // An audio bed that outlives its slide (slideshow ambient
+            // audio): already playing this bed → keep it, dropping any
+            // foreground left over from the slide we came from. At most one
+            // ambient track plays; a new one replaces the old.
+            if (this._ambient_meta?.url === url && this._ambient_playing) {
+                this._stopNarration();
+                return;
+            }
+            this._stopNarration();
+            if (bag?.stopAllPrevious !== false) this._stopAmbient();
+            if (this._disposed || !this._narration_allowed) return;
+            if (!allow_without_gesture && !this._has_user_gesture()) {
+                this._replayNarrationAfterGesture = true;
+                return;
+            }
+            const el = this._ambientElement();
+            this._ambient_meta = { url };
+            this._startTrack(el, url, bag, allow_without_gesture);
+            return;
+        }
+        // An ephemeral track (or none): a newcomer that does not opt out of
+        // stopping replaces any ambient bed; a silent slide keeps a playing
+        // bed (it belongs to the tour, not to the slide we left).
+        if (url === null || bag?.stopAllPrevious !== false) {
+            if (url === null && this._ambient_playing) {
+                this._stopNarration();
+                return;
+            }
+            this._stopAmbient();
+        }
         this._stopNarration();
         if (!url || this._disposed || !this._narration_allowed) return;
         if (!allow_without_gesture && !this._has_user_gesture()) {
@@ -1774,14 +1982,103 @@ class StoryMapBase {
             return;
         }
         const el = this._narrationElement();
+        this._narration_meta = { url, stopOnExit: bag?.stopOnExit !== false };
+        this._startTrack(el, url, bag, allow_without_gesture);
+    }
+
+    /**
+     * Start (or arm) a narration track: loop flag, start offset once the
+     * metadata is available, and `play: "click"` arms paused for the
+     * visitor instead of playing (see `playNarration()`). A rejected play()
+     * (policy, network) must not surface as an unhandled rejection.
+     */
+    _startTrack(
+        el: HTMLAudioElement,
+        url: string,
+        bag: StorymapSlideNarration | null,
+        allow_without_gesture: boolean,
+    ) {
+        el.loop = bag?.loop === true;
         el.src = url;
-        el.currentTime = 0;
+        this._seekAudio(el, bag?.offset);
+        if (bag?.play === "click") return;
+        if (!allow_without_gesture && !this._has_user_gesture()) {
+            this._replayNarrationAfterGesture = true;
+            return;
+        }
+        if (el === this._ambient_el) {
+            this._ambient_playing = true;
+        }
         const token = ++this._narration_token;
-        // a rejected play() (policy, network) must not surface as an
-        // unhandled rejection
         void el.play()?.catch?.(() => {
-            if (token === this._narration_token) this._replayNarrationAfterGesture = true;
+            if (token !== this._narration_token) return;
+            // a failed start is not playing: the gesture retry must attempt
+            // it again rather than take the same-URL fast path
+            if (el === this._ambient_el) {
+                this._ambient_playing = false;
+            }
+            this._replayNarrationAfterGesture = true;
         });
+    }
+
+    /**
+     * Start the current slide's click-armed narration (`narration.play:
+     * "click"`): the control for visitors (or hosts) to start a track that
+     * waits for them. Auto-armed tracks play on their own. No-op when
+     * nothing is armed.
+     */
+    playNarration(): void {
+        const el = this._ambient_meta ? this._ambient_el : this._narration_el;
+        if (!el || !el.getAttribute("src")) return;
+        if (this._disposed || !this._narration_allowed || this._has_user_gesture() === false) {
+            this._replayNarrationAfterGesture = true;
+            return;
+        }
+        if (el === this._ambient_el) {
+            this._ambient_playing = true;
+        }
+        const token = ++this._narration_token;
+        void el.play()?.catch?.(() => {
+            if (token !== this._narration_token) return;
+            if (el === this._ambient_el) {
+                this._ambient_playing = false;
+            }
+            this._replayNarrationAfterGesture = true;
+        });
+    }
+
+    /**
+     * Seek to a start offset in seconds (slideshow `audio.offset`):
+     * immediately when the metadata is already there, otherwise once on
+     * `loadedmetadata`. Guarded by the narration token, so a quick
+     * pass-through cannot seek a newer track.
+     */
+    _seekAudio(el: HTMLAudioElement, offset: number | null | undefined) {
+        const target =
+            typeof offset === "number" && Number.isFinite(offset) && offset > 0 ? offset : 0;
+        const token = this._narration_token;
+        const apply = () => {
+            if (token !== this._narration_token || this._disposed) return;
+            try {
+                el.currentTime = target;
+            } catch {
+                // metadata not ready yet; the listener below retries
+            }
+        };
+        if (el.readyState >= 1) {
+            apply();
+            return;
+        }
+        const on_metadata = () => {
+            el.removeEventListener("loadedmetadata", on_metadata);
+            apply();
+        };
+        el.addEventListener("loadedmetadata", on_metadata);
+        try {
+            el.currentTime = target;
+        } catch {
+            // pre-metadata seek throws in some browsers; the listener covers it
+        }
     }
 
     _narrationElement(): HTMLAudioElement {
@@ -1796,7 +2093,28 @@ class StoryMapBase {
 
     _stopNarration() {
         this._narration_token++;
+        this._narration_meta = null;
         const el = this._narration_el;
+        if (!el) return;
+        el.pause();
+        el.removeAttribute("src");
+    }
+
+    _ambientElement(): HTMLAudioElement {
+        if (this._ambient_el === null) {
+            this._ambient_el = document.createElement("audio");
+            this._ambient_el.className = "vco-media-item vco-ambient";
+            this._ambient_el.preload = "none";
+            this._ambient_el.setAttribute("aria-hidden", "true");
+        }
+        return this._ambient_el;
+    }
+
+    _stopAmbient() {
+        this._narration_token++;
+        this._ambient_meta = null;
+        this._ambient_playing = false;
+        const el = this._ambient_el;
         if (!el) return;
         el.pause();
         el.removeAttribute("src");
@@ -1857,6 +2175,27 @@ class StoryMapBase {
     }
 
     /**
+     * Stop other slides' ambient audio beds when the new slide claims the
+     * audio (its narration, or playable media, does not opt out via
+     * `stopAllPrevious: false`). A silent slide inherits a playing bed.
+     */
+    _stopAmbientSlideMedia(slide: StorymapSlide | undefined) {
+        const claims =
+            (typeof slide?.narration?.url === "string" &&
+                slide.narration.url !== "" &&
+                slide.narration.stopAllPrevious !== false) ||
+            (this._storyslider?._slides?.[this.current_slide]?.hasPlayableMedia?.() === true &&
+                (slide?.media as { stopAllPrevious?: boolean } | null | undefined)
+                    ?.stopAllPrevious !== false);
+        if (!claims) return;
+        const slides = this._storyslider?._slides;
+        if (!slides) return;
+        slides.forEach((entry, index) => {
+            if (index !== this.current_slide) entry.stopAmbientMedia?.();
+        });
+    }
+
+    /**
      * Arm autoplay for the current slide.
      *
      * With `autoplay_media` on and a slide whose media is playable audio or
@@ -1885,6 +2224,15 @@ class StoryMapBase {
         };
         this._autoplay_advance = advance;
 
+        // Per-slide dwell (slideshow slidetimeout): overrides the global
+        // interval for this slide; 0 holds here even with autoplay on.
+        const slideTimeout = this.data.slides?.[this.current_slide]?.slidetimeout;
+        const dwell =
+            typeof slideTimeout === "number" && Number.isFinite(slideTimeout) && slideTimeout >= 0
+                ? slideTimeout
+                : this.options.autoplay;
+        if (!(dwell > 0)) return;
+
         if (this.options.autoplay_media) {
             const slide = this._storyslider?._slides?.[this.current_slide];
             if (slide?.hasPlayableMedia?.()) {
@@ -1892,7 +2240,7 @@ class StoryMapBase {
             }
         }
 
-        this._autoplay_timer = setTimeout(advance, this.options.autoplay);
+        this._autoplay_timer = setTimeout(advance, dwell);
     }
 
     _stopAutoplay() {
@@ -2174,6 +2522,10 @@ class StoryMapBase {
             this._stopAutoplay();
         }
         this._menubar.setAutoplayState(this._autoplay_stopped);
+    }
+
+    _onProgressGo(e: { slide: number }) {
+        this.goTo(e.slide);
     }
 
     _onTilesAllowed() {

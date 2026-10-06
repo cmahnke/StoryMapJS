@@ -274,6 +274,21 @@
                         },
                         "attribution": {
                             "type": "string"
+                        },
+                        "width": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "description": "Canvas width in pixels, enabling region clamping and the static fallback without another fetch"
+                        },
+                        "height": {
+                            "type": "number",
+                            "exclusiveMinimum": 0,
+                            "description": "Canvas height in pixels, enabling region clamping and the static fallback without another fetch"
+                        },
+                        "fallbackUrl": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Full-size image used when info.json cannot be loaded (slideshow image_static)"
                         }
                     }
                 },
@@ -303,6 +318,16 @@
                 },
                 "show_progress": {
                     "type": "boolean"
+                },
+                "progressbar": {
+                    "anyOf": [
+                        { "type": "boolean" },
+                        {
+                            "type": "string",
+                            "enum": ["bar", "dots", "squares", "block", "thinblock", "off"]
+                        }
+                    ],
+                    "description": "Progress indicator style (slideshow progressbar): false/off hides it, true/bar is the classic fill bar, dots/squares render one step per slide, block/thinblock are fill-bar height variants. Absent means show_progress decides with the bar style."
                 },
                 "show_layers_control": {
                     "type": "boolean",
@@ -336,6 +361,58 @@
                     "type": "string",
                     "enum": ["left", "center", "right"],
                     "description": "Default horizontal alignment for slide text"
+                },
+                "textmode": {
+                    "type": "string",
+                    "enum": ["left", "right", "bottom"],
+                    "description": "Slide panel dock (slideshow textmode) in landscape: right (default) is the current layout, left mirrors it, bottom docks the panel below the map. Portrait layouts always behave like bottom."
+                },
+                "textsize": {
+                    "type": "number",
+                    "minimum": 10,
+                    "maximum": 80,
+                    "description": "Slide panel size as a percentage (slideshow textsize): percent of the width for side docks, of the height for the bottom dock. Absent keeps the built-in 50/50 split."
+                },
+                "fxmode": {
+                    "type": "string",
+                    "enum": ["slide", "fade", "none"],
+                    "description": "Slide transition effect (slideshow fxmode): slide (default) is the current glide, fade cross-fades slides, none jumps without animation. prefers-reduced-motion still forces none."
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["standard", "static"],
+                    "description": "Reading mode (slideshow mode): standard (default) is the slider; static stacks all slides in a scrollable list and follows the map to the slide in view."
+                },
+                "hudcolor": {
+                    "type": "string",
+                    "description": "HUD foreground color override (slideshow hudcolor)"
+                },
+                "hudbgcolor": {
+                    "type": "string",
+                    "description": "HUD background color override (slideshow hudbgcolor)"
+                },
+                "hudopacity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "HUD opacity percent 0..100 (slideshow hudopacity), applied to the HUD background"
+                },
+                "shownav": {
+                    "type": "boolean",
+                    "description": "Show the previous/next slide navigation (slideshow shownav). Default true."
+                },
+                "show_headings": {
+                    "type": "boolean",
+                    "description": "Render slide headlines (slideshow showheadings). Default true; false hides headline elements."
+                },
+                "show_scrollbars": {
+                    "type": "boolean",
+                    "description": "Show scrollbars in the slide panel (slideshow showscrollbars). Default true; false hides them (content still scrolls)."
+                },
+                "viewerheight": {
+                    "type": "string",
+                    "pattern": "^[0-9]+(\\.[0-9]+)?(px|%|vh)$",
+                    "description": "Fixed viewer height (slideshow viewerheight), e.g. 400px: applied as a container height override when set."
                 },
                 "text_color": {
                     "type": "string"
@@ -433,6 +510,24 @@
                     "format": "uri",
                     "description": "WebVTT subtitle file for an audio or video slide, rendered as a <track kind=\"subtitles\">."
                 },
+                "offset": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Start offset in seconds for audio/video media (slideshow audio.offset)"
+                },
+                "loop": {
+                    "type": "boolean",
+                    "description": "Loop audio/video media (slideshow audio.loop)"
+                },
+                "play": {
+                    "type": "string",
+                    "enum": ["auto", "click"],
+                    "description": "auto plays on activation; click arms paused for the visitor to start"
+                },
+                "stopOnExit": {
+                    "type": "boolean",
+                    "description": "Stop this media when leaving the slide (default true); false lets an audio bed continue"
+                },
                 "mediatype": {
                     "type": ["object", "null"]
                 }
@@ -473,7 +568,41 @@
                             },
                             "minItems": 4,
                             "maxItems": 4,
-                            "description": "Image region [x, y, w, h] in image pixels (IIIF xywh convention) for image maps; the view fits the region on navigation"
+                            "description": "Image region [x, y, w, h] in image pixels (IIIF xywh convention) for image maps; the view fits the region on navigation. Negative origins are clamped to the canvas."
+                        },
+                        "rotation": {
+                            "type": "number",
+                            "description": "View rotation in degrees clockwise (slideshow rotation); absent means north-up"
+                        },
+                        "filter": {
+                            "type": "object",
+                            "description": "Per-slide image grading (slideshow filters), applied as a CSS filter() on the map viewport",
+                            "properties": {
+                                "brightness": { "type": "number", "minimum": 0, "maximum": 200 },
+                                "contrast": { "type": "number", "minimum": 0, "maximum": 200 },
+                                "saturate": { "type": "number", "minimum": 0, "maximum": 200 },
+                                "hueRotate": { "type": "number", "minimum": -180, "maximum": 180 },
+                                "sepia": { "type": "number", "minimum": 0, "maximum": 100 },
+                                "blur": { "type": "number", "minimum": 0, "maximum": 20 }
+                            }
+                        },
+                        "mask": {
+                            "type": "object",
+                            "description": "Spotlight mask (slideshow passepartout): normalized viewport fractions left visible while the rest is dimmed",
+                            "required": ["x", "y", "w", "h"],
+                            "properties": {
+                                "x": { "type": "number" },
+                                "y": { "type": "number" },
+                                "w": { "type": "number", "exclusiveMinimum": 0 },
+                                "h": { "type": "number", "exclusiveMinimum": 0 },
+                                "color": { "type": "string" },
+                                "invert": { "type": "boolean" },
+                                "opacity": { "type": "number", "minimum": 0, "maximum": 1 }
+                            }
+                        },
+                        "basemap": {
+                            "type": "string",
+                            "description": "Per-slide basemap override (multi-manifest tours): any map_type value or IIIF info.json URL. Absent keeps the story basemap."
                         },
                         "zoom": {
                             "type": "number"
@@ -575,6 +704,49 @@
                         "url": {
                             "type": "string",
                             "format": "uri"
+                        },
+                        "loop": {
+                            "type": "boolean",
+                            "description": "Loop the narration (slideshow audio.loop)"
+                        },
+                        "offset": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "Start offset in seconds (slideshow audio.offset)"
+                        },
+                        "play": {
+                            "type": "string",
+                            "enum": ["auto", "click"],
+                            "description": "auto plays on navigation; click arms paused for the visitor to start (slideshow audio.play)"
+                        },
+                        "stopOnExit": {
+                            "type": "boolean",
+                            "description": "Stop when leaving the slide (default true); false keeps an audio bed across slides while the URL is unchanged"
+                        },
+                        "stopAllPrevious": {
+                            "type": "boolean",
+                            "description": "Stop any other playing track before starting (default true); false allows ambient overlap"
+                        }
+                    },
+                    "required": ["url"]
+                },
+                "slidetimeout": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Per-slide autoplay dwell in milliseconds (slideshow slidetimeout): overrides the global autoplay interval for this slide; 0 holds. Absent means the global interval."
+                },
+                "imgoverlay": {
+                    "anyOf": [{ "type": "object" }, { "type": "null" }],
+                    "description": "Per-slide image overlay on the map (slideshow imgoverlay), shown while this slide is active",
+                    "properties": {
+                        "url": { "type": "string", "format": "uri" },
+                        "size": { "type": "number", "exclusiveMinimum": 0 },
+                        "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+                        "extent": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 4,
+                            "maxItems": 4
                         }
                     },
                     "required": ["url"]

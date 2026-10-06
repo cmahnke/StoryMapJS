@@ -31,7 +31,7 @@
                 "date": "",
                 "text": {
                     "headline": "Torso region",
-                    "text": "StrollView-style image stops via the IIIF xywh convention."
+                    "text": "Slideshow-style image stops via the IIIF xywh convention."
                 },
                 "location": {
                     "region": [700, 800, 900, 1100]

@@ -16,6 +16,11 @@
     border-bottom-right-radius: 7px;
     left: 0;
 
+    // opt-in HUD palette (hudcolor/hudbgcolor): the theme values stay the
+    // default, so stories without the options render unchanged
+    background-color: var(--vco-hud-bg, transparent);
+    color: var(--vco-hud-fg, inherit);
+
     .vco-menubar-button:first-child {
         border-left: 0;
     }

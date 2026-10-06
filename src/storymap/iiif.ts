@@ -22,6 +22,7 @@ import {
     asRecord,
     asString,
     asStringArray,
+    clampRegion,
     isLonLatBox,
 } from "./iiif-shared";
 
@@ -156,8 +157,11 @@ function readSelectorEntry(entry: unknown, out: ReadSelector, depth = 0): void {
             const match = /xywh=(pixel:)?([^,]+),([^,]+),([^,]+),([^,]+)/.exec(raw);
             if (match) {
                 const parts = match.slice(2).map(Number);
+                // Origins may be negative (slideshow overshoots its canvas);
+                // clamping to the canvas happens in readSelector, which knows
+                // the size. Only the size must already be positive here.
                 if (parts.length === 4 && parts.every((n) => Number.isFinite(n))) {
-                    if (parts[0] >= 0 && parts[1] >= 0 && parts[2] > 0 && parts[3] > 0) {
+                    if (parts[2] > 0 && parts[3] > 0) {
                         out.region = parts as [number, number, number, number];
                     }
                 }
@@ -239,7 +243,14 @@ export function readSelector(
         }
     }
 
-    if (out.region === null && out.point !== null) {
+    if (out.region !== null) {
+        const clamped = clampRegion(out.region, width, height);
+        out.region = clamped;
+        if (clamped === null && out.point !== null) {
+            // fully outside the canvas: fall back to the point square
+            out.region = pointToRegion(out.point, width, height);
+        }
+    } else if (out.point !== null) {
         out.region = pointToRegion(out.point, width, height);
     }
 
@@ -547,6 +558,34 @@ export interface PaintingBody {
      * in storymap JSON is the documented route.
      */
     subtitles: string | null;
+    /**
+     * Playback flags from `storymap:` foreign members on the painting
+     * annotation (slideshow audio terms); absent stays absent.
+     */
+    offset?: number;
+    loop?: boolean;
+    play?: "auto" | "click";
+    stopOnExit?: boolean;
+}
+
+/**
+ * Reads `storymap:` playback flags off a painting annotation into the
+ * painting body: `offset` (seconds), `loop`, `play` and `stopOnExit`.
+ */
+function readPaintingPlayback(
+    annotationRecord: Record<string, unknown>,
+    painting: { offset?: number; loop?: boolean; play?: "auto" | "click"; stopOnExit?: boolean },
+): void {
+    const offset = annotationRecord[STORYMAP_PREFIX + "offset"];
+    if (typeof offset === "number" && Number.isFinite(offset) && offset >= 0) {
+        painting.offset = offset;
+    }
+    const loop = annotationRecord[STORYMAP_PREFIX + "loop"];
+    if (typeof loop === "boolean") painting.loop = loop;
+    const play = annotationRecord[STORYMAP_PREFIX + "play"];
+    if (play === "auto" || play === "click") painting.play = play;
+    const stopOnExit = annotationRecord[STORYMAP_PREFIX + "stopOnExit"];
+    if (typeof stopOnExit === "boolean") painting.stopOnExit = stopOnExit;
 }
 
 /**
@@ -654,7 +693,7 @@ function readPaintings(
             });
             if (!isPainting) continue;
             for (const body of readPaintingBodies(annotationRecord.body)) {
-                found.push({
+                const painting: PaintingBody = {
                     url: asString(body.id) ?? asString(body.value) ?? "",
                     region: readSelector(annotationRecord.target, width, height).region,
                     type: asString(body.type),
@@ -676,7 +715,9 @@ function readPaintings(
                     start: asNumber(body.start),
                     end: asNumber(body.end),
                     subtitles: readBodySubtitles(annotationRecord.body),
-                });
+                };
+                readPaintingPlayback(annotationRecord, painting);
+                found.push(painting);
             }
         }
     }
@@ -688,8 +729,18 @@ function readPaintings(
  * the first `Sound`/`Video` body wins. Painting bodies are skipped here —
  * the painting reader owns them, including the array-motivation form — and
  * anything else (commenting, tagging, …) belongs to the annotation stops.
+ *
+ * Playback flags ride `storymap:` foreign members on the annotation (or the
+ * body as a fallback), which need no vocabulary registration.
  */
-function readSupplementing(canvas: Record<string, unknown>): { url: string } | null {
+function readSupplementing(canvas: Record<string, unknown>): {
+    url: string;
+    loop?: boolean;
+    offset?: number;
+    play?: "auto" | "click";
+    stopOnExit?: boolean;
+    stopAllPrevious?: boolean;
+} | null {
     const annotationPages = Array.isArray(canvas.items) ? canvas.items : [];
     for (const page of annotationPages) {
         const pageRecord = asRecord(page);
@@ -707,7 +758,33 @@ function readSupplementing(canvas: Record<string, unknown>): { url: string } | n
             if (type !== "Sound" && type !== "Video") continue;
             const url = asString(body.id) ?? asString(body.value);
             if (url === null) continue;
-            return { url };
+            const narration: {
+                url: string;
+                loop?: boolean;
+                offset?: number;
+                play?: "auto" | "click";
+                stopOnExit?: boolean;
+                stopAllPrevious?: boolean;
+            } = { url };
+            const readBag = (record: Record<string, unknown>) => {
+                const loop = record[STORYMAP_PREFIX + "loop"];
+                if (typeof loop === "boolean") narration.loop = loop;
+                const offset = record[STORYMAP_PREFIX + "offset"];
+                if (typeof offset === "number" && Number.isFinite(offset) && offset >= 0) {
+                    narration.offset = offset;
+                }
+                const play = record[STORYMAP_PREFIX + "play"];
+                if (play === "auto" || play === "click") narration.play = play;
+                const stopOnExit = record[STORYMAP_PREFIX + "stopOnExit"];
+                if (typeof stopOnExit === "boolean") narration.stopOnExit = stopOnExit;
+                const stopAllPrevious = record[STORYMAP_PREFIX + "stopAllPrevious"];
+                if (typeof stopAllPrevious === "boolean") {
+                    narration.stopAllPrevious = stopAllPrevious;
+                }
+            };
+            readBag(annotationRecord);
+            readBag(body);
+            return narration;
         }
     }
     return null;
@@ -746,6 +823,28 @@ function readFeatureLocation(feature: unknown): StorymapSlideLocation | null {
             const value = properties[key];
             if (value === undefined || value === null || value === "") continue;
             locationProps[key] = value;
+        }
+        // Narrow the slideshow-driven keys the verbatim copy cannot check:
+        // a mistyped value must not reach the map as a wrong-typed field.
+        if (typeof location.rotation !== "number" || !Number.isFinite(location.rotation)) {
+            delete location.rotation;
+        }
+        if (typeof location.basemap !== "string" || location.basemap === "") {
+            delete location.basemap;
+        }
+        const filter = asRecord(location.filter);
+        if (location.filter !== undefined && filter === null) delete location.filter;
+        const mask = asRecord(location.mask);
+        if (location.mask !== undefined) {
+            if (
+                mask === null ||
+                typeof mask.x !== "number" ||
+                typeof mask.y !== "number" ||
+                typeof mask.w !== "number" ||
+                typeof mask.h !== "number"
+            ) {
+                delete location.mask;
+            }
         }
     }
     return location;
@@ -1007,6 +1106,10 @@ function canvasToSlide(
         if (sizes !== null) media.sizes = sizes;
         if (thumbnail !== null) media.thumb = thumbnail;
         if (painting?.subtitles != null) media.subtitles = painting.subtitles;
+        if (painting?.offset !== undefined) media.offset = painting.offset;
+        if (painting?.loop !== undefined) media.loop = painting.loop;
+        if (painting?.play !== undefined) media.play = painting.play;
+        if (painting?.stopOnExit !== undefined) media.stopOnExit = painting.stopOnExit;
         slide.media = media;
     }
     if (extraPaintings.length > 0) {
@@ -1030,13 +1133,20 @@ function canvasToSlide(
     );
     if (supplement !== null && !mediaUrls.has(supplement.url)) {
         slide.narration = { url: supplement.url };
+        if (supplement.loop !== undefined) slide.narration.loop = supplement.loop;
+        if (supplement.offset !== undefined) slide.narration.offset = supplement.offset;
+        if (supplement.play !== undefined) slide.narration.play = supplement.play;
+        if (supplement.stopOnExit !== undefined) slide.narration.stopOnExit = supplement.stopOnExit;
+        if (supplement.stopAllPrevious !== undefined) {
+            slide.narration.stopAllPrevious = supplement.stopAllPrevious;
+        }
     }
 
     // location: canvas navPlace, falling back to a manifest-level navPlace
     // aggregated in items order (both are allowed by the proposal)
     const location = readLocation(record.navPlace) ?? readFeatureLocation(manifestFeature);
     if (location !== null) slide.location = location;
-    // IIIF xywh region (StrollView-style image stops): [x, y, w, h] pixels.
+    // IIIF xywh region (slideshow-style image stops): [x, y, w, h] pixels.
     // The extension term wins over the interoperable spelling — an Image API
     // Selector on the painting annotation target
     // region: the painting annotation's target selector, the only source since
@@ -1044,6 +1154,61 @@ function canvasToSlide(
     const region = painting?.region ?? null;
     if (region !== null) {
         slide.location = { ...(slide.location ?? {}), region };
+    }
+    // View directives as canvas `storymap:` terms: the fallback for slides
+    // without lat/lon (no navPlace to carry them). navPlace wins when both
+    // spell the same key.
+    const canvasRotation = record[STORYMAP_PREFIX + "rotation"];
+    if (
+        slide.location?.rotation === undefined &&
+        typeof canvasRotation === "number" &&
+        Number.isFinite(canvasRotation)
+    ) {
+        slide.location = { ...(slide.location ?? {}), rotation: canvasRotation };
+    }
+    const canvasBasemap = record[STORYMAP_PREFIX + "basemap"];
+    if (
+        slide.location?.basemap === undefined &&
+        typeof canvasBasemap === "string" &&
+        canvasBasemap !== ""
+    ) {
+        slide.location = { ...(slide.location ?? {}), basemap: canvasBasemap };
+    }
+    const canvasFilter = asRecord(record[STORYMAP_PREFIX + "filter"]);
+    if (slide.location?.filter === undefined && canvasFilter !== null) {
+        slide.location = { ...(slide.location ?? {}), filter: canvasFilter };
+    }
+    const canvasMask = asRecord(record[STORYMAP_PREFIX + "mask"]);
+    if (slide.location?.mask === undefined && canvasMask !== null) {
+        const mx = canvasMask.x;
+        const my = canvasMask.y;
+        const mw = canvasMask.w;
+        const mh = canvasMask.h;
+        if (
+            typeof mx === "number" &&
+            typeof my === "number" &&
+            typeof mw === "number" &&
+            typeof mh === "number"
+        ) {
+            slide.location = {
+                ...(slide.location ?? {}),
+                mask: { ...canvasMask, x: mx, y: my, w: mw, h: mh },
+            };
+        }
+    }
+    const canvasSlidetimeout = record[STORYMAP_PREFIX + "slidetimeout"];
+    if (
+        slide.slidetimeout === undefined &&
+        typeof canvasSlidetimeout === "number" &&
+        Number.isFinite(canvasSlidetimeout) &&
+        canvasSlidetimeout >= 0
+    ) {
+        slide.slidetimeout = canvasSlidetimeout;
+    }
+    const canvasImgoverlay = asRecord(record[STORYMAP_PREFIX + "imgoverlay"]);
+    if (slide.imgoverlay === undefined && canvasImgoverlay !== null) {
+        const overlayUrl = asString(canvasImgoverlay.url);
+        if (overlayUrl !== null) slide.imgoverlay = { ...canvasImgoverlay, url: overlayUrl };
     }
 
     // StoryMap extension terms

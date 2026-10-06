@@ -26,6 +26,7 @@ export interface MenuBarEvents {
     back_to_start: Event;
     fullscreen: Event;
     autoplay_toggle: undefined;
+    progress_go: { slide: number };
     collapse: { y: number; collapsed: boolean };
     basemapchange: { map_type: string };
     overlaychange: { index: number; visible: boolean };
@@ -249,10 +250,21 @@ class MenuBarBase {
     }
 
     /**
-     * Update the progress indicator (issue #247); no-op when disabled.
+     * Update the progress indicator; no-op when disabled. The `progressbar`
+     * option selects the style (slideshow `progressbar`): the classic fill
+     * `bar` (default), height variants `block`/`thinblock`, or per-slide
+     * `dots`/`squares` buttons that jump to their slide.
      */
     setProgress(current: number, total: number): void {
-        if (!this.options.show_progress || !this._el.progress_fill) {
+        const style = this._progressStyle();
+        if (style === "off" || !this._el.progress) {
+            return;
+        }
+        if (style === "dots" || style === "squares") {
+            this._renderProgressSteps(style, current, total);
+            return;
+        }
+        if (!this._el.progress_fill) {
             return;
         }
         const percent = total > 1 ? Math.round((current / (total - 1)) * 100) : 100;
@@ -262,6 +274,53 @@ class MenuBarBase {
         this._el.progress.setAttribute("aria-valuemin", "1");
         this._el.progress.setAttribute("aria-valuemax", String(total));
         this._el.progress.setAttribute("aria-label", `${current + 1} / ${total}`);
+    }
+
+    /** The resolved progress style: `progressbar` wins, `show_progress` decides the default. */
+    _progressStyle(): "off" | "bar" | "dots" | "squares" | "block" | "thinblock" {
+        const raw = this.options.progressbar as string | boolean | undefined;
+        if (raw === false || raw === "off") return "off";
+        if (
+            raw === "bar" ||
+            raw === "dots" ||
+            raw === "squares" ||
+            raw === "block" ||
+            raw === "thinblock"
+        ) {
+            return raw;
+        }
+        return this.options.show_progress ? "bar" : "off";
+    }
+
+    /** Per-slide progress buttons for the `dots`/`squares` styles. */
+    _renderProgressSteps(style: "dots" | "squares", current: number, total: number): void {
+        const container = this._el.progress;
+        const built = Number(container.getAttribute("data-steps") ?? "0");
+        if (built !== total) {
+            container.innerHTML = "";
+            container.setAttribute("role", "tablist");
+            container.setAttribute("aria-label", `Slides 1 / ${total}`);
+            for (let i = 0; i < total; i++) {
+                const step = document.createElement("button");
+                step.setAttribute("type", "button");
+                step.className = `vco-menubar-progress-step vco-menubar-progress-${style}`;
+                step.setAttribute("role", "tab");
+                step.setAttribute("aria-label", `Slide ${i + 1} / ${total}`);
+                step.setAttribute("data-slide", String(i));
+                step.addEventListener("click", () => {
+                    this.fire("progress_go", { slide: i });
+                });
+                container.appendChild(step);
+            }
+            container.setAttribute("data-steps", String(total));
+        }
+        const steps = container.querySelectorAll("[data-slide]");
+        steps.forEach((entry, index) => {
+            const el = entry as HTMLElement;
+            el.setAttribute("aria-selected", String(index === current));
+            el.classList.toggle("vco-active", index === current);
+            el.classList.toggle("vco-past", index < current);
+        });
     }
 
     /**
@@ -407,9 +466,13 @@ class MenuBarBase {
             this._el.button_overview.innerHTML = Language.buttons.map_overview;
         }
 
-        // Progress indicator (issue #247)
-        if (this.options.show_progress) {
+        // Progress indicator (issue #247; dots/squares/block/thinblock via progressbar)
+        if (this._progressStyle() !== "off") {
             this._el.progress = Dom.create("span", "vco-menubar-progress", this._el.container);
+            const style = this._progressStyle();
+            if (style !== "bar") {
+                this._el.progress.classList.add(`vco-menubar-progress-${style}`);
+            }
             this._el.progress_fill = Dom.create(
                 "span",
                 "vco-menubar-progress-fill",

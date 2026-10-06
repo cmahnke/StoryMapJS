@@ -336,6 +336,19 @@ describe("context agreement", () => {
             "storymap:lineOpacity",
             "storymap:lineDash",
             "storymap:lineJoin",
+            // slideshow-driven view/audio terms (rotation,
+            // filter/mask, slidetimeout, imgoverlay, playback flags);
+            // covered by tests/slideshow-features.test.ts
+            "storymap:rotation",
+            "storymap:filter",
+            "storymap:mask",
+            "storymap:slidetimeout",
+            "storymap:imgoverlay",
+            "storymap:loop",
+            "storymap:offset",
+            "storymap:play",
+            "storymap:stopOnExit",
+            "storymap:stopAllPrevious",
         ]);
         const unaccounted = [...declared].filter(
             (t) => !emitted.has(t) && !NOT_EXERCISED_BY_A_FIXTURE.has(t),
@@ -400,6 +413,10 @@ describe("context agreement", () => {
         const READ = [
             "name",
             "zoom",
+            "rotation",
+            "basemap",
+            "filter",
+            "mask",
             "line",
             "icon",
             "iconSize",

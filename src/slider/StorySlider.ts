@@ -101,6 +101,10 @@ class StorySliderBase {
     declare "animator_background": AnimationHandle | null;
     declare "fire": EventedInstance<StorySliderEvents>["fire"];
     declare "_loaded": boolean;
+    /** Scroll-spy observer for `mode: "static"`; null in standard mode. */
+    declare "_static_observer": IntersectionObserver | null;
+    /** True while a scroll-spy navigation is settling (suppresses echo scrolls). */
+    declare "_static_spying": boolean;
 
     /*	Private Methods
 	================================================== */
@@ -175,6 +179,8 @@ class StorySliderBase {
         // Animation Object
         this.animator = null;
         this.animator_background = null;
+        this._static_observer = null;
+        this._static_spying = false;
 
         // Preload scheduling handles, at most one of which is ever live
         this.preloadTimer = undefined;
@@ -260,6 +266,11 @@ class StorySliderBase {
         slide.addTo(this._el.slider_item_container);
         slide.on("added", this._onSlideAdded, this);
         slide.on("background_change", this._onBackgroundChange, this);
+        // a slide added after layout (editor preview, StoryMap.createSlide)
+        // joins the scroll-spy in static mode
+        if (this._isStatic()) {
+            this._initStaticSpy();
+        }
     }
 
     /*	Message
@@ -309,6 +320,8 @@ class StorySliderBase {
      */
     dispose() {
         this._cancelPreload();
+        this._static_observer?.disconnect();
+        this._static_observer = null;
         if (this._swipable) {
             this._swipable.dispose();
         }
@@ -327,7 +340,7 @@ class StorySliderBase {
         this._slides = [];
     }
 
-    goTo(n: number, fast?: boolean, displayupdate?: boolean) {
+    goTo(n: number, fast?: boolean, displayupdate?: boolean, fromScroll = false) {
         this.changeBackground({ color_value: "", image: false });
 
         // Clear Preloader Timer
@@ -354,13 +367,40 @@ class StorySliderBase {
                 this._swipable.stopMomentum();
             }
 
-            if (fast || prefersReducedMotion()) {
+            // Static reading mode: all slides are stacked in a scrollable
+            // list instead of a translating strip. Programmatic navigation
+            // scrolls the slide into view; scroll-spy navigation (fromScroll)
+            // only flips the active state, or scrolling would fight the
+            // visitor's own scroll position.
+            if (this._isStatic()) {
+                if (!fromScroll) {
+                    this._static_spying = true;
+                    this._scrollSlideIntoView(this.current_slide);
+                    window.setTimeout(() => {
+                        this._static_spying = false;
+                    }, 150);
+                }
+                this._onSlideChange(displayupdate);
+            } else if (fast || prefersReducedMotion() || this.options.fxmode === "none") {
+                this._el.slider_container.style.opacity = "";
                 this._el.slider_container.style.left = -(this.slide_spacing * n) + "px";
                 this._onSlideChange(displayupdate);
+            } else if (this.options.fxmode === "fade") {
+                // fire the change event at animation start so the map and the
+                // slider animate simultaneously
+                this._onSlideChange(displayupdate);
+                this._el.slider_container.style.left = -(this.slide_spacing * n) + "px";
+                this._el.slider_container.style.opacity = "0";
+                this.animator = Animate(this._el.slider_container, {
+                    opacity: 1,
+                    duration: transition_duration,
+                    easing: this.options.ease,
+                });
             } else {
                 // fire the change event at animation start so the map and the
                 // slider animate simultaneously
                 this._onSlideChange(displayupdate);
+                this._el.slider_container.style.opacity = "";
                 this.animator = Animate(this._el.slider_container, {
                     left: -(this.slide_spacing * n) + "px",
                     duration: transition_duration,
@@ -475,6 +515,11 @@ class StorySliderBase {
     }
 
     showNav(nav_obj: SlideNav, show: boolean) {
+        // `shownav: false` (slideshow shownav) hides the previous/next
+        // chrome; keyboard, swipe and dots navigation still work
+        if (this.options.shownav === false) {
+            show = false;
+        }
         if (this.options.width <= 500 && Browser.mobile) {
             // hidden on small mobile screens
         } else {
@@ -605,6 +650,64 @@ class StorySliderBase {
     /*	Private Methods
 	================================================== */
 
+    /** True in the stacked reading mode (`mode: "static"`): no strip translation. */
+    _isStatic(): boolean {
+        return (this.options as { mode?: unknown }).mode === "static";
+    }
+
+    /**
+     * Scroll-spy for the static reading mode: the most visible stacked slide
+     * becomes current, so the map follows the reading position. Programmatic
+     * scrolls set `_static_spying` while settling and are ignored, or the
+     * observer would echo them back.
+     */
+    _initStaticSpy(): void {
+        if (typeof IntersectionObserver === "undefined") return;
+        this._static_observer?.disconnect();
+        const root = this._el.slider_container_mask;
+        this._static_observer = new IntersectionObserver(
+            (entries) => {
+                if (this._static_spying) return;
+                let best = -1;
+                let bestRatio = 0;
+                for (const entry of entries) {
+                    const index = Number((entry.target as HTMLElement).dataset?.slideIndex ?? -1);
+                    if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+                        best = index;
+                        bestRatio = entry.intersectionRatio;
+                    }
+                }
+                if (best >= 0 && best !== this.current_slide) {
+                    this.goTo(best, true, true, true);
+                }
+            },
+            { root, threshold: [0, 0.25, 0.5, 0.75, 1] },
+        );
+        for (const child of Array.from(this._el.slider_item_container.children)) {
+            const index = [...this._el.slider_item_container.children].indexOf(child);
+            (child as HTMLElement).dataset.slideIndex = String(index);
+            this._static_observer.observe(child);
+        }
+    }
+
+    /** Scroll a stacked slide into view without moving the host page. */
+    _scrollSlideIntoView(n: number): void {
+        const slide = this._el.slider_item_container.children[n] as HTMLElement | undefined;
+        const mask = this._el.slider_container_mask;
+        if (!slide || !mask || typeof slide.offsetTop !== "number") return;
+        const container = this._el.slider_item_container;
+        const top =
+            (typeof container.offsetTop === "number" ? container.offsetTop : 0) + slide.offsetTop;
+        try {
+            mask.scrollTo({
+                top,
+                behavior: prefersReducedMotion() ? "auto" : "smooth",
+            });
+        } catch {
+            mask.scrollTop = top;
+        }
+    }
+
     // Update Display
     _updateDisplay(width?: number, height?: number, animate?: unknown, layout?: string) {
         let _layout;
@@ -642,9 +745,19 @@ class StorySliderBase {
         this._nav.previous.setPosition({ top: nav_pos });
 
         // Position slides
-        for (let i = 0; i < this._slides.length; i++) {
-            this._slides[i].updateDisplay(this.options.width, this.options.height, _layout);
-            this._slides[i].setPosition({ left: this.slide_spacing * i, top: 0 });
+        if (this._isStatic()) {
+            // stacked reading mode: slides flow vertically (see .vco-static),
+            // so no strip positions — but keep the scroll-spy observing the
+            // current set of slides
+            for (let i = 0; i < this._slides.length; i++) {
+                this._slides[i].updateDisplay(this.options.width, this.options.height, _layout);
+            }
+            this._initStaticSpy();
+        } else {
+            for (let i = 0; i < this._slides.length; i++) {
+                this._slides[i].updateDisplay(this.options.width, this.options.height, _layout);
+                this._slides[i].setPosition({ left: this.slide_spacing * i, top: 0 });
+            }
         }
 
         // Go to the current slide
@@ -688,6 +801,10 @@ class StorySliderBase {
 	================================================== */
     _initLayout() {
         this._el.container.className += " vco-storyslider";
+        // Static reading mode: stacked slides with scroll-spy navigation
+        if (this._isStatic()) {
+            this._el.container.classList.add("vco-static");
+        }
 
         // Create Layout
         this._el.slider_container_mask = Dom.create(

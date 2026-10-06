@@ -7,6 +7,8 @@ export interface ViewToOptions {
     calculate_zoom?: boolean;
     duration?: number;
     zoom?: number;
+    /** View rotation in degrees clockwise; absent leaves rotation unchanged. */
+    rotation?: number;
 }
 
 /** A point of the connection line: either a slide or a raw lat/lon pair. */

@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { harnessUrl, waitForStoryMap } from "./helpers";
 
 /**
- * Image region stops (StrollView-style): slides with `location.region`
+ * Image region stops (slideshow-style): slides with `location.region`
  * ([x, y, w, h] image pixels, IIIF xywh convention) fit that region on
  * navigation in image mode; region-less slides fit as before.
  */
