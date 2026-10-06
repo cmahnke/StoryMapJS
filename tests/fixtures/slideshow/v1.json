@@ -1,0 +1,81 @@
+{
+    "@context": "https://seige.digital/ns/iiif.jsonld",
+    "id": "https://example.org/tours/legacy",
+    "type": "AnnotationPageSequence",
+    "metadata": {
+        "title": "A legacy tour",
+        "author": "Example Author",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    "pages": [
+        {
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "type": "AnnotationPage",
+            "items": [
+                {
+                    "id": "https://example.org/tours/legacy/annotation/0",
+                    "type": "Annotation",
+                    "body": {
+                        "id": "https://example.org/tours/legacy/body/0",
+                        "type": "TextualBody",
+                        "value": "<p>First part.</p>",
+                        "format": "text/html"
+                    },
+                    "target": {
+                        "id": "https://images.example.org/iiif/canvas/1#10,20,300,400",
+                        "type": "Image",
+                        "format": "image/jpeg",
+                        "manifest_id": "https://images.example.org/iiif/manifest",
+                        "canvas_id": "https://images.example.org/iiif/canvas/1",
+                        "image_id": "https://images.example.org/iiif/image/1",
+                        "image_srv": "https://images.example.org/iiif/image/1"
+                    }
+                },
+                {
+                    "id": "https://example.org/tours/legacy/annotation/0b",
+                    "type": "Annotation",
+                    "body": {
+                        "id": "https://example.org/tours/legacy/body/0b",
+                        "type": "TextualBody",
+                        "value": "<p>Second part.</p>",
+                        "format": "text/html"
+                    },
+                    "target": {
+                        "id": "https://images.example.org/iiif/canvas/1#50,60,100,100",
+                        "type": "Image",
+                        "format": "image/jpeg",
+                        "manifest_id": "https://images.example.org/iiif/manifest",
+                        "canvas_id": "https://images.example.org/iiif/canvas/1",
+                        "image_id": "https://images.example.org/iiif/image/1",
+                        "image_srv": "https://images.example.org/iiif/image/1"
+                    }
+                }
+            ]
+        },
+        {
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "type": "AnnotationPage",
+            "items": [
+                {
+                    "id": "https://example.org/tours/legacy/annotation/1",
+                    "type": "Annotation",
+                    "body": {
+                        "id": "https://example.org/tours/legacy/body/1",
+                        "type": "TextualBody",
+                        "value": "<p>Whole canvas.</p>",
+                        "format": "text/html"
+                    },
+                    "target": {
+                        "id": "https://images.example.org/iiif/canvas/2",
+                        "type": "Image",
+                        "format": "image/jpeg",
+                        "manifest_id": "https://images.example.org/iiif/manifest",
+                        "canvas_id": "https://images.example.org/iiif/canvas/2",
+                        "image_id": "https://images.example.org/iiif/image/2",
+                        "image_srv": "https://images.example.org/iiif/image/2"
+                    }
+                }
+            ]
+        }
+    ]
+}

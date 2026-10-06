@@ -105,11 +105,16 @@ export function slideBasemapKey(location: StorymapSlideLocation | null | undefin
     return typeof basemap === "string" && basemap !== "" ? basemap : null;
 }
 
-/** True for plain image-file URLs (no IIIF service, `{z}` template or keyword). */
+/**
+ * True for plain image-file URLs (no IIIF service, `{z}` template or
+ * keyword). Only unambiguous raster extensions: `.jpx`/`.jp2` can be IIIF
+ * bases too (Leipzig serves `info.json` off `.jpx`), so those go through
+ * the service attempt with a static fallback instead.
+ */
 export function isStaticImageUrl(url: string): boolean {
     return (
         /^https?:\/\//i.test(url) &&
         !url.includes("{z}") &&
-        /\.(jpe?g|png|gif|webp|tif?f|bmp|avif|jp2)(\?.*)?$/i.test(url)
+        /\.(jpe?g|png|gif|webp|tif?f|bmp|avif)(\?.*)?$/i.test(url)
     );
 }

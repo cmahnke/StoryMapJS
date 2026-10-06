@@ -133,8 +133,12 @@ export default class OpenLayers extends Map {
     declare "_imgoverlay_layer": Layer | null;
     /** Guards stale static-fallback probes (see `_probeStaticFallback`). */
     declare "_static_probe_token": number;
-    /** Guards stale per-slide static basemap probes, independently. */
-    declare "_slide_probe_token": number;
+    /**
+     * Per-URL probe tokens for static slide basemaps: concurrent probes for
+     * different slides must not cancel each other (see
+     * `_createStaticImageBasemap`).
+     */
+    declare "_slide_probe_tokens": globalThis.Map<string, number>;
 
     /*	Create the Map
 	================================================== */
@@ -147,7 +151,7 @@ export default class OpenLayers extends Map {
         this._mask_el = null;
         this._imgoverlay_layer = null;
         this._static_probe_token = 0;
-        this._slide_probe_token = 0;
+        this._slide_probe_tokens = new globalThis.Map();
 
         // Caller-supplied OpenLayers options: `controls` replaces the defaults
         // (the viewer installs none), `interactions` are added to the viewer's
@@ -1103,6 +1107,7 @@ export default class OpenLayers extends Map {
         this._mask_el?.remove();
         this._mask_el = null;
         this._basemap_cache.clear();
+        this._slide_probe_tokens.clear();
         this._slide_basemap = null;
         this._story_basemap_layer = null;
         this._imgoverlay_layer = null;
@@ -2373,13 +2378,11 @@ export default class OpenLayers extends Map {
                     pending.setSource(source);
                     this._fireImageready(source, "iiif", pending);
                 })
-                .catch((err) =>
-                    console.error(
-                        "Slide basemap info.json could not be loaded:",
-                        info_url,
-                        err?.stack || err,
-                    ),
-                );
+                .catch(() => {
+                    // not an image service after all (a plain file, e.g. a
+                    // `.jpx` that serves no info.json): probe it as one
+                    this._replaceWithStaticBasemap(key, pending);
+                });
             return pending;
         }
         return this._createTileLayer(key);
@@ -2388,16 +2391,19 @@ export default class OpenLayers extends Map {
     /**
      * A basemap from a plain image URL (no IIIF service): an `ImageLayer`
      * filled in once the natural size probes. Used for per-slide basemaps
-     * pointing at static files; unusable dimensions keep the error logged
-     * and the layer empty, like the failed-service path.
+     * pointing at static files, and as the fallback when an `info.json`
+     * turns out unreachable (some `.jpx`/`.jp2` bases serve one, some are
+     * plain files — only the fetch tells). Unusable dimensions keep the
+     * error logged and the layer empty, like the failed-service path.
      */
     _createStaticImageBasemap(url: string): Layer {
         const pending = new ImageLayer();
         pending.setZIndex(0);
-        const token = ++this._slide_probe_token;
+        const token = (this._slide_probe_tokens.get(url) ?? 0) + 1;
+        this._slide_probe_tokens.set(url, token);
         void this._probeStaticImage(url).then(
             (dims) => {
-                if (token !== this._slide_probe_token) return;
+                if (this._slide_probe_tokens.get(url) !== token) return;
                 if (!dims || !(dims.width > 0) || !(dims.height > 0)) {
                     console.error("Slide basemap image has no usable dimensions:", url);
                     return;
@@ -2424,6 +2430,22 @@ export default class OpenLayers extends Map {
                 ),
         );
         return pending;
+    }
+
+    /**
+     * Replace a failed IIIF slide basemap with a probed static image under
+     * the same cache key, swapping it into the map when still current (the
+     * visitor may have moved on while the fetch was in flight, in which
+     * case the cache holds it for a return visit).
+     */
+    _replaceWithStaticBasemap(key: string, pending: TileLayer): void {
+        const staticLayer = this._createStaticImageBasemap(key);
+        this._basemap_cache.set(key, staticLayer);
+        if (this._tile_layer === (pending as unknown as Layer)) {
+            this._map.removeLayer(pending);
+            this._tile_layer = staticLayer;
+            this._map.addLayer(staticLayer);
+        }
     }
 
     /**

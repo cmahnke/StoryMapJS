@@ -24,6 +24,17 @@ describe("isSlideshowCollection", () => {
         expect(isSlideshowCollection(fixture("single"))).toBe(true);
     });
 
+    test("detects a v1 tour and reports version 1", () => {
+        expect(isSlideshowCollection(fixture("v1"))).toBe(true);
+        expect(slideshowVersion(fixture("v1"))).toBe(1);
+    });
+
+    test("rejects bare page sequences without the v1 context", () => {
+        expect(isSlideshowCollection({ id: "x", type: "AnnotationPageSequence", pages: [] })).toBe(
+            false,
+        );
+    });
+
     test("rejects IIIF manifests and collections", () => {
         const manifest = {
             "@context": ["http://iiif.io/api/presentation/3/context.json"],
@@ -253,10 +264,40 @@ describe("player settings", () => {
     });
 });
 
+describe("legacy v1 tour", () => {
+    test("maps pages to slides with concatenated bodies", () => {
+        const result = slideshowToStorymapData(fixture("v1"));
+        expect(validateStorymap({ storymap: result.data })).toEqual([]);
+        expect(result.data.slides).toHaveLength(2);
+        const first = result.data.slides[0];
+        expect(first.uniqueid).toBe("https://example.org/tours/legacy/annotation/0");
+        expect(first.text?.headline).toBe("A legacy tour");
+        expect(first.text?.text).toBe("<p>First part.</p> <p>Second part.</p>");
+        // last fragment wins, like the canonical parser
+        expect(first.location?.region).toEqual([50, 60, 100, 100]);
+        expect(first.location?.basemap).toBe("https://images.example.org/iiif/image/1");
+        expect(first.provenance).toMatchObject({
+            manifest: "https://images.example.org/iiif/manifest",
+            canvas: "https://images.example.org/iiif/canvas/1",
+            image: "https://images.example.org/iiif/image/1",
+        });
+        expect(first.narration).toBeUndefined();
+        const second = result.data.slides[1];
+        expect(second.location?.region).toBeUndefined();
+        expect(result.data.credit).toEqual({
+            creator: "Example Author",
+            rights: "https://creativecommons.org/licenses/by-sa/4.0/",
+        });
+        const data = result.data as unknown as Record<string, unknown>;
+        expect(data.title).toBe("A legacy tour");
+        expect(data.map_type).toBe("iiif");
+    });
+});
+
 describe("versions and paging", () => {
-    test("v1 warns without slides", () => {
+    test("unknown versions warn without slides", () => {
         const result = slideshowToStorymapData({
-            "@context": ["https://seige.digital/ns/iiif.jsonld"],
+            "@context": ["http://example.org/unknown.jsonld"],
             id: "https://example.org/old",
             type: "AnnotationCollection",
         });
@@ -305,7 +346,7 @@ describe("versions and paging", () => {
 
 describe("translator output validity", () => {
     test("every fixture validates", () => {
-        for (const name of ["single", "multi", "negative", "audio", "unsupported"]) {
+        for (const name of ["single", "multi", "negative", "audio", "unsupported", "v1"]) {
             const result = slideshowToStorymapData(fixture(name));
             expect(validateStorymap({ storymap: result.data as StorymapData })).toEqual([]);
         }

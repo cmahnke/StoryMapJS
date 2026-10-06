@@ -95,27 +95,36 @@ export function slideshowVersion(doc: unknown): 0 | 1 | 2 {
 }
 
 /**
- * True for a slideshow tour document: an `AnnotationCollection` that is
- * neither Presentation 3 (Manifest/Collection) nor a plain annotation page,
- * carrying slideshow markers (extension context, or items shaped like
- * slideshow annotations). Narrow by conjunction so P3 `seeAlso`
- * collections never match.
+ * True for a slideshow tour document: a v2 `AnnotationCollection` or a v1
+ * `AnnotationPageSequence` carrying the matching extension context (never a
+ * P3 `Manifest`/`Collection`), with items shaped like tour annotations.
+ * Narrow by conjunction so P3 `seeAlso` collections never match.
  */
 export function isSlideshowCollection(doc: unknown): boolean {
     const record = asRecord(doc);
     if (!record) return false;
-    if (record.type !== "AnnotationCollection") return false;
     const contexts = contextsOf(record);
     if (contexts.some((c) => c.includes(P3_CONTEXT))) return false;
-    if (slideshowVersion(doc) !== 0) return true;
-    const first = asRecord(record.first);
-    const items = first && Array.isArray(first.items) ? first.items : [];
-    const head = asRecord(items[0]);
-    if (!head) return false;
-    if (asRecord(head.strollview) !== null) return true;
-    const target = asRecord(head.target);
-    const targetId = target ? asString(target.id) : null;
-    return targetId !== null && /#([^,]+),([^,]+),([^,]+),([^,]+)\s*$/.test(targetId);
+    if (record.type === "AnnotationCollection" && slideshowVersion(doc) === 2) {
+        const first = asRecord(record.first);
+        const items = first && Array.isArray(first.items) ? first.items : [];
+        const head = asRecord(items[0]);
+        if (!head) return false;
+        if (asRecord(head.strollview) !== null) return true;
+        const target = asRecord(head.target);
+        const targetId = target ? asString(target.id) : null;
+        return targetId !== null && /#([^,]+),([^,]+),([^,]+),([^,]+)\s*$/.test(targetId);
+    }
+    // v1 has no extension object: the context plus page/item shapes decide
+    if (record.type === "AnnotationPageSequence" && slideshowVersion(doc) === 1) {
+        const pages = Array.isArray(record.pages) ? record.pages : [];
+        const page = asRecord(pages[0]);
+        const items = page && Array.isArray(page.items) ? page.items : [];
+        const head = asRecord(items[0]);
+        if (!head) return false;
+        return asRecord(head.target) !== null;
+    }
+    return false;
 }
 
 /** A language map (or plain string) reduced to one string, `none` first. */
@@ -439,6 +448,115 @@ function applySettings(
 }
 
 /**
+ * Translate a v1 tour (`AnnotationPageSequence`): one page is one slide,
+ * ids come from the first item's target, bodies concatenate with a space
+ * and the last `#x,y,w,h` fragment wins — mirroring the canonical
+ * v1 parser. v1 has no filters/rotation/mask/audio/static fields.
+ */
+function translateV1(
+    record: Record<string, unknown>,
+    docId: string,
+    opts: SlideshowTranslatorOptions,
+    warnings: Warnings,
+): SlideshowToStorymapResult {
+    const data: StorymapData = { slides: [] };
+    const meta = asRecord(record.metadata) ?? {};
+    const label = asString(meta.title) ?? "";
+    if (label !== "") {
+        (data as unknown as Record<string, unknown>).title = label;
+    }
+    const creator = asString(meta.author);
+    const rights = asString(meta.license);
+    if (creator !== null || rights !== null) {
+        data.credit = {
+            ...(creator !== null ? { creator } : {}),
+            ...(rights !== null ? { rights } : {}),
+        };
+    }
+    const pages = Array.isArray(record.pages) ? record.pages : [];
+    const slides: StorymapSlide[] = [];
+    const services: string[] = [];
+    pages.forEach((page, index) => {
+        const sampleId = `page/${index}`;
+        const pageRecord = asRecord(page);
+        const items = pageRecord && Array.isArray(pageRecord.items) ? pageRecord.items : [];
+        if (items.length === 0) {
+            warnings.add("slideshow.page", sampleId, "no items, skipped");
+            return;
+        }
+        const slide: StorymapSlide = {};
+        const head = asRecord(items[0]);
+        const headTarget = head ? asRecord(head.target) : null;
+        const annotationId = (head ? asString(head.id) : null) ?? `${docId}/page/${index}`;
+        slide.uniqueid = annotationId;
+        const texts: string[] = [];
+        let region: [number, number, number, number] | null = null;
+        let rawTarget = false;
+        for (const item of items) {
+            const annotation = asRecord(item);
+            if (!annotation) continue;
+            const body = asRecord(annotation.body);
+            const value = body ? (asString(body.value) ?? "") : "";
+            if (value !== "") texts.push(value);
+            // last fragment wins, like the canonical parser
+            const split = splitTarget(annotation.target);
+            if (split.raw) {
+                rawTarget = true;
+                if (split.region !== null) region = split.region;
+            }
+        }
+        if (texts.length === 0 && region === null && headTarget === null) {
+            warnings.add("slideshow.page", sampleId, "nothing to show, skipped");
+            return;
+        }
+        if (rawTarget && region === null) {
+            warnings.add("slideshow.target", sampleId, "unparsable region, kept whole");
+        }
+        const text = texts.join(" ");
+        slide.text = {
+            ...(index === 0 && label !== "" ? { headline: label } : {}),
+            ...(text !== "" ? { text } : {}),
+        };
+        const location: StorymapSlide["location"] = {};
+        if (region !== null) location.region = region;
+        const service = headTarget ? asString(headTarget.image_srv) : null;
+        if (service !== null) {
+            location.basemap = service;
+            services.push(service);
+        }
+        const provenance: Record<string, unknown> = {};
+        if (headTarget) {
+            for (const [key, source] of [
+                ["manifest", headTarget.manifest_id],
+                ["canvas", headTarget.canvas_id],
+                ["image", headTarget.image_id],
+            ] as const) {
+                const id = asString(source);
+                if (id !== null) provenance[key] = id;
+            }
+        }
+        if (Object.keys(provenance).length > 0) {
+            slide.provenance = provenance as StorymapSlide["provenance"];
+        }
+        if (Object.keys(location).length > 0) slide.location = location;
+        slides.push(slide);
+    });
+    data.slides = slides;
+    data.map_type = "iiif";
+    data.map_as_image = true;
+    const iiif: { url: string; attribution: string } = { url: "", attribution: "" };
+    const firstService = services.length > 0 ? (services[0] as string) : null;
+    if (firstService !== null && !isStaticImageUrl(firstService)) {
+        iiif.url = firstService.endsWith("/info.json")
+            ? firstService
+            : `${firstService.replace(/\/$/, "")}/info.json`;
+    }
+    (data as unknown as Record<string, unknown>).iiif = iiif;
+    applySettings(data, slides, opts.settings, warnings);
+    return { data, warnings: warnings.list() };
+}
+
+/**
  * Translate one slideshow tour document (plus any following pages) into
  * storymap data. Slideshow-only fields land verbatim; internal validation
  * (`validateStorymap`) must still pass on the result.
@@ -455,15 +573,14 @@ export function slideshowToStorymapData(
         return { data, warnings: warnings.list() };
     }
     const version = slideshowVersion(doc);
-    if (version === 1) {
-        warnings.add(
-            "slideshow.version",
-            null,
-            "legacy v1 tours are detected but not mapped; no slides",
-        );
+    const docId = asString(record.id) ?? "";
+    if (version === 0) {
+        warnings.add("slideshow.version", null, "unknown version, no slides");
         return { data, warnings: warnings.list() };
     }
-    const docId = asString(record.id) ?? "";
+    if (version === 1) {
+        return translateV1(record, docId, opts, warnings);
+    }
     const label = flattenLabel(record.label);
     if (label !== "") {
         (data as unknown as Record<string, unknown>).title = label;

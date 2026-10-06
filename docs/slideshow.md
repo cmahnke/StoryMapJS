@@ -37,6 +37,15 @@ are omitted (the viewer defaults match). A target without a fragment, or
 with an unusable one, keeps the whole canvas with a warning. Audio that
 duplicates the slide media URL is kept once, as media.
 
+## Legacy v1 tours
+
+v1 documents (`AnnotationPageSequence`, one page per slide, `metadata`
+with plain `title`/`author`/`license`) map page-by-page: bodies
+concatenate with a space, the last `#x,y,w,h` fragment wins, ids come
+from the first item's target, and the metadata becomes title + credit.
+v1 has no filters/rotation/mask/audio/static fields. Detection is by
+context plus shape, never Presentation 3.
+
 ## Player settings mapping
 
 | Setting                              | Option                                                                                                                         |

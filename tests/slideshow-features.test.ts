@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, test, vi } from "vitest";
 import { clampRegion } from "../src/storymap/iiif-shared";
 import {
     buildSlideFilter,
+    isStaticImageUrl,
     normalizeMask,
     slideBasemapKey,
     slideRotationRad,
@@ -112,6 +113,22 @@ describe("normalizeMask", () => {
         expect(mask?.x).toBe(0);
         expect(mask?.w).toBe(1);
         expect(mask?.color).toBe("rgba(0,0,0,0.5)");
+    });
+});
+
+describe("isStaticImageUrl", () => {
+    test("sniffs unambiguous raster files only", () => {
+        expect(isStaticImageUrl("https://example.org/sheet.jpg")).toBe(true);
+        expect(isStaticImageUrl("https://example.org/sheet.JPEG?w=1")).toBe(true);
+        expect(isStaticImageUrl("https://example.org/i.png")).toBe(true);
+        expect(isStaticImageUrl("https://example.org/i.tif")).toBe(true);
+        // .jpx/.jp2 can be IIIF bases too: service attempt first
+        expect(isStaticImageUrl("https://example.org/00000001.jpx")).toBe(false);
+        expect(isStaticImageUrl("https://example.org/i.jp2")).toBe(false);
+        expect(isStaticImageUrl("https://example.org/iiif/image/1")).toBe(false);
+        expect(isStaticImageUrl("https://example.org/iiif/image/1/info.json")).toBe(false);
+        expect(isStaticImageUrl("https://example.org/tiles/{z}/{x}/{y}.png")).toBe(false);
+        expect(isStaticImageUrl("osm:bright")).toBe(false);
     });
 });
 
@@ -586,6 +603,42 @@ describe("map per-slide presentation", () => {
         expect(map._slide_basemap).toBeNull();
         expect(map._tile_layer).toBe(first);
         expect(cached).not.toBe(first);
+    });
+
+    test("a failed info.json falls back to a probed static layer", async () => {
+        const sms = geoStorymap("sm-base-fallback", [{}, {}], true);
+        const harness = sms as unknown as {
+            _map: {
+                _tile_layer: object | null;
+                _basemap_cache: Map<string, object>;
+                _switchSlideBasemap(loc: unknown): void;
+                _probeStaticImage(url: string): Promise<{ width: number; height: number }>;
+                _slide_basemap: string | null;
+            };
+        };
+        const map = harness._map;
+        const first = map._tile_layer;
+        vi.stubGlobal(
+            "fetch",
+            () => Promise.reject(new Error("no service here")) as Promise<Response>,
+        );
+        try {
+            map._probeStaticImage = () => Promise.resolve({ width: 640, height: 480 });
+            map._switchSlideBasemap({ basemap: "https://example.org/00000001.jpx" });
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            expect(map._slide_basemap).toBe("https://example.org/00000001.jpx");
+            const layer = map._basemap_cache.get("https://example.org/00000001.jpx") as {
+                getSource(): object | null;
+                constructor: { name: string };
+            };
+            expect(layer.constructor.name).toBe("ImageLayer");
+            expect(layer.getSource()).not.toBeNull();
+            expect(map._tile_layer).toBe(layer);
+            expect(map._tile_layer).not.toBe(first);
+        } finally {
+            vi.unstubAllGlobals();
+        }
     });
 
     test("image overlays pin by extent and clear on null", () => {
