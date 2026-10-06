@@ -244,8 +244,8 @@ test("format: a malformed location icon URL is reported", () => {
 /*	map_type
 	`map_type: ""` means OpenStreetMap, so an absent key cannot mean
 	"no map" without breaking every existing document. `none` is the
-	explicit sentinel for a storymap with no map at all (§2.4 of
-	docs/plans/iiif-internals.md).
+	explicit sentinel for a storymap with no map at all
+	(docs/migration-from-knightlab.md, "A story with no map").
 ================================================= */
 
 test('accepts map_type: "none" — the explicit no-map sentinel', () => {

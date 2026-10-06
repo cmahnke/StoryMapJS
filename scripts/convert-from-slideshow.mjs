@@ -1,6 +1,6 @@
 // Converts slideshow tours (W3C AnnotationCollection + extension, by URL or
 // file) into storymap JSON ({ storymap: ... }) following
-// docs/SLIDESHOW_PLAN.md.
+// docs/plans/SLIDESHOW_PLAN.md.
 //
 // Usage: node scripts/convert-from-slideshow.mjs [--settings settings.json]
 //        [--out out.json] <tour-url-or-file> [...]

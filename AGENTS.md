@@ -20,6 +20,14 @@ Vitest unit specs live in `tests/` (jsdom). Playwright e2e specs live in `e2e/` 
 
 Use concise, present-tense commit messages (`replace zoomify with iiif image api tile layer`) and group related changes. Reference issues in the footer (`Refs #123`). Pull requests should summarize motivation, list test results or manual verification, and include UI screenshots or screencasts when rendering changes.
 
+## Planning
+
+Working plans live in `docs/plans/`; the directory is gitignored and plans
+are never committed. Code and test comments may reference plan files for
+rationale, but only sections that exist — and prefer the maintained docs
+(`docs/*.md`, `schema/`) for anything durable, since plans are scratch and
+may be deleted.
+
 ## Security & Configuration Tips
 
 Never commit real keys. Map credentials (Mapbox/Stadia tokens) come from storymap data options, not the repo.
