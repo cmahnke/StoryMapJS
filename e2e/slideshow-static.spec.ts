@@ -33,7 +33,11 @@ test("static-file tour paints its basemap", async ({ page }) => {
                             };
                         }
                     ).__sm;
-                    const layers = sm?.map.getLayers().getArray() ?? [];
+                    // the viewer loads the tour asynchronously, so the map
+                    // is legitimately null on early polls — that is "not
+                    // painted yet", not an error
+                    if (!sm?.map) return false;
+                    const layers = sm.map.getLayers().getArray() ?? [];
                     // a painted static basemap: a layer whose source exposes
                     // an image extent (class names are mangled in dist builds)
                     return layers.some(
