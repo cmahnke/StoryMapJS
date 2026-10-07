@@ -95,6 +95,9 @@ class StorySliderBase {
     declare "_message": Message;
     declare "current_slide": number;
     declare "current_bg_color": string | null;
+    /** Layout the background gradient was built for; a portrait↔landscape
+        switch rebuilds it even when the color is unchanged. */
+    declare "current_bg_layout": string | null;
     declare "data": Partial<StorymapData>;
     declare "options": StorySliderOptions;
     declare "animator": AnimationHandle | null;
@@ -140,6 +143,7 @@ class StorySliderBase {
 
         // Current Background Color
         this.current_bg_color = null;
+        this.current_bg_layout = null;
 
         // Data Object
         this.data = {};
@@ -567,19 +571,30 @@ class StorySliderBase {
             bg_color = this.options.default_bg_color;
         }
 
-        // Stop animation
-        if (this.animator_background) {
-            this.animator_background.stop();
-        }
-
         const bg_color_rgb = bg_color.r + "," + bg_color.g + "," + bg_color.b;
 
-        if (!this.current_bg_color || this.current_bg_color !== bg_color_rgb) {
+        if (
+            !this.current_bg_color ||
+            this.current_bg_color !== bg_color_rgb ||
+            this.current_bg_layout !== this.options.layout
+        ) {
             this.current_bg_color = bg_color_rgb;
+            this.current_bg_layout = this.options.layout;
             do_animation = true;
         }
 
         if (do_animation) {
+            // Stop the in-flight fade only when replacing it: an early
+            // no-op call (same color, e.g. the empty reset at the top of
+            // goTo before the active slide fires background_change) must not
+            // kill the fade another call just started — stop() commits the
+            // partial opacity inline and the finish handler never runs, so
+            // the gradient below would never be applied and the panel would
+            // keep the opaque stylesheet fallback.
+            if (this.animator_background) {
+                this.animator_background.stop();
+            }
+
             // Figure out CSS
             if (this.options.layout === "landscape") {
                 this._nav.next.setColor(false);
@@ -650,6 +665,15 @@ class StorySliderBase {
             opacity: 1,
             duration: prefersReducedMotion() ? 0 : this.options.duration / 2,
             easing: this.options.ease,
+            complete: () => {
+                // Fold the end state into the inline style so the panel does
+                // not depend on a retained fill-forwards animation to stay
+                // visible: once the fill is dropped (cancel, GC) the element
+                // would snap back to the inline opacity:0 above.
+                this._el.background.style.opacity = "1";
+                this.animator_background?.stop();
+                this.animator_background = null;
+            },
         });
     }
 

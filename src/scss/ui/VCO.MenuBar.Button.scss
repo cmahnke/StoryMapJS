@@ -32,6 +32,11 @@
     align-items: center;
     justify-content: center;
 
+    // text-to-icon spacing lives here, not as a literal space in the
+    // button markup: flex ignores inter-item whitespace, and a gap stays
+    // consistent across locales, RTL and icon-only mobile buttons
+    gap: 6px;
+
     // position:relative;
     // top:-24px;
     background-color: var(--vco-color-ui-fade, #{fadeout($ui-background-color, 10%)});

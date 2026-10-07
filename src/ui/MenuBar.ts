@@ -137,18 +137,24 @@ class MenuBarBase {
             this._el.button_fullscreen.innerHTML = `<span class='${icon}'></span>`;
         } else {
             const label = active ? Language.buttons.exit_fullscreen : Language.buttons.fullscreen;
-            this._el.button_fullscreen.innerHTML = `${label} <span class='${icon}'></span>`;
+            this._el.button_fullscreen.innerHTML = `${label}<span class='${icon}'></span>`;
         }
     }
 
     /**
      * Repaint the overview button label. An image map has no interactive
-     * overview, so it gets the shorter wording.
+     * overview, so it gets the shorter wording. Icon-only on mobile.
      */
     _renderOverviewLabel(): void {
-        this._el.button_overview.innerHTML = this.options.map_as_image
+        const label = this.options.map_as_image
             ? Language.buttons.overview
             : Language.buttons.map_overview;
+        if (Browser.mobile) {
+            this._el.button_overview.innerHTML = "<span class='vco-icon-mappin'></span>";
+            this._el.button_overview.setAttribute("aria-label", label);
+        } else {
+            this._el.button_overview.innerHTML = `${label}<span class='vco-icon-mappin'></span>`;
+        }
     }
 
     /**
@@ -157,7 +163,7 @@ class MenuBarBase {
     _renderBackToStartLabel(): void {
         this._el.button_backtostart.innerHTML = Browser.mobile
             ? "<span class='vco-icon-goback'></span>"
-            : Language.buttons.backtostart + " <span class='vco-icon-goback'></span>";
+            : Language.buttons.backtostart + "<span class='vco-icon-goback'></span>";
     }
 
     /**
@@ -171,7 +177,7 @@ class MenuBarBase {
             const text = collapsed
                 ? Language.buttons.uncollapse_toggle
                 : Language.buttons.collapse_toggle;
-            this._el.button_collapse_toggle.innerHTML = `${text} <span class='vco-icon-${arrow}'></span>`;
+            this._el.button_collapse_toggle.innerHTML = `${text}<span class='vco-icon-${arrow}'></span>`;
         }
     }
 
@@ -215,6 +221,12 @@ class MenuBarBase {
      */
     _renderMobileLabels(): void {
         const labels: [string, string][] = [
+            [
+                "button_overview",
+                this.options.map_as_image
+                    ? Language.buttons.overview
+                    : Language.buttons.map_overview,
+            ],
             ["button_backtostart", Language.buttons.backtostart],
             [
                 "button_collapse_toggle",
@@ -475,11 +487,7 @@ class MenuBarBase {
             this,
         );
 
-        if (this.options.map_as_image) {
-            this._el.button_overview.innerHTML = Language.buttons.overview;
-        } else {
-            this._el.button_overview.innerHTML = Language.buttons.map_overview;
-        }
+        this._renderOverviewLabel();
 
         // Progress indicator (issue #247; dots/squares/block/thinblock via progressbar)
         if (this._progressStyle() !== "off") {
@@ -509,7 +517,7 @@ class MenuBarBase {
             this._renderBackToStartLabel();
             this._renderCollapseLabel(this.collapsed);
             this._el.button_fullscreen.innerHTML =
-                Language.buttons.fullscreen + " <span class='vco-icon-resize-full'></span>";
+                Language.buttons.fullscreen + "<span class='vco-icon-resize-full'></span>";
         }
 
         if (this.options.layout === "landscape" || this.options.map_type === "none") {
