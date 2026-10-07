@@ -58,7 +58,7 @@ Detection is by context plus shape, never Presentation 3.
 | `progressbar`                        | `progressbar` (`false`/`"off"` → `false`)                                                                                      |
 | `textmode`                           | `textmode`                                                                                                                     |
 | `textsize`                           | `textsize`, bottom dock only (side docks ignore it — the player drops the declaration too: `"20%"/2` is `NaN` inside `calc()`) |
-| `hudcolor`/`hudbgcolor`/`hudopacity` | direct (`"75"` → `75`)                                                                                                         |
+| `hudcolor`/`hudbgcolor`/`hudopacity` | direct strings for the colors; `hudopacity` converts `"75"` → `75`                                                             |
 | `shownav`                            | `shownav`                                                                                                                      |
 | `showfullscreen`                     | `fullscreen`                                                                                                                   |
 | `showinfo`                           | `show_info`                                                                                                                    |
@@ -70,10 +70,14 @@ Detection is by context plus shape, never Presentation 3.
 
 Provenance identifiers beyond `uniqueid` (kept data-only in
 `slide.provenance`), unfollowed `next` pages (inline documents; the URL
-loader and CLI follow the chain), unknown `mode`/`fxmode`/`play` values,
-unparsable bottom-dock `textsize`/`hudopacity`/`viewerheight`, overlay
-enabled without a URL, malformed targets/annotations, empty pages
-(skipped). Everything else translates silently — legacy v1 tours map
+loader and CLI follow the chain), unknown `mode`/`fxmode`/`play`/`textmode`/
+`progressbar` values (unknown `audio.play` falls back to `auto`),
+unparsable bottom-dock `textsize`/`hudopacity`/`viewerheight`/`slidetimeout`
+(`slidetimeout` falls back to 6000), overlay enabled without a URL,
+unusable `passepartout` shapes (omitted), `imgoverlaysize` unparsable
+(silently defaults to `0.5` with no warning), audio that duplicates the
+slide media URL (kept once, as media), malformed targets/annotations, empty
+pages (skipped). Everything else translates silently — legacy v1 tours map
 fully (above) — and every translator output validates against
 `schema/storymap.schema.json`.
 

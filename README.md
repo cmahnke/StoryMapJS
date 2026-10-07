@@ -39,8 +39,10 @@ Points are set to only display on mouseover in image mode, but you can set map_a
 
 ## Map Options
 
-To disable connecting lines on maps set `map_as_image: true` in the storymap
-options (the default `false` renders cartography).
+To disable connecting lines on maps set `show_lines: false` in the storymap
+options (the default `true` renders cartography with `show_history_line`).
+`map_as_image: true` is something else: image-map mode, only meaningful with
+`map_type: "iiif"` (the image itself becomes the map).
 
 `storymap.map` is the raw OpenLayers map, typed with the re-exported `ol`
 types, and `getBaseLayer()`, `getOverlayLayers()`, `getMinimap()`,
@@ -80,7 +82,9 @@ the base layer), `overview_extent` (the overview slide's bounds),
 `keyboard` (page-wide arrow-key navigation for multi-viewer pages),
 per-slide `marker: { popup, audioBadge }` (the active marker's card, openable
 via `storymap.openMarkerPopup(n)`, and the narration/audio dot) and
-`narration: { url }` with `autoplay_media` per slide. All are validated
+`narration: { url }` per slide. `autoplay_media` is global (wait for slide
+media to end while autoplaying); the per-slide dwell is `slidetimeout`.
+All are validated
 against `schema/storymap.schema.json` — read it (or `src/types.ts`) for the
 full list with defaults.
 
@@ -122,7 +126,8 @@ failed `info.json` fetch falls back to a probed static image in place.
 The player chrome is opt-in storymap options (absent means the default
 layout): `textmode: "left"|"right"|"bottom"` with `textsize` (10–80 %,
 bottom dock only — the player drops side-dock sizes too),
-`progressbar: "bar"|"dots"|"squares"|"block"|"thinblock"|"off"`,
+`progressbar: "bar"|"dots"|"squares"|"block"|"thinblock"|"off"` (`true`
+means `"bar"`, `false` means hidden),
 `fxmode: "slide"|"fade"|"none"`, `mode: "static"` (stacked reading list with
 scroll-spy map sync), `hudcolor`/`hudbgcolor`/`hudopacity`,
 `shownav`/`show_headings`/`show_scrollbars`/`show_info` toggles and
@@ -193,16 +198,18 @@ current slide is re-fitted after the swap.
 
 ### Icons
 
-Default pins use the bundled `vco-icons` font (`dist/css/icons/`, referenced via
-relative `./icons/...` URLs from `dist/css/storymap.css`), so pins render on
-subpath deploys, bundler consumers (Vite leaves absolute `/css/...` untouched)
-Font themes (`font_css: "stock:<name>"`) resolve via `import.meta.url`, so they
-only work script-tagged, unbundled. A bundler consumer imports the theme
+Default pins use the bundled `vco-icons` font (`dist/css/icons/`). The SCSS
+source uses the absolute public path (`/css/icons/...`) so `vite dev` serves
+the fonts directly; `vite build` rewrites them to relative `./icons/...` in
+`dist/css/storymap.css`, so pins render on subpath deploys, for bundler
+consumers and on `file://`/Electron hosts without extra configuration.
+Import the stylesheet once
+(`import "@projektemacher/storymapjs/css/storymap.css"`).
+
+Font themes (`font_css: "stock:<name>"`) resolve via `import.meta.url`, so
+they only work script-tagged, unbundled. A bundler consumer imports the theme
 instead (`import "@projektemacher/storymapjs/css/fonts/font.default.css"`)
 and passes `font_css: false` for no injected `<link>`.
-
-and `file://`/Electron hosts without extra configuration. Import the stylesheet
-once (`import "@projektemacher/storymapjs/css/storymap.css"`).
 
 ## Custom HTML in slide content
 
@@ -256,9 +263,11 @@ Decisions are stored in `localStorage` under `storymapjs-consent` and have no
 expiry — clearing site data asks again.
 
 The consent labels are **not** fully translated. `src/language/locale/en.json`
-defines every string; 28 bundled locales fall back to English for the keys
-they lack — most are missing one, a handful are missing around ten (the
-per-service consent prompts and the fullscreen button labels). Run
+defines every string (34 keys across 29 locale files: English plus 28
+translations). German is missing 1 key, most locales are missing 9 (the audio
+badge, autoplay, layer-switcher, iframe-title and narration-consent strings),
+and five locales (`et`, `is`, `nn`, `ur`, `sr`) are missing 18–19 (additionally
+the fullscreen, consent-dialog, error and overview strings). Run
 `npm run check:locales` to see the current state — it reports the gap per
 locale and is expected to be runnable without failing.
 

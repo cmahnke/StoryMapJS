@@ -134,7 +134,7 @@ slide.
 | `PointSelector` (`x`, `y`)                                  | a square of 5% of the canvas's smaller side, centred on the point and clamped to the canvas — a pin you can fit                                                      |
 | `TextQuoteSelector` (`exact`, optional `prefix`/`suffix`)   | preserved; **not resolved**, because a canvas carries no transcript. Use it to anchor a stop to quoted text in a tool that has one                                   |
 | `TimeState` (`start`, `end`) or a `start`/`end` range       | preserved on the stop; a time-ranged narration can be built from it                                                                                                  |
-| `SvgSelector`                                               | preserved; the viewer fits the bounding region, it does not draw the true outline yet                                                                                |
+| `SvgSelector`                                               | preserved on the stop; **not resolved and not fitted** — an annotation with only an `SvgSelector` (no region) is not a stop, because there is no region to fit       |
 
 One level of `refinedBy` is followed, so a fragment refined by a quote works.
 

@@ -292,6 +292,57 @@
                         }
                     }
                 },
+                "tilejson": {
+                    "type": "object",
+                    "description": "TileJSON source for the base layer: tiles becomes the map_type template, the rest constrains the source/view where the map can act on it",
+                    "required": ["tiles"],
+                    "properties": {
+                        "tiles": {
+                            "anyOf": [
+                                { "type": "string" },
+                                { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+                            ]
+                        },
+                        "minzoom": { "type": "number" },
+                        "maxzoom": { "type": "number" },
+                        "bounds": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 4,
+                            "maxItems": 4
+                        },
+                        "scheme": { "type": "string", "enum": ["xyz", "tms"] },
+                        "center": {
+                            "type": "array",
+                            "items": { "type": "number" },
+                            "minItems": 3,
+                            "maxItems": 3
+                        }
+                    }
+                },
+                "see_also": {
+                    "type": "array",
+                    "description": "seeAlso targets recorded from a IIIF manifest (annotation collections/pages); recorded but not fetched on load",
+                    "items": {
+                        "type": "object",
+                        "required": ["id", "type"],
+                        "properties": {
+                            "id": { "type": "string" },
+                            "type": { "type": "string" }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Story title carried by IIIF manifests (label) and slideshow tours; extra on legacy documents"
+                },
+                "metadata": {
+                    "type": "array",
+                    "description": "Label/value pairs carried from a IIIF manifest or slideshow tour; data-only, handed on as data.metadata[]"
+                },
+                "logo": {
+                    "description": "Publisher logo carried from a IIIF manifest; data-only, offered as data.logo"
+                },
                 "font_css": {
                     "anyOf": [{ "type": "string" }, { "const": false }],
                     "description": "Font theme stylesheet (stock:<name> or URL); false disables the injected stylesheet because the host bundles the theme itself"

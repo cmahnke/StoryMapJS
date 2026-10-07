@@ -10,7 +10,11 @@ the fixtures in [`public/examples/`](../public/examples/) are real-world samples
 ([`public/examples-iiif/`](../public/examples-iiif/)), and
 `scripts/validate-iiif.mjs` checks every converted manifest against the
 [official IIIF presentation validator](https://presentation-validator.iiif.io/)
-(`npm run validate:iiif`). All converted fixtures pass the official validator.
+(`npm run validate:iiif`). All converted fixtures pass the official validator,
+except the two hand-authored georeferenced-layer fixtures, which the base
+validator schema cannot accept by design (see "Geo-referenced layers" below);
+`npm run validate:iiif` reports those two as _not covered_ rather than as
+failures.
 
 ## Contexts
 
@@ -335,7 +339,9 @@ properties):
 A keyword basemap and a tile URL template are different kinds of thing, and
 `mapType` used to be both. They are now separate: `storymap:basemap` names a
 source the viewer knows how to configure, and an **unprefixed** `tilejson`
-object describes any other tile service in the standard's own terms. Only
+object describes any other tile service in the standard's own terms (the
+`tilejson` context entry stays prefixed by JSON-LD convention; only the
+unprefixed wire form is read). Only
 `tiles` is required:
 
 ```json
@@ -362,7 +368,9 @@ object describes any other tile service in the standard's own terms. Only
 
 `tiles` becomes `map_type`, so everything that dispatches on a template (the
 `tile_source_factory` option, attribution, the minimap) works unchanged. The
-rest is honoured where the map can act on it:
+rest is honoured where the map can act on it when _reading_ a manifest; note
+the converter only writes `{tiles}` back out, so a manifest → storymap →
+manifest cycle drops `minzoom`/`maxzoom`/`bounds`/`scheme`/`center`:
 
 | Member    | Effect                                                                    |
 | --------- | ------------------------------------------------------------------------- |
@@ -385,7 +393,7 @@ offset, the same reason `map_bbox` works the way it does.
 | `mapAccessToken`              | `map_access_token`                  | Mapbox/Stadia token from the storymap data, never the repository                                                                                |
 | `mapBackgroundColor`          | `map_background_color`              | CSS color                                                                                                                                       |
 | `mapCenterOffset`             | `map_center_offset`                 | `{left, top}`                                                                                                                                   |
-| `mapSubdomains`               | `map_subdomains`                    | Tile URL subdomains                                                                                                                             |
+| _(none — removed)_            | `map_subdomains`                    | _dropped_ (inert, no reader; see the full mapping table)                                                                                        |
 | _(none)_                      | `iiif.url`                          | From the Image API `service[]` a painting body carries, plus `/info.json`; see below                                                            |
 | `fontCss`                     | `font_css`                          | e.g. `stock:dancing-ledger`, or `false` for no injected theme                                                                                   |
 | `callToAction`                | `call_to_action`                    | boolean                                                                                                                                         |
@@ -393,7 +401,7 @@ offset, the same reason `map_bbox` works the way it does.
 | `startAtSlide`                | `start_at_slide`                    | 0-based slide index                                                                                                                             |
 | `language`                    | `language`                          | IETF language tag                                                                                                                               |
 | `calculateZoom`               | `calculate_zoom`                    | boolean                                                                                                                                         |
-| `lessBounce`                  | `less_bounce`                       | boolean                                                                                                                                         |
+| _(none — removed)_            | `less_bounce`                       | _dropped_ (inert, no reader; see the full mapping table)                                                                                        |
 | `lineFollowsPath`             | `line_follows_path`                 | boolean                                                                                                                                         |
 | `showLines`                   | `show_lines`                        | boolean                                                                                                                                         |
 | `showHistoryLine`             | `show_history_line`                 | boolean                                                                                                                                         |
@@ -479,15 +487,15 @@ The painting annotation's body is read into one shared record. The
 dropped — a manifest still using them loads, but the strings are not read —
 and the standard properties are the only source:
 
-| Body property                                                   | Slide media field                |
-| --------------------------------------------------------------- | -------------------------------- |
-| `label`                                                         | `caption`                        |
-| `requiredStatement` (one `{label, value}` object) or `provider` | `credit`                         |
-| `accessibilitySummary`                                          | `alt`                            |
-| `thumbnail`                                                     | `thumb`                          |
-| `type`, `format`                                                | player selection (`MediaType()`) |
-| `duration`, `start`, `end`                                      | time-anchored stops              |
-| a sibling `TextualBody` with `format: text/vtt`                 | `subtitles`                      |
+| Body property                                                   | Slide media field                                               |
+| --------------------------------------------------------------- | --------------------------------------------------------------- |
+| `label`                                                         | `caption`                                                       |
+| `requiredStatement` (one `{label, value}` object) or `provider` | `credit`                                                        |
+| `accessibilitySummary`                                          | `alt`                                                           |
+| `thumbnail`                                                     | `thumb`                                                         |
+| `type`, `format`                                                | player selection (`MediaType()`)                                |
+| `duration`, `start`, `end`                                      | time-anchored stops                                             |
+| a sibling `TextualBody` with `format: text/vtt` **and an `id`** | `subtitles` (both required — the `id` is the subtitle file URL) |
 
 ## Native IIIF vs. the StoryMap extension
 
@@ -892,47 +900,47 @@ photo, and a slide with a YouTube video — full manifest:
 
 ## Full mapping table
 
-| Legacy field (storymap root)                                                                                                                         | IIIF path                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `slides`                                                                                                                                             | `items[]` (Canvas per slide)                                               |
-| `language`                                                                                                                                           | `service[0].storymap:language`                                             |
-| `map_type`                                                                                                                                           | `service[0].storymap:basemap` (`zoomify` → `iiif`), or `tilejson.tiles`    |
-| `map_as_image`                                                                                                                                       | `service[0].storymap:mapAsImage`                                           |
-| `map_mini`                                                                                                                                           | _dropped_ (viewer setting, not part of the exchange format)                |
-| `map_subdomains`                                                                                                                                     | _dropped_ (inert, no reader)                                               |
-| `map_access_token`                                                                                                                                   | `service[0].storymap:mapAccessToken`                                       |
-| `map_background_color`                                                                                                                               | `service[0].storymap:mapBackgroundColor`                                   |
-| `map_center_offset`                                                                                                                                  | `service[0].storymap:mapCenterOffset`                                      |
-| `map_popup`                                                                                                                                          | _dropped_ (viewer setting)                                                 |
-| `use_custom_markers`                                                                                                                                 | `service[0].storymap:useCustomMarkers`                                     |
-| `map_area`                                                                                                                                           | `service[0].storymap:mapArea`                                              |
-| `overview_extent`                                                                                                                                    | `service[0].storymap:overviewExtent`                                       |
-| `keyboard`                                                                                                                                           | `service[0].storymap:keyboard`                                             |
-| `overlays` (georeference)                                                                                                                            | Georeferencing annotation `target` + `body`                                |
-| `zoom_distance`                                                                                                                                      | _dropped_ (viewer setting)                                                 |
-| `calculate_zoom`                                                                                                                                     | `service[0].storymap:calculateZoom`                                        |
-| `less_bounce`                                                                                                                                        | _dropped_ (inert, no reader)                                               |
-| `line_follows_path`                                                                                                                                  | `service[0].storymap:lineFollowsPath`                                      |
-| `show_lines`                                                                                                                                         | `service[0].storymap:showLines`                                            |
-| `show_history_line`                                                                                                                                  | `service[0].storymap:showHistoryLine`                                      |
-| `line_color`                                                                                                                                         | `service[0].storymap:lineColor`                                            |
-| `line_color_inactive`                                                                                                                                | `service[0].storymap:lineColorInactive`                                    |
-| `line_weight`                                                                                                                                        | `service[0].storymap:lineWeight`                                           |
-| `line_opacity`                                                                                                                                       | `service[0].storymap:lineOpacity`                                          |
-| `line_dash`                                                                                                                                          | `service[0].storymap:lineDash`                                             |
-| `line_join`                                                                                                                                          | `service[0].storymap:lineJoin`                                             |
-| `iiif.url`                                                                                                                                           | Canvas Image annotation `service[0].id` + `/info.json`                     |
-| `iiif.attribution`                                                                                                                                   | `requiredStatement`                                                        |
-| `zoomify`                                                                                                                                            | _dropped_ (zoomify is replaced by the IIIF reference image)                |
-| `font_css`                                                                                                                                           | `service[0].storymap:fontCss` (`false` disables the injected theme)        |
-| `call_to_action`                                                                                                                                     | `service[0].storymap:callToAction`                                         |
-| `call_to_action_text`                                                                                                                                | `service[0].storymap:callToActionText`                                     |
-| `relative_date`                                                                                                                                      | _dropped_ (viewer setting)                                                 |
-| `start_at_slide`                                                                                                                                     | `service[0].storymap:startAtSlide`                                         |
-| _(root) `width`, `height`_                                                                                                                           | _dropped_ (viewer embed size)                                              |
-| _(slideshow tours) player chrome (`textmode`, `textsize`, `progressbar`, `fxmode`, `mode`, `hud*`, `shownav`, `show_*`, `viewerheight`, `autoplay`)_ | _dropped_ (no IIIF vocabulary; translator-only, see docs/slideshow.md)     |
-| `credit.creator` / `credit.rights`                                                                                                                   | Manifest `metadata` entries ("Creator" / "Rights")                         |
-| `iiif.fallbackUrl`                                                                                                                                   | _dropped_ (runtime fallback; tour documents carry `image_static` per stop) |
+| Legacy field (storymap root)                                                                                                                         | IIIF path                                                                                                                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slides`                                                                                                                                             | `items[]` (Canvas per slide)                                                                                                                                                                    |
+| `language`                                                                                                                                           | `service[0].storymap:language`                                                                                                                                                                  |
+| `map_type`                                                                                                                                           | `service[0].storymap:basemap` (`zoomify` → `iiif`), or `tilejson.tiles`                                                                                                                         |
+| `map_as_image`                                                                                                                                       | `service[0].storymap:mapAsImage`                                                                                                                                                                |
+| `map_mini`                                                                                                                                           | _dropped_ (viewer setting, not part of the exchange format)                                                                                                                                     |
+| `map_subdomains`                                                                                                                                     | _dropped_ (inert, no reader)                                                                                                                                                                    |
+| `map_access_token`                                                                                                                                   | `service[0].storymap:mapAccessToken`                                                                                                                                                            |
+| `map_background_color`                                                                                                                               | `service[0].storymap:mapBackgroundColor`                                                                                                                                                        |
+| `map_center_offset`                                                                                                                                  | `service[0].storymap:mapCenterOffset`                                                                                                                                                           |
+| `map_popup`                                                                                                                                          | _dropped_ (viewer setting)                                                                                                                                                                      |
+| `use_custom_markers`                                                                                                                                 | `service[0].storymap:useCustomMarkers`                                                                                                                                                          |
+| `map_area`                                                                                                                                           | `service[0].storymap:mapArea`                                                                                                                                                                   |
+| `overview_extent`                                                                                                                                    | `service[0].storymap:overviewExtent`                                                                                                                                                            |
+| `keyboard`                                                                                                                                           | `service[0].storymap:keyboard`                                                                                                                                                                  |
+| `overlays` (georeference)                                                                                                                            | Georeferencing annotation `target` + `body`                                                                                                                                                     |
+| `zoom_distance`                                                                                                                                      | _dropped_ (viewer setting)                                                                                                                                                                      |
+| `calculate_zoom`                                                                                                                                     | `service[0].storymap:calculateZoom`                                                                                                                                                             |
+| `less_bounce`                                                                                                                                        | _dropped_ (inert, no reader)                                                                                                                                                                    |
+| `line_follows_path`                                                                                                                                  | `service[0].storymap:lineFollowsPath`                                                                                                                                                           |
+| `show_lines`                                                                                                                                         | `service[0].storymap:showLines`                                                                                                                                                                 |
+| `show_history_line`                                                                                                                                  | `service[0].storymap:showHistoryLine`                                                                                                                                                           |
+| `line_color`                                                                                                                                         | `service[0].storymap:lineColor`                                                                                                                                                                 |
+| `line_color_inactive`                                                                                                                                | `service[0].storymap:lineColorInactive`                                                                                                                                                         |
+| `line_weight`                                                                                                                                        | `service[0].storymap:lineWeight`                                                                                                                                                                |
+| `line_opacity`                                                                                                                                       | `service[0].storymap:lineOpacity`                                                                                                                                                               |
+| `line_dash`                                                                                                                                          | `service[0].storymap:lineDash`                                                                                                                                                                  |
+| `line_join`                                                                                                                                          | `service[0].storymap:lineJoin`                                                                                                                                                                  |
+| `iiif.url`                                                                                                                                           | Canvas Image annotation `service[0].id` + `/info.json` (only when the story uses `map_type: "iiif"`)                                                                                            |
+| `iiif.attribution`                                                                                                                                   | `requiredStatement`                                                                                                                                                                             |
+| `zoomify`                                                                                                                                            | _dropped_ (zoomify is replaced by the IIIF reference image)                                                                                                                                     |
+| `font_css`                                                                                                                                           | `service[0].storymap:fontCss` (`false` disables the injected theme)                                                                                                                             |
+| `call_to_action`                                                                                                                                     | `service[0].storymap:callToAction`                                                                                                                                                              |
+| `call_to_action_text`                                                                                                                                | `service[0].storymap:callToActionText`                                                                                                                                                          |
+| `relative_date`                                                                                                                                      | _dropped_ (viewer setting)                                                                                                                                                                      |
+| `start_at_slide`                                                                                                                                     | `service[0].storymap:startAtSlide`                                                                                                                                                              |
+| _(root) `width`, `height`_                                                                                                                           | _dropped_ (viewer embed size)                                                                                                                                                                   |
+| _(slideshow tours) player chrome (`textmode`, `textsize`, `progressbar`, `fxmode`, `mode`, `hud*`, `shownav`, `show_*`, `viewerheight`, `autoplay`)_ | _dropped_ (no IIIF vocabulary; translator-only, see docs/slideshow.md)                                                                                                                          |
+| `credit.creator` / `credit.rights`                                                                                                                   | Manifest `metadata` entries ("Creator" / "Rights") — one way: the reader keeps all metadata in `data.metadata[]` and never reconstructs `credit`, and `credit.licenseUrl` is not written at all |
+| `iiif.fallbackUrl`                                                                                                                                   | _dropped_ (runtime fallback; tour documents carry `image_static` per stop)                                                                                                                      |
 
 | Legacy field (slide)                                    | IIIF path                                                                        |
 | ------------------------------------------------------- | -------------------------------------------------------------------------------- |

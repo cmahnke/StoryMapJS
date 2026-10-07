@@ -159,9 +159,10 @@ storymap JSON sources.
   before; the mini map is an OpenLayers `OverviewMap` control.
 - New basemap options: vector styles via `map_type: "osm:<style>"` (OpenFreeMap)
   or a Mapbox style JSON URL.
-- All OL types (`Map`, `View`, `Layer`, `Source`, `Feature`, ...) are
-  re-exported, so a consumer can type its own overlays without depending on
-  `ol` directly.
+- The `Ol*` aliases re-exported from `src/main.ts` (`OlMap`, `OlView`,
+  `OlLayer`, `OlTileLayer`, `OlVectorLayer`, `OlSource`, `OlProjection`) let
+  a consumer type the map and layers without depending on `ol` directly;
+  anything beyond those (features, geometries, coordinates) still needs `ol`.
 
 ### Direct Leaflet calls → OpenLayers
 
@@ -227,17 +228,17 @@ construction, so check it before first use in an async setup). Everything the
 viewer keeps internally is available through accessors on `storymap` (and on
 `storymap._map` for the engine methods):
 
-| Accessor                                                     | Returns                                                            |
-| ------------------------------------------------------------ | ------------------------------------------------------------------ |
-| `getBaseLayer()`                                             | the base tile/vector layer                                         |
-| `getOverlayLayers()` / `getOverlayLayer(i)`                  | overlay layers / one by index (`null` if out of range)             |
-| `getOverlayCount()`                                          | number of overlays                                                 |
-| `setOverlayVisible(i, on)` / `setOverlayOpacity(i, opacity)` | show/hide and fade one overlay                                     |
-| `getMinimap()`                                               | the `OverviewMap` control, or its inner map via `getOverviewMap()` |
-| `getLine()` / `getLineActive()`                              | the full and the travelled route `VectorLayer`                     |
-| `getMarker(n)` / `getMarkers()`                              | one marker or all of them, in slide order                          |
-| `setExtraAttributions(html)`                                 | extra attribution HTML, listed after the source credits            |
-| `isImageSpace()`                                             | whether the map is a IIIF image in image space (see below)         |
+| Accessor                                                     | Returns                                                                                                                           |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `getBaseLayer()`                                             | the base tile/vector layer                                                                                                        |
+| `getOverlayLayers()` / `getOverlayLayer(i)`                  | overlay layers / one by index (`null` if out of range)                                                                            |
+| `getOverlayCount()`                                          | number of overlays                                                                                                                |
+| `setOverlayVisible(i, on)` / `setOverlayOpacity(i, opacity)` | show/hide and fade one overlay                                                                                                    |
+| `getMinimap()`                                               | the inner overview `ol/Map` (`OlMap \| null`), not the `OverviewMap` control itself — there is no accessor for the control object |
+| `getLine()` / `getLineActive()`                              | the full and the travelled route `VectorLayer`                                                                                    |
+| `getMarker(n)` / `getMarkers()`                              | one marker or all of them, in slide order                                                                                         |
+| `setExtraAttributions(html)`                                 | extra attribution HTML, listed after the source credits                                                                           |
+| `isImageSpace()`                                             | whether the map is a IIIF image in image space (see below)                                                                        |
 
 `tile_source_factory` may return a full `ol/layer/Layer` (not just a source)
 anywhere a layer is built, so custom layers can carry their own opacity,
@@ -317,8 +318,9 @@ viewer's own pan/zoom set, `view` merges over the computed default).
 For source classes the templates cannot express (WMS, authenticated or
 gridded sources), use the `tile_source_factory` option. It is consulted
 for every base, overlay and minimap layer before the built-in
-`map_type` handling — return a `TileLayer` (or a bare `Source`, which
-is wrapped in one), or `null`/`undefined` to fall through:
+`map_type` handling — return any `ol/layer/Layer` (used as-is) or a bare
+`Source` (which is wrapped in a `TileLayer`), or `null`/`undefined` to fall
+through:
 
 ```js
 import TileLayer from "ol/layer/Tile";
@@ -326,7 +328,7 @@ import TileWMS from "ol/source/TileWMS";
 
 new StoryMap("embed", data, {
     map_type: "wms:flood",
-    tile_source_factory: (map_type, { createDefault }) =>
+    tile_source_factory: (map_type, { options, createDefault }) =>
         map_type.startsWith("wms:")
             ? new TileLayer({
                   source: new TileWMS({
@@ -338,6 +340,12 @@ new StoryMap("embed", data, {
             : createDefault(),
 });
 ```
+
+The second factory argument also carries the resolved `options`
+(`{ options, createDefault }`). A factory may return any `ol/layer/Layer`
+(used as-is — including sourceless layers such as Allmaps'
+`WarpedMapLayer`), a bare `Source` (wrapped in a `TileLayer`), or
+`null`/`undefined` to fall through to the default `map_type` handling.
 
 Custom sources must carry their own attributions (via the returned
 source or the `attribution` option) — only the built-in `osm*` types

@@ -31,9 +31,16 @@ index.html            dev/demo entry + the project landing page
 demo.html             minimal single-example page
 harness.html          example harness used by the e2e suite
                       (?example= / ?manifest= / ?slideshow= / ?url= / ?options=)
-public/               static assets copied verbatim to dist/
+harness-multi.html    two-viewer harness for the multiple-instances specs
+public/               static assets copied to dist/ (plus generated files —
+                      `css/fonts/`, `site.css`, `docs/*.html` — written there
+                      by `plugins/sitegen.ts`, and `context.json`,
+                      `navplace-properties.json`, `thumbs/`, `demo.json`,
+                      `football.json`)
   examples/           storymap JSON fixtures (validated in CI)
-  examples-iiif/      generated Presentation 3 fixtures
+  examples-iiif/      IIIF Presentation 3 fixtures (`convert:iiif` output plus
+                      three hand-authored files: two georeferenced layers and
+                      one annotation-driven tour)
   examples-slideshow/ slideshow tour fixtures (raw tours + a static image)
   embed/              the embed page
   css/icons/          icon font binaries
@@ -54,7 +61,8 @@ scripts/
   convert-to-iiif.mjs    legacy JSON -> Presentation 3 manifest
   convert-from-slideshow.mjs  slideshow tour (URL or file) -> storymap JSON
   check-locales.mjs      reports which locales are missing which UI strings
-  serve-root.mjs
+  docs-api.mjs           runs TypeDoc into public/docs/api (warns, never fails)
+  serve-root.mjs         static repo-root server for the e2e matrix
 e2e/                  Playwright specs
 tests/                Vitest unit specs
 tasks/
@@ -70,54 +78,75 @@ npm install                # hydrate dependencies (node >= 22)
 npm run dev                # vite dev server with HMR at :8000; also generates the API docs once (~3.5s)
 npm run build              # vite: lib (js/storymap.js + storymap.d.ts + css), demo pages, fonts/docs, API docs
 npm run preview            # serve the built dist/ (what e2e tests run against)
+npm run clean              # remove dist/
+npm run dist               # clean + build + copy storymap.js to storymap-min.js
+npm run thumbs             # screenshot curated fixtures to public/thumbs/ (requires a prior build)
 npm test                   # vitest unit tests
-npm run test:e2e           # playwright over all examples + embed page (builds first)
+npm run test:e2e           # playwright (Chromium) over all examples + embed page (builds first)
+npm run test:e2e:all       # ... plus Firefox and WebKit (E2E_ALL_BROWSERS=1; non-blocking CI job)
 npm run typecheck          # tsc --noEmit
 npm run lint               # eslint + stylelint
-npm run validate           # validate storymap JSON fixtures against the schema
-npm run validate:iiif      # validate the IIIF manifest fixtures
-npm run convert:iiif       # storymap JSON -> IIIF manifests (needs node >= 22.6: the CLI imports the TypeScript library source via type stripping)
-npm run check:locales      # report translation gaps between en.json and the rest
+npm run validate           # validate storymap JSON fixtures (public/examples/*.json) against the schema
+npm run validate:iiif      # validate the IIIF manifest fixtures (two georeferenced layers report as not-covered, not failures)
+npm run convert:iiif       # storymap JSON -> IIIF manifests (needs node >= 22.6: the CLI imports the TypeScript library source via type stripping; package engines say >= 22)
+npm run convert:slideshow  # slideshow tour (URL or file) -> storymap JSON [--settings settings.json] [--out out.json]
+npm run check:locales      # report translation gaps between en.json and the rest (exit 0)
+npm run check:locales:strict    # fail on any gap beyond .expected-gaps.json
+npm run check:locales:baseline  # rewrite .expected-gaps.json after adding strings
 npm run docs:api           # typedoc -> public/docs/api (~3.5s); warns instead of failing
+npm run format             # prettier --write .
 npm run format:check       # prettier --check .
 ```
 
-`dist/` layout (consumers depend on these paths):
+`dist/` layout (consumers depend on these paths; `vite build --mode pages`
+uses `emptyOutDir: false` so the pages build preserves the lib outputs, and
+copies `public/` over them):
 
 ```
 dist/js/storymap.js        ES module bundle (the only JS entry)
+dist/js/storymap.js.map    sourcemap for the bundle
 dist/js/storymap.d.ts      bundled type declarations
 dist/css/storymap.css      widget styles + the OpenLayers stylesheet
 dist/css/fonts/font.*.css  font theme stylesheets + binaries (files/)
 dist/css/icons/            icon font binaries
+dist/index.html            project landing page
+dist/demo.html             minimal single-example page
+dist/harness.html          e2e harness (?example= / ?manifest= / ...)
+dist/harness-multi.html    two-viewer e2e harness
+dist/assets/               hashed demo/harness JS chunks
+dist/site.css              landing-page styles (generated by sitegen)
+dist/docs/*.html           rendered README + docs (generated by sitegen)
+dist/docs/api/             TypeDoc API reference (generated into public/docs/api
+                           by `npm run docs:api`, then copied by the build)
+dist/examples*/            fixture copies served to the e2e suite
+dist/thumbs/               fixture screenshots (via `npm run thumbs`)
 dist/embed/index.html      embed page (?url=<published.json>)
-dist/docs/api/            TypeDoc API reference (generated by `npm run docs:api`)
 ```
 
 ## API reference
 
 `npm run docs:api` runs TypeDoc over `src/main.ts` into `public/docs/api`, and
-warns rather than fails (see `scripts/docs-api.mjs`). Two `typedoc.json` options
-exist only to keep the warning list honest:
+warns rather than fails (see `scripts/docs-api.mjs`, which does no warning
+counting or classification — it just runs TypeDoc and warns on a start
+failure or non-zero exit). Two `typedoc.json` options exist only to keep the
+warning list honest:
 
-- **`intentionallyNotExported`** names the engine classes behind `StoryMap`'s
-  `declare` fields (`_map`, `_menubar`, `_storyslider`, and the marker class
-  `getMarker()` returns) plus the `StoryMapListener` alias. They are
-  implementation, not API; documenting them would be worse than naming them
-  here. Everything else TypeDoc complained about was a type the documented API
-  genuinely reaches, so those are exported from `src/main.ts` — a host has to be
-  able to type `overlays[].georeference` or `slides[].media` without reaching
-  into internal modules.
-- **`externalSymbolLinkMappings`** sends the `module:ol/...` links that OpenLayers'
-  own `.d.ts` comments contain to the current page instead of warning that they
-  are not documented here. They cannot be resolved and are not ours to fix.
-
-Eight warnings remain, all `Failed to resolve link` for `FrameState`/`State`
-inside OpenLayers' declaration files. `externalSymbolLinkMappings` cannot reach
-them — its resolver only handles globally-resolved references — and
-`validation.invalidLink: false` would give up the check on _our_ comments, which
-is the one worth keeping. A new warning naming an `Ol*` type is upstream; one
-naming anything else is ours.
+- **`intentionallyNotExported`** names the engine and data types behind the
+  documented API (`StoryMap`'s `declare` fields `_map`, `_menubar`,
+  `_storyslider`, the marker class `getMarker()` returns and the
+  `StoryMapListener` alias, plus the internal option/data bags such as
+  `IconSpec`, `MapMarkerData`, `MediaData`, `TextData`, `SlideNavData` /
+  `SlideNavOptions`, `SlideBackgroundChange`, `MessageOptions`, `DragData`
+  and `LayersRow` — see `typedoc.json` for the exact list, which is the
+  source of truth). They are implementation, not API; documenting them would
+  be worse than naming them here.
+- **`externalSymbolLinkMappings`** maps `@types/node`'s `__global.module`
+  to the current page so that reference does not warn. It does not cover
+  OpenLayers' `module:ol/...` links in `ol`'s own `.d.ts` comments — those
+  cannot be resolved and are not ours to fix, so an `Ol*` warning naming
+  `FrameState`/`State` is upstream; a new warning naming anything else is
+  ours. (No warning baseline is recorded in the repo; `validation.invalidLink`
+  stays on so our own comments keep being checked.)
 
 ## Data validation
 
@@ -261,22 +290,29 @@ visitor interacted with most recently.
   IIIF Image API imagery via `ol/source/IIIF`. `map_type: "zoomify"` remains
   as a legacy image-pyramid basemap.
 - Markers use the `vco-icons` font (`src/scss/icons/Icons.scss`,
-  `dist/css/icons/`); keep the `@font-face` URLs relative (`./icons/...`)
-  so subpath/bundler/Electron consumers resolve them.
+  `dist/css/icons/`); the SCSS source uses the absolute public path
+  (`/css/icons/...`) so `vite dev` serves the fonts directly, and
+  `vite.config.ts` rewrites them to relative `./icons/...` in the built
+  `dist/css/storymap.css` so subpath/bundler/Electron consumers resolve them.
 - Image maps (`map_as_image: true` with `iiif`) use an `EPSG:4326` view
   with image-pixel coordinates.
 
 ## Tests
 
 The Playwright suite covers every fixture in `public/examples/` (rendering,
-slide navigation, no uncaught exceptions), the IIIF path, the embed page, and
+slide navigation, no uncaught exceptions), the IIIF path (including the
+georeferenced-layer fixtures), the slideshow tours, the embed page, and
 the known-issue regressions in `e2e/known-issues/` (a `test.fixme()` marks a
-target behavior that is not implemented yet).
+target behavior that is not implemented yet). It runs against three servers
+(see `playwright.config.ts`): the built preview on :8200, a static repo-root
+server on :8300 for the `contrib/` examples, and the dev server on :8500.
 
 Three legacy zoomify fixtures (`courbet`, `jansteen`, `seurat`) are skipped in
 the generic sweep because they need the real image-pyramid assets; zoomify
 rendering itself is covered by
-`e2e/known-issues/issue-zoomify-rendering.spec.ts`.
+`e2e/known-issues/issue-zoomify-rendering.spec.ts`. (`zoomify-clamp.json`
+also uses `map_type: "zoomify"` but is not in the skip set, so it runs in
+the sweep.)
 
 ### What the jsdom tests cannot cover
 
