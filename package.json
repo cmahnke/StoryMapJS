@@ -1,7 +1,7 @@
 {
     "name": "@projektemacher/storymapjs",
     "version": "0.10.8",
-    "description": "StoryMapJS viewer library \u2014 unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
+    "description": "StoryMapJS viewer library — unofficial TypeScript/OpenLayers rewrite of the Knight Lab StoryMapJS (viewer only)",
     "license": "MPL-2.0",
     "type": "module",
     "types": "./dist/js/storymap.d.ts",
@@ -44,6 +44,7 @@
         "ol-mapbox-style": "^13.5.1"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
         "@eslint/js": "^10.0.1",
         "@fontsource-variable/bitter": "^5.3.0",
         "@fontsource-variable/dancing-script": "^5.3.0",

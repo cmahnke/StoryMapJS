@@ -153,6 +153,8 @@ export default class OpenLayersMapMarker extends MapMarker {
             el.className = "vco-mapmarker-custom";
             const img = document.createElement("img");
             img.src = this._custom_icon.url;
+            // decorative: the parent div carries the marker's title
+            img.alt = "";
             img.style.width = this._custom_icon.size[0] + "px";
             img.style.height = "auto";
             el.appendChild(img);
@@ -162,6 +164,7 @@ export default class OpenLayersMapMarker extends MapMarker {
             el.className = "vco-mapmarker-image-icon";
             const img = document.createElement("img");
             img.src = this._custom_image_icon;
+            img.alt = "";
             img.style.width = "48px";
             img.style.height = "auto";
             el.appendChild(img);

@@ -51,10 +51,10 @@
         font-size: $base-font-size;
 
         // font-family: $font-secondary;
-        color: var(--vco-color-text-muted);
+        color: var(--vco-color-text-muted, #{color.adjust($color-dark, $lightness: 40%)});
 
         a {
-            color: var(--vco-color-text-muted);
+            color: var(--vco-color-text-muted, #{color.adjust($color-dark, $lightness: 40%)});
             text-decoration: none;
             background-image: linear-gradient(
                 to bottom,

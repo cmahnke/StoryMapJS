@@ -181,4 +181,60 @@ describe("accessibility chrome", () => {
         );
         expect(named?.getAttribute("title")).toBe("Custom");
     });
+
+    it("renders the call-to-action and scroll hint as real buttons", () => {
+        const sm = storymap("sm-a11y-buttons", {
+            call_to_action: true,
+            call_to_action_text: "Begin",
+            slides: [
+                { text: { headline: "One", text: "long ".repeat(400) } },
+                { text: { headline: "Two", text: "" } },
+            ],
+        });
+        const slider = (sm as unknown as { _storyslider: { _slides: unknown[] } })._storyslider;
+        // activate the first slide and stub layout so the hint builds
+        const slide = slider._slides[0] as unknown as {
+            setActive(active: boolean): void;
+            _updateScrollHint(): void;
+            _el: { container: HTMLElement };
+        };
+        slide.setActive(true);
+        const sc = slide._el.container;
+        Object.defineProperty(sc, "scrollHeight", { value: 5000, configurable: true });
+        Object.defineProperty(sc, "clientHeight", { value: 500, configurable: true });
+        slide._updateScrollHint();
+        const hint = sc.querySelector(".vco-slide-scroll-hint") as HTMLButtonElement | null;
+        expect(hint?.tagName).toBe("BUTTON");
+        expect(hint?.getAttribute("type")).toBe("button");
+        expect(hint?.getAttribute("aria-label")).toBe("Scroll down");
+        sm.dispose();
+    });
+
+    it("emits the date after the headline and as a paragraph", () => {
+        const sm = storymap("sm-a11y-date", {
+            slides: [
+                {
+                    // Text reads the text block; the date rides inside it
+                    text: {
+                        headline: "Headline first",
+                        text: "",
+                        date: { created_time: "2013-12-09 01:56:28" },
+                    },
+                },
+            ],
+        });
+        const container = document.querySelector(
+            "#sm-a11y-date .vco-text-content-container",
+        ) as HTMLElement;
+        const children = [...container.children].map((el) => ({
+            tag: el.tagName,
+            cls: el.className,
+        }));
+        const headlineIdx = children.findIndex((c) => c.cls.includes("vco-headline"));
+        const dateIdx = children.findIndex((c) => c.cls.includes("vco-headline-date"));
+        expect(headlineIdx).toBeGreaterThanOrEqual(0);
+        expect(dateIdx).toBeGreaterThan(headlineIdx);
+        expect(children[dateIdx]?.tag).toBe("P");
+        sm.dispose();
+    });
 });

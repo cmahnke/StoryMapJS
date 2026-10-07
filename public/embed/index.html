@@ -129,6 +129,8 @@
     const showEmbedError = (message) => {
         const el = document.createElement("div");
         el.className = "vco-consent-blocked";
+        // announce to AT (issue #385 wave)
+        el.setAttribute("role", "alert");
         // inline fallback styles in case the widget CSS did not load
         el.style.cssText =
             "display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:20px;background-color:#fff;color:#333;font-family:sans-serif;text-align:center;";
@@ -174,6 +176,8 @@
         error.id = "storymap-url-error";
         error.className = "storymap-url-error";
         error.hidden = true;
+        // the input describes its error slot (issue #385 wave)
+        input.setAttribute("aria-describedby", "storymap-url-error");
         row.append(input, button);
         form.append(label, row, error);
         card.append(heading, hint, form);
@@ -192,6 +196,8 @@
             } catch {
                 error.textContent = "Please enter a valid URL to a storymap.json file.";
                 error.hidden = false;
+                error.setAttribute("role", "alert");
+                input.setAttribute("aria-invalid", "true");
                 return;
             }
             urlParams.set("url", value);

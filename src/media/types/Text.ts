@@ -141,12 +141,6 @@ class TextBase {
             this._el.content_container.classList.add("vco-text-align-" + align);
         }
 
-        // Date (only rendered when the slide has one; issue #286)
-        if (this.data.date && this.data.date.created_time && this.data.date.created_time !== "") {
-            this._el.date = Dom.create("h3", "vco-headline-date", this._el.content_container);
-            this.addDateText(convertUnixTime(this.data.date.created_time));
-        }
-
         // Headline (sanitized; issue #358 keeps formatting but drops scripts)
         const headline = this.data.headline ?? "";
         if (headline !== "") {
@@ -156,6 +150,14 @@ class TextBase {
             }
             this._el.headline = Dom.create("h2", headline_class, this._el.content_container);
             this._el.headline.appendChild(sanitizeSlideText(headline));
+        }
+
+        // Date (only rendered when the slide has one; issue #286). Emitted
+        // after the headline and as a <p> (issue #385 wave): an <h3> before
+        // the <h2> was a heading-order skip
+        if (this.data.date && this.data.date.created_time && this.data.date.created_time !== "") {
+            this._el.date = Dom.create("p", "vco-headline-date", this._el.content_container);
+            this.addDateText(convertUnixTime(this.data.date.created_time));
         }
 
         // Text (sanitized; issue #358 allows extra iframe media in the text field)

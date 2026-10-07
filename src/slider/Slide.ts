@@ -430,7 +430,10 @@ class SlideBase {
             return;
         }
         if (!this._scroll_hint) {
-            this._scroll_hint = Dom.create("div", "vco-slide-scroll-hint", el);
+            // a real button for keyboard/AT operability (issue #385 wave)
+            this._scroll_hint = Dom.create("button", "vco-slide-scroll-hint", el);
+            this._scroll_hint.setAttribute("type", "button");
+            this._scroll_hint.setAttribute("aria-label", "Scroll down");
             this._scroll_hint.innerHTML = "<span class='vco-icon-arrow-down'></span>";
             DomEvent.addListener(this._scroll_hint, "click", this._onScrollHintClick, this);
         }
@@ -465,11 +468,14 @@ class SlideBase {
     }
 
     addCallToAction(str: string) {
+        // a real button for keyboard/AT operability (issue #385 wave), like
+        // the menubar buttons; the classes carry the look
         this._el.call_to_action = Dom.create(
-            "div",
+            "button",
             "vco-slide-calltoaction",
             this._el.content_container,
         );
+        this._el.call_to_action.setAttribute("type", "button");
         // The text comes from `call_to_action_text` in the storymap JSON, so
         // it goes through the sanitizer like every other author string
         // instead of being concatenated into markup.

@@ -34,6 +34,14 @@
         margin-bottom: 10px;
         padding-bottom: 10px;
 
+        // real <button>: strip the UA chrome, the classes carry the look
+        // (issue #385 wave)
+        appearance: none;
+        background: none;
+        border: 0;
+        font: inherit;
+        text-align: inherit;
+
         .vco-slide-calltoaction-button-text {
             display: inline-block;
             background-color: var(--vco-color-theme, #{$color-theme});
@@ -191,6 +199,12 @@
     color: #fff;
     cursor: pointer;
     animation: vco-scroll-hint-bounce 1.2s ease-in-out infinite;
+
+    // real <button>: strip the UA chrome (issue #385 wave)
+    appearance: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
 
     @media (prefers-reduced-motion: reduce) {
         animation: none;

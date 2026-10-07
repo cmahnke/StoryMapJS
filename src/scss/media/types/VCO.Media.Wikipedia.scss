@@ -19,21 +19,8 @@
             font-style: italic;
         }
 
-        h4 {
-            margin-top: 0;
-
-            // border-bottom: 1px solid @color-line;
-            margin-bottom: 0;
-        }
-
-        h4 a {
-            color: var(--vco-color-dark, #{$color-dark});
-            text-decoration: none;
-        }
-
-        h4 a:hover {
-            text-decoration: underline;
-        }
+        // no h4 rules: the sanitizer strips the tag, so these were dead
+        // (issue #385 wave; see docs/plans/css-followups.md)
     }
 }
 
@@ -46,10 +33,6 @@
             @include background-color-opacity(0, 0, 0, 60);
 
             border-radius: 7px;
-
-            h4 a {
-                @include slide-text-shadow;
-            }
         }
     }
 }
