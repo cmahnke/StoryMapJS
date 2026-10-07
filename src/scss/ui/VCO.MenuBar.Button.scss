@@ -19,7 +19,10 @@
     background-color: var(--vco-color-background, #{$color-background});
     cursor: pointer;
     font-weight: bold;
-    color: var(--vco-color-text, #{$color-text});
+
+    // pre-0.9.0 gray, not the body text color: the classic menubar buttons
+    // read as chrome, not content. 4.7:1 on white, so no contrast cost.
+    color: #737373;
 
     .vco-icon-arrow-up,
     .vco-icon-arrow-down {
@@ -44,6 +47,20 @@
         color: var(--vco-color-background, #{$color-background});
         outline: 2px solid var(--vco-color-dark, #{$color-dark});
         outline-offset: 2px;
+    }
+}
+
+// dark mode keeps a lighter gray for the same chrome look: #737373 on the
+// dark panel would fail contrast (the themed text it replaces passed).
+// Mirrors the data-vco-theme / prefers-color-scheme switching in
+// VCO.StoryMap.scss.
+.vco-storymap[data-vco-theme="dark"] .vco-menubar-button {
+    color: #b3b3b3;
+}
+
+@media (prefers-color-scheme: dark) {
+    .vco-storymap:not([data-vco-theme="light"]) .vco-menubar-button {
+        color: #b3b3b3;
     }
 }
 
