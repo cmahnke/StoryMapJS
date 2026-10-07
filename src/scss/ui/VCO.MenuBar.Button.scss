@@ -4,14 +4,33 @@
 /* MenuBar Button
 ================================================== */
 
-.vco-menubar-button {
+.vco-menubar .vco-menubar-button {
+    // scoped under .vco-menubar on purpose: the ported normalize reset in
+    // core/Reset.scss targets `.vco-storymap button` (0,1,1) and would
+    // otherwise zero the padding, border, size and weight below
     border-left: 1px solid
         var(--vco-color-border, #{color.adjust($color-background, $lightness: -10%)});
     font-size: 14px;
+
+    // real <button>s do not inherit the typeface: without this they render
+    // in the UA system font instead of the storymap stack the pre-0.9.0
+    // divs inherited. No `font` shorthand: it would reset font-weight.
+    font-family: inherit;
+    line-height: inherit;
     padding: 6px 12px;
 
     // pointer targets stay usable for coarse pointers and low vision
     min-height: 44px;
+
+    // the widget root is content-box (see VCO.StoryMap.scss): without this
+    // the 6px+6px padding lands on top of the 44px instead of inside it
+    box-sizing: border-box;
+
+    // the 44px box dwarfs the label: center it so the original padding
+    // reads as padding, not as dead space below the text
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     // position:relative;
     // top:-24px;
