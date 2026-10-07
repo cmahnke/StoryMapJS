@@ -1,0 +1,44 @@
+{
+    "@context": [
+        "http://www.w3.org/ns/anno.jsonld",
+        "https://seige.digital/strollview/2/context.jsonld"
+    ],
+    "id": "https://example.org/tours/static",
+    "type": "AnnotationCollection",
+    "creator": "",
+    "label": "A static-file tour",
+    "rights": "",
+    "first": {
+        "type": "AnnotationPage",
+        "items": [
+            {
+                "id": "https://example.org/tours/static/annotation/0",
+                "type": "Annotation",
+                "body": {
+                    "id": "https://example.org/tours/static/body/0",
+                    "type": "TextualBody",
+                    "value": "<p>Painted from a plain file.</p>",
+                    "format": "text/html"
+                },
+                "target": {
+                    "id": "https://example.org/sheet.png#0,0,64,64",
+                    "type": "Image",
+                    "format": "image/jpeg"
+                },
+                "strollview": {
+                    "filters": false,
+                    "passepartout": false,
+                    "rotation": 0,
+                    "audio": false,
+                    "manifest_id": "https://example.org/manifest",
+                    "canvas_id": "https://example.org/sheet.png",
+                    "image_id": "https://example.org/sheet.png",
+                    "image_srv": "/examples-slideshow/static/pixel.png",
+                    "image_static": null,
+                    "passepartout_color": "#000000cc",
+                    "passepartout_invert": false
+                }
+            }
+        ]
+    }
+}

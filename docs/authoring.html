@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Authoring IIIF stories — StoryMapJS</title>
+        <meta name="description" content="Authoring IIIF stories — StoryMapJS documentation" />
+        <link rel="stylesheet" href="../site.css" />
+    </head>
+    <body class="sm-site">
+        
+    <nav class="navbar navbar-dark">
+        <ul>
+            <li class="logo">
+                <a href="../index.html">StoryMap <span>JS</span></a>
+            </li>
+        </ul>
+        <ul class="nav-right">
+            <li>
+                <a class="button button-dark button-active" href="https://github.com/cmahnke/StoryMapJS"
+                    >GitHub</a
+                >
+            </li>
+            <li>
+                <a class="button button-dark" href="https://github.com/cmahnke/StoryMapJS/issues"
+                    >Issues</a
+                >
+            </li>
+        </ul>
+    </nav>
+    <header class="header-product header-product-docs">
+        <nav id="navbar-secondary" class="navbar navbar-subnav" aria-label="Page navigation">
+            <ul>
+                <li><a class="button" href="../index.html#overview">Overview</a></li>
+                <li><a class="button" href="../index.html#examples">Examples</a></li>
+                <li><a class="button" href="./readme.html">README</a></li>
+                <li><a class="button" href="./migration.html">Migration guide</a></li>
+                <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="./authoring.html">Authoring</a></li>
+                <li><a class="button" href="./events.html">Events</a></li>
+                <li><a class="button" href="./api/index.html">API docs</a></li>
+                <li><a class="button" href="../index.html#help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+        <main class="sm-docs">
+            <h1>Authoring IIIF stories and tours</h1>
+<p>How to encode a story as a IIIF Presentation 3 manifest that this viewer
+reads, including the annotation-driven tour stops it accepts.</p>
+<p>The viewer also reads legacy storymap JSON; see the
+<a href="../README.md">README</a> for that format. This page covers the IIIF side.
+<a href="./iiif.html">docs/storymap-as-iiif-manifest.md</a> documents the
+full property mapping; this page is the task-oriented version.</p>
+<h2>The shortest possible story</h2>
+<p>One canvas, one slide:</p>
+<pre><code class="language-json">{
+    &quot;@context&quot;: &quot;http://iiif.io/api/presentation/3/context.json&quot;,
+    &quot;id&quot;: &quot;https://example.org/story/1&quot;,
+    &quot;type&quot;: &quot;Manifest&quot;,
+    &quot;label&quot;: { &quot;en&quot;: [&quot;A story&quot;] },
+    &quot;items&quot;: [
+        {
+            &quot;id&quot;: &quot;https://example.org/story/1/canvas/1&quot;,
+            &quot;type&quot;: &quot;Canvas&quot;,
+            &quot;height&quot;: 3000,
+            &quot;width&quot;: 2315,
+            &quot;label&quot;: { &quot;en&quot;: [&quot;The first slide&quot;] },
+            &quot;summary&quot;: { &quot;en&quot;: [&quot;Its body text.&quot;] },
+            &quot;items&quot;: [
+                {
+                    &quot;type&quot;: &quot;AnnotationPage&quot;,
+                    &quot;items&quot;: [
+                        {
+                            &quot;type&quot;: &quot;Annotation&quot;,
+                            &quot;motivation&quot;: &quot;painting&quot;,
+                            &quot;body&quot;: {
+                                &quot;id&quot;: &quot;https://example.org/image/full/max/0/default.jpg&quot;,
+                                &quot;type&quot;: &quot;Image&quot;,
+                                &quot;format&quot;: &quot;image/jpeg&quot;,
+                                &quot;service&quot;: [
+                                    {
+                                        &quot;id&quot;: &quot;https://example.org/image/info.json&quot;,
+                                        &quot;type&quot;: &quot;ImageService3&quot;,
+                                        &quot;profile&quot;: &quot;level2&quot;
+                                    }
+                                ]
+                            },
+                            &quot;target&quot;: &quot;https://example.org/story/1/canvas/1&quot;
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+</code></pre>
+<p>One canvas is one slide: <code>label</code> becomes the headline, <code>summary</code> the body
+text, and the painting annotation&#39;s body the slide media. There is also one
+slide for a Canvas that has no painting at all.</p>
+<p>That <code>service</code> array on the body is also where the basemap comes from. With
+<code>storymap:basemap: &quot;iiif&quot;</code> the viewer takes the first painting body carrying an
+<code>ImageService3</code> as the image basemap and fetches its <code>info.json</code>, which is how
+<code>iiif.url</code> is resolved — so the basemap service is spelled the standard way and
+needs no mapconfig term.</p>
+<h2>Guided tours: one image, many stops</h2>
+<p>This is the Micrio/Storiiies shape and the reason the format exists here: a
+single canvas shown as a map, with one slide per detail. An annotation with
+<code>commenting</code>, <code>tagging</code>, <code>classifying</code> or <code>describing</code> and a <strong>fragment
+target</strong> becomes a slide, and the view fits the region the target points at.</p>
+<p>Two things are required:</p>
+<ol>
+<li>The canvas must be presented as an image map — a
+<a href="./iiif.html#manifest--service">map configuration service</a>
+with <code>storymap:basemap: &quot;iiif&quot;</code> and <code>storymap:mapAsImage: true</code>. Region
+stops are honoured in image mode; a geographic map ignores them.</li>
+<li>The target must resolve to a region. An annotation aimed at the whole
+canvas is not a stop — the canvas slide already shows that.</li>
+</ol>
+<pre><code class="language-json">&quot;service&quot;: [
+    {
+        &quot;id&quot;: &quot;https://example.org/story/1/map-config&quot;,
+        &quot;type&quot;: &quot;Service&quot;,
+        &quot;profile&quot;: &quot;https://cmahnke.github.io/StoryMapJS/context.json/mapconfig&quot;,
+        &quot;storymap:basemap&quot;: &quot;iiif&quot;,
+        &quot;storymap:mapAsImage&quot;: true
+    }
+]
+</code></pre>
+<p>Then the stops, on the canvas, after its painting:</p>
+<pre><code class="language-json">{
+    &quot;type&quot;: &quot;AnnotationPage&quot;,
+    &quot;items&quot;: [
+        {
+            &quot;id&quot;: &quot;https://example.org/story/1/canvas/1/annotation/2&quot;,
+            &quot;type&quot;: &quot;Annotation&quot;,
+            &quot;motivation&quot;: &quot;commenting&quot;,
+            &quot;label&quot;: { &quot;en&quot;: [&quot;The lower group&quot;] },
+            &quot;body&quot;: {
+                &quot;type&quot;: &quot;TextualBody&quot;,
+                &quot;format&quot;: &quot;text/plain&quot;,
+                &quot;value&quot;: &quot;First paragraph.\n\nSecond paragraph.&quot;
+            },
+            &quot;target&quot;: {
+                &quot;type&quot;: &quot;SpecificResource&quot;,
+                &quot;source&quot;: &quot;https://example.org/story/1/canvas/1&quot;,
+                &quot;selector&quot;: {
+                    &quot;type&quot;: &quot;FragmentSelector&quot;,
+                    &quot;value&quot;: &quot;xywh=120,1500,1100,900&quot;
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<p>The annotation <code>label</code> becomes the stop&#39;s headline — that is what the slider
+and the map marker show. Stops render in annotation order, after the canvas
+slide.</p>
+<h3>Target selectors</h3>
+<table>
+<thead>
+<tr>
+<th>Selector</th>
+<th>Becomes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>FragmentSelector</code> / <code>ImageApiSelector</code> with <code>xywh=x,y,w,h</code></td>
+<td>that image-pixel region. <code>xywh=pixel:…</code> works too. A negative origin is clamped to the canvas (targets routinely overshoot it); a region fully outside it is dropped</td>
+</tr>
+<tr>
+<td><code>PointSelector</code> (<code>x</code>, <code>y</code>)</td>
+<td>a square of 5% of the canvas&#39;s smaller side, centred on the point and clamped to the canvas — a pin you can fit</td>
+</tr>
+<tr>
+<td><code>TextQuoteSelector</code> (<code>exact</code>, optional <code>prefix</code>/<code>suffix</code>)</td>
+<td>preserved; <strong>not resolved</strong>, because a canvas carries no transcript. Use it to anchor a stop to quoted text in a tool that has one</td>
+</tr>
+<tr>
+<td><code>TimeState</code> (<code>start</code>, <code>end</code>) or a <code>start</code>/<code>end</code> range</td>
+<td>preserved on the stop; a time-ranged narration can be built from it</td>
+</tr>
+<tr>
+<td><code>SvgSelector</code></td>
+<td>preserved on the stop; <strong>not resolved and not fitted</strong> — an annotation with only an <code>SvgSelector</code> (no region) is not a stop, because there is no region to fit</td>
+</tr>
+</tbody></table>
+<p>One level of <code>refinedBy</code> is followed, so a fragment refined by a quote works.</p>
+<h3>Bodies</h3>
+<p>A stop&#39;s <code>body</code> may be one resource or an array.</p>
+<ul>
+<li><strong>Text</strong> — a <code>TextualBody</code> becomes the slide text. <code>text/plain</code> is escaped
+and split into one paragraph per blank-line-separated block; <code>text/html</code> is
+kept as markup. Slide text is sanitized when it renders, so a body cannot
+inject script.</li>
+<li><strong>Media</strong> — a body with an <code>id</code> (typically <code>type: &quot;Sound&quot;</code>) becomes
+<code>media.url</code>. The viewer resolves the URL to a player: a <code>.mp3</code>/<code>.wav</code>/<code>.m4a</code>
+URL renders a native <code>&lt;audio&gt;</code>, a YouTube or Vimeo URL renders that embed,
+and anything else falls back to a framed website. A <code>Sound</code> body therefore
+needs no type of its own beyond <code>id</code> and <code>format</code>. Playback flags ride
+<code>storymap:</code> members on the painting annotation — <code>storymap:offset</code>
+(start seconds), <code>storymap:loop</code>, <code>storymap:play</code> (<code>auto</code>/<code>click</code>) and
+<code>storymap:stopOnExit</code> — and a <code>motivation: &quot;supplementing&quot;</code> Sound/Video
+body becomes the slide <code>narration</code> with the same flags plus
+<code>storymap:stopAllPrevious</code>. These fields are read from any manifest but
+render only for slideshow tours (the viewer&#39;s <code>slideshow_source</code> marker);
+hand-written manifests keep the long-standing playback.</li>
+<li>A media body&#39;s <code>label</code> becomes the media caption,
+<code>accessibilitySummary</code> the alt text, and <code>requiredStatement</code> (or <code>provider</code>)
+the credit. A <code>thumbnail</code> becomes the media thumb. A sibling <code>TextualBody</code>
+with <code>format: &quot;text/vtt&quot;</code> and an <code>id</code> becomes the media&#39;s subtitle track —
+IIIF has no subtitle term, so this is the one body the viewer reads for
+that purpose.</li>
+<li>An annotation with a region but <strong>no</strong> body is not a stop — a stop with
+nothing to say is just a focus change. Use it in a viewer that links
+annotations.</li>
+</ul>
+<h2>Locations, groups and attribution</h2>
+<ul>
+<li><strong>A point on a map</strong> — <a href="https://iiif.io/api/extension/navplace/">navPlace</a>
+on the canvas. A <code>Point</code> gives the slide&#39;s location; a <code>Polygon</code> gives the
+story&#39;s extent (<code>map_bbox</code>). Marker presentation (<code>icon</code>, <code>iconSize</code>,
+<code>image</code>, <code>name</code>, <code>line</code>, <code>zoom</code>, <code>rotation</code> in degrees clockwise, <code>basemap</code>
+for a per-slide basemap, <code>filter</code> for per-slide image grading, <code>mask</code> for a
+spotlight mask, <code>use_custom_marker</code>) goes in the Feature&#39;s
+<code>properties</code>. All stops on a canvas share that canvas&#39;s <code>navPlace</code> — the
+extension does not allow it on an annotation, so there is no per-stop
+override. Two <code>properties</code> names are marker behaviour, not data:
+<code>popup: true</code> gives the active marker a card with the slide&#39;s headline and
+excerpt, and <code>audioBadge: true</code> dots a marker whose slide has narration or
+audio. Open the card from code with <code>storymap.openMarkerPopup(n)</code> (it
+navigates to the stop first) and listen for <code>popupopen</code> / <code>popupclose</code>
+with <code>{ marker_number, current_slide }</code>. The thirteen names the reader
+copies — and the linked-data context that describes them — are listed
+in <code>docs/storymap-as-iiif-manifest.md</code>.</li>
+<li><strong>Chapters</strong> — a <code>Range</code> with a <code>label</code> and no <code>start</code> groups the canvases
+it lists. A <code>Range</code> whose <code>items</code> order differs from canvas order becomes
+the slide order instead: a Range <em>is</em> a storyboard.</li>
+<li><strong>Attribution</strong> — a <code>requiredStatement</code> object on the manifest, with a
+<code>label</code> and a <code>value</code> (both language maps). It lands in the map&#39;s
+attribution line.</li>
+<li><strong>Language</strong> — every label, summary and property value is a language map.
+The viewer renders the language it was configured with, and falls back to
+<code>none</code>.</li>
+</ul>
+<h2>Annotations in a separate file</h2>
+<p>A Canvas can point at an <code>AnnotationCollection</code> with <code>seeAlso</code>, and the viewer
+follows it. Nothing is fetched while the story loads — that would put a network
+round trip in front of the first paint — so the stops on the canvas appear
+immediately, and a host asks for the rest afterwards:</p>
+<pre><code class="language-js">await sm.loadAnnotations();
+sm.on(&quot;annotationsloaded&quot;, (result) =&gt; {
+    console.log(`added ${result.stops.length} stops`);
+});
+</code></pre>
+<p>One level is followed: a referenced <code>AnnotationPage</code> is read, but a <code>seeAlso</code>
+inside that page is not, and a <code>SearchService1</code> is recorded rather than
+followed. Stops from a referenced page are <strong>appended</strong> after the canvases
+already rendered, not placed after the canvas they annotate, because that canvas
+has been visited. A <code>uniqueid</code> is required, so a stop can be deep-linked.</p>
+<h2>What this viewer does not read yet</h2>
+<ul>
+<li>An <code>SvgSelector</code>&#39;s true outline (see above).</li>
+<li>A <code>TextQuoteSelector</code> is not resolved against a transcript.</li>
+<li><code>accessibilityFeature</code> beyond the alt-text mapping.</li>
+</ul>
+<h2>Checking your work</h2>
+<pre><code class="language-sh">npm run validate:iiif   # the official IIIF validator, over every example
+</code></pre>
+<p><a href="../examples-iiif/annotated-image.json"><code>public/examples-iiif/annotated-image.json</code></a>
+is a complete four-stop tour using everything above, and is what
+<code>e2e/annotations.spec.ts</code> renders.</p>
+
+        </main>
+        
+    <footer class="footer-knightlab">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">StoryMap <span>JS</span></div>
+                <ul class="list-social">
+                    <li>
+                        <a href="https://github.com/cmahnke/StoryMapJS" title="StoryMapJS fork on GitHub"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a href="https://github.com/NUKnightLab/StoryMapJS" title="Upstream Knight Lab repository"
+                            >Upstream</a
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="footer-description">
+                <p>
+                    A TypeScript rewrite of
+                    <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+                    the original tool by
+                    <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
+                </p>
+                <span class="copyright">
+                    Released under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
+                </span>
+            </div>
+        </div>
+    </footer>
+    </body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>StoryMapMarker | StoryMapJS API</title><meta name="description" content="Documentation for StoryMapJS API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">StoryMapJS API</a>
+<div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
+<ul role="listbox" id="tsd-search-results"></ul>
+<div id="tsd-search-status" aria-live="polite" aria-atomic="true">
+<div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="" aria-current="page">StoryMapMarker</a></li></ul>
+<h1>Interface StoryMapMarker</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>A map marker as returned by <code>storymap.getMarker(n)</code> / <code>getMarkers()</code> —
+the handle for <code>openPopup()</code> / <code>closePopup()</code> / <code>popupOpen</code>.</p>
+</div></section>
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">StoryMapMarker</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#_audio_badge">_audio_badge</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_custom_icon">_custom_icon</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">IconSpec</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_custom_icon_url">_custom_icon_url</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_custom_image_icon">_custom_image_icon</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_el">_el</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_icon">_icon</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">IconSpec</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">HTMLDivElement</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_is_active">_is_active</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_marker">_marker</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_marker_label">_marker_label</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_onmarkerclickbound">_onMarkerClickBound</a><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Event</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_onmarkerkeybound">_onMarkerKeyBound</a><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KeyboardEvent</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_onpopupkeybound">_onPopupKeyBound</a><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KeyboardEvent</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_overlay">_overlay</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Overlay</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_popup_el">_popup_el</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#_popup_enabled">_popup_enabled</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#animator">animator</a><span class="tsd-signature-symbol">:</span> <a href="AnimationHandle.html" class="tsd-signature-type tsd-kind-interface">AnimationHandle</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#data">data</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#fire">fire</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">?:</span> <a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">this</span> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">?:</span> <a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#marker_number">marker_number</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#media_icon_class">media_icon_class</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#options">options</a><span class="tsd-signature-symbol">:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#timer">timer</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Timeout</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-keyword">get</span> <a class="tsd-kind-get-signature" href="#popupopenpopupopen">popupOpen</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_active-1">_active</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">a</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_addto-1">_addTo</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <a href="OlMap.html" class="tsd-signature-type tsd-kind-interface">OlMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_closepopup-1">_closePopup</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_createmarker-1">_createMarker</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_createmarkerelement-1">_createMarkerElement</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_createpopupelement-1">_createPopupElement</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_customiconanchor-1">_customIconAnchor</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">size</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_initlayout-1">_initLayout</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_location-1">_location</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_onmarkerclick-1">_onMarkerClick</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_presentation-1">_presentation</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MarkerPresentation</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_removefrom-1">_removeFrom</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <a href="OlMap.html" class="tsd-signature-type tsd-kind-interface">OlMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_togglepopup-1">_togglePopup</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_updateaudiobadge-1">_updateAudioBadge</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#_updatedisplay-1">_updateDisplay</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">animate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#active-1">active</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">a</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#addto-1">addTo</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#closepopup-1">closePopup</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#createmarker-1">createMarker</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#createpopup-1">createPopup</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">_d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">_o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#dispose-1">dispose</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#haseventlisteners-1">hasEventListeners</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#haseventlistenersk">K</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#haseventlistenersk">K</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#hide-1">hide</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#ispopupenabled-1">isPopupEnabled</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#latlon-1">latLon</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#location-1">location</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#off-1">off</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#offk">K</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#offk">K</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <a href="../types/FiredEvent.html" class="tsd-signature-type tsd-kind-type-alias">FiredEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#offk">K</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#on-1">on</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#onk">K</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <a href="../types/FiredEvent.html" class="tsd-signature-type tsd-kind-type-alias">FiredEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#openpopup-1">openPopup</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#removefrom-1">removeFrom</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#show-1">show</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#togglepopup-1">togglePopup</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#updatedisplay-1">updateDisplay</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">w</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">h</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">a</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
+<section class="tsd-panel tsd-hierarchy" data-refl="2646">
+<h4>Hierarchy</h4>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-signature-type">default</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">StoryMapMarker</span></li></ul></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L28">src/map/openlayers/MapMarker.OpenLayers.ts:28</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h5 class="tsd-index-heading uppercase">Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#_audio_badge" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>audio_<wbr/>badge</span></a>
+<a href="#_custom_icon" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>custom_<wbr/>icon</span></a>
+<a href="#_custom_icon_url" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>custom_<wbr/>icon_<wbr/>url</span></a>
+<a href="#_custom_image_icon" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>custom_<wbr/>image_<wbr/>icon</span></a>
+<a href="#_el" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>el</span></a>
+<a href="#_icon" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>icon</span></a>
+<a href="#_is_active" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>is_<wbr/>active</span></a>
+<a href="#_marker" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>marker</span></a>
+<a href="#_marker_label" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>marker_<wbr/>label</span></a>
+<a href="#_onmarkerclickbound" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>on<wbr/>Marker<wbr/>Click<wbr/>Bound</span></a>
+<a href="#_onmarkerkeybound" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>on<wbr/>Marker<wbr/>Key<wbr/>Bound</span></a>
+<a href="#_onpopupkeybound" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>on<wbr/>Popup<wbr/>Key<wbr/>Bound</span></a>
+<a href="#_overlay" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>overlay</span></a>
+<a href="#_popup_el" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>popup_<wbr/>el</span></a>
+<a href="#_popup_enabled" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>popup_<wbr/>enabled</span></a>
+<a href="#animator" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>animator</span></a>
+<a href="#data" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>data</span></a>
+<a href="#fire" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>fire</span></a>
+<a href="#marker_number" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>marker_<wbr/>number</span></a>
+<a href="#media_icon_class" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>media_<wbr/>icon_<wbr/>class</span></a>
+<a href="#options" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>options</span></a>
+<a href="#timer" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>timer</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="accessors">Accessors<a href="#accessors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#popupopen" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>popup<wbr/>Open</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-index-list"><a href="#_active" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>active</span></a>
+<a href="#_addto" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>add<wbr/>To</span></a>
+<a href="#_closepopup" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>close<wbr/>Popup</span></a>
+<a href="#_createmarker" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>create<wbr/>Marker</span></a>
+<a href="#_createmarkerelement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>create<wbr/>Marker<wbr/>Element</span></a>
+<a href="#_createpopupelement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>create<wbr/>Popup<wbr/>Element</span></a>
+<a href="#_customiconanchor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>custom<wbr/>Icon<wbr/>Anchor</span></a>
+<a href="#_initlayout" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>init<wbr/>Layout</span></a>
+<a href="#_location" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>location</span></a>
+<a href="#_onmarkerclick" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>on<wbr/>Marker<wbr/>Click</span></a>
+<a href="#_presentation" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>presentation</span></a>
+<a href="#_removefrom" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>remove<wbr/>From</span></a>
+<a href="#_togglepopup" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>toggle<wbr/>Popup</span></a>
+<a href="#_updateaudiobadge" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>update<wbr/>Audio<wbr/>Badge</span></a>
+<a href="#_updatedisplay" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>update<wbr/>Display</span></a>
+<a href="#active" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>active</span></a>
+<a href="#addto" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>To</span></a>
+<a href="#closepopup" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>close<wbr/>Popup</span></a>
+<a href="#createmarker" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Marker</span></a>
+<a href="#createpopup" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Popup</span></a>
+<a href="#dispose" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dispose</span></a>
+<a href="#haseventlisteners" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Event<wbr/>Listeners</span></a>
+<a href="#hide" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide</span></a>
+<a href="#ispopupenabled" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Popup<wbr/>Enabled</span></a>
+<a href="#latlon" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>lat<wbr/>Lon</span></a>
+<a href="#location" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>location</span></a>
+<a href="#off" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>off</span></a>
+<a href="#on" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a>
+<a href="#openpopup" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>open<wbr/>Popup</span></a>
+<a href="#removefrom" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>remove<wbr/>From</span></a>
+<a href="#show" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show</span></a>
+<a href="#togglepopup" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>toggle<wbr/>Popup</span></a>
+<a href="#updatedisplay" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Display</span></a>
+</div></section></div></details></section></section>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_audio_badge"><span>_<wbr/>audio_<wbr/>badge</span><a href="#_audio_badge" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_audio_badge</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>marker.audioBadge: flag a slide that has narration or audio media.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L38">src/map/openlayers/MapMarker.OpenLayers.ts:38</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_custom_icon"><span>_<wbr/>custom_<wbr/>icon</span><a href="#_custom_icon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_custom_icon</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">IconSpec</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker._custom_icon</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L31">src/map/MapMarker.ts:31</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_custom_icon_url"><span>_<wbr/>custom_<wbr/>icon_<wbr/>url</span><a href="#_custom_icon_url" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_custom_icon_url</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker._custom_icon_url</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L32">src/map/MapMarker.ts:32</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_custom_image_icon"><span>_<wbr/>custom_<wbr/>image_<wbr/>icon</span><a href="#_custom_image_icon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_custom_image_icon</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">false</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker._custom_image_icon</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L33">src/map/MapMarker.ts:33</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_el"><span>_<wbr/>el</span><a href="#_el" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_el</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker._el</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L28">src/map/MapMarker.ts:28</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_icon"><span>_<wbr/>icon</span><a href="#_icon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_icon</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">IconSpec</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">HTMLDivElement</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker._icon</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L30">src/map/MapMarker.ts:30</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_is_active"><span>_<wbr/>is_<wbr/>active</span><a href="#_is_active" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_is_active</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Mirrors <code>active()</code>, as a flag rather than a method reference.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L50">src/map/openlayers/MapMarker.OpenLayers.ts:50</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_marker"><span>_<wbr/>marker</span><a href="#_marker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_marker</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker._marker</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L29">src/map/MapMarker.ts:29</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_marker_label"><span>_<wbr/>marker_<wbr/>label</span><a href="#_marker_label" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_marker_label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>Base accessible name (slide headline or label), without audio suffix.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L34">src/map/openlayers/MapMarker.OpenLayers.ts:34</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_onmarkerclickbound"><span>_<wbr/>on<wbr/>Marker<wbr/>Click<wbr/>Bound</span><a href="#_onmarkerclickbound" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_onMarkerClickBound</span><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Event</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L30">src/map/openlayers/MapMarker.OpenLayers.ts:30</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_onmarkerkeybound"><span>_<wbr/>on<wbr/>Marker<wbr/>Key<wbr/>Bound</span><a href="#_onmarkerkeybound" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_onMarkerKeyBound</span><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KeyboardEvent</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
+<div class="tsd-comment tsd-typography"><p>Enter/Space activation for keyboard visitors, detached in dispose().</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L32">src/map/openlayers/MapMarker.OpenLayers.ts:32</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_onpopupkeybound"><span>_<wbr/>on<wbr/>Popup<wbr/>Key<wbr/>Bound</span><a href="#_onpopupkeybound" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_onPopupKeyBound</span><span class="tsd-signature-symbol">:</span> (<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KeyboardEvent</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span>) <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
+<div class="tsd-comment tsd-typography"><p>Escape-to-close, detached in dispose().</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L48">src/map/openlayers/MapMarker.OpenLayers.ts:48</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_overlay"><span>_<wbr/>overlay</span><a href="#_overlay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_overlay</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Overlay</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L29">src/map/openlayers/MapMarker.OpenLayers.ts:29</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_popup_el"><span>_<wbr/>popup_<wbr/>el</span><a href="#_popup_el" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_popup_el</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
+<div class="tsd-comment tsd-typography"><p>The popup card while it is open. <code>declare</code> fields are undefined until
+assigned, so every read below is a truthiness check, never <code>=== null</code>,
+and there is no constructor to initialise them: <code>MapMarker</code>'s own
+constructor already runs <code>_initLayout()</code> → <code>_createMarker()</code>, which
+assigns the flags, and initialising afterwards would wipe them.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L46">src/map/openlayers/MapMarker.OpenLayers.ts:46</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_popup_enabled"><span>_<wbr/>popup_<wbr/>enabled</span><a href="#_popup_enabled" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">_popup_enabled</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>marker.popup: the active marker opens its card when clicked.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L36">src/map/openlayers/MapMarker.OpenLayers.ts:36</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="animator"><span>animator</span><a href="#animator" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">animator</span><span class="tsd-signature-symbol">:</span> <a href="AnimationHandle.html" class="tsd-signature-type tsd-kind-interface">AnimationHandle</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.animator</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L39">src/map/MapMarker.ts:39</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="data"><span>data</span><a href="#data" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">data</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MapMarkerData</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.data</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L37">src/map/MapMarker.ts:37</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="fire"><span>fire</span><a href="#fire" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">fire</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">?:</span> <a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">this</span> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">?:</span> <a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">this</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.fire</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/core/mixins.ts#L32">src/core/mixins.ts:32</a></li>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L40">src/map/MapMarker.ts:40</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="marker_number"><span>marker_<wbr/>number</span><a href="#marker_number" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">marker_number</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.marker_number</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L34">src/map/MapMarker.ts:34</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="media_icon_class"><span>media_<wbr/>icon_<wbr/>class</span><a href="#media_icon_class" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">media_icon_class</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.media_icon_class</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L35">src/map/MapMarker.ts:35</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="options"><span>options</span><a href="#options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">options</span><span class="tsd-signature-symbol">:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.options</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L38">src/map/MapMarker.ts:38</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="timer"><span>timer</span><a href="#timer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">timer</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Timeout</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.timer</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L36">src/map/MapMarker.ts:36</a></li></ul></aside></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="accessors-1">Accessors<a href="#accessors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="popupopen"><span>popup<wbr/>Open</span><a href="#popupopen" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li>
+<div class="tsd-signature" id="popupopenpopupopen"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">popupOpen</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L312">src/map/openlayers/MapMarker.OpenLayers.ts:312</a></li></ul></aside></div></li></ul></section></section></details>
+<details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
+<section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_active"><span>_<wbr/>active</span><a href="#_active" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_active-1"><span class="tsd-kind-call-signature">_active</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">a</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_active-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">a</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Overrides MapMarker._active</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L425">src/map/openlayers/MapMarker.OpenLayers.ts:425</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_addto"><span>_<wbr/>add<wbr/>To</span><a href="#_addto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_addto-1"><span class="tsd-kind-call-signature">_addTo</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <a href="OlMap.html" class="tsd-signature-type tsd-kind-interface">OlMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_addto-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">m</span>: <a href="OlMap.html" class="tsd-signature-type tsd-kind-interface">OlMap</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Overrides MapMarker._addTo</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L196">src/map/openlayers/MapMarker.OpenLayers.ts:196</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_closepopup"><span>_<wbr/>close<wbr/>Popup</span><a href="#_closepopup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_closepopup-1"><span class="tsd-kind-call-signature">_closePopup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_closepopup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L250">src/map/openlayers/MapMarker.OpenLayers.ts:250</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_createmarker"><span>_<wbr/>create<wbr/>Marker</span><a href="#_createmarker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_createmarker-1"><span class="tsd-kind-call-signature">_createMarker</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_createmarker-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">d</span>: <span class="tsd-signature-type">MapMarkerData</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">o</span>: <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Overrides MapMarker._createMarker</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L77">src/map/openlayers/MapMarker.OpenLayers.ts:77</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_createmarkerelement"><span>_<wbr/>create<wbr/>Marker<wbr/>Element</span><a href="#_createmarkerelement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_createmarkerelement-1"><span class="tsd-kind-call-signature">_createMarkerElement</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLDivElement</span><a href="#_createmarkerelement-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">d</span>: <span class="tsd-signature-type">MapMarkerData</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">o</span>: <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLDivElement</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L145">src/map/openlayers/MapMarker.OpenLayers.ts:145</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_createpopupelement"><span>_<wbr/>create<wbr/>Popup<wbr/>Element</span><a href="#_createpopupelement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_createpopupelement-1"><span class="tsd-kind-call-signature">_createPopupElement</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#_createpopupelement-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Headline, a sanitized excerpt, the media thumb and an audio control.
+Every piece of text goes through <code>sanitizeSlideText</code> — a slide's text
+is untrusted input and a marker card is no different (the stored-XSS
+audit made that lesson once; a label is attacker-controlled text like
+any other).</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HTMLElement</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L323">src/map/openlayers/MapMarker.OpenLayers.ts:323</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_customiconanchor"><span>_<wbr/>custom<wbr/>Icon<wbr/>Anchor</span><a href="#_customiconanchor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_customiconanchor-1"><span class="tsd-kind-call-signature">_customIconAnchor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">size</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><a href="#_customiconanchor-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">size</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L489">src/map/openlayers/MapMarker.OpenLayers.ts:489</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_initlayout"><span>_<wbr/>init<wbr/>Layout</span><a href="#_initlayout" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="_initlayout-1"><span class="tsd-kind-call-signature">_initLayout</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_initlayout-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker._initLayout</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L169">src/map/MapMarker.ts:169</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_location"><span>_<wbr/>location</span><a href="#_location" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_location-1"><span class="tsd-kind-call-signature">_location</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#_location-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The marker's coordinate, or null when it has none (an overview slide, or
+a slide carrying only an image region). Every caller treats null as
+&quot;nothing to focus&quot;, so this is the honest shape — the previous
+<code>{ lat: 0, lng: 0 }</code> was a real point at Null Island, spelled with a
+longitude key nothing in the map read.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Overrides MapMarker._location</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L497">src/map/openlayers/MapMarker.OpenLayers.ts:497</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_onmarkerclick"><span>_<wbr/>on<wbr/>Marker<wbr/>Click</span><a href="#_onmarkerclick" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="_onmarkerclick-1"><span class="tsd-kind-call-signature">_onMarkerClick</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_onmarkerclick-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">e</span>: <span class="tsd-signature-type">unknown</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker._onMarkerClick</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L163">src/map/MapMarker.ts:163</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_presentation"><span>_<wbr/>presentation</span><a href="#_presentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_presentation-1"><span class="tsd-kind-call-signature">_presentation</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MarkerPresentation</span><a href="#_presentation-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The merged marker presentation: <code>marker.*</code> wins, <code>location.*</code> is the
+legacy spelling and still works.
+<code>location</code> also stays the carrier of geography, so lat/lon are read
+from it alone — presentation never moves a marker.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">d</span>: <span class="tsd-signature-type">MapMarkerData</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">MarkerPresentation</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L60">src/map/openlayers/MapMarker.OpenLayers.ts:60</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_removefrom"><span>_<wbr/>remove<wbr/>From</span><a href="#_removefrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_removefrom-1"><span class="tsd-kind-call-signature">_removeFrom</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <a href="OlMap.html" class="tsd-signature-type tsd-kind-interface">OlMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_removefrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">m</span>: <a href="OlMap.html" class="tsd-signature-type tsd-kind-interface">OlMap</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Overrides MapMarker._removeFrom</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L222">src/map/openlayers/MapMarker.OpenLayers.ts:222</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_togglepopup"><span>_<wbr/>toggle<wbr/>Popup</span><a href="#_togglepopup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_togglepopup-1"><span class="tsd-kind-call-signature">_togglePopup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_togglepopup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Toggle the popup card for the <em>active</em> marker. Inactive markers keep
+their original behaviour — a click navigates — so a popup never
+swallows navigation on a map full of pins.</p>
+<p>The card is a DOM element parented to the marker element and positioned
+with CSS, which is how it survives a move to the vector renderer
+(docs/plans/issue-159-vector-markers.md): only the anchor is the
+marker's, and that is <code>latLon()</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L246">src/map/openlayers/MapMarker.OpenLayers.ts:246</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="_updateaudiobadge"><span>_<wbr/>update<wbr/>Audio<wbr/>Badge</span><a href="#_updateaudiobadge" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="_updateaudiobadge-1"><span class="tsd-kind-call-signature">_updateAudioBadge</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_updateaudiobadge-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>A small indicator on markers whose slide has narration or audio media
+(the Micrio affordance). Recomputed on activation, because a slide's
+media may only be known once it is resolved.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L380">src/map/openlayers/MapMarker.OpenLayers.ts:380</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="_updatedisplay"><span>_<wbr/>update<wbr/>Display</span><a href="#_updatedisplay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="_updatedisplay-1"><span class="tsd-kind-call-signature">_updateDisplay</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">width</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">height</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">animate</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#_updatedisplay-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">width</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><span class="tsd-kind-parameter">height</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">animate</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker._updateDisplay</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L174">src/map/MapMarker.ts:174</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="active"><span>active</span><a href="#active" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="active-1"><span class="tsd-kind-call-signature">active</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">a</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#active-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">a</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.active</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L131">src/map/MapMarker.ts:131</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="addto"><span>add<wbr/>To</span><a href="#addto" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="addto-1"><span class="tsd-kind-call-signature">addTo</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#addto-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">m</span>: <span class="tsd-signature-type">unknown</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.addTo</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L115">src/map/MapMarker.ts:115</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="closepopup"><span>close<wbr/>Popup</span><a href="#closepopup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="closepopup-1"><span class="tsd-kind-call-signature">closePopup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#closepopup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Close the popup card if it is open. Fires <code>popupclose</code>. Also runs on
+Escape, the card's close button, deactivation and <code>dispose()</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L286">src/map/openlayers/MapMarker.OpenLayers.ts:286</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="createmarker"><span>create<wbr/>Marker</span><a href="#createmarker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="createmarker-1"><span class="tsd-kind-call-signature">createMarker</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#createmarker-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">d</span>: <span class="tsd-signature-type">MapMarkerData</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">o</span>: <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.createMarker</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L127">src/map/MapMarker.ts:127</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="createpopup"><span class="deprecated">create<wbr/>Popup</span><a href="#createpopup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="createpopup-1"><span class="tsd-kind-call-signature">createPopup</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">_d</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">MapMarkerData</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">_o</span><span class="tsd-signature-symbol">?:</span> <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#createpopup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">_d</span>: <span class="tsd-signature-type">MapMarkerData</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">_o</span>: <a href="StorymapOptions.html" class="tsd-signature-type tsd-kind-interface">StorymapOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Never implemented, in the original viewer either: the base
+<code>MapMarker._createPopup</code> had an empty body and the Leaflet override's
+body was commented out, so the <code>map_popup</code> option that called it never
+had any effect. Kept as a no-op so pre-0.10 code that calls it keeps
+working. Render the slide text yourself, or use CSS on
+<code>.vco-mapmarker</code> to show a label.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.createPopup</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L113">src/map/MapMarker.ts:113</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="dispose"><span>dispose</span><a href="#dispose" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="dispose-1"><span class="tsd-kind-call-signature">dispose</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#dispose-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L401">src/map/openlayers/MapMarker.OpenLayers.ts:401</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="haseventlisteners"><span>has<wbr/>Event<wbr/>Listeners</span><a href="#haseventlisteners" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="haseventlisteners-1"><span class="tsd-kind-call-signature">hasEventListeners</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#haseventlistenersk">K</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#haseventlistenersk">K</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#haseventlisteners-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="haseventlistenersk"><span class="tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">type</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#haseventlistenersk">K</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.hasEventListeners</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/core/mixins.ts#L33">src/core/mixins.ts:33</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="hide"><span class="deprecated">hide</span><a href="#hide" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="hide-1"><span class="tsd-kind-call-signature">hide</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#hide-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-1">Deprecated<a href="#deprecated-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>See <a href="#show" class="tsd-kind-method">show</a> — no-op since 0.9.x upstream.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.hide</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L103">src/map/MapMarker.ts:103</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="ispopupenabled"><span>is<wbr/>Popup<wbr/>Enabled</span><a href="#ispopupenabled" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="ispopupenabled-1"><span class="tsd-kind-call-signature">isPopupEnabled</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#ispopupenabled-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>True when this marker is configured to show a popup card.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L255">src/map/openlayers/MapMarker.OpenLayers.ts:255</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="latlon"><span>lat<wbr/>Lon</span><a href="#latlon" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="latlon-1"><span class="tsd-kind-call-signature">latLon</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#latlon-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The marker's {lat, lon}, or null when it is a non-georeferenced marker
+(an overview slide, or a slide with only an image region). <code>_createMarker</code>
+already established this for a real marker, but returning it from one
+place means the type checker can see it too.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L185">src/map/openlayers/MapMarker.OpenLayers.ts:185</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="location"><span>location</span><a href="#location" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="location-1"><span class="tsd-kind-call-signature">location</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#location-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="LatLngLiteral.html" class="tsd-signature-type tsd-kind-interface">LatLngLiteral</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.location</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L135">src/map/MapMarker.ts:135</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="off"><span>off</span><a href="#off" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="off-1"><span class="tsd-kind-call-signature">off</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#offk">K</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#offk">K</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <a href="../types/FiredEvent.html" class="tsd-signature-type tsd-kind-type-alias">FiredEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#offk">K</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#off-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="offk"><span class="tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">type</span>: <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#offk">K</a></span></li>
+<li><span><span class="tsd-kind-parameter">fn</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <a href="../types/FiredEvent.html" class="tsd-signature-type tsd-kind-type-alias">FiredEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">,</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="../classes/StoryMap.html#offk">K</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">unknown</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.off</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/core/mixins.ts#L27">src/core/mixins.ts:27</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="on"><span>on</span><a href="#on" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="on-1"><span class="tsd-kind-call-signature">on</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#onk">K</a> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">fn</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <a href="../types/FiredEvent.html" class="tsd-signature-type tsd-kind-type-alias">FiredEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">this</span><a href="#on-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="onk"><span class="tsd-kind-type-parameter">K</span> <span class="tsd-signature-keyword">extends</span> <span class="tsd-signature-type">&quot;markerclick&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupopen&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;popupclose&quot;</span></span></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">type</span>: <span class="tsd-signature-type tsd-kind-type-parameter">K</span></span></li>
+<li><span><span class="tsd-kind-parameter">fn</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">e</span><span class="tsd-signature-symbol">:</span> <a href="../types/FiredEvent.html" class="tsd-signature-type tsd-kind-type-alias">FiredEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="MapMarkerEvents.html" class="tsd-signature-type tsd-kind-interface">MapMarkerEvents</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type tsd-kind-type-parameter">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">context</span>: <span class="tsd-signature-type">unknown</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.on</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/core/mixins.ts#L22">src/core/mixins.ts:22</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="openpopup"><span>open<wbr/>Popup</span><a href="#openpopup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="openpopup-1"><span class="tsd-kind-call-signature">openPopup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#openpopup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Open the popup card for this marker.</p>
+<p>Returns false (and opens nothing) when popups are disabled for the
+marker or it is not a real map marker — e.g. an overview slide. A
+click on an inactive marker navigates instead of opening (see the
+click handler in <code>_createMarker</code>); programmatic callers that want the
+card on another stop should navigate first (<code>StoryMap.openMarkerPopup</code>
+does exactly that). Fires <code>popupopen</code> on success.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L269">src/map/openlayers/MapMarker.OpenLayers.ts:269</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="removefrom"><span>remove<wbr/>From</span><a href="#removefrom" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="removefrom-1"><span class="tsd-kind-call-signature">removeFrom</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">m</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#removefrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">m</span>: <span class="tsd-signature-type">unknown</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.removeFrom</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L119">src/map/MapMarker.ts:119</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="show"><span class="deprecated">show</span><a href="#show" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="show-1"><span class="tsd-kind-call-signature">show</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#show-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-2">Deprecated<a href="#deprecated-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>No-op since 0.9.x upstream (the original marker defined an
+empty body too). Markers are never individually hidden; use CSS on
+<code>.vco-mapmarker</code>, or <code>active(false)</code> to dim one.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from MapMarker.show</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L100">src/map/MapMarker.ts:100</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="togglepopup"><span>toggle<wbr/>Popup</span><a href="#togglepopup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="togglepopup-1"><span class="tsd-kind-call-signature">togglePopup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><a href="#togglepopup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Open the card when closed, close it when open. Returns whether the
+card is open afterwards (false when popups are disabled).</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/openlayers/MapMarker.OpenLayers.ts#L304">src/map/openlayers/MapMarker.OpenLayers.ts:304</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="updatedisplay"><span>update<wbr/>Display</span><a href="#updatedisplay" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="updatedisplay-1"><span class="tsd-kind-call-signature">updateDisplay</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">w</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">h</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">a</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#updatedisplay-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">w</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><span class="tsd-kind-parameter">h</span>: <span class="tsd-signature-type">number</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">a</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from MapMarker.updateDisplay</p>
+<ul>
+<li>Defined in <a href="https://github.com/cmahnke/StoryMapJS/blob/ffcd40cfccb804f667ff3b975dd61e8cf12bd289/src/map/MapMarker.ts#L123">src/map/MapMarker.ts:123</a></li></ul></aside></div></li></ul></section></section></details></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div>
+<div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
+<h3>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
+<div><a href="#_audio_badge"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>audio_<wbr/>badge</span></a><a href="#_custom_icon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>custom_<wbr/>icon</span></a><a href="#_custom_icon_url" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>custom_<wbr/>icon_<wbr/>url</span></a><a href="#_custom_image_icon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>custom_<wbr/>image_<wbr/>icon</span></a><a href="#_el" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>el</span></a><a href="#_icon" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>icon</span></a><a href="#_is_active"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>is_<wbr/>active</span></a><a href="#_marker" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>marker</span></a><a href="#_marker_label"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>marker_<wbr/>label</span></a><a href="#_onmarkerclickbound"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>on<wbr/>Marker<wbr/>Click<wbr/>Bound</span></a><a href="#_onmarkerkeybound"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>on<wbr/>Marker<wbr/>Key<wbr/>Bound</span></a><a href="#_onpopupkeybound"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>on<wbr/>Popup<wbr/>Key<wbr/>Bound</span></a><a href="#_overlay"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>overlay</span></a><a href="#_popup_el"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>popup_<wbr/>el</span></a><a href="#_popup_enabled"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>popup_<wbr/>enabled</span></a><a href="#animator" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>animator</span></a><a href="#data" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>data</span></a><a href="#fire" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>fire</span></a><a href="#marker_number" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>marker_<wbr/>number</span></a><a href="#media_icon_class" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>media_<wbr/>icon_<wbr/>class</span></a><a href="#options" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>options</span></a><a href="#timer" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>timer</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Accessors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Accessors</summary>
+<div><a href="#popupopen"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="../assets/icons.svg#icon-262144"></use></svg><span>popup<wbr/>Open</span></a></div></details>
+<details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
+<div><a href="#_active"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>active</span></a><a href="#_addto"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>add<wbr/>To</span></a><a href="#_closepopup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>close<wbr/>Popup</span></a><a href="#_createmarker"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>create<wbr/>Marker</span></a><a href="#_createmarkerelement"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>create<wbr/>Marker<wbr/>Element</span></a><a href="#_createpopupelement"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>create<wbr/>Popup<wbr/>Element</span></a><a href="#_customiconanchor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>custom<wbr/>Icon<wbr/>Anchor</span></a><a href="#_initlayout" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>init<wbr/>Layout</span></a><a href="#_location"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>location</span></a><a href="#_onmarkerclick" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>on<wbr/>Marker<wbr/>Click</span></a><a href="#_presentation"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>presentation</span></a><a href="#_removefrom"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>remove<wbr/>From</span></a><a href="#_togglepopup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>toggle<wbr/>Popup</span></a><a href="#_updateaudiobadge"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>update<wbr/>Audio<wbr/>Badge</span></a><a href="#_updatedisplay" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>update<wbr/>Display</span></a><a href="#active" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>active</span></a><a href="#addto" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>To</span></a><a href="#closepopup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>close<wbr/>Popup</span></a><a href="#createmarker" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Marker</span></a><a href="#createpopup" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Popup</span></a><a href="#dispose"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dispose</span></a><a href="#haseventlisteners" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>has<wbr/>Event<wbr/>Listeners</span></a><a href="#hide" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>hide</span></a><a href="#ispopupenabled"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Popup<wbr/>Enabled</span></a><a href="#latlon"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>lat<wbr/>Lon</span></a><a href="#location" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>location</span></a><a href="#off" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>off</span></a><a href="#on" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a><a href="#openpopup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>open<wbr/>Popup</span></a><a href="#removefrom" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>remove<wbr/>From</span></a><a href="#show" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>show</span></a><a href="#togglepopup"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>toggle<wbr/>Popup</span></a><a href="#updatedisplay" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>update<wbr/>Display</span></a></div></details></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../modules.html">StoryMapJS API</a>
+<ul class="tsd-small-nested-navigation" id="tsd-nav-container">
+<li>Loading...</li></ul></nav></div></div></div><footer></footer>
+<div class="overlay"></div></body></html>

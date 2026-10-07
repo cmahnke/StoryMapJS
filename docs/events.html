@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Event reference — StoryMapJS</title>
+        <meta name="description" content="Event reference — StoryMapJS documentation" />
+        <link rel="stylesheet" href="../site.css" />
+    </head>
+    <body class="sm-site">
+        
+    <nav class="navbar navbar-dark">
+        <ul>
+            <li class="logo">
+                <a href="../index.html">StoryMap <span>JS</span></a>
+            </li>
+        </ul>
+        <ul class="nav-right">
+            <li>
+                <a class="button button-dark button-active" href="https://github.com/cmahnke/StoryMapJS"
+                    >GitHub</a
+                >
+            </li>
+            <li>
+                <a class="button button-dark" href="https://github.com/cmahnke/StoryMapJS/issues"
+                    >Issues</a
+                >
+            </li>
+        </ul>
+    </nav>
+    <header class="header-product header-product-docs">
+        <nav id="navbar-secondary" class="navbar navbar-subnav" aria-label="Page navigation">
+            <ul>
+                <li><a class="button" href="../index.html#overview">Overview</a></li>
+                <li><a class="button" href="../index.html#examples">Examples</a></li>
+                <li><a class="button" href="./readme.html">README</a></li>
+                <li><a class="button" href="./migration.html">Migration guide</a></li>
+                <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="./authoring.html">Authoring</a></li>
+                <li><a class="button" href="./events.html">Events</a></li>
+                <li><a class="button" href="./api/index.html">API docs</a></li>
+                <li><a class="button" href="../index.html#help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+        <main class="sm-docs">
+            <h1>Event reference</h1>
+<p>One table per emitter: the event name, its payload, when it fires, and who
+can subscribe. This is the canonical list;
+<code>docs/migration-from-knightlab.md</code> keeps only the migration differences.
+payloads are also typed — see the <code>*Events</code> maps exported from
+<code>src/main.ts</code> (e.g. <code>StoryMapEvents</code>), which make <code>storymap.on(&quot;change&quot;, …)</code>
+a compile error and infer the handler parameter.</p>
+<p>Every event object carries the payload fields plus the framework&#39;s own
+<code>type</code> and <code>target</code>. <code>target</code> is always the object that fired — in
+particular, a re-fired event&#39;s <code>target</code> is the re-firing viewer, not the
+origin (a payload carrying its own <code>type</code>/<code>target</code> cannot displace them).</p>
+<h2><code>StoryMap</code> — subscribe on the viewer</h2>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Payload</th>
+<th>Fires when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>change</code></td>
+<td><code>{ current_slide, current_id }</code></td>
+<td>any navigation completes (programmatic, slider, map, back-to-start); exactly once per navigation</td>
+</tr>
+<tr>
+<td><code>loaded</code></td>
+<td>the storymap data</td>
+<td>slider and map both loaded (mapless stories skip the map gate)</td>
+</tr>
+<tr>
+<td><code>title</code></td>
+<td><code>{ title }</code></td>
+<td>the story title resolves</td>
+</tr>
+<tr>
+<td><code>dataloaded</code></td>
+<td><em>none</em></td>
+<td>the storymap document is read, before layout</td>
+</tr>
+<tr>
+<td><code>fontLoaded</code></td>
+<td><code>{ font }</code></td>
+<td>the font theme finishes loading — or fails to (a missing theme never blocks the story)</td>
+</tr>
+<tr>
+<td><code>transitionstart</code> / <code>transitionend</code></td>
+<td><code>{ current_slide, duration }</code> / <code>{ current_slide }</code></td>
+<td>a slide glide starts / elapses (only the latest transition ever ends)</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td><code>{ message, source, conflict? }</code></td>
+<td>fetch/validation failure, or a second viewer claiming another locale (<code>conflict: true</code>)</td>
+</tr>
+<tr>
+<td><code>imageready</code></td>
+<td><code>{ source, kind, layer }</code> (<code>kind</code>: <code>&quot;iiif&quot;</code> | <code>&quot;zoomify&quot;</code> | <code>&quot;tiles&quot;</code>; <code>layer</code> may be <code>null</code>)</td>
+<td>an image source is actually attached — the only signal the imagery exists (<code>loaded</code> can fire earlier)</td>
+</tr>
+<tr>
+<td><code>annotationsloaded</code></td>
+<td><code>{ stops, searchService, failed }</code></td>
+<td><code>loadAnnotations()</code> appended external stops</td>
+</tr>
+<tr>
+<td><code>markerclick</code></td>
+<td><code>{ marker_number, current_slide }</code></td>
+<td>a marker is clicked (<code>change</code> alone does not say <em>how</em> the story moved)</td>
+</tr>
+<tr>
+<td><code>popupopen</code> / <code>popupclose</code></td>
+<td><code>{ marker_number, current_slide }</code></td>
+<td>a marker card opens / closes (button, Escape, deactivation, dispose)</td>
+</tr>
+<tr>
+<td><code>basemapchange</code></td>
+<td><code>{ map_type, previous }</code></td>
+<td>the layer switcher swapped the basemap</td>
+</tr>
+<tr>
+<td><code>overlaychange</code></td>
+<td><code>{ index, visible }</code></td>
+<td>the layer switcher toggled an overlay</td>
+</tr>
+</tbody></table>
+<h2><code>Map</code> (engine) — subscribe on <code>storymap._map</code></h2>
+<p><code>markerAdded</code> / <code>markerRemoved</code> fire <strong>only here</strong>, never on the viewer.
+(<code>added</code> / <code>removed</code> from the <code>DomMixed</code> mixin exist on the engine too.)</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Payload</th>
+<th>Fires when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>change</code></td>
+<td><code>{ current_marker }</code></td>
+<td>the engine navigated (consumed internally to drive <code>_navigate</code>)</td>
+</tr>
+<tr>
+<td><code>loaded</code></td>
+<td>the map data</td>
+<td>the engine loaded (guarded against OL <code>loadend</code> repeats)</td>
+</tr>
+<tr>
+<td><code>markerAdded</code> / <code>markerRemoved</code></td>
+<td>the marker</td>
+<td>marker created / destroyed</td>
+</tr>
+<tr>
+<td><code>markerclick</code></td>
+<td><code>{ marker_number }</code></td>
+<td>a marker is clicked (consumed internally to navigate; re-fired on the viewer)</td>
+</tr>
+<tr>
+<td><code>popupopen</code> / <code>popupclose</code></td>
+<td><code>{ marker_number }</code></td>
+<td>a marker card opens / closes (re-fired on the viewer)</td>
+</tr>
+<tr>
+<td><code>imageready</code></td>
+<td><code>{ source, kind, layer }</code></td>
+<td>a source is usable (re-fired on the viewer; <code>layer</code> may be <code>null</code>)</td>
+</tr>
+<tr>
+<td><code>tilesallowed</code></td>
+<td><em>none</em></td>
+<td>deferred tile layers attached after a tile consent grant (engine-only, never re-fired on the viewer)</td>
+</tr>
+</tbody></table>
+<h2>Internal emitters</h2>
+<p>Consumed inside the viewer; a host generally observes their effects through
+the <code>StoryMap</code> events above.</p>
+<table>
+<thead>
+<tr>
+<th>Emitter</th>
+<th>Events</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>StorySlider</code></td>
+<td><code>change {current_slide, uniqueid}</code>, <code>loaded</code>, <code>title {title}</code>, <code>colorchange</code>, <code>slideAdded</code>, <code>nav_next</code> / <code>nav_previous</code> / <code>nav_left</code> / <code>nav_right</code> (declared but never fired)</td>
+</tr>
+<tr>
+<td><code>Slide</code></td>
+<td><code>background_change</code>, <code>call_to_action</code>, <code>loaded</code>, <code>added</code>, <code>removed</code></td>
+</tr>
+<tr>
+<td><code>SlideNav</code></td>
+<td><code>clicked</code>, <code>loaded</code>, <code>added</code>, <code>removed</code></td>
+</tr>
+<tr>
+<td><code>Media</code></td>
+<td><code>loaded</code>, <code>media_loaded</code>, <code>media_ended</code> (fired by media subclasses with a playable element — what <code>autoplay_media</code> waits for), <code>added</code>, <code>removed</code></td>
+</tr>
+<tr>
+<td><code>Text</code></td>
+<td><code>loaded</code>, <code>added</code>, <code>removed</code></td>
+</tr>
+<tr>
+<td><code>MapMarker</code></td>
+<td><code>markerclick</code>, <code>popupopen</code>, <code>popupclose</code> (all <code>{marker_number}</code>; consumed by the engine)</td>
+</tr>
+<tr>
+<td><code>MenuBar</code></td>
+<td><code>overview</code>, <code>back_to_start</code>, <code>fullscreen</code>, <code>autoplay_toggle</code>, <code>progress_go {slide}</code> (consumed by the viewer to navigate), <code>collapse {y, collapsed}</code>, <code>basemapchange {map_type}</code>, <code>overlaychange {index, visible}</code> (the last two forwarded from the layer switcher and re-fired on the viewer)</td>
+</tr>
+<tr>
+<td><code>Message</code></td>
+<td><code>clicked</code> (consumed by the slider), <code>loaded</code>, <code>added</code>, <code>removed</code></td>
+</tr>
+<tr>
+<td><code>Swipable</code></td>
+<td><code>dragstart</code>, <code>dragend</code>, <code>dragmove</code>, <code>momentum</code>, <code>swipe_left</code> / <code>swipe_right</code> / <code>swipe_up</code> / <code>swipe_down</code>, <code>swipe_nodirection</code></td>
+</tr>
+</tbody></table>
+<p><code>loaded</code> / <code>added</code> / <code>removed</code> come from the <code>DomMixed</code> mixin (<code>onLoaded</code> /
+<code>onAdd</code> / <code>onRemove</code>); some emitters provide them without ever firing them.</p>
+
+        </main>
+        
+    <footer class="footer-knightlab">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">StoryMap <span>JS</span></div>
+                <ul class="list-social">
+                    <li>
+                        <a href="https://github.com/cmahnke/StoryMapJS" title="StoryMapJS fork on GitHub"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a href="https://github.com/NUKnightLab/StoryMapJS" title="Upstream Knight Lab repository"
+                            >Upstream</a
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="footer-description">
+                <p>
+                    A TypeScript rewrite of
+                    <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+                    the original tool by
+                    <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
+                </p>
+                <span class="copyright">
+                    Released under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
+                </span>
+            </div>
+        </div>
+    </footer>
+    </body>
+</html>

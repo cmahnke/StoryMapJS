@@ -1,0 +1,42 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_type": "iiif",
+        "map_as_image": true,
+        "iiif": {
+            "url": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+            "attribution": "IIIF fixture repository"
+        },
+        "slides": [
+            {
+                "type": "overview",
+                "date": "",
+                "text": {
+                    "headline": "Image region stops",
+                    "text": "Each slide fits its xywh region on navigation."
+                },
+                "location": {}
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Head region",
+                    "text": "The view fits the [x, y, w, h] region in image pixels."
+                },
+                "location": {
+                    "region": [800, 100, 700, 700]
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Torso region",
+                    "text": "Slideshow-style image stops via the IIIF xywh convention."
+                },
+                "location": {
+                    "region": [700, 800, 900, 1100]
+                }
+            }
+        ]
+    }
+}

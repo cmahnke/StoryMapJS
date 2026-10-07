@@ -1,0 +1,318 @@
+{
+    "@context": [
+        "http://iiif.io/api/extension/navplace/context.json",
+        "http://iiif.io/api/presentation/3/context.json",
+        "https://cmahnke.github.io/StoryMapJS/navplace-properties.json",
+        "http://iiif.io/api/extension/georef/1/context.json",
+        "https://cmahnke.github.io/StoryMapJS/context.json"
+    ],
+    "id": "https://example.org/storymap/georeferenced-layer",
+    "type": "Manifest",
+    "label": {
+        "none": [
+            "Georeferenced layer"
+        ]
+    },
+    "behavior": [
+        "paged"
+    ],
+    "provider": [
+        {
+            "id": "https://example.org/",
+            "type": "Agent",
+            "label": {
+                "none": [
+                    "StoryMapJS"
+                ]
+            }
+        }
+    ],
+    "service": [
+        {
+            "id": "https://example.org/storymap/georeferenced-layer/config",
+            "type": "StoryMapMapConfiguration",
+            "profile": "mapconfig",
+            "storymap:basemap": "osm",
+            "storymap:mapArea": "full",
+            "storymap:overviewExtent": [
+                4.3,
+                51.85,
+                4.6,
+                51.98
+            ]
+        }
+    ],
+    "items": [
+        {
+            "id": "https://example.org/storymap/georeferenced-layer/canvas/1",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "label": {
+                "none": [
+                    "A sheet placed from ground control points"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<p>This canvas carries a <code>motivation: &quot;georeferencing&quot;</code> annotation. Its <code>target</code> embeds the IIIF Image API service to place, as the extension asks for a target that is external to the resource it ships in, and its <code>body</code> is the Georeference Extension FeatureCollection of ground control points. The ground control points are fitted affinely and the sheet is placed on the geographic map.</p>"
+                ]
+            },
+            "items": [
+                {
+                    "id": "https://example.org/storymap/georeferenced-layer/canvas/1/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/georeferenced-layer/canvas/1/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/georeferenced-layer/canvas/1"
+                        },
+                        {
+                            "id": "https://example.org/storymap/georeferenced-layer/canvas/1/georeferencing/1",
+                            "type": "Annotation",
+                            "motivation": "georeferencing",
+                            "target": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon",
+                                "type": "Image",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "requiredStatement": {
+                                "label": {
+                                    "none": [
+                                        "Attribution"
+                                    ]
+                                },
+                                "value": {
+                                    "none": [
+                                        "Placed sheet (synthetic ground control points)"
+                                    ]
+                                }
+                            },
+                            "body": {
+                                "id": "https://example.org/storymap/georeferenced-layer/layer/historic-sheet/features",
+                                "type": "FeatureCollection",
+                                "transformation": {
+                                    "type": "polynomial",
+                                    "options": {
+                                        "order": 1
+                                    }
+                                },
+                                "features": [
+                                    {
+                                        "id": "https://example.org/storymap/georeferenced-layer/layer/historic-sheet/feature/1",
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                0,
+                                                0
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.45,
+                                                51.92
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "id": "https://example.org/storymap/georeferenced-layer/layer/historic-sheet/feature/2",
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                2315,
+                                                0
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.5,
+                                                51.92
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "id": "https://example.org/storymap/georeferenced-layer/layer/historic-sheet/feature/3",
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                2315,
+                                                3000
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.5,
+                                                51.9
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "id": "https://example.org/storymap/georeferenced-layer/layer/historic-sheet/feature/4",
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                0,
+                                                3000
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.45,
+                                                51.9
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "id": "https://example.org/storymap/georeferenced-layer/layer/historic-sheet/feature/5",
+                                        "type": "Feature",
+                                        "properties": {
+                                            "resourceCoords": [
+                                                1157,
+                                                1500
+                                            ]
+                                        },
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [
+                                                4.474989,
+                                                51.91
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ],
+            "navPlace": {
+                "id": "https://example.org/storymap/georeferenced-layer/canvas/1/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/georeferenced-layer/canvas/1/navplace/feature/1",
+                        "type": "Feature",
+                        "properties": {},
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                4.4777,
+                                51.9166
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/storymap/georeferenced-layer/canvas/2",
+            "type": "Canvas",
+            "height": 1080,
+            "width": 1080,
+            "label": {
+                "none": [
+                    "A polygon navPlace constrains the map"
+                ]
+            },
+            "summary": {
+                "none": [
+                    "<p>The second canvas states its area as a polygon. The navPlace extension lists a single geographic bounding box as a use case, so it becomes the storymap's <code>map_bbox</code> and the view is constrained to it.</p>"
+                ]
+            },
+            "items": [
+                {
+                    "id": "https://example.org/storymap/georeferenced-layer/canvas/2/annotationpage/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/storymap/georeferenced-layer/canvas/2/annotation/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 2315,
+                                "height": 3000,
+                                "service": [
+                                    {
+                                        "id": "https://iiif.io/api/image/3.0/example/reference/28473c77da3deebe4375c3a50572d9d3-laocoon/info.json",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://example.org/storymap/georeferenced-layer/canvas/2"
+                        }
+                    ]
+                }
+            ],
+            "navPlace": {
+                "id": "https://example.org/storymap/georeferenced-layer/canvas/2/navplace",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "id": "https://example.org/storymap/georeferenced-layer/canvas/2/navplace/feature/1",
+                        "type": "Feature",
+                        "properties": {},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [
+                                        4.44,
+                                        51.895
+                                    ],
+                                    [
+                                        4.51,
+                                        51.895
+                                    ],
+                                    [
+                                        4.51,
+                                        51.925
+                                    ],
+                                    [
+                                        4.44,
+                                        51.925
+                                    ],
+                                    [
+                                        4.44,
+                                        51.895
+                                    ]
+                                ]
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

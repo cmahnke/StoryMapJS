@@ -1,0 +1,71 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Multiple media per slide",
+                    "text": "A slide can carry extra visible media items after its primary one."
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-landscape.jpg",
+                    "caption": "Primary media",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Side by side",
+                    "text": "Two items with media_layout row sit next to each other."
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-city.jpg",
+                    "caption": "First item",
+                    "credit": ""
+                },
+                "media_extra": [
+                    {
+                        "url": "https://example.com/iframe/embed/123",
+                        "caption": "Second item",
+                        "credit": ""
+                    }
+                ],
+                "media_layout": "row"
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Stacked with audio",
+                    "text": "Items pile vertically by default, and an audible extra badges the marker."
+                },
+                "location": {
+                    "lat": 52.52,
+                    "lon": 13.4,
+                    "zoom": 6
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-portrait.jpg",
+                    "caption": "First item",
+                    "credit": ""
+                },
+                "media_extra": [
+                    {
+                        "url": "/examples/assets/tone.mp3",
+                        "caption": "Second item",
+                        "credit": ""
+                    }
+                ]
+            }
+        ]
+    }
+}

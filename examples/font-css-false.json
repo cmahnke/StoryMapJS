@@ -1,0 +1,33 @@
+{
+    "storymap": {
+        "map_type": "osm",
+        "font_css": false,
+        "slides": [
+            {
+                "type": "overview",
+                "date": "",
+                "text": {
+                    "headline": "A story with font loading disabled",
+                    "text": "The host page bundles its own font theme."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Second slide",
+                    "text": "<p>No font stylesheet is appended by the viewer.</p>"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

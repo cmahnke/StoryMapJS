@@ -1,0 +1,35 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "DocumentCloud embeds",
+                    "text": "Overview"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "DC doc",
+                    "text": "A document."
+                },
+                "media": {
+                    "url": "https://www.documentcloud.org/documents/3914627-APS-report.html",
+                    "caption": "",
+                    "credit": "Original: https://www.documentcloud.org/documents/1234567-sample-document.html"
+                }
+            }
+        ]
+    }
+}

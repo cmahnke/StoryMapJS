@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>README — StoryMapJS</title>
+        <meta name="description" content="README — StoryMapJS documentation" />
+        <link rel="stylesheet" href="../site.css" />
+    </head>
+    <body class="sm-site">
+        
+    <nav class="navbar navbar-dark">
+        <ul>
+            <li class="logo">
+                <a href="../index.html">StoryMap <span>JS</span></a>
+            </li>
+        </ul>
+        <ul class="nav-right">
+            <li>
+                <a class="button button-dark button-active" href="https://github.com/cmahnke/StoryMapJS"
+                    >GitHub</a
+                >
+            </li>
+            <li>
+                <a class="button button-dark" href="https://github.com/cmahnke/StoryMapJS/issues"
+                    >Issues</a
+                >
+            </li>
+        </ul>
+    </nav>
+    <header class="header-product header-product-docs">
+        <nav id="navbar-secondary" class="navbar navbar-subnav" aria-label="Page navigation">
+            <ul>
+                <li><a class="button" href="../index.html#overview">Overview</a></li>
+                <li><a class="button" href="../index.html#examples">Examples</a></li>
+                <li><a class="button" href="./readme.html">README</a></li>
+                <li><a class="button" href="./migration.html">Migration guide</a></li>
+                <li><a class="button" href="./iiif.html">IIIF docs</a></li>
+                <li><a class="button" href="./authoring.html">Authoring</a></li>
+                <li><a class="button" href="./events.html">Events</a></li>
+                <li><a class="button" href="./api/index.html">API docs</a></li>
+                <li><a class="button" href="../index.html#help">Help</a></li>
+            </ul>
+        </nav>
+    </header>
+        <main class="sm-docs">
+            <h1>StoryMapJS: Maps that tell stories.</h1>
+<blockquote>
+<p><strong>Important:</strong> this is an <strong>unofficial, unapproved fork</strong> of the original
+<a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>
+repository. It is a proof of concept for an AI-based renovation of the
+codebase, built using the model <strong>GLM 5.3 Flash</strong>. It is not endorsed by,
+affiliated with, or supported by Northwestern University Knight Lab.</p>
+</blockquote>
+<p>This fork is a <strong>viewer-only library</strong>: it renders existing StoryMap JSON
+files (or IIIF Presentation manifests) with TypeScript + Vite + OpenLayers.
+There is no authoring tool — create your storymap JSON by hand or with your
+own code, and see <code>docs/</code> for the migration notes from the original
+Knight Lab release. The library also exports <code>storymapToManifest()</code>, which
+produces a IIIF manifest from a storymap document (<code>npm run convert:iiif</code>
+does the same from the command line; see <code>docs/storymap-as-iiif-manifest.md</code>).</p>
+<h2>Development</h2>
+<p>See docs/DEVELOPMENT.md to get setup for local development of StoryMapJS. This
+repository is the viewer library only (TypeScript + Vite + OpenLayers);
+StoryMap JSON is validated against the schema in <code>schema/</code> on load and via
+<code>npm run validate</code>.</p>
+<h2>Contributing language translations</h2>
+<p>StoryMap ships locale files for dozens of languages under
+<code>src/language/locale/</code> (for example
+<a href="src/language/locale/es.json"><code>es.json</code></a>). To add or improve a translation,
+copy an existing file and edit the quoted strings — please <em>don&#39;t</em> change the
+&quot;keys&quot; (the unquoted strings). The file name is the language code, e.g.
+<code>es.json</code> (codes like <code>zh-cn.json</code> and <code>zh-tw.json</code> are also supported — the
+value of the storymap&#39;s <code>language</code> option must match the file name).</p>
+<h2>IIIF images</h2>
+<p>Large images served over the IIIF Image API are rendered so when set to be map_as_image the entire image is shown. When set as cartography the zoom will set so that all the markers fit.</p>
+<p>Points are set to only display on mouseover in image mode, but you can set map_as_image to false in the config options to always show the points. The points are hidden when the intent is an image so that nothing obstructs the image the viewer is looking at. Looking at a painting is hard with a bunch of points on it.</p>
+<h2>Map Options</h2>
+<p>To disable connecting lines on maps set <code>show_lines: false</code> in the storymap
+options (the default <code>true</code> renders cartography with <code>show_history_line</code>).
+<code>map_as_image: true</code> is something else: image-map mode, only meaningful with
+<code>map_type: &quot;iiif&quot;</code> (the image itself becomes the map).</p>
+<p><code>storymap.map</code> is the raw OpenLayers map, typed with the re-exported <code>ol</code>
+types, and <code>getBaseLayer()</code>, <code>getOverlayLayers()</code>, <code>getMinimap()</code>,
+<code>getMarkers()</code> and friends hand out the layers the viewer built. Listen for
+<code>imageready</code> to run code against the real imagery, and call
+<code>storymap.dispose()</code> when the embedding view goes away — see
+<a href="./migration.html#reaching-the-map-layers-and-markers">docs/migration-from-knightlab.md</a>
+for the full surface.</p>
+<p>The menubar buttons can be disabled individually:</p>
+<pre><code>show_overview:       false,   // map overview button
+show_back_to_start:  false,   // back to the beginning button
+fullscreen:          false,   // fullscreen toggle
+</code></pre>
+<p>(true is the default; setting the option to false hides the button.)</p>
+<p>More config options available to do what you want with the line:</p>
+<pre><code>line_follows_path:      true,		// Map history path follows default line, if false it will connect previous and current only
+line_color:             &quot;#c34528&quot;,
+line_color_inactive:    &quot;#CCC&quot;,
+line_join:              &quot;miter&quot;,
+line_weight:            3,
+line_opacity:           0.80,
+line_dash:              &quot;5,5&quot;,
+show_lines:             true,
+show_history_line:      true,
+</code></pre>
+<p>To disable zoom calculation/edit zoom level set calculate_zoom to false in the config options.</p>
+<h3>More data options</h3>
+<p>Beyond the map options above, the storymap data takes <code>overlays[]</code>
+(stacked raster layers over the basemap), <code>tilejson</code> (a TileJSON source for
+the base layer), <code>overview_extent</code> (the overview slide&#39;s bounds),
+<code>keyboard</code> (page-wide arrow-key navigation for multi-viewer pages),
+per-slide <code>marker: { popup, audioBadge }</code> (the active marker&#39;s card, openable
+via <code>storymap.openMarkerPopup(n)</code>, and the narration/audio dot) and
+<code>narration: { url }</code> per slide. <code>autoplay_media</code> is global (wait for slide
+media to end while autoplaying); the per-slide dwell is <code>slidetimeout</code>.
+All are validated
+against <code>schema/storymap.schema.json</code> — read it (or <code>src/types.ts</code>) for the
+full list with defaults.</p>
+<p><code>show_layers_control: true</code> adds a menubar disclosure button listing the
+<code>overlays[]</code> as checkboxes and <code>basemaps[]</code> as basemap radios, so the
+visitor can switch layers without touching code.</p>
+<p><code>theme: &quot;dark&quot;</code> forces the dark palette, <code>&quot;light&quot;</code> pins the light one;
+unset, the widget follows <code>prefers-color-scheme</code>.</p>
+<h3>Slideshow-style tours</h3>
+<p>Slides can carry per-slide presentation for image tours (a stop can restyle
+the view while it is active; everything is optional and validated against
+<code>schema/storymap.schema.json</code>):</p>
+<pre><code>location: {
+    region: [x, y, w, h],  // image-pixel stop (IIIF xywh); negative origins clamp to the canvas
+    rotation: 45,          // view rotation in degrees clockwise
+    filter: { sepia: 40 }, // brightness/contrast/saturate 0-200 (%), hueRotate -180-180 (°), sepia 0-100 (%), blur 0-20 (px)
+    mask: { x: 0.1, y: 0.1, w: 0.8, h: 0.8, opacity: 0.5 },  // spotlight mask (fractions) + color/invert
+    basemap: &quot;osm:bright&quot;, // per-slide basemap (any map_type, IIIF info.json URL or image file)
+},
+narration: { url, loop, offset, play: &quot;auto&quot;|&quot;click&quot;, stopOnExit, stopAllPrevious },
+slidetimeout: 9000,        // per-slide autoplay dwell in ms (0 holds); default is the global autoplay
+imgoverlay: { url, size, extent, opacity },  // image overlay while the slide is active
+</code></pre>
+<p>Audio/video media take the same <code>offset</code>/<code>loop</code>/<code>play</code>/<code>stopOnExit</code> flags
+on the slide&#39;s <code>media</code> object (<code>stopAllPrevious</code> is narration-only).</p>
+<p>When a slide&#39;s IIIF <code>info.json</code> cannot be loaded, <code>iiif: { width, height, fallbackUrl }</code> paints the static image instead of a blank basemap. Without
+stated dimensions the viewer probes the fallback image&#39;s natural size first,
+but only for slideshow tours (15s timeout); other documents keep the logged
+error path. Per-slide static basemaps (<code>image_srv</code> pointing at a plain
+image file, absolute or same-origin relative) probe the same way, and a
+failed <code>info.json</code> fetch falls back to a probed static image in place.</p>
+<p>The player chrome is opt-in storymap options (absent means the default
+layout): <code>textmode: &quot;left&quot;|&quot;right&quot;|&quot;bottom&quot;</code> with <code>textsize</code> (10–80 %,
+bottom dock only — the player drops side-dock sizes too),
+<code>progressbar: &quot;bar&quot;|&quot;dots&quot;|&quot;squares&quot;|&quot;block&quot;|&quot;thinblock&quot;|&quot;off&quot;</code> (<code>true</code>
+means <code>&quot;bar&quot;</code>, <code>false</code> means hidden),
+<code>fxmode: &quot;slide&quot;|&quot;fade&quot;|&quot;none&quot;</code>, <code>mode: &quot;static&quot;</code> (stacked reading list with
+scroll-spy map sync), <code>hudcolor</code>/<code>hudbgcolor</code>/<code>hudopacity</code>,
+<code>shownav</code>/<code>show_headings</code>/<code>show_scrollbars</code>/<code>show_info</code> toggles and
+<code>viewerheight: &quot;400px&quot;</code>.</p>
+<p><strong>IIIF round-trip:</strong> the per-slide fields do survive — <code>rotation</code>,
+<code>filter</code>, <code>mask</code>, <code>basemap</code>, <code>slidetimeout</code>, <code>imgoverlay</code>, <code>provenance</code>
+and the playback bags travel as <code>storymap:</code> terms (see
+<a href="./iiif.html">docs/storymap-as-iiif-manifest.md</a>).
+The player chrome does <strong>not</strong>: it has no IIIF vocabulary and is
+translator-only (a storymap→manifest→storymap cycle drops it).</p>
+<p>These presentation fields render <strong>only for slideshow tours</strong> (documents
+loaded from that format, which set the internal <code>slideshow_source</code> marker).
+Hand-written storymap documents and IIIF manifests keep the long-standing
+rendering even when they name the new keys — captions always show, the
+autoplay interval stays global, the panel keeps its default dock. Hosts may
+pass <code>slideshow_source: true</code> explicitly as an escape hatch (e.g. in tests).</p>
+<p>Slideshow tours (W3C <code>AnnotationCollection</code> documents) load directly — by
+object, file or URL, following <code>next</code> pages — or convert offline with
+<code>npm run convert:slideshow -- [--settings settings.json] [--out out.json] &lt;tour-url-or-file&gt;</code>
+(see <a href="docs/slideshow.md">docs/slideshow.md</a> for the field mapping,
+player-settings handling and loss table).</p>
+<p>Images can now be used in place of map pins.
+Use <code>image</code> inside the location object and include a url to use, together with
+<code>use_custom_marker: true</code> in the location object (or set <code>use_custom_markers: true</code> globally in the storymap options). Same goes for custom icons except you
+need <code>icon</code> inside the location object.</p>
+<h3>Limit the map to a bounding box</h3>
+<p>Set <code>map_bbox</code> to <code>[west, south, east, north]</code> (lon/lat) to constrain the map —
+the view center stays inside the box, so the map cannot pan away from it:</p>
+<pre><code>map_bbox: [-11, 34, 32, 71],   // or null (the default) to leave the map unconstrained
+</code></pre>
+<p>For image-space (IIIF) maps the coordinates are raw image pixels. When the
+slide content panel is opaque (a solid background that hides the map behind it),
+the initial fit accounts for the covered area so the story stays inside the
+visible region. To limit the map to the left, visible half in landscape (with
+an opaque slide panel instead of the gradient over the map), set
+<code>map_area: &quot;left&quot;</code> (default <code>&quot;full&quot;</code>).</p>
+<h3>Custom tile templates</h3>
+<p><code>map_type</code> accepts absolute or relative tile URL templates and style JSON URLs:</p>
+<pre><code>map_type: &quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;,
+map_type: &quot;./tiles/{z}/{x}/{y}.png&quot;,   // same-origin, works on subpaths + Electron
+map_type: &quot;https://tiles.openfreemap.org/styles/bright&quot;,  // vector style
+</code></pre>
+<p>Any value containing <code>{z}</code> renders as a raster XYZ layer; a path without <code>{z}</code>
+that looks like a URL/path renders as a vector style layer; anything else falls
+back to classic OSM raster — except <code>&quot;none&quot;</code>, which builds no map at all and
+runs the story as text and media only. A full template naming a known provider
+(<code>https://tile.openstreetmap.org/{z}/{x}/{y}.png</code>) is credited to that
+provider; anything else gets the generic &quot;Map data&quot; line (add your own via
+<code>attribution</code>).</p>
+<h3>Switching the basemap at runtime</h3>
+<p><code>storymap.setMapOption(&quot;map_type&quot;, next)</code> / <code>setMapOptions({...})</code> rebuilds the
+main tile layer <strong>and</strong> the minimap (<code>ol/control/OverviewMap</code>) layer, keeping
+the overview fitted to the marker bounds (zoomify/IIIF extents preserved). The
+current slide is re-fitted after the swap.</p>
+<h3>Icons</h3>
+<p>Default pins use the bundled <code>vco-icons</code> font (<code>dist/css/icons/</code>). The SCSS
+source uses the absolute public path (<code>/css/icons/...</code>) so <code>vite dev</code> serves
+the fonts directly; <code>vite build</code> rewrites them to relative <code>./icons/...</code> in
+<code>dist/css/storymap.css</code>, so pins render on subpath deploys, for bundler
+consumers and on <code>file://</code>/Electron hosts without extra configuration.
+Import the stylesheet once
+(<code>import &quot;@projektemacher/storymapjs/css/storymap.css&quot;</code>).</p>
+<p>Font themes (<code>font_css: &quot;stock:&lt;name&gt;&quot;</code>) resolve via <code>import.meta.url</code>, so
+they only work script-tagged, unbundled. A bundler consumer imports the theme
+instead (<code>import &quot;@projektemacher/storymapjs/css/fonts/font.default.css&quot;</code>)
+and passes <code>font_css: false</code> for no injected <code>&lt;link&gt;</code>.</p>
+<h2>Custom HTML in slide content</h2>
+<p>Slide text is rendered as HTML: the <code>text</code> (and <code>headline</code>) fields accept
+arbitrary markup. If the text contains no <code>&lt;p&gt;</code> tag, it is wrapped in one
+automatically; otherwise it is used as-is. This means you can use links,
+images, lists, emphasis and spans in your slides, e.g.:</p>
+<pre><code>{
+    &quot;headline&quot;: &quot;1920: An American in the Making&quot;,
+    &quot;text&quot;: &quot;Immigrants arriving at &lt;a href=\&quot;https://example.org\&quot;&gt;Ellis Island&lt;/a&gt;.&lt;br&gt;&lt;span class=&#39;vco-note&#39;&gt;Photograph: Library of Congress.&lt;/span&gt;&quot;
+}
+</code></pre>
+<p>The <code>vco-note</code> span renders as a small grey note, like the built-in credits.</p>
+<p><strong>Caution:</strong> the text is sanitized, but sanitizing is a mitigation rather
+than a guarantee. Prose and media formatting survive (<code>class</code>, <code>alt</code>, <code>width</code>,
+table attributes, and so on), scripts and other executable tags are dropped
+with their contents, event-handler attributes are stripped, every URL
+attribute is checked to be <code>http(s)</code>, and <code>&lt;iframe&gt;</code> embeds are rebuilt into
+a sandboxed, <code>no-referrer</code> element. <code>style</code>, <code>id</code> and <code>name</code> are <em>not</em> allowed,
+and a link&#39;s <code>target</code> is always forced to <code>_blank</code>. The same sanitizer covers
+media credit, media caption, the navigation headline and the map attribution
+line. Still: only load storymaps from sources you trust.</p>
+<h2>GDPR consent for external services</h2>
+<p>Set the <code>consent_required</code> option to <code>true</code> to ask for permission before
+anything is loaded from external services (media embeds such as YouTube,
+Twitter or SoundCloud, slide narration audio, map tiles, and external font
+CSS):</p>
+<pre><code>{
+    &quot;consent_required&quot;: true,
+    ...
+}
+</code></pre>
+<p>Each service asks with an Allow/Deny panel; answering one panel resolves every
+pending panel of the same service. Denied services show a placeholder
+instead of the media, and the map renders without tiles until they are
+allowed.</p>
+<p>Before the story loads, one dialog lists every external service it uses (map
+tiles, media services including slide narration, external fonts) with three
+choices: <strong>Allow all</strong>, <strong>Decline all</strong>, or a decision per service. A story
+with no map (<code>map_type: &quot;none&quot;</code>) has no tile row to answer. The dialog is
+skipped once every service has a stored decision; per-service panels still
+appear for services discovered later (e.g. a preloaded slide).</p>
+<p>Decisions are stored in <code>localStorage</code> under <code>storymapjs-consent</code> and have no
+expiry — clearing site data asks again.</p>
+<p>The consent labels are <strong>not</strong> fully translated. <code>src/language/locale/en.json</code>
+defines every string (34 keys across 29 locale files: English plus 28
+translations). German is missing 1 key, most locales are missing 9 (the audio
+badge, autoplay, layer-switcher, iframe-title and narration-consent strings),
+and five locales (<code>et</code>, <code>is</code>, <code>nn</code>, <code>ur</code>, <code>sr</code>) are missing 18–19 (additionally
+the fullscreen, consent-dialog, error and overview strings). Run
+<code>npm run check:locales</code> to see the current state — it reports the gap per
+locale and is expected to be runnable without failing.</p>
+<h2>Troubleshooting</h2>
+<p>If a storymap fails to render, open the browser console: the viewer logs
+fetch and validation errors (e.g. &quot;could not load storymap data from ...&quot;).
+The <code>error</code> event also fires for programmatic consumers. The full event
+reference (payloads included) is <a href="./events.html">docs/events.md</a>.</p>
+<h2>Accessibility</h2>
+<p>Supported, and covered by tests: text alternatives on slide images
+(decorative <code>alt=&quot;&quot;</code> included); real <code>&lt;button&gt;</code> menubar actions and slide
+navigation; polite live-region slide announcements; reduced-motion handling
+of the slide glide and autoplay; an embed page that does not disable zoom;
+sanitized author tables that keep their semantics; slides hidden from
+assistive tech while inactive (<code>aria-hidden</code> + <code>inert</code>), with a layer
+switcher built from native checkboxes, radios and fieldsets; keyboard
+operable map pins and message dismissal; a skip link to the slide content;
+an autoplay pause/resume toggle; slide text pronounced in its own language
+(<code>lang</code>); consent dialogs exposed with labels and focus; media errors
+announced as alerts; and a motion kill-switch that also honors an
+OS reduced-motion toggle flipped mid-story.</p>
+<p>Known limitations (not fixed here): map markers are pointer-only; audio and
+video have no viewer-side captions or transcripts; narration ships without a
+transcript; focus moves only when the layer panel closes with Escape; labels
+and announcements are hardcoded English; several muted text colors fall
+below 4.5:1; third-party embeds are the vendor&#39;s conformance. No VPAT or
+ACR is claimed — §508 conformance is decided per deliverable by an
+external audit.</p>
+<h2>Bundled credentials</h2>
+<p>The viewer ships no credentials. Mapbox/Stadia tiles need a token passed via
+<code>map_access_token</code>, and <code>flickr.com/photos</code> API URLs need <code>api_key_flickr</code>
+(both settable in the storymap options).</p>
+
+        </main>
+        
+    <footer class="footer-knightlab">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">StoryMap <span>JS</span></div>
+                <ul class="list-social">
+                    <li>
+                        <a href="https://github.com/cmahnke/StoryMapJS" title="StoryMapJS fork on GitHub"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a href="https://github.com/NUKnightLab/StoryMapJS" title="Upstream Knight Lab repository"
+                            >Upstream</a
+                        >
+                    </li>
+                </ul>
+            </div>
+            <div class="footer-description">
+                <p>
+                    A TypeScript rewrite of
+                    <a href="https://github.com/NUKnightLab/StoryMapJS">NUKnightLab/StoryMapJS</a>,
+                    the original tool by
+                    <a href="https://knightlab.northwestern.edu/">Northwestern University Knight Lab</a>.
+                </p>
+                <span class="copyright">
+                    Released under the <a href="https://opensource.org/license/MPL-2-0">MPL-2.0</a> license.
+                </span>
+            </div>
+        </div>
+    </footer>
+    </body>
+</html>

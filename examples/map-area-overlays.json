@@ -1,0 +1,68 @@
+{
+    "storymap": {
+        "map_type": "osm",
+        "map_area": "left",
+        "keyboard": true,
+        "map_mini": true,
+        "overview_extent": [-0.6, 51.2, 0.4, 51.8],
+        "map_bbox": [-0.6, 51.2, 0.4, 51.8],
+        "overlays": [
+            {
+                "map_type": "https://tiles.example.org/london-1900/{z}/{x}/{y}.png",
+                "opacity": 0.55,
+                "attribution": "Historical base sheet (demo overlay)"
+            },
+            {
+                "map_type": "https://tiles.example.org/railway-1850/{z}/{x}/{y}.png",
+                "visible": false,
+                "className": "ol-layer historic-sheet",
+                "blendMode": "multiply",
+                "extent": [-0.4, 51.3, 0.2, 51.7],
+                "attribution": "Railway lines 1850 (demo overlay)"
+            }
+        ],
+        "slides": [
+            {
+                "date": "1890",
+                "type": "overview",
+                "text": {
+                    "headline": "Map area, overlays and minimap bounds",
+                    "text": "The map is limited to the left half, two raster layers are stacked above the basemap (the second one hidden, blended and clipped) and the overview is pinned to a lon/lat box. Arrow keys navigate the story."
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-landscape.jpg",
+                    "alt": "A map of London with two stacked overlay layers",
+                    "caption": "map_area, overlays, overview_extent, keyboard",
+                    "credit": ""
+                },
+                "location": { "lat": 51.5074, "lon": -0.1278, "zoom": 10 }
+            },
+            {
+                "date": "1900",
+                "text": {
+                    "headline": "The overlay follows the story",
+                    "text": "Every option in this storymap is also expressible in a IIIF Presentation manifest: map_area, overlays, overview_extent and keyboard become storymap: extension terms of the map configuration service."
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-portrait.jpg",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": { "lat": 51.5155, "lon": -0.0922, "zoom": 12, "line": true }
+            },
+            {
+                "date": "1910",
+                "text": {
+                    "headline": "Constrained to the box",
+                    "text": "map_bbox and overview_extent use the same [west, south, east, north] lon/lat convention, and a polygon navPlace in a manifest is read as exactly that box."
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-landscape.jpg",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": { "lat": 51.4818, "lon": -0.0046, "zoom": 11, "line": true }
+            }
+        ]
+    }
+}

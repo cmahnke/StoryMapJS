@@ -1,0 +1,24 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Responsive images",
+                    "text": "The srcset/sizes fields pass through to the img element."
+                },
+                "media": {
+                    "url": "/examples/assets/placeholder-portrait.jpg",
+                    "srcset": "/examples/assets/placeholder-portrait.jpg 480w, /examples/assets/placeholder-landscape.jpg 1024w",
+                    "sizes": "50vw",
+                    "caption": "srcset passthrough",
+                    "credit": ""
+                }
+            }
+        ]
+    }
+}

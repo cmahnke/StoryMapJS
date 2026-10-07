@@ -1,0 +1,47 @@
+/* StoryMapJS API docs: adapt the TypeDoc default theme to the site chrome
+ * (see src/scss/site/site.scss). Loaded via typedoc.json "customCss". */
+
+:root {
+    --color-accent: #df4e13;
+    --color-text: #222;
+    --color-text-aside: #646464;
+    --color-link: #13a4df;
+    --color-ts-module: #13a4df;
+    --color-ts-class: #df4e13;
+    --color-ts-interface: #24a549;
+    --color-ts-enum: #c34528;
+    --color-ts-function: #484848;
+    --color-ts-type-alias: #646464;
+}
+
+body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    color: #222;
+}
+
+.tsd-page-title,
+.tsd-panel h1,
+.tsd-panel h2,
+.tsd-panel h3 {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-style: italic;
+}
+
+.tsd-navigation,
+.tsd-page-toolbar,
+code,
+pre {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.tsd-page-toolbar {
+    border-bottom: 1px solid #d4d4d4;
+}
+
+a {
+    color: #13a4df;
+}
+
+a:hover {
+    color: #df4e13;
+}

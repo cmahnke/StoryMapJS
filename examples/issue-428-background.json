@@ -1,0 +1,62 @@
+{
+    "storymap": {
+        "call_to_action": false,
+        "zoomify": false,
+        "map_as_image": false,
+        "map_type": "osm",
+        "slides": [
+            {
+                "date": "",
+                "type": "overview",
+                "text": {
+                    "headline": "Background issue 428",
+                    "text": "Overview slide"
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "With background",
+                    "text": "This slide has a background image."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "background": {
+                    "url": "/css/icons/emoji.png"
+                },
+                "location": {
+                    "lat": 48.85,
+                    "lon": 2.35,
+                    "zoom": 6,
+                    "line": true
+                }
+            },
+            {
+                "date": "",
+                "text": {
+                    "headline": "Without background",
+                    "text": "This slide must not inherit the darkened background."
+                },
+                "media": {
+                    "url": "",
+                    "caption": "",
+                    "credit": ""
+                },
+                "location": {
+                    "lat": 52.52,
+                    "lon": 13.4,
+                    "zoom": 6,
+                    "line": true
+                }
+            }
+        ]
+    }
+}
