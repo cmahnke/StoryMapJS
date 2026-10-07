@@ -14,6 +14,15 @@ test("slideshow tour renders its slides", async ({ page }) => {
         })
         .toBe(true);
 
+    // a URL-string tour loads asynchronously (the viewer re-fetches it
+    // after construction), so __smReady does not imply layout yet — poll
+    // for the container instead of asserting a single shot
+    await expect
+        .poll(() => page.evaluate(() => !!document.querySelector("#storymap-embed.vco-storymap")), {
+            timeout: 30_000,
+        })
+        .toBe(true);
+
     const state = await page.evaluate(() => ({
         errors: (window as unknown as { __smErrors?: string[] }).__smErrors,
         hasContainer: !!document.querySelector("#storymap-embed.vco-storymap"),

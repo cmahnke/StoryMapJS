@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { harnessUrl, waitForStoryMap } from "./known-issues/helpers";
+import { clearHover, harnessUrl, waitForStoryMap } from "./known-issues/helpers";
 
 /**
  * Menubar buttons keep the pre-0.9.0 Knight Lab look: medium gray text on
@@ -18,6 +18,11 @@ async function buttonStyle(page: import("@playwright/test").Page, index: number)
             ...document.querySelectorAll("#storymap-embed .vco-menubar-button"),
         ] as HTMLElement[];
         const button = buttons[i];
+        if (button.matches(":hover") || button.matches(":focus-visible")) {
+            throw new Error(
+                `menubar button ${i} is hovered or focused; styles would read the interactive state`,
+            );
+        }
         const cs = getComputedStyle(button);
         const rect = button.getBoundingClientRect();
         const range = document.createRange();
@@ -40,6 +45,7 @@ async function buttonStyle(page: import("@playwright/test").Page, index: number)
 test("menubar buttons use the classic look on the light palette", async ({ page }) => {
     await page.goto(harnessUrl("katrina"));
     await waitForStoryMap(page);
+    await clearHover(page);
 
     const first = await buttonStyle(page, 0);
     expect(first.color).toBe("rgb(115, 115, 115)");
@@ -60,6 +66,7 @@ test("menubar buttons use the classic look on the light palette", async ({ page 
 test("menubar buttons stay readable on the dark palette", async ({ page }) => {
     await page.goto(harnessUrl("katrina", { theme: "dark" }));
     await waitForStoryMap(page);
+    await clearHover(page);
 
     const style = await buttonStyle(page, 0);
     expect(style.color).toBe("rgb(179, 179, 179)");

@@ -79,7 +79,15 @@
                         "storymap-embed",
                         slideshow !== null && remoteUrl === null ? dataUrl : data,
                         optionsOverride,
-                        {},
+                        {
+                            // viewer load failures (bad URL, bad document)
+                            // only reach console.error + this event — without
+                            // this bridge the specs' __smErrors stays empty
+                            // while nothing renders
+                            error: (e) => {
+                                window.__smErrors.push("storymap: " + (e.message || String(e)));
+                            },
+                        },
                     );
                     window.__sm = sm;
                     // opt-in: ?record=imageready,loaded collects events into

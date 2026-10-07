@@ -9,6 +9,23 @@ export async function waitForStoryMap(page: Page) {
         .toBe(true);
 }
 
+/**
+ * Park the virtual mouse over the map, clear of the chrome, and drop focus
+ * to the page body. A fresh Playwright page starts its pointer at the
+ * viewport origin — the menubar's top-left corner — so without this any
+ * `getComputedStyle` read of the first menubar button measures `:hover`
+ * (white text / theme background) instead of the resting look, but only
+ * when the page is focused (i.e. CI, not a backgrounded local window).
+ */
+export async function clearHover(page: Page) {
+    await page.mouse.move(640, 400);
+    await page.evaluate(() => {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+    });
+}
+
 /** Navigate the harness to an example (optionally with options overrides). */
 export function harnessUrl(example: string, options?: unknown): string {
     const params = new URLSearchParams({ example });

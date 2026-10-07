@@ -88,6 +88,22 @@
     }
 }
 
+// the dark resting color above ties with :hover/:focus-visible (0,3,0)
+// and wins by source order, leaving gray text on the theme background —
+// restate the inverted interactive look explicitly so dark hover matches
+// light hover (panel text on the theme background, high contrast both ways)
+.vco-storymap[data-vco-theme="dark"] .vco-menubar-button:hover,
+.vco-storymap[data-vco-theme="dark"] .vco-menubar-button:focus-visible {
+    color: var(--vco-color-background, #222);
+}
+
+@media (prefers-color-scheme: dark) {
+    .vco-storymap:not([data-vco-theme="light"]) .vco-menubar-button:hover,
+    .vco-storymap:not([data-vco-theme="light"]) .vco-menubar-button:focus-visible {
+        color: var(--vco-color-background, #222);
+    }
+}
+
 .vco-mobile {
     .vco-menubar-button {
         &:hover {
